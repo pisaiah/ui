@@ -5,14 +5,18 @@ import gx
 struct Theme {
 	text_color           gx.Color
 	background           gx.Color
+
 	button_bg_normal     gx.Color
 	button_bg_hover      gx.Color
     button_bg_click      gx.Color
 	button_border_normal gx.Color
 	button_border_hover  gx.Color
     button_border_click  gx.Color
+
     menubar_background   gx.Color
     menubar_border       gx.Color
+    dropdown_background  gx.Color
+    dropdown_border      gx.Color
 }
 
 // Default Theme
@@ -28,6 +32,8 @@ pub fn theme_default() Theme {
         button_border_click: gx.rgb(0,84, 153)
         menubar_background: gx.rgb(255,255,255)
         menubar_border: gx.rgb(242,242,242)
+        dropdown_background: gx.rgb(242,242,242)
+        dropdown_border: gx.rgb(204,204,204)
 	}
 }
 
@@ -44,5 +50,7 @@ pub fn theme_dark() Theme {
         button_border_click: gx.rgb(0, 84, 153)
         menubar_background: gx.rgb(60,60,60)
         menubar_border: gx.rgb(10,10,10)
+         dropdown_background: gx.rgb(10,10,10)
+        dropdown_border: gx.rgb(0,0,0)
 	}
 }
