@@ -1,7 +1,7 @@
 Module {
-	name: 'GGGUI'
-	description: 'Test of V's GG graphics module'
+	name: 'iui'
+	description: 'Isaiah's UI Toolkit'
 	version: '0.0.1'
-	license: 'UNLICENSE'
+	license: 'MIT'
 	dependencies: []
 }
