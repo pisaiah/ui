@@ -22,8 +22,8 @@ mut:
 	width int
 	height int
 	last_click f64
+	is_selected bool
 	draw()
-	// click_event_fn fn (mut Window, Component)
 }
 
 pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
@@ -49,6 +49,7 @@ pub mut:
 	bar           Menubar
 	components    []Component
 	show_menu_bar bool = true
+	shift_pressed bool
 }
 
 pub fn window(theme Theme) &Window {
@@ -56,7 +57,6 @@ pub fn window(theme Theme) &Window {
 		gg: 0
 		theme: theme
 	}
-	app.init()
 	return app
 }
 
@@ -162,6 +162,7 @@ pub mut:
 	height         int
 	last_click     f64
 	click_event_fn fn (mut Window, Button)
+	is_selected    bool
 }
 
 pub fn button(app &Window, text string) Button {
@@ -206,16 +207,19 @@ fn (app &Window) draw_button(x int, y int, width int, height int, mut btn Button
 		if now - btn.last_click > 100 {
 			// btn.eb.publish('click', work, error) // TODO: Eventbus broken? (INVALID MEMORY ERROR)
 			btn.click_event_fn(app, *btn)
+			btn.is_selected = true
 
 			bg = app.theme.button_bg_click
 			border = app.theme.button_border_click
 			btn.last_click = time.now().unix_time_milli()
 		}
+	} else {
+		btn.is_selected = false
 	}
 
 	// Draw Button Background & Border
-	app.gg.draw_rounded_rect(x, y1, width, height, 2, bg)
-	app.gg.draw_empty_rounded_rect(x, y1, width, height, 2, border)
+	app.gg.draw_rounded_rect(x, y1, width, height, 4, bg)
+	app.gg.draw_empty_rounded_rect(x, y1, width, height, 4, border)
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
@@ -321,7 +325,9 @@ fn on_event(e &gg.Event, mut app Window) {
 		app.mouse_x = int(e.mouse_x)
 		app.mouse_y = int(e.mouse_y)
 		for mut com in app.components {
-			com.text = app.mouse_x.str() + ' / ' + app.mouse_y.str()
+			if com is Button {
+				// com.text = app.mouse_x.str() + ' / ' + app.mouse_y.str()
+			}
 		}
 	}
 	if e.typ == .mouse_down {
@@ -334,11 +340,34 @@ fn on_event(e &gg.Event, mut app Window) {
 		app.click_y = -1
 	}
 	if e.typ == .key_down {
-		app.key_down(e.key_code)
+		app.key_down(e.key_code, e)
+	}
+	if e.typ == .key_up {
+		letter := e.key_code.str()
+		if letter == 'left_shift' || letter == 'right_shift' {
+			app.shift_pressed = false
+		}
 	}
 }
 
-fn (mut app Window) key_down(key gg.KeyCode) {
+// Textbox
+struct Textbox {
+pub mut:
+	app            &Window
+	text           string
+	x              int
+	y              int
+	width          int
+	height         int
+	last_click     f64
+	click_event_fn fn (mut Window, Textbox)
+	is_blink       bool
+	last_blink     f64
+	wrap           bool = true
+	is_selected    bool
+}
+
+fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	// global keys
 	match key {
 		.escape {
@@ -349,4 +378,245 @@ fn (mut app Window) key_down(key gg.KeyCode) {
 		}
 		else {}
 	}
+	for mut a in app.components {
+		if a is Textbox {
+			if a.is_selected {
+				kc := u32(gg.KeyCode(e.key_code))
+				mut letter := e.key_code.str()
+				mut res := utf32_to_str(kc)
+				if letter == 'space' {
+					letter = ' '
+				}
+				if letter == 'enter' {
+					letter = '\n'
+				}
+				if letter == 'left_shift' || letter == 'right_shift' {
+					letter = ''
+					app.shift_pressed = true
+					return
+				}
+				if letter.starts_with('_') {
+					letter = letter.replace('_', '')
+					nums := [')', '!', '@', '#', '$', '%', '^', '&', '*', '(']
+					if app.shift_pressed && letter.len > 0 {
+						letter = nums[letter.u32()]
+					}
+				}
+				if letter == 'minus' {
+					if app.shift_pressed {
+						letter = '_'
+					} else {
+						letter = '-'
+					}
+				}
+				if letter == 'left_bracket' && app.shift_pressed {
+					letter = '{'
+				}
+				if letter == 'right_bracket' && app.shift_pressed {
+					letter = '{'
+				}
+				if letter == 'equal' && app.shift_pressed {
+					letter = '+'
+				}
+				if letter == 'apostrophe' && app.shift_pressed {
+					letter = '"'
+				}
+				if letter == 'comma' && app.shift_pressed {
+					letter = '<'
+				}
+				if letter == 'period' && app.shift_pressed {
+					letter = '>'
+				}
+				if letter == 'slash' && app.shift_pressed {
+					letter = '?'
+				}
+				if letter == 'tab' {
+					letter = '	'
+				}
+				if letter == 'semicolon' && app.shift_pressed {
+					letter = ':'
+				}
+				letter = letter.replace('backslash', '\\')
+				if letter == 'backspace' {
+					if a.text.len > 0 {
+						a.text = a.text.substr(0, a.text.len - 1)
+					}
+				} else {
+					if app.shift_pressed && letter.len > 0 {
+						letter = letter.to_upper()
+					}
+					if letter.len > 1 {
+						letter = res
+					}
+					a.text = a.text + letter
+				}
+			}
+		}
+	}
+}
+
+pub fn textbox(app &Window, text string) Textbox {
+	return Textbox{
+		text: text
+		app: app
+		click_event_fn: blank_event_tbox
+	}
+}
+
+pub fn (mut com Textbox) set_click(b fn (mut Window, Textbox)) {
+	com.click_event_fn = b
+}
+
+pub fn blank_event_tbox(mut win Window, a Textbox) {
+}
+
+pub fn (mut com Textbox) draw() {
+	mut spl := com.text.split('\n')
+	mut y_mult := 0
+	size := 14
+	padding := 4
+
+	mut app := com.app
+	mut bg := app.theme.textbox_background
+	mut border := app.theme.textbox_border
+
+	mut mid := (com.x + (com.width / 2))
+	mut midy := (com.y + (com.height / 2))
+
+	// Detect Hover
+	if (math.abs(mid - app.mouse_x) < (com.width / 2))
+		&& (math.abs(midy - app.mouse_y) < (com.height / 2)) {
+		border = app.theme.button_border_hover
+	}
+
+	// Detect Click
+	if (math.abs(mid - app.click_x) < (com.width / 2))
+		&& (math.abs(midy - app.click_y) < (com.height / 2)) {
+		now := time.now().unix_time_milli()
+
+		if now - com.last_click > 100 {
+			com.is_selected = true
+			com.click_event_fn(app, *com)
+
+			bg = app.theme.button_bg_click
+			border = app.theme.button_border_click
+			com.last_click = time.now().unix_time_milli()
+		}
+	} else {
+        if app.click_x > -1 {
+            com.is_selected = false
+        }
+    }
+    
+    if com.is_selected {
+        border = app.theme.button_border_click
+    }
+
+	com.app.draw_bordered_rect(com.x, com.y, com.width, com.height, 2, bg, border)
+
+	mut cl := 0
+	for txt in spl {
+		mut tl := com.app.gg.text_width(txt)
+		if com.wrap && tl > com.width {
+			// TODO
+			com.app.gg.draw_text(com.x + padding, com.y + y_mult + padding, txt, gx.TextCfg{
+				size: size
+				color: com.app.theme.text_color
+			})
+		} else {
+			com.app.gg.draw_text(com.x + padding, com.y + y_mult + padding, txt, gx.TextCfg{
+				size: size
+				color: com.app.theme.text_color
+			})
+		}
+		if cl < spl.len - 1 {
+			y_mult += (com.app.gg.text_height(txt) + com.app.gg.text_height(spl[0])) / 2
+		}
+		cl++
+	}
+
+	mut now := time.now().unix_time_milli()
+	if now - com.last_blink > 1000 {
+		com.is_blink = !com.is_blink
+		com.last_blink = now
+	}
+	if com.is_blink {
+		mut lw := com.app.gg.text_width(spl[spl.len - 1]) - 1
+		com.app.gg.draw_text(com.x + lw + padding, com.y + y_mult + padding, '|', gx.TextCfg{
+			size: size
+			color: com.app.theme.text_color
+		})
+	}
+}
+
+// Checkbox
+struct Checkbox {
+pub mut:
+	app            &Window
+	text           string
+	x              int
+	y              int
+	width          int
+	height         int
+	last_click     f64
+	click_event_fn fn (mut Window, Checkbox)
+	is_selected    bool
+}
+
+pub fn checkbox(app &Window, text string) Checkbox {
+	return Checkbox{
+		text: text
+		app: app
+		click_event_fn: blank_event_cbox
+	}
+}
+
+pub fn (mut com Checkbox) set_click(b fn (mut Window, Checkbox)) {
+	com.click_event_fn = b
+}
+
+pub fn blank_event_cbox(mut win Window, a Checkbox) {
+}
+
+pub fn (mut com Checkbox) draw() {
+	app := com.app
+	width := com.width
+	height := com.height
+	mut bg := app.theme.checkbox_bg
+	mut border := app.theme.button_border_normal
+
+	mut mid := (com.x + (width / 2))
+	mut midy := (com.y + (height / 2))
+
+	// Detect Hover
+	if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+		bg = app.theme.button_bg_hover
+		border = app.theme.button_border_hover
+	}
+
+	// Detect Click
+	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
+		now := time.now().unix_time_milli()
+
+		if now - com.last_click > 100 {
+			com.is_selected = !com.is_selected
+			com.click_event_fn(app, *com)
+
+			bg = app.theme.button_bg_click
+			border = app.theme.button_border_click
+			com.last_click = time.now().unix_time_milli()
+		}
+	}
+
+	com.app.draw_bordered_rect(com.x, com.y, com.width, com.height, 2, bg, border)
+	if com.is_selected {
+		cut := 4
+		com.app.draw_bordered_rect(com.x + cut, com.y + cut, com.width - (cut * 2), com.height - (cut * 2),
+			2, com.app.theme.checkbox_selected, com.app.theme.checkbox_selected)
+	}
+	sizh := app.gg.text_height(com.text) / 2
+	app.gg.draw_text(com.x + com.width + 4, com.y + (height / 2) - sizh, com.text, gx.TextCfg{
+		size: 14
+		color: app.theme.text_color
+	})
 }
