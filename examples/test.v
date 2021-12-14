@@ -85,7 +85,7 @@ fn main() {
 	for i := 0; i < 4; i++ {
 		sel.items << 'Pick me ' + i.str()
 	}
-    sel.set_change(sel_change)
+	sel.set_change(sel_change)
 	window.add_child(sel)
 
 	window.gg.run()
@@ -111,5 +111,5 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 }
 
 fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) {
-    println("OLD: " + old_val + ", NEW: " + new_val)
+	println('OLD: ' + old_val + ', NEW: ' + new_val)
 }
