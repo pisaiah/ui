@@ -1,5 +1,5 @@
-import iui as ui
 import gg
+import iui as ui
 
 [console]
 fn main() {
@@ -10,8 +10,8 @@ fn main() {
 	window.init()
 
 	window.bar = ui.menubar(window, window.theme)
-	window.bar.items << ui.menuitem('File')
-	window.bar.items << ui.menuitem('Edit')
+	window.bar.add_child(ui.menuitem('File'))
+	window.bar.add_child(ui.menuitem('Edit'))
 
 	mut help := ui.menuitem('Help')
 	mut theme_menu := ui.menuitem('Themes')
@@ -19,7 +19,7 @@ fn main() {
 
 	for i := 0; i < 3; i++ {
 		mut item := ui.menuitem('Item ' + i.str())
-		help.items << item
+		help.add_child(item)
 	}
 
 	mut themes := [ui.theme_default(), ui.theme_dark(), ui.theme_dark_hc(),
@@ -27,12 +27,12 @@ fn main() {
 	for theme2 in themes {
 		mut item := ui.menuitem(theme2.name)
 		item.set_click(theme_click)
-		theme_menu.items << item
+		theme_menu.add_child(item)
 	}
 
-	help.items << about
-	window.bar.items << help
-	window.bar.items << theme_menu
+	help.add_child(about)
+	window.bar.add_child(help)
+	window.bar.add_child(theme_menu)
 
 	mut btn := ui.button(window, 'A Button')
 	btn.x = 30
@@ -42,7 +42,7 @@ fn main() {
 
 	btn.set_click(on_click)
 
-	window.components << btn
+	window.add_child(btn)
 
 	mut btn2 := ui.button(window, 'Hello')
 	btn2.x = 30
@@ -50,7 +50,7 @@ fn main() {
 	btn2.height = 25
 	btn2.width = 100
 
-	window.components << btn2
+	window.add_child(btn2)
 
 	mut tbox := ui.textbox(window, 'This is a Textbox.')
 	tbox.x = 30
@@ -58,7 +58,7 @@ fn main() {
 	tbox.width = 320
 	tbox.height = 100
 
-	window.components << tbox
+	window.add_child(tbox)
 
 	mut cbox := ui.checkbox(window, 'Check me!')
 	cbox.x = 150
@@ -73,8 +73,20 @@ fn main() {
 	cbox2.height = 25
 	cbox2.is_selected = true
 
-	window.components << cbox
-	window.components << cbox2
+	window.add_child(cbox)
+	window.add_child(cbox2)
+
+	mut sel := ui.selector(window, 'Selectbox')
+	sel.x = 30
+	sel.y = 230
+	sel.height = 25
+	sel.width = 100
+
+	for i := 0; i < 4; i++ {
+		sel.items << 'Pick me ' + i.str()
+	}
+    sel.set_change(sel_change)
+	window.add_child(sel)
 
 	window.gg.run()
 }
@@ -96,4 +108,8 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 		else { println('Theme not found: ' + text) }
 	}
 	win.set_theme(theme)
+}
+
+fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) {
+    println("OLD: " + old_val + ", NEW: " + new_val)
 }

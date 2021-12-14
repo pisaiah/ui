@@ -52,6 +52,10 @@ pub mut:
 	shift_pressed bool
 }
 
+pub fn (mut win Window) add_child(com Component) {
+	win.components << com
+}
+
 pub fn window(theme Theme) &Window {
 	mut app := &Window{
 		gg: 0
@@ -107,6 +111,10 @@ pub mut:
 	items []MenuItem
 }
 
+pub fn (mut bar Menubar) add_child(com MenuItem) {
+	bar.items << com
+}
+
 [heap]
 struct MenuItem {
 pub mut:
@@ -115,6 +123,10 @@ pub mut:
 	shown          bool
 	show_items     bool
 	click_event_fn fn (mut Window, MenuItem)
+}
+
+pub fn (mut item MenuItem) add_child(com MenuItem) {
+	item.items << com
 }
 
 pub fn menuitem(text string) MenuItem {
@@ -413,7 +425,7 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 					letter = '{'
 				}
 				if letter == 'right_bracket' && app.shift_pressed {
-					letter = '{'
+					letter = '}'
 				}
 				if letter == 'equal' && app.shift_pressed {
 					letter = '+'
@@ -436,7 +448,9 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 				if letter == 'semicolon' && app.shift_pressed {
 					letter = ':'
 				}
-				letter = letter.replace('backslash', '\\')
+				if letter == 'backslash' && app.shift_pressed {
+					letter = '|'
+				}
 				if letter == 'backspace' {
 					if a.text.len > 0 {
 						a.text = a.text.substr(0, a.text.len - 1)
@@ -494,7 +508,7 @@ pub fn (mut com Textbox) draw() {
 		&& (math.abs(midy - app.click_y) < (com.height / 2)) {
 		now := time.now().unix_time_milli()
 
-		if now - com.last_click > 100 {
+		if now - com.last_click > 100 && !com.is_selected {
 			com.is_selected = true
 			com.click_event_fn(app, *com)
 
@@ -503,19 +517,20 @@ pub fn (mut com Textbox) draw() {
 			com.last_click = time.now().unix_time_milli()
 		}
 	} else {
-        if app.click_x > -1 {
-            com.is_selected = false
-        }
-    }
-    
-    if com.is_selected {
-        border = app.theme.button_border_click
-    }
+		if app.click_x > -1 {
+			com.is_selected = false
+		}
+	}
+
+	if com.is_selected {
+		border = app.theme.button_border_click
+	}
 
 	com.app.draw_bordered_rect(com.x, com.y, com.width, com.height, 2, bg, border)
 
 	mut cl := 0
-	for txt in spl {
+	for mut txt in spl {
+		txt = txt.replace('\t', '        ')
 		mut tl := com.app.gg.text_width(txt)
 		if com.wrap && tl > com.width {
 			// TODO
@@ -616,6 +631,184 @@ pub fn (mut com Checkbox) draw() {
 	}
 	sizh := app.gg.text_height(com.text) / 2
 	app.gg.draw_text(com.x + com.width + 4, com.y + (height / 2) - sizh, com.text, gx.TextCfg{
+		size: 14
+		color: app.theme.text_color
+	})
+}
+
+// Select
+struct Select {
+pub mut:
+	app             &Window
+	text            string
+	x               int
+	y               int
+	width           int
+	height          int
+	last_click      f64
+	click_event_fn  fn (mut Window, Select)
+	change_event_fn fn (mut Window, Select, string, string)
+	is_selected     bool
+	items           []string
+	shown           bool
+	show_items      bool
+}
+
+pub fn selector(app &Window, text string) Select {
+	return Select{
+		text: text
+		app: app
+		click_event_fn: blank_event_sel
+        change_event_fn: fn (mut win Window, a Select, old string, neww string) {} 
+	}
+}
+
+pub fn (mut com Select) set_click(b fn (mut Window, Select)) {
+	com.click_event_fn = b
+}
+
+pub fn (mut com Select) set_change(b fn (mut Window, Select, string, string)) {
+	com.change_event_fn = b
+}
+
+pub fn blank_event_sel(mut win Window, a Select) {
+}
+
+pub fn (mut item Select) draw() {
+	x := item.x
+	y := item.y
+	app := item.app
+	width := item.width
+	height := item.height
+	size := app.gg.text_width(item.text) / 2
+	sizh := app.gg.text_height(item.text) / 2
+
+	mut bg := app.theme.button_bg_normal
+	mut border := app.theme.button_border_normal
+
+	mut midx := (x + (width / 2))
+	mut midy := (y + (height / 2))
+
+	// Detect Hover
+	if (math.abs(midx - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+		bg = app.theme.button_bg_hover
+		border = app.theme.button_border_hover
+	}
+
+	// Detect Click
+	mut clicked := ((math.abs(midx - app.click_x) < (width / 2))
+		&& (math.abs(midy - app.click_y) < (height / 2)))
+	if clicked && !item.show_items {
+		bg = app.theme.button_bg_click
+		border = app.theme.button_border_click
+		item.show_items = true
+
+		item.click_event_fn(app, *item)
+
+		if item.text == 'About iUI' {
+			go message_box('About iUI', "Isaiah's UI Toolkit for V.\nVersion: " + iui.version +
+				'\n\nCopyright (c) 2021-2022 Isaiah.\t\nAll Rights Reserved.')
+		}
+	}
+
+	if item.show_items && item.items.len > 0 {
+		bg = app.theme.button_bg_click
+		border = app.theme.button_border_click
+		mut wid := 100
+
+		for mut sub in item.items {
+			sub_size := app.gg.text_width(sub + '...')
+			if wid < sub_size {
+				wid = sub_size
+			}
+		}
+
+		app.draw_bordered_rect(x, y + height, wid, (item.items.len * 26) + 2, 2, app.theme.dropdown_background,
+			app.theme.dropdown_border)
+
+		mut mult := 0
+		for mut sub in item.items {
+			// app.draw_menu_button(x + 1, y + height + mult + 1, wid - 2, 25, mut sub)
+
+			mut subb := button(app, sub)
+			app.draw_button_2(x + 1, y + height + mult + 1, wid - 2, 25, mut subb, mut
+				item)
+
+			mult += 26
+		}
+	}
+
+	if item.show_items && app.click_x != -1 && app.click_y != -1 && !clicked {
+		item.show_items = false
+	}
+
+	// Draw Button Background & Border
+	app.gg.draw_rounded_rect(x, y, width, height, 2, bg)
+	app.gg.draw_empty_rounded_rect(x, y, width, height, 2, border)
+
+	// Draw Button Text
+	app.gg.draw_text((x + (width / 2)) - size - 4, y + (height / 2) - sizh, item.text,
+		gx.TextCfg{
+		size: 14
+		color: app.theme.text_color
+	})
+
+	// Draw down arrow
+	char_height := app.gg.text_height('.') / 2
+	app.gg.draw_triangle(x + width - 20, y + (height / 2) - char_height, x + width - 15,
+		y + (height / 2) + 5 - char_height, x + width - 10, y + (height / 2) - char_height,
+		app.theme.text_color)
+}
+
+fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Button, mut sel Select) {
+	mut y1 := y
+	if !app.show_menu_bar {
+		y1 = y1 - 25
+	}
+
+	text := btn.text
+	size := app.gg.text_width(text) / 2
+	sizh := app.gg.text_height(text) / 2
+
+	mut bg := app.theme.button_bg_normal
+	mut border := app.theme.button_border_normal
+
+	mut mid := (x + (width / 2))
+	mut midy := (y1 + (height / 2))
+
+	// Detect Hover
+	if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+		bg = app.theme.button_bg_hover
+		border = app.theme.button_border_hover
+	}
+
+	// Detect Click
+	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
+		now := time.now().unix_time_milli()
+
+		// TODO: Better click time
+		if now - btn.last_click > 100 {
+			btn.click_event_fn(app, *btn)
+			btn.is_selected = true
+            
+            old_text := sel.text
+            sel.text = btn.text
+            sel.change_event_fn(sel.app, *sel, old_text, sel.text)
+
+			bg = app.theme.button_bg_click
+			border = app.theme.button_border_click
+			btn.last_click = time.now().unix_time_milli()
+		}
+	} else {
+		btn.is_selected = false
+	}
+
+	// Draw Button Background & Border
+	app.gg.draw_rounded_rect(x, y1, width, height, 4, bg)
+	app.gg.draw_empty_rounded_rect(x, y1, width, height, 4, border)
+
+	// Draw Button Text
+	app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
 		size: 14
 		color: app.theme.text_color
 	})
