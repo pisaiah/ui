@@ -73,11 +73,6 @@ pub fn (mut item Select) draw() {
 		item.show_items = true
 
 		item.click_event_fn(app, *item)
-
-		if item.text == 'About iUI' {
-			go message_box('About iUI', "Isaiah's UI Toolkit for V.\nVersion: " + version +
-				'\n\nCopyright (c) 2021-2022 Isaiah.\t\nAll Rights Reserved.')
-		}
 	}
 
 	if item.show_items && item.items.len > 0 {

@@ -69,7 +69,7 @@ fn (mut app Window) get_bar() Menubar {
 	return app.bar
 }
 
-fn (app &Window) draw_menu_button(x int, y int, width int, height int, mut item MenuItem) {
+fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut item MenuItem) {
 	size := app.gg.text_width(item.text) / 2
 	sizh := app.gg.text_height(item.text) / 2
 
@@ -96,8 +96,8 @@ fn (app &Window) draw_menu_button(x int, y int, width int, height int, mut item 
 		item.click_event_fn(app, *item)
 
 		if item.text == 'About iUI' {
-			go message_box('About iUI', "Isaiah's UI Toolkit for V.\nVersion: " + version +
-				'\n\nCopyright (c) 2021-2022 Isaiah.\t\nAll Rights Reserved.')
+			app.message_box('About iUI', "Isaiah's UI Toolkit for V.\nVersion: " + version +
+				'\n\nCopyright (c) 2021-2022 Isaiah.\nAll Rights Reserved.')
 		}
 	}
 

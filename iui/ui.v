@@ -50,6 +50,10 @@ pub mut:
 	components    []Component
 	show_menu_bar bool = true
 	shift_pressed bool
+
+	modal_show  bool
+	modal_title string
+	modal_text  string
 }
 
 pub fn (mut win Window) add_child(com Component) {
@@ -110,6 +114,7 @@ pub mut:
 	last_click     f64
 	click_event_fn fn (mut Window, Button)
 	is_selected    bool
+	in_modal       bool
 }
 
 pub fn button(app &Window, text string) Button {
@@ -153,6 +158,12 @@ fn (app &Window) draw_button(x int, y int, width int, height int, mut btn Button
 		// TODO: Better click time
 		if now - btn.last_click > 100 {
 			// btn.eb.publish('click', work, error) // TODO: Eventbus broken? (INVALID MEMORY ERROR)
+			if app.modal_show {
+				if !btn.in_modal {
+					return
+				}
+			}
+
 			btn.click_event_fn(app, *btn)
 			btn.is_selected = true
 
@@ -196,10 +207,49 @@ fn (mut app Window) draw() {
 		mut bar := app.get_bar()
 		bar.draw()
 	}
+
+	if app.modal_show {
+		mut ws := gg.window_size()
+		// app.draw_bordered_rect(0,0, ws.width, ws.height, 2, gx.rgba(230,230,230,10), gx.rgba(100,100,100,10))
+
+		app.gg.draw_rounded_rect((ws.width / 2) - (300 / 2), 50, 300, 26, 2, gx.rgb(80,
+			80, 80))
+
+		mut title := app.modal_title
+		tw := app.gg.text_width(title)
+		th := app.gg.text_height(title)
+		app.gg.draw_text((ws.width / 2) - (tw / 2), 50 + (th / 2) - 1, title, gx.TextCfg{
+			size: 16
+			color: gx.rgb(240, 240, 240)
+		})
+		app.draw_bordered_rect((ws.width / 2) - (300 / 2), 74, 300, 200, 2, app.theme.background,
+			gx.rgb(80, 80, 80))
+
+		mut spl := app.modal_text.split('\n')
+		mut mult := 10
+		for txt in spl {
+			app.gg.draw_text((ws.width / 2) - (300 / 2) + 26, 86 + mult, txt, gx.TextCfg{
+				size: 15
+				color: app.theme.text_color
+			})
+			mult += app.gg.text_height(txt) + 4
+		}
+
+		mut close := button(app, 'OK')
+		close.x = (ws.width / 2) - 50
+		close.y = 230
+		close.width = 100
+		close.height = 25
+		close.set_click(fn (mut win Window, btn Button) {
+			win.modal_show = false
+		})
+		close.in_modal = true
+		close.draw()
+	}
 }
 
 fn on_event(e &gg.Event, mut app Window) {
-	if e.typ == .mouse_move {
+	if e.typ == .mouse_move && !app.modal_show {
 		app.mouse_x = int(e.mouse_x)
 		app.mouse_y = int(e.mouse_y)
 	}
@@ -221,4 +271,11 @@ fn on_event(e &gg.Event, mut app Window) {
 			app.shift_pressed = false
 		}
 	}
+}
+
+// Modal
+pub fn (mut win Window) message_box(title string, s string) {
+	win.modal_show = true
+	win.modal_title = title
+	win.modal_text = s
 }
