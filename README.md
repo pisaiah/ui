@@ -47,7 +47,7 @@ fn on_click(mut win ui.Window, com ui.Button) {
 | Treeview     | TODO |
 | Hbox         | TODO |
 | Vbox         | TODO |
-| ProgressBar  | TODO |
+| ProgressBar  | ![image](https://user-images.githubusercontent.com/16439221/146232553-1916c9cb-181a-4c22-a4a0-c84496f641b4.png) |
 
 * Components marked with `TODO` are coming soon.
 
