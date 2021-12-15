@@ -68,20 +68,21 @@ pub fn window(theme Theme) &Window {
 	return app
 }
 
-pub fn (mut app Window) init() {
+pub fn (mut app Window) init(title string) &Window {
 	mut font_path := gg.system_font_path()
 	app.gg = gg.new_context(
 		bg_color: app.theme.background
 		width: iui.win_width
 		height: iui.win_height
 		create_window: true
-		window_title: 'V GG Demo'
+		window_title: title
 		frame_fn: frame
 		event_fn: on_event
 		user_data: app
 		font_path: font_path
 		font_size: 14
 	)
+	return app
 }
 
 pub fn (mut win Window) set_theme(theme Theme) {
@@ -157,7 +158,7 @@ fn (app &Window) draw_button(x int, y int, width int, height int, mut btn Button
 
 		// TODO: Better click time
 		if now - btn.last_click > 100 {
-			// btn.eb.publish('click', work, error) // TODO: Eventbus broken? (INVALID MEMORY ERROR)
+			// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without INVALID MEMORY ERROR.
 			if app.modal_show {
 				if !btn.in_modal {
 					return
@@ -271,6 +272,10 @@ fn on_event(e &gg.Event, mut app Window) {
 			app.shift_pressed = false
 		}
 	}
+	/*
+	if !(e.typ == .mouse_move) {
+        println(e.typ)
+    }*/
 }
 
 // Modal

@@ -180,11 +180,13 @@ pub fn (mut com Textbox) draw() {
 			com.app.gg.draw_text(com.x + padding, com.y + y_mult + padding, txt, gx.TextCfg{
 				size: size
 				color: com.app.theme.text_color
+				max_width: 20
 			})
 		} else {
 			com.app.gg.draw_text(com.x + padding, com.y + y_mult + padding, txt, gx.TextCfg{
 				size: size
 				color: com.app.theme.text_color
+				max_width: 20
 			})
 		}
 		if cl < spl.len - 1 {

@@ -7,7 +7,7 @@ fn main() {
 	theme := ui.theme_default()
 
 	mut window := ui.window(theme)
-	window.init()
+	window.init('My Window')
 
 	window.bar = ui.menubar(window, window.theme)
 	window.bar.add_child(ui.menuitem('File'))
@@ -63,13 +63,13 @@ fn main() {
 	mut cbox := ui.checkbox(window, 'Check me!')
 	cbox.x = 150
 	cbox.y = 40
-	cbox.width = 25
+	cbox.width = 90
 	cbox.height = 25
 
 	mut cbox2 := ui.checkbox(window, 'Check me!')
 	cbox2.x = 150
 	cbox2.y = 70
-	cbox2.width = 25
+	cbox2.width = 90
 	cbox2.height = 25
 	cbox2.is_selected = true
 
@@ -83,10 +83,17 @@ fn main() {
 	sel.width = 100
 
 	for i := 0; i < 4; i++ {
-		sel.items << 'Pick me ' + i.str()
+		sel.items << (25 * (i + 1)).str() + '%'
 	}
 	sel.set_change(sel_change)
 	window.add_child(sel)
+
+	mut pb := ui.progressbar(window, 50)
+	pb.x = 140
+	pb.y = 230
+	pb.height = 20
+	pb.width = 100
+	window.add_child(pb)
 
 	window.gg.run()
 }
@@ -112,4 +119,11 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 
 fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) {
 	println('OLD: ' + old_val + ', NEW: ' + new_val)
+	mut a := new_val.replace('%', '')
+
+	for mut kid in win.components {
+		if kid is ui.Progressbar {
+			kid.text = a
+		}
+	}
 }

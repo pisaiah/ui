@@ -64,14 +64,20 @@ pub fn (mut com Checkbox) draw() {
 		}
 	}
 
-	com.app.draw_bordered_rect(com.x, com.y, com.width, com.height, 2, bg, border)
+	com.app.draw_bordered_rect(com.x, com.y, com.height, com.height, 2, bg, border)
 	if com.is_selected {
 		cut := 4
-		com.app.draw_bordered_rect(com.x + cut, com.y + cut, com.width - (cut * 2), com.height - (cut * 2),
+		com.app.draw_bordered_rect(com.x + cut, com.y + cut, com.height - (cut * 2), com.height - (cut * 2),
 			2, com.app.theme.checkbox_selected, com.app.theme.checkbox_selected)
+
+		// TODO: Better Checkmark
+		com.app.gg.draw_line(com.x + (com.height / 2) - 5, com.y + (com.height / 2) + 1,
+			com.x + (com.height / 2), com.y + (com.height / 2) + 5, com.app.theme.checkbox_selected)
+		com.app.gg.draw_line(com.x + (com.height / 2), com.y + (com.height / 2) + 5, com.x +
+			(com.height / 2) + 5, com.y + (com.height / 2) - 5, com.app.theme.checkbox_selected)
 	}
 	sizh := app.gg.text_height(com.text) / 2
-	app.gg.draw_text(com.x + com.width + 4, com.y + (height / 2) - sizh, com.text, gx.TextCfg{
+	app.gg.draw_text(com.x + com.height + 4, com.y + (height / 2) - sizh, com.text, gx.TextCfg{
 		size: 14
 		color: app.theme.text_color
 	})

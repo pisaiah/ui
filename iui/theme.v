@@ -27,6 +27,8 @@ pub:
 
 	checkbox_bg       gx.Color
 	checkbox_selected gx.Color
+
+	progressbar_fill gx.Color
 }
 
 //
@@ -49,8 +51,9 @@ pub fn theme_default() Theme {
 		dropdown_border: gx.rgb(224, 224, 224)
 		textbox_background: gx.rgb(255, 255, 255)
 		textbox_border: gx.rgb(215, 215, 215)
-		checkbox_selected: gx.rgb(180, 180, 180)
+		checkbox_selected: gx.rgb(37, 161, 218)
 		checkbox_bg: gx.rgb(254, 254, 254)
+		progressbar_fill: gx.rgb(81, 180, 225)
 	}
 }
 
@@ -76,6 +79,7 @@ pub fn theme_dark() Theme {
 		textbox_border: gx.rgb(130, 130, 130)
 		checkbox_selected: gx.rgb(130, 130, 130)
 		checkbox_bg: gx.rgb(5, 5, 5)
+		progressbar_fill: gx.rgb(130, 130, 130)
 	}
 }
 
@@ -101,6 +105,7 @@ pub fn theme_dark_hc() Theme {
 		textbox_border: gx.rgb(200, 200, 200)
 		checkbox_selected: gx.rgb(220, 220, 220)
 		checkbox_bg: gx.rgb(0, 0, 0)
+		progressbar_fill: gx.rgb(220, 220, 220)
 	}
 }
 
@@ -126,6 +131,7 @@ pub fn theme_black_red() Theme {
 		textbox_border: gx.rgb(200, 0, 0)
 		checkbox_selected: gx.rgb(255, 0, 0)
 		checkbox_bg: gx.rgb(0, 0, 0)
+		progressbar_fill: gx.rgb(255, 0, 0)
 	}
 }
 
@@ -151,5 +157,6 @@ pub fn theme_minty() Theme {
 		textbox_border: gx.rgb(215, 215, 215)
 		checkbox_selected: gx.rgb(154, 184, 124)
 		checkbox_bg: gx.rgb(247, 247, 247)
+		progressbar_fill: gx.rgb(154, 184, 124)
 	}
 }
