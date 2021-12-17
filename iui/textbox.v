@@ -5,7 +5,7 @@ import gx
 import time
 import math
 
-// Textbox
+// Textbox - implements Component interface
 struct Textbox {
 pub mut:
 	app            &Window
@@ -20,6 +20,8 @@ pub mut:
 	last_blink     f64
 	wrap           bool = true
 	is_selected    bool
+	carrot_index   int = 1
+    z_index        int
 }
 
 fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
@@ -94,6 +96,15 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 				if letter == 'backslash' && app.shift_pressed {
 					letter = '|'
 				}
+				if letter == 'left' {
+					a.carrot_index--
+					return
+				}
+				if letter == 'right' {
+					a.carrot_index++
+					return
+				}
+
 				if letter == 'backspace' {
 					if a.text.len > 0 {
 						a.text = a.text.substr(0, a.text.len - 1)
@@ -174,7 +185,7 @@ pub fn (mut com Textbox) draw() {
 	mut cl := 0
 	for mut txt in spl {
 		txt = txt.replace('\t', '        ')
-		mut tl := com.app.gg.text_width(txt)
+		mut tl := com.text_width(txt)
 		if com.wrap && tl > com.width {
 			// TODO
 			com.app.gg.draw_text(com.x + padding, com.y + y_mult + padding, txt, gx.TextCfg{
@@ -201,7 +212,8 @@ pub fn (mut com Textbox) draw() {
 		com.last_blink = now
 	}
 	if com.is_blink {
-		mut lw := com.app.gg.text_width(spl[spl.len - 1]) - 1
+		// mut aaa := com.app.gg.text_width("a")
+		mut lw := com.app.text_width(spl[spl.len - 1]) - 1 //(aaa * com.carrot_index)
 		com.app.gg.draw_text(com.x + lw + padding, com.y + y_mult + padding, '|', gx.TextCfg{
 			size: size
 			color: com.app.theme.text_color

@@ -13,6 +13,12 @@ const (
 	version    = '0.0.1'
 )
 
+//[if debug]
+pub fn debug(o string) {
+	// Using println with no console, crashes V.
+	println('(Debug) ' + o)
+}
+
 // Component Interface
 pub interface Component {
 mut:
@@ -23,7 +29,20 @@ mut:
 	height int
 	last_click f64
 	is_selected bool
+	carrot_index int
+    z_index int
 	draw()
+}
+
+pub fn draw_with_offset(mut com Component, offx int, offy int) {
+	ox := com.x
+	oy := com.y
+
+	com.x = com.x + offx
+	com.y = com.y + offy
+	com.draw()
+	com.x = ox
+	com.y = oy
 }
 
 pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
@@ -31,6 +50,21 @@ pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
 }
 
 pub fn blank_event(mut win Window, a Button) {
+}
+
+pub fn set_pos(mut com Component, x int, y int) {
+	com.x = x
+	com.y = y
+}
+
+pub fn set_size(mut com Component, width int, height int) {
+	com.width = width
+	com.height = height
+}
+
+pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
+	set_pos(mut com, x, y)
+	set_size(mut com, width, height)
 }
 
 // Window
@@ -116,6 +150,8 @@ pub mut:
 	click_event_fn fn (mut Window, Button)
 	is_selected    bool
 	in_modal       bool
+	carrot_index   int = 1
+    z_index        int
 }
 
 pub fn button(app &Window, text string) Button {
@@ -137,8 +173,8 @@ fn (app &Window) draw_button(x int, y int, width int, height int, mut btn Button
 	}
 
 	text := btn.text
-	size := app.gg.text_width(text) / 2
-	sizh := app.gg.text_height(text) / 2
+	size := app.text_width(text) / 2
+	sizh := app.text_height(text) / 2
 
 	mut bg := app.theme.button_bg_normal
 	mut border := app.theme.button_border_normal
@@ -173,7 +209,13 @@ fn (app &Window) draw_button(x int, y int, width int, height int, mut btn Button
 			btn.last_click = time.now().unix_time_milli()
 		}
 	} else {
-		btn.is_selected = false
+		now := time.now().unix_time_milli()
+		if now - btn.last_click > 80 {
+			btn.is_selected = false
+		} else {
+			bg = app.theme.button_bg_click
+			border = app.theme.button_border_click
+		}
 	}
 
 	// Draw Button Background & Border
@@ -188,7 +230,7 @@ fn (app &Window) draw_button(x int, y int, width int, height int, mut btn Button
 }
 
 fn (mut app Window) draw() {
-	time.sleep(10 * time.millisecond) // Reduce CPU Usage
+	time.sleep(20 * time.millisecond) // Reduce CPU Usage
 
 	if (time.now().unix_time_milli() - app.lastt) > 1000 {
 		app.fps = app.fpss
@@ -197,6 +239,9 @@ fn (mut app Window) draw() {
 	}
 	app.fpss++
 	app.display()
+
+    // Sort by Z-index
+    app.components.sort(a.z_index < b.z_index)
 
 	// Draw components
 	for mut com in app.components {
@@ -211,14 +256,13 @@ fn (mut app Window) draw() {
 
 	if app.modal_show {
 		mut ws := gg.window_size()
-		// app.draw_bordered_rect(0,0, ws.width, ws.height, 2, gx.rgba(230,230,230,10), gx.rgba(100,100,100,10))
 
 		app.gg.draw_rounded_rect((ws.width / 2) - (300 / 2), 50, 300, 26, 2, gx.rgb(80,
 			80, 80))
 
 		mut title := app.modal_title
-		tw := app.gg.text_width(title)
-		th := app.gg.text_height(title)
+		tw := app.text_width(title)
+		th := app.text_height(title)
 		app.gg.draw_text((ws.width / 2) - (tw / 2), 50 + (th / 2) - 1, title, gx.TextCfg{
 			size: 16
 			color: gx.rgb(240, 240, 240)
@@ -283,4 +327,14 @@ pub fn (mut win Window) message_box(title string, s string) {
 	win.modal_show = true
 	win.modal_title = title
 	win.modal_text = s
+}
+
+
+// Functions for GG
+pub fn (mut win Window) text_width(text string) int {
+    return win.gg.text_width(text)
+}
+
+pub fn (mut win Window) text_height(text string) int {
+    return win.gg.text_height(text)
 }

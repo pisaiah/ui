@@ -1,14 +1,14 @@
 import gg
-import iui as ui
+import iui as ui { debug }
+import time
 
 [console]
 fn main() {
-	// Set UI Theme
-	theme := ui.theme_default()
-
-	mut window := ui.window(theme)
+	// Create Window
+	mut window := ui.window(ui.get_system_theme())
 	window.init('My Window')
 
+	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
 	window.bar.add_child(ui.menuitem('File'))
 	window.bar.add_child(ui.menuitem('Edit'))
@@ -35,52 +35,34 @@ fn main() {
 	window.bar.add_child(theme_menu)
 
 	mut btn := ui.button(window, 'A Button')
-	btn.x = 30
-	btn.y = 40
-	btn.height = 25
-	btn.width = 100
+	ui.set_bounds(mut btn, 30, 40, 100, 25)
 
 	btn.set_click(on_click)
 
 	window.add_child(btn)
 
 	mut btn2 := ui.button(window, 'Hello')
-	btn2.x = 30
-	btn2.y = 70
-	btn2.height = 25
-	btn2.width = 100
+	ui.set_bounds(mut btn2, 30, 70, 100, 25)
 
 	window.add_child(btn2)
 
 	mut tbox := ui.textbox(window, 'This is a Textbox.')
-	tbox.x = 30
-	tbox.y = 110
-	tbox.width = 320
-	tbox.height = 100
+	ui.set_bounds(mut tbox, 30, 110, 320, 100)
 
 	window.add_child(tbox)
 
 	mut cbox := ui.checkbox(window, 'Check me!')
-	cbox.x = 150
-	cbox.y = 40
-	cbox.width = 90
-	cbox.height = 25
+	ui.set_bounds(mut cbox, 150, 40, 90, 25)
 
 	mut cbox2 := ui.checkbox(window, 'Check me!')
-	cbox2.x = 150
-	cbox2.y = 70
-	cbox2.width = 90
-	cbox2.height = 25
+	ui.set_bounds(mut cbox2, 150, 70, 90, 25)
 	cbox2.is_selected = true
 
 	window.add_child(cbox)
 	window.add_child(cbox2)
 
 	mut sel := ui.selector(window, 'Selectbox')
-	sel.x = 30
-	sel.y = 230
-	sel.height = 25
-	sel.width = 100
+	ui.set_bounds(mut sel, 30, 230, 100, 25)
 
 	for i := 0; i < 4; i++ {
 		sel.items << (25 * (i + 1)).str() + '%'
@@ -89,36 +71,74 @@ fn main() {
 	window.add_child(sel)
 
 	mut pb := ui.progressbar(window, 50)
-	pb.x = 140
-	pb.y = 230
-	pb.height = 20
-	pb.width = 100
+	ui.set_bounds(mut pb, 140, 230, 100, 20)
 	window.add_child(pb)
+
+	mut pb2 := ui.progressbar(window, 50)
+	ui.set_bounds(mut pb2, 250, 230, 100, 20)
+	window.add_child(pb2)
+
+	go test(mut &pb2)
+
+	mut tree := ui.tree(window, 'Beverages')
+	tree.x = 30
+	tree.y = 280
+	tree.width = 150
+	tree.height = 200
+
+    mut subtree := ui.tree(window, 'Water')
+    ui.set_bounds(mut subtree, 4,4,100,25)
+	tree.childs << subtree
+    
+    mut subtree2 := ui.tree(window, 'Coke')
+    ui.set_bounds(mut subtree2, 4,4,100,25)
+	tree.childs << subtree2
+
+    mut subtree3 := ui.tree(window, 'Tea')
+    ui.set_bounds(mut subtree3, 4,4,100,100)
+	tree.childs << subtree3
+    
+    mut subtree4 := ui.tree(window, 'Black Tea')
+    ui.set_bounds(mut subtree4, 4,4,100,25)
+	subtree3.childs << subtree4
+    
+    mut subtree5 := ui.tree(window, 'Green Tea')
+    ui.set_bounds(mut subtree5, 4,4,100,25)
+	subtree3.childs << subtree5
+    
+
+
+	window.add_child(tree)
 
 	window.gg.run()
 }
 
+fn test(mut pb ui.Progressbar) {
+	for true {
+		mut val := pb.text.f32()
+		if val < 100 {
+			val++
+		} else {
+			val = 5
+		}
+		pb.text = val.str().replace('.', '')
+		time.sleep(80 * time.millisecond)
+	}
+}
+
 fn on_click(mut win ui.Window, com ui.Button) {
-	println('on_click')
+	debug('on_click')
 }
 
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
-	mut text := com.text
-	println(text)
-	mut theme := ui.theme_default()
-	match text {
-		'Default' { theme = ui.theme_default() }
-		'Dark' { theme = ui.theme_dark() }
-		'Dark High Contrast' { theme = ui.theme_dark_hc() }
-		'Black Red' { theme = ui.theme_black_red() }
-		'Minty' { theme = ui.theme_minty() }
-		else { println('Theme not found: ' + text) }
-	}
+	text := com.text
+	debug(text)
+	theme := ui.theme_by_name(text)
 	win.set_theme(theme)
 }
 
 fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) {
-	println('OLD: ' + old_val + ', NEW: ' + new_val)
+	debug('OLD: ' + old_val + ', NEW: ' + new_val)
 	mut a := new_val.replace('%', '')
 
 	for mut kid in win.components {

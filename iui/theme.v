@@ -4,6 +4,26 @@ module iui
 
 import gx
 
+pub fn get_system_theme() Theme {
+	$if windows {
+		return theme_default()
+	} $else {
+		// Default to Linux
+		return theme_minty()
+	}
+}
+
+pub fn theme_by_name(name string) Theme {
+	mut themes := [theme_default(), theme_dark(), theme_dark_hc(),
+		theme_black_red(), theme_minty()]
+	for mut theme in themes {
+		if theme.name == name {
+			return theme
+		}
+	}
+	return theme_default()
+}
+
 struct Theme {
 pub:
 	name       string

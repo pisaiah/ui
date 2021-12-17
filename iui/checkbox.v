@@ -5,7 +5,7 @@ import gx
 import time
 import math
 
-// Checkbox
+// Checkbox - implements Component interface
 struct Checkbox {
 pub mut:
 	app            &Window
@@ -17,6 +17,8 @@ pub mut:
 	last_click     f64
 	click_event_fn fn (mut Window, Checkbox)
 	is_selected    bool
+	carrot_index   int = 1
+    z_index        int
 }
 
 pub fn checkbox(app &Window, text string) Checkbox {

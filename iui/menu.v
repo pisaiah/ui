@@ -97,7 +97,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 
 		if item.text == 'About iUI' {
 			app.message_box('About iUI', "Isaiah's UI Toolkit for V.\nVersion: " + version +
-				'\n\nCopyright (c) 2021-2022 Isaiah.\nAll Rights Reserved.')
+				'\n\n\nCopyright (c) 2021-2022 Isaiah.\nAll Rights Reserved.')
 		}
 	}
 
