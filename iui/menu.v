@@ -30,8 +30,8 @@ pub fn (mut item MenuItem) add_child(com MenuItem) {
 	item.items << com
 }
 
-pub fn menuitem(text string) MenuItem {
-	return MenuItem{
+pub fn menuitem(text string) &MenuItem {
+	return &MenuItem{
 		text: text
 		shown: false
 		show_items: false
@@ -46,8 +46,8 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 	com.click_event_fn = b
 }
 
-pub fn menubar(app &Window, theme Theme) Menubar {
-	return Menubar{
+pub fn menubar(app &Window, theme Theme) &Menubar {
+	return &Menubar{
 		app: app
 		theme: theme
 	}
@@ -60,18 +60,18 @@ fn (mut mb Menubar) draw() {
 
 	mut mult := 0
 	for mut item in mb.items {
-		mb.app.draw_menu_button(50 * mult, 0, 50, 25, mut item)
+        mb.app.draw_menu_button(50 * mult, 0, 50, 25, mut item)
 		mult++
 	}
 }
 
-fn (mut app Window) get_bar() Menubar {
+fn (mut app Window) get_bar() &Menubar {
 	return app.bar
 }
 
 fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut item MenuItem) {
-	size := app.gg.text_width(item.text) / 2
-	sizh := app.gg.text_height(item.text) / 2
+	size := text_width(app, item.text) / 2
+	sizh := text_height(app, item.text) / 2
 
 	mut bg := app.theme.menubar_background
 	mut border := app.theme.menubar_border
@@ -96,8 +96,8 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 		item.click_event_fn(app, *item)
 
 		if item.text == 'About iUI' {
-			app.message_box('About iUI', "Isaiah's UI Toolkit for V.\nVersion: " + version +
-				'\n\n\nCopyright (c) 2021-2022 Isaiah.\nAll Rights Reserved.')
+			app.message_box('About I-UI', "Isaiah's UI Toolkit for V.\nVersion: " + version +
+				'\n\n\nCopyright © 2021-2022 Isaiah.\nAll Rights Reserved.')
 		}
 	}
 
@@ -107,7 +107,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 		mut wid := 100
 
 		for mut sub in item.items {
-			sub_size := app.gg.text_width(sub.text + '...')
+			sub_size := text_width(app, sub.text + '...')
 			if wid < sub_size {
 				wid = sub_size
 			}

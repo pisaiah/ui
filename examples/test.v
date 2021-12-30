@@ -41,12 +41,18 @@ fn main() {
 
 	window.add_child(btn)
 
-	mut btn2 := ui.button(window, 'Hello')
-	ui.set_bounds(mut btn2, 30, 70, 100, 25)
+	mut btn2 := ui.button(window, 'This is a Button')
+	ui.set_pos(mut btn2, 30, 70)
+	btn2.pack() // Auto set width & height
 
 	window.add_child(btn2)
 
-	mut tbox := ui.textbox(window, 'This is a Textbox.')
+	mut tbox := ui.textbox(window, 'This is a Textbox.\nIt has an multiline mode that\ncan support\nmultiple lines\nIt also can scroll and stuff')
+    
+    for i := 0; i < 6; i++ {
+		tbox.text += "\nExtra line #" + i.str()
+	}
+    
 	ui.set_bounds(mut tbox, 30, 110, 320, 100)
 
 	window.add_child(tbox)
@@ -78,7 +84,7 @@ fn main() {
 	ui.set_bounds(mut pb2, 250, 230, 100, 20)
 	window.add_child(pb2)
 
-	go test(mut &pb2)
+	//go test(mut &pb2)
 
 	mut tree := ui.tree(window, 'Beverages')
 	tree.x = 30
@@ -86,29 +92,42 @@ fn main() {
 	tree.width = 150
 	tree.height = 200
 
-    mut subtree := ui.tree(window, 'Water')
-    ui.set_bounds(mut subtree, 4,4,100,25)
+	mut subtree := ui.tree(window, 'Water')
+	ui.set_bounds(mut subtree, 4, 4, 100, 25)
 	tree.childs << subtree
-    
-    mut subtree2 := ui.tree(window, 'Coke')
-    ui.set_bounds(mut subtree2, 4,4,100,25)
+
+	mut subtree2 := ui.tree(window, 'Coke')
+	ui.set_bounds(mut subtree2, 4, 4, 100, 25)
 	tree.childs << subtree2
 
-    mut subtree3 := ui.tree(window, 'Tea')
-    ui.set_bounds(mut subtree3, 4,4,100,100)
+	mut subtree3 := ui.tree(window, 'Tea')
+	ui.set_bounds(mut subtree3, 4, 4, 100, 100)
 	tree.childs << subtree3
-    
-    mut subtree4 := ui.tree(window, 'Black Tea')
-    ui.set_bounds(mut subtree4, 4,4,100,25)
-	subtree3.childs << subtree4
-    
-    mut subtree5 := ui.tree(window, 'Green Tea')
-    ui.set_bounds(mut subtree5, 4,4,100,25)
-	subtree3.childs << subtree5
-    
 
+	mut subtree4 := ui.tree(window, 'Black Tea')
+	ui.set_bounds(mut subtree4, 4, 4, 100, 25)
+	subtree3.childs << subtree4
+
+	mut subtree5 := ui.tree(window, 'Green Tea')
+	ui.set_bounds(mut subtree5, 4, 4, 100, 25)
+	subtree3.childs << subtree5
 
 	window.add_child(tree)
+
+	mut tb := ui.tabbox(window)
+	ui.set_bounds(mut tb, 200, 280, 250, 200)
+
+	mut tbtn := ui.button(window, 'Tab 1 content')
+	ui.set_pos(mut tbtn, 30, 10)
+	tbtn.pack()
+	tb.add_child('Tab 1', tbtn)
+
+	mut tbtn1 := ui.button(window, 'This in a button inside Tab #2')
+	ui.set_pos(mut tbtn1, 30, 30)
+	tbtn1.pack()
+	tb.add_child('Tab 2', tbtn1)
+
+	window.add_child(tb)
 
 	window.gg.run()
 }

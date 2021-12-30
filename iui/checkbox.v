@@ -18,7 +18,8 @@ pub mut:
 	click_event_fn fn (mut Window, Checkbox)
 	is_selected    bool
 	carrot_index   int = 1
-    z_index        int
+	z_index        int
+	scroll_i       int
 }
 
 pub fn checkbox(app &Window, text string) Checkbox {

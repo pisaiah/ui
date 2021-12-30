@@ -49,6 +49,9 @@ pub:
 	checkbox_selected gx.Color
 
 	progressbar_fill gx.Color
+
+    scroll_track_color gx.Color
+    scroll_bar_color   gx.Color
 }
 
 //
@@ -66,14 +69,16 @@ pub fn theme_default() Theme {
 		button_border_hover: gx.rgb(0, 120, 215)
 		button_border_click: gx.rgb(0, 84, 153)
 		menubar_background: gx.rgb(255, 255, 255)
-		menubar_border: gx.rgb(250, 250, 250)
-		dropdown_background: gx.rgb(242, 242, 242)
+		menubar_border: gx.rgb(255, 255, 255)
+		dropdown_background: gx.rgb(255, 255, 255)
 		dropdown_border: gx.rgb(224, 224, 224)
 		textbox_background: gx.rgb(255, 255, 255)
 		textbox_border: gx.rgb(215, 215, 215)
 		checkbox_selected: gx.rgb(37, 161, 218)
 		checkbox_bg: gx.rgb(254, 254, 254)
 		progressbar_fill: gx.rgb(81, 180, 225)
+        scroll_track_color: gx.rgb(240,240,240)
+        scroll_bar_color: gx.rgb(205,205,205)
 	}
 }
 
@@ -100,6 +105,8 @@ pub fn theme_dark() Theme {
 		checkbox_selected: gx.rgb(130, 130, 130)
 		checkbox_bg: gx.rgb(5, 5, 5)
 		progressbar_fill: gx.rgb(130, 130, 130)
+        scroll_track_color: gx.rgb(0,0,0)
+        scroll_bar_color: gx.rgb(180,180,180)
 	}
 }
 
@@ -126,6 +133,8 @@ pub fn theme_dark_hc() Theme {
 		checkbox_selected: gx.rgb(220, 220, 220)
 		checkbox_bg: gx.rgb(0, 0, 0)
 		progressbar_fill: gx.rgb(220, 220, 220)
+        scroll_track_color: gx.rgb(0,0,0)
+        scroll_bar_color: gx.rgb(205,205,205)
 	}
 }
 
@@ -152,6 +161,8 @@ pub fn theme_black_red() Theme {
 		checkbox_selected: gx.rgb(255, 0, 0)
 		checkbox_bg: gx.rgb(0, 0, 0)
 		progressbar_fill: gx.rgb(255, 0, 0)
+        scroll_track_color: gx.rgb(0,0,0)
+        scroll_bar_color: gx.rgb(240,0,0)
 	}
 }
 
@@ -178,5 +189,7 @@ pub fn theme_minty() Theme {
 		checkbox_selected: gx.rgb(154, 184, 124)
 		checkbox_bg: gx.rgb(247, 247, 247)
 		progressbar_fill: gx.rgb(154, 184, 124)
+        scroll_track_color: gx.rgb(238,238,238)
+        scroll_bar_color: gx.rgb(181, 203, 158)
 	}
 }

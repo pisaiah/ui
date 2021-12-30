@@ -20,6 +20,7 @@ pub fn debug(o string) {
 }
 
 // Component Interface
+[heap]
 pub interface Component {
 mut:
 	text string
@@ -30,7 +31,8 @@ mut:
 	last_click f64
 	is_selected bool
 	carrot_index int
-    z_index int
+	z_index int
+	scroll_i int
 	draw()
 }
 
@@ -45,12 +47,6 @@ pub fn draw_with_offset(mut com Component, offx int, offy int) {
 	com.y = oy
 }
 
-pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
-	com.click_event_fn = b
-}
-
-pub fn blank_event(mut win Window, a Button) {
-}
 
 pub fn set_pos(mut com Component, x int, y int) {
 	com.x = x
@@ -80,7 +76,7 @@ pub mut:
 	fps           int
 	fpss          int
 	theme         Theme
-	bar           Menubar
+	bar           &Menubar
 	components    []Component
 	show_menu_bar bool = true
 	shift_pressed bool
@@ -98,6 +94,7 @@ pub fn window(theme Theme) &Window {
 	mut app := &Window{
 		gg: 0
 		theme: theme
+        bar: 0
 	}
 	return app
 }
@@ -115,6 +112,7 @@ pub fn (mut app Window) init(title string) &Window {
 		user_data: app
 		font_path: font_path
 		font_size: 14
+        //ui_mode: true
 	)
 	return app
 }
@@ -138,114 +136,15 @@ fn (app &Window) draw_bordered_rect(x int, y int, width int, height int, a int, 
 	app.gg.draw_empty_rounded_rect(x, y, width, height, a, bord)
 }
 
-struct Button {
-pub mut:
-	app            &Window
-	text           string
-	x              int
-	y              int
-	width          int
-	height         int
-	last_click     f64
-	click_event_fn fn (mut Window, Button)
-	is_selected    bool
-	in_modal       bool
-	carrot_index   int = 1
-    z_index        int
-}
-
-pub fn button(app &Window, text string) Button {
-	return Button{
-		text: text
-		app: app
-		click_event_fn: blank_event
-	}
-}
-
-pub fn (mut btn Button) draw() {
-	btn.app.draw_button(btn.x, btn.y, btn.width, btn.height, mut btn)
-}
-
-fn (app &Window) draw_button(x int, y int, width int, height int, mut btn Button) {
-	mut y1 := y
-	if !app.show_menu_bar {
-		y1 = y1 - 25
-	}
-
-	text := btn.text
-	size := app.text_width(text) / 2
-	sizh := app.text_height(text) / 2
-
-	mut bg := app.theme.button_bg_normal
-	mut border := app.theme.button_border_normal
-
-	mut mid := (x + (width / 2))
-	mut midy := (y1 + (height / 2))
-
-	// Detect Hover
-	if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
-		bg = app.theme.button_bg_hover
-		border = app.theme.button_border_hover
-	}
-
-	// Detect Click
-	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
-		now := time.now().unix_time_milli()
-
-		// TODO: Better click time
-		if now - btn.last_click > 100 {
-			// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without INVALID MEMORY ERROR.
-			if app.modal_show {
-				if !btn.in_modal {
-					return
-				}
-			}
-
-			btn.click_event_fn(app, *btn)
-			btn.is_selected = true
-
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
-			btn.last_click = time.now().unix_time_milli()
-		}
-	} else {
-		now := time.now().unix_time_milli()
-		if now - btn.last_click > 80 {
-			btn.is_selected = false
-		} else {
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
-		}
-	}
-
-	// Draw Button Background & Border
-	app.gg.draw_rounded_rect(x, y1, width, height, 4, bg)
-	app.gg.draw_empty_rounded_rect(x, y1, width, height, 4, border)
-
-	// Draw Button Text
-	app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
-		size: 14
-		color: app.theme.text_color
-	})
-}
-
 fn (mut app Window) draw() {
-	time.sleep(20 * time.millisecond) // Reduce CPU Usage
+	//time.sleep(20 * time.millisecond) // Reduce CPU Usage
 
-	if (time.now().unix_time_milli() - app.lastt) > 1000 {
-		app.fps = app.fpss
-		app.fpss = 0
-		app.lastt = time.now().unix_time_milli()
-	}
-	app.fpss++
-	app.display()
-
-    // Sort by Z-index
-    app.components.sort(a.z_index < b.z_index)
+	// Sort by Z-index
+	app.components.sort(a.z_index < b.z_index)
 
 	// Draw components
 	for mut com in app.components {
-		com.draw()
+        com.draw()
 	}
 
 	// Draw Menubar last
@@ -261,8 +160,8 @@ fn (mut app Window) draw() {
 			80, 80))
 
 		mut title := app.modal_title
-		tw := app.text_width(title)
-		th := app.text_height(title)
+		tw := text_width(app, title)
+		th := text_height(app, title)
 		app.gg.draw_text((ws.width / 2) - (tw / 2), 50 + (th / 2) - 1, title, gx.TextCfg{
 			size: 16
 			color: gx.rgb(240, 240, 240)
@@ -316,10 +215,20 @@ fn on_event(e &gg.Event, mut app Window) {
 			app.shift_pressed = false
 		}
 	}
-	/*
-	if !(e.typ == .mouse_move) {
-        println(e.typ)
-    }*/
+
+	if e.typ == .mouse_scroll {
+        for mut a in app.components {
+            if a is Textbox {
+                if a.is_selected {
+                    if math.abs(e.scroll_y) != e.scroll_y {
+                        a.scroll_i += 1
+                    } else if a.scroll_i > 0 {
+                        a.scroll_i -= 1
+                    }
+                }
+            }
+        }
+	}
 }
 
 // Modal
@@ -329,12 +238,11 @@ pub fn (mut win Window) message_box(title string, s string) {
 	win.modal_text = s
 }
 
-
 // Functions for GG
-pub fn (mut win Window) text_width(text string) int {
-    return win.gg.text_width(text)
+pub fn text_width(win Window, text string) int {
+	return win.gg.text_width(text)
 }
 
-pub fn (mut win Window) text_height(text string) int {
-    return win.gg.text_height(text)
+pub fn text_height(win Window, text string) int {
+	return win.gg.text_height(text)
 }

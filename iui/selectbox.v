@@ -22,7 +22,8 @@ pub mut:
 	shown           bool
 	show_items      bool
 	carrot_index    int = 1
-    z_index         int = 2
+	z_index         int = 2
+	scroll_i        int
 }
 
 pub fn selector(app &Window, text string) Select {
@@ -51,8 +52,8 @@ pub fn (mut item Select) draw() {
 	app := item.app
 	width := item.width
 	height := item.height
-	size := app.text_width(item.text) / 2
-	sizh := app.text_height(item.text) / 2
+	size := text_width(app, item.text) / 2
+	sizh := text_height(app, item.text) / 2
 
 	mut bg := app.theme.button_bg_normal
 	mut border := app.theme.button_border_normal
@@ -83,7 +84,7 @@ pub fn (mut item Select) draw() {
 		mut wid := 100
 
 		for mut sub in item.items {
-			sub_size := app.text_width(sub + '...')
+			sub_size := text_width(app, sub + '...')
 			if wid < sub_size {
 				wid = sub_size
 			}
@@ -132,8 +133,8 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	}
 
 	text := btn.text
-	size := app.text_width(text) / 2
-	sizh := app.text_height(text) / 2
+	size := text_width(app, text) / 2
+	sizh := text_height(app, text) / 2
 
 	mut bg := app.theme.button_bg_normal
 	mut border := app.theme.button_border_normal

@@ -4,6 +4,7 @@ import gg
 import gx
 import time
 import math
+import os
 
 // Textbox - implements Component interface
 struct Textbox {
@@ -21,7 +22,9 @@ pub mut:
 	wrap           bool = true
 	is_selected    bool
 	carrot_index   int = 1
-    z_index        int
+	z_index        int
+	scroll_i       int
+    last_fit       int = 1
 }
 
 fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
@@ -183,37 +186,72 @@ pub fn (mut com Textbox) draw() {
 	com.app.draw_bordered_rect(com.x, com.y, com.width, com.height, 2, bg, border)
 
 	mut cl := 0
-	for mut txt in spl {
+    if com.scroll_i > spl.len - com.last_fit {
+        com.scroll_i = spl.len - com.last_fit
+    }
+    if com.scroll_i < 0 {
+        com.scroll_i = 0
+    }
+
+    mut last_ym := 0
+	space_width := text_width(com.app, ' ')
+
+	for i := com.scroll_i; i < spl.len; i++ {
+		mut txt := spl[i]
 		txt = txt.replace('\t', '        ')
-		mut tl := com.text_width(txt)
-		if com.wrap && tl > com.width {
-			// TODO
-			com.app.gg.draw_text(com.x + padding, com.y + y_mult + padding, txt, gx.TextCfg{
-				size: size
-				color: com.app.theme.text_color
-				max_width: 20
-			})
-		} else {
-			com.app.gg.draw_text(com.x + padding, com.y + y_mult + padding, txt, gx.TextCfg{
-				size: size
-				color: com.app.theme.text_color
-				max_width: 20
-			})
+        mut skip := false
+
+		if y_mult + (text_height(com.app, txt)*2) > com.height {
+            com.last_fit = cl
+            y_mult = y_mult - last_ym
+            skip = true
+		} else if com.wrap {
+			mut wspl := txt.split(' ')
+			mut wmul := 0
+			for mut wtxt in wspl {
+				if padding + wmul > com.width {
+					y_mult += com.app.gg.text_height(wtxt)
+					wmul = 0
+				}
+				com.app.gg.draw_text(com.x + padding + wmul, com.y + y_mult + padding, wtxt, gx.TextCfg{
+					size: size
+					color: com.app.theme.text_color
+					max_width: 20
+				})
+				wmul += text_width(com.app, wtxt) + 1
+			} 
 		}
-		if cl < spl.len - 1 {
-			y_mult += (com.app.gg.text_height(txt) + com.app.gg.text_height(spl[0])) / 2
-		}
-		cl++
+
+        if !skip {
+            if cl < spl.len - 1 {
+                last_ym = (com.app.gg.text_height(txt) + com.app.gg.text_height(spl[0])) / 2
+                y_mult += last_ym
+            }
+            cl++
+        } else {
+            break
+        }
 	}
 
+    // Calculate postion for scroll
+    mut sth := int( (f32((com.scroll_i)) / f32(spl.len)) * com.height)
+    mut enh := int( (f32(cl) / f32(spl.len)) * com.height)
+    mut requires_scrollbar := (com.height - enh) > 0
+
+    // Draw Scroll
+    if requires_scrollbar {
+        com.app.draw_bordered_rect(com.x + com.width - 11, com.y + 1, 10, com.height-2, 2, com.app.theme.scroll_track_color, com.app.theme.button_bg_hover)
+        com.app.draw_bordered_rect(com.x + com.width - 11, com.y + sth + 1, 10, enh - 2, 2, com.app.theme.scroll_bar_color, com.app.theme.scroll_track_color)
+    }
+
+    // Blinking text cursor
 	mut now := time.now().unix_time_milli()
 	if now - com.last_blink > 1000 {
 		com.is_blink = !com.is_blink
 		com.last_blink = now
 	}
 	if com.is_blink {
-		// mut aaa := com.app.gg.text_width("a")
-		mut lw := com.app.text_width(spl[spl.len - 1]) - 1 //(aaa * com.carrot_index)
+		mut lw := text_width(com.app, spl[spl.len - 1]) - 1 //(aaa * com.carrot_index)
 		com.app.gg.draw_text(com.x + lw + padding, com.y + y_mult + padding, '|', gx.TextCfg{
 			size: size
 			color: com.app.theme.text_color
