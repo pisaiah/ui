@@ -7,19 +7,11 @@ import math
 
 // Checkbox - implements Component interface
 struct Checkbox {
+	Component_A
 pub mut:
 	app            &Window
 	text           string
-	x              int
-	y              int
-	width          int
-	height         int
-	last_click     f64
 	click_event_fn fn (mut Window, Checkbox)
-	is_selected    bool
-	carrot_index   int = 1
-	z_index        int
-	scroll_i       int
 }
 
 pub fn checkbox(app &Window, text string) Checkbox {
@@ -54,7 +46,8 @@ pub fn (mut com Checkbox) draw() {
 	}
 
 	// Detect Click
-	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
+	//if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
+	if com.is_mouse_down {
 		now := time.now().unix_time_milli()
 
 		if now - com.last_click > 100 {

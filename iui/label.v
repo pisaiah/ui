@@ -5,40 +5,41 @@ import gx
 import time
 import math
 
-// Button - implements Component interface
-struct Button {
+// Label - implements Component interface
+struct Label {
 	Component_A
 pub mut:
 	app            &Window
-	click_event_fn fn (mut Window, Button)
+	text           string
+	click_event_fn fn (mut Window, Label)
+	in_modal       bool
 	need_pack      bool
-	in_modal	   bool
 }
 
-pub fn button(app &Window, text string) Button {
-	return Button{
+pub fn label(app &Window, text string) Label {
+	return Label{
 		text: text
 		app: app
-		click_event_fn: blank_event
+		click_event_fn: blank_event_l
 	}
 }
 
-pub fn (mut btn Button) draw() {
-	btn.app.draw_button(btn.x, btn.y, btn.width, btn.height, mut btn)
+pub fn (mut btn Label) draw() {
+	btn.app.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn)
 }
 
-pub fn (mut btn Button) pack() {
+pub fn (mut btn Label) pack() {
 	btn.need_pack = true
 }
 
-pub fn (mut btn Button) pack_do() {
+pub fn (mut btn Label) pack_do() {
 	width := text_width(btn.app, btn.text + 'ab')
 	btn.width = width
-	btn.height = text_height(btn.app, btn.text) + 13
+	btn.height = text_height(btn.app, btn.text) + 4
 	btn.need_pack = false
 }
 
-fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn Button) {
+fn (mut app Window) draw_label(x int, y int, width int, height int, mut btn Label) {
 	if btn.need_pack {
 		btn.pack_do()
 	}
@@ -59,32 +60,25 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 		border = app.theme.button_border_hover
 	}
 
-	if btn.is_mouse_rele {
-		btn.click_event_fn(app, *btn)
-		btn.is_mouse_rele = false
-	}
-
 	// Detect Click
-	//if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
-	if btn.is_mouse_down {
+	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
 		now := time.now().unix_time_milli()
 
 		// TODO: Better click time
-		//if now - btn.last_click > 100 {
-			// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without INVALID MEMORY ERROR.
+		if now - btn.last_click > 100 {
 			if app.modal_show {
 				if !btn.in_modal {
 					return
 				}
 			}
 
-			//btn.click_event_fn(app, *btn)
+			btn.click_event_fn(app, *btn)
 			btn.is_selected = true
 
 			bg = app.theme.button_bg_click
 			border = app.theme.button_border_click
-			//btn.last_click = time.now().unix_time_milli()
-		//}
+			btn.last_click = time.now().unix_time_milli()
+		}
 	} else {
 		now := time.now().unix_time_milli()
 		if now - btn.last_click > 80 {
@@ -95,10 +89,6 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 		}
 	}
 
-	// Draw Button Background & Border
-	app.gg.draw_rounded_rect(x, y, width, height, 4, bg)
-	app.gg.draw_empty_rounded_rect(x, y, width, height, 4, border)
-
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
 		size: 14
@@ -106,9 +96,9 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	})
 }
 
-pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
+pub fn (mut com Label) set_click(b fn (mut Window, Label)) {
 	com.click_event_fn = b
 }
 
-pub fn blank_event(mut win Window, a Button) {
+pub fn blank_event_l(mut win Window, a Label) {
 }

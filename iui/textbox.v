@@ -8,22 +8,14 @@ import os
 
 // Textbox - implements Component interface
 struct Textbox {
+	Component_A
 pub mut:
 	app            &Window
 	text           string
-	x              int
-	y              int
-	width          int
-	height         int
-	last_click     f64
 	click_event_fn fn (mut Window, Textbox)
 	is_blink       bool
 	last_blink     f64
 	wrap           bool = true
-	is_selected    bool
-	carrot_index   int = 1
-	z_index        int
-	scroll_i       int
     last_fit       int = 1
 }
 

@@ -8,15 +8,15 @@ import time
 import math
 
 const (
-	win_width  = 500
-	win_height = 512
+	win_width  = 510
+	win_height = 500
 	version    = '0.0.1'
 )
 
-//[if debug]
 pub fn debug(o string) {
-	// Using println with no console, crashes V.
-	println('(Debug) ' + o)
+	$if debug ? {
+		println('(Debug) ' + o)
+	}
 }
 
 // Component Interface
@@ -33,7 +33,36 @@ mut:
 	carrot_index int
 	z_index int
 	scroll_i int
+	is_mouse_down bool
+	is_mouse_rele bool
 	draw()
+}
+
+pub struct Component_A {
+pub mut:
+	text string
+	x int
+	y int
+	width int
+	height int
+	last_click f64
+	is_selected bool
+	carrot_index int
+	z_index int
+	scroll_i int
+	is_mouse_down bool
+	is_mouse_rele bool
+}
+
+pub fn (mut com Component_A) draw() {
+	// Stub
+}
+
+pub fn point_in(mut com Component, px int, py int) bool {
+	midx := com.x + (com.width/2)
+	midy := com.y + (com.height/2)
+
+	return (math.abs(midx - px) < (com.width / 2)) && (math.abs(midy - py) < (com.height / 2))
 }
 
 pub fn draw_with_offset(mut com Component, offx int, offy int) {
@@ -47,6 +76,14 @@ pub fn draw_with_offset(mut com Component, offx int, offy int) {
 	com.y = oy
 }
 
+pub fn (mut com Component_A) set_bounds(x int, y int, width int, height int) {
+	set_bounds(mut com, x, y, width, height)
+}
+
+pub fn (mut com Component_A) set_pos(x int, y int) {
+	com.x = x
+	com.y = y
+}
 
 pub fn set_pos(mut com Component, x int, y int) {
 	com.x = x
@@ -84,22 +121,21 @@ pub mut:
 	modal_show  bool
 	modal_title string
 	modal_text  string
+
+	last_update i64
 }
 
 pub fn (mut win Window) add_child(com Component) {
 	win.components << com
 }
 
-pub fn window(theme Theme) &Window {
+pub fn window(theme Theme, title string) &Window {
 	mut app := &Window{
 		gg: 0
 		theme: theme
         bar: 0
 	}
-	return app
-}
-
-pub fn (mut app Window) init(title string) &Window {
+	//go app.idle_draw()
 	mut font_path := gg.system_font_path()
 	app.gg = gg.new_context(
 		bg_color: app.theme.background
@@ -111,10 +147,23 @@ pub fn (mut app Window) init(title string) &Window {
 		event_fn: on_event
 		user_data: app
 		font_path: font_path
-		font_size: 14
-        //ui_mode: true
+		font_size: 32
+        ui_mode: false
 	)
 	return app
+}
+
+// Update at 1FPS during idle, (for text cursor blinking)
+pub fn (mut win Window) idle_draw() {
+	for {
+		now := time.now().unix_time_milli()
+		if now - win.last_update > 1000 {
+			win.gg.refresh_ui()
+			win.last_update = now
+			println(now)
+		}
+		time.sleep(1000 * time.millisecond)
+	}
 }
 
 pub fn (mut win Window) set_theme(theme Theme) {
@@ -137,14 +186,18 @@ fn (app &Window) draw_bordered_rect(x int, y int, width int, height int, a int, 
 }
 
 fn (mut app Window) draw() {
-	//time.sleep(20 * time.millisecond) // Reduce CPU Usage
+	time.sleep(20 * time.millisecond) // Reduce CPU Usage
 
 	// Sort by Z-index
 	app.components.sort(a.z_index < b.z_index)
 
 	// Draw components
 	for mut com in app.components {
-        com.draw()
+		if app.show_menu_bar {
+        	com.draw()
+		} else {
+			draw_with_offset(mut com, 0, -25)
+		}
 	}
 
 	// Draw Menubar last
@@ -200,11 +253,34 @@ fn on_event(e &gg.Event, mut app Window) {
 	if e.typ == .mouse_down {
 		app.click_x = int(e.mouse_x)
 		app.click_y = int(e.mouse_y)
+
+		// Sort by Z-index
+		app.components.sort(a.z_index < b.z_index)
+
+		mut found := false
+		for mut com in app.components {
+			if point_in(mut com, app.click_x, app.click_y) && !found {
+				com.is_mouse_down = true
+				found = true
+			} else {
+				com.is_mouse_down = false
+			}
+		}
 	}
 
 	if e.typ == .mouse_up {
 		app.click_x = -1
 		app.click_y = -1
+		mut found := false
+		for mut com in app.components {
+			if point_in(mut com, int(e.mouse_x), int(e.mouse_y)) && !found {
+				com.is_mouse_down = false
+				com.is_mouse_rele = true
+				found = true
+			} else {
+				com.is_mouse_down = false
+			}
+		}
 	}
 	if e.typ == .key_down {
 		app.key_down(e.key_code, e)

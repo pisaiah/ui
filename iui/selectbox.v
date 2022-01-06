@@ -7,23 +7,15 @@ import math
 
 // Select - implements Component interface
 struct Select {
+	Component_A
 pub mut:
 	app             &Window
 	text            string
-	x               int
-	y               int
-	width           int
-	height          int
-	last_click      f64
 	click_event_fn  fn (mut Window, Select)
 	change_event_fn fn (mut Window, Select, string, string)
-	is_selected     bool
 	items           []string
 	shown           bool
 	show_items      bool
-	carrot_index    int = 1
-	z_index         int = 2
-	scroll_i        int
 }
 
 pub fn selector(app &Window, text string) Select {
@@ -70,6 +62,7 @@ pub fn (mut item Select) draw() {
 	// Detect Click
 	mut clicked := ((math.abs(midx - app.click_x) < (width / 2))
 		&& (math.abs(midy - app.click_y) < (height / 2)))
+	
 	if clicked && !item.show_items {
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
@@ -149,6 +142,7 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	}
 
 	// Detect Click
+	//if btn.is_mouse_down {
 	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
 		now := time.now().unix_time_milli()
 

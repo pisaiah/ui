@@ -6,19 +6,11 @@ import math
 
 // Tabbox - implements Component interface
 struct Tabbox {
+	Component_A
 pub mut:
 	win            &Window
 	text           string
-	x              int
-	y              int
-	width          int
-	height         int
-	last_click     f64
 	click_event_fn fn (mut Window, Tabbox)
-	is_selected    bool
-	carrot_index   int = 1
-	z_index        int
-	scroll_i       int
 	kids		   map[string][]Component
 	active_tab	   string
 }
@@ -33,18 +25,24 @@ pub fn tabbox(win &Window) Tabbox {
 
 // Draw this component
 pub fn (mut tb Tabbox) draw() {
-	theig := 20
-	tb.win.gg.draw_empty_rounded_rect(tb.x, tb.y + theig - 1, tb.width, tb.height - (theig-1), 2, tb.win.theme.button_border_normal)
+	t_heig := 22
+	tb.win.gg.draw_empty_rounded_rect(tb.x, tb.y + t_heig - 1, tb.width, tb.height - (t_heig-1), 2, tb.win.theme.button_border_normal)
 	mut mx := 0
 	for key, mut val in tb.kids {
+		mut theig := 20
+		mut my := 2
 		size := text_width(tb.win, key) / 2
 		sizh := text_height(tb.win, key) / 2
+		if tb.active_tab == key {
+			theig = 22
+			my = 0
+		}
 
-		tsize := (size*2) + 10
-		tb.win.draw_bordered_rect(tb.x + mx, tb.y, tsize, theig, 2, tb.win.theme.button_bg_normal, tb.win.theme.button_border_normal)
-		
+		tsize := (size*2) + 14
+		tb.win.draw_bordered_rect(tb.x + mx, tb.y + my, tsize, theig, 2, tb.win.theme.button_bg_normal, tb.win.theme.button_border_normal)
+
 		// Draw Button Text
-		tb.win.gg.draw_text((tb.x + mx + (tsize / 2)) - size, tb.y + (theig / 2) - sizh, key, gx.TextCfg{
+		tb.win.gg.draw_text((tb.x + mx + (tsize / 2)) - size, tb.y + my + ((theig) / 2) - sizh, key, gx.TextCfg{
 			size: 14
 			color: tb.win.theme.text_color
 		})

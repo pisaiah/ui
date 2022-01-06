@@ -7,21 +7,11 @@ import math
 
 // Treeview
 struct Tree {
+	Component_A
 pub mut:
 	app            &Window
-	text           string
-	x              int
-	y              int
-	width          int
-	height         int
-	last_click     f64
 	click_event_fn fn (mut Window, Tree)
-	is_selected    bool
-	in_modal       bool
 	childs         []Component
-	carrot_index   int = 1
-	z_index        int
-	scroll_i       int
 }
 
 pub fn tree(app &Window, text string) Tree {
@@ -66,14 +56,16 @@ pub fn (mut tr Tree) draw() {
 	tr.app.gg.draw_rounded_rect(tr.x + 4, tr.y + 3, tr.width - 8, 20, 2, bg)
 
 	if tr.is_selected {
-		tr.app.gg.draw_triangle(tr.x + 5, tr.y + 8, tr.x + 12, tr.y + 8, tr.x + 8, tr.y + 16,
+		tr.app.gg.draw_triangle(tr.x + 5, tr.y + 8,
+								tr.x + 12, tr.y + 8,
+								tr.x + 8, tr.y + 14,
 			app.theme.text_color)
 	} else if tr.childs.len > 0 {
 		tr.app.gg.draw_triangle(tr.x + 7, tr.y + 6, tr.x + 12, tr.y + 11, tr.x + 7, tr.y + 16,
 			app.theme.text_color)
 	}
 
-	tr.app.gg.draw_text(tr.x + 14, tr.y + 4, tr.text, gx.TextCfg{
+	tr.app.gg.draw_text(tr.x + 16, tr.y + 4, tr.text, gx.TextCfg{
 		size: 14
 		color: tr.app.theme.text_color
 	})

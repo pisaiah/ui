@@ -5,8 +5,7 @@ import time
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme())
-	window.init('My Window')
+	mut window := ui.window(ui.get_system_theme(), 'My Window')
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
@@ -35,14 +34,14 @@ fn main() {
 	window.bar.add_child(theme_menu)
 
 	mut btn := ui.button(window, 'A Button')
-	ui.set_bounds(mut btn, 30, 40, 100, 25)
-
+	btn.set_click(btn_click)
+	btn.set_bounds(30, 40, 100, 25)
 	btn.set_click(on_click)
 
 	window.add_child(btn)
 
 	mut btn2 := ui.button(window, 'This is a Button')
-	ui.set_pos(mut btn2, 30, 70)
+	btn2.set_pos(30, 70)
 	btn2.pack() // Auto set width & height
 
 	window.add_child(btn2)
@@ -53,22 +52,22 @@ fn main() {
 		tbox.text += "\nExtra line #" + i.str()
 	}
     
-	ui.set_bounds(mut tbox, 30, 110, 320, 100)
+	tbox.set_bounds(30, 110, 320, 100)
 
 	window.add_child(tbox)
 
 	mut cbox := ui.checkbox(window, 'Check me!')
-	ui.set_bounds(mut cbox, 150, 40, 90, 25)
+	cbox.set_bounds(145, 40, 90, 25)
 
 	mut cbox2 := ui.checkbox(window, 'Check me!')
-	ui.set_bounds(mut cbox2, 150, 70, 90, 25)
+	cbox2.set_bounds(145, 70, 90, 25)
 	cbox2.is_selected = true
 
 	window.add_child(cbox)
 	window.add_child(cbox2)
 
 	mut sel := ui.selector(window, 'Selectbox')
-	ui.set_bounds(mut sel, 30, 230, 100, 25)
+	sel.set_bounds(30, 230, 100, 25)
 
 	for i := 0; i < 4; i++ {
 		sel.items << (25 * (i + 1)).str() + '%'
@@ -76,56 +75,53 @@ fn main() {
 	sel.set_change(sel_change)
 	window.add_child(sel)
 
-	mut pb := ui.progressbar(window, 50)
-	ui.set_bounds(mut pb, 140, 230, 100, 20)
+	mut pb := ui.progressbar(window, 30)
+	pb.set_bounds(140, 230, 100, 20)
 	window.add_child(pb)
 
-	mut pb2 := ui.progressbar(window, 50)
-	ui.set_bounds(mut pb2, 250, 230, 100, 20)
+	mut pb2 := ui.progressbar(window, 75)
+	pb2.set_bounds(250, 230, 100, 20)
 	window.add_child(pb2)
 
 	//go test(mut &pb2)
 
 	mut tree := ui.tree(window, 'Beverages')
-	tree.x = 30
-	tree.y = 280
-	tree.width = 150
-	tree.height = 200
+	tree.set_bounds(355, 40, 150, 200)
 
 	mut subtree := ui.tree(window, 'Water')
-	ui.set_bounds(mut subtree, 4, 4, 100, 25)
+	subtree.set_bounds(4, 4, 100, 25)
 	tree.childs << subtree
 
 	mut subtree2 := ui.tree(window, 'Coke')
-	ui.set_bounds(mut subtree2, 4, 4, 100, 25)
+	subtree2.set_bounds(4, 4, 100, 25)
 	tree.childs << subtree2
 
 	mut subtree3 := ui.tree(window, 'Tea')
-	ui.set_bounds(mut subtree3, 4, 4, 100, 100)
+	subtree3.set_bounds(4, 4, 100, 100)
 	tree.childs << subtree3
 
 	mut subtree4 := ui.tree(window, 'Black Tea')
-	ui.set_bounds(mut subtree4, 4, 4, 100, 25)
+	subtree4.set_bounds(4, 4, 100, 25)
 	subtree3.childs << subtree4
 
 	mut subtree5 := ui.tree(window, 'Green Tea')
-	ui.set_bounds(mut subtree5, 4, 4, 100, 25)
+	subtree5.set_bounds(4, 4, 100, 25)
 	subtree3.childs << subtree5
 
 	window.add_child(tree)
 
 	mut tb := ui.tabbox(window)
-	ui.set_bounds(mut tb, 200, 280, 250, 200)
+	tb.set_bounds(247, 38, 100, 62)
 
-	mut tbtn := ui.button(window, 'Tab 1 content')
-	ui.set_pos(mut tbtn, 30, 10)
+	mut tbtn := ui.label(window, 'Label in Tab A')
+	tbtn.set_pos(0, 8)
 	tbtn.pack()
-	tb.add_child('Tab 1', tbtn)
+	tb.add_child('Tab A', tbtn)
 
-	mut tbtn1 := ui.button(window, 'This in a button inside Tab #2')
-	ui.set_pos(mut tbtn1, 30, 30)
+	mut tbtn1 := ui.label(window, 'Now in Tab B')
+	tbtn1.set_pos(1, 8)
 	tbtn1.pack()
-	tb.add_child('Tab 2', tbtn1)
+	tb.add_child('Tab B', tbtn1)
 
 	window.add_child(tb)
 
@@ -165,4 +161,8 @@ fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) 
 			kid.text = a
 		}
 	}
+}
+
+fn btn_click(mut win ui.Window, com ui.Button) {
+	debug('btn click')
 }

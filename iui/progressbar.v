@@ -5,19 +5,11 @@ import gx
 
 // Progress bar - implements Component interface
 struct Progressbar {
+	Component_A
 pub mut:
 	win            &Window
 	text           string
-	x              int
-	y              int
-	width          int
-	height         int
-	last_click     f64
 	click_event_fn fn (mut Window, Button)
-	is_selected    bool
-	carrot_index   int = 1
-	z_index        int
-	scroll_i       int
 }
 
 // Return new Progressbar
