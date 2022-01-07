@@ -60,7 +60,7 @@ fn (mut mb Menubar) draw() {
 
 	mut mult := 0
 	for mut item in mb.items {
-        mb.app.draw_menu_button(50 * mult, 0, 50, 25, mut item)
+		mb.app.draw_menu_button(50 * mult, 0, 50, 25, mut item)
 		mult++
 	}
 }

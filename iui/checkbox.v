@@ -45,19 +45,18 @@ pub fn (mut com Checkbox) draw() {
 		border = app.theme.button_border_hover
 	}
 
+	if com.is_mouse_rele {
+		com.is_mouse_rele = false
+		com.is_selected = !com.is_selected
+		com.click_event_fn(app, *com)
+	}
+
 	// Detect Click
-	//if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
+	// if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
 	if com.is_mouse_down {
-		now := time.now().unix_time_milli()
-
-		if now - com.last_click > 100 {
-			com.is_selected = !com.is_selected
-			com.click_event_fn(app, *com)
-
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
-			com.last_click = time.now().unix_time_milli()
-		}
+		bg = app.theme.button_bg_click
+		border = app.theme.button_border_click
+		com.last_click = time.now().unix_time_milli()
 	}
 
 	com.app.draw_bordered_rect(com.x, com.y, com.height, com.height, 2, bg, border)

@@ -20,6 +20,7 @@ pub fn debug(o string) {
 }
 
 // Component Interface
+
 [heap]
 pub interface Component {
 mut:
@@ -40,16 +41,16 @@ mut:
 
 pub struct Component_A {
 pub mut:
-	text string
-	x int
-	y int
-	width int
-	height int
-	last_click f64
-	is_selected bool
-	carrot_index int
-	z_index int
-	scroll_i int
+	text          string
+	x             int
+	y             int
+	width         int
+	height        int
+	last_click    f64
+	is_selected   bool
+	carrot_index  int
+	z_index       int
+	scroll_i      int
 	is_mouse_down bool
 	is_mouse_rele bool
 }
@@ -58,9 +59,16 @@ pub fn (mut com Component_A) draw() {
 	// Stub
 }
 
+pub fn (mut com Component_A) collect_kids() []Component_A {
+	// Stub
+
+	mut empty := [com]
+	return empty
+}
+
 pub fn point_in(mut com Component, px int, py int) bool {
-	midx := com.x + (com.width/2)
-	midy := com.y + (com.height/2)
+	midx := com.x + (com.width / 2)
+	midy := com.y + (com.height / 2)
 
 	return (math.abs(midx - px) < (com.width / 2)) && (math.abs(midy - py) < (com.height / 2))
 }
@@ -133,9 +141,9 @@ pub fn window(theme Theme, title string) &Window {
 	mut app := &Window{
 		gg: 0
 		theme: theme
-        bar: 0
+		bar: 0
 	}
-	//go app.idle_draw()
+	// go app.idle_draw()
 	mut font_path := gg.system_font_path()
 	app.gg = gg.new_context(
 		bg_color: app.theme.background
@@ -148,7 +156,7 @@ pub fn window(theme Theme, title string) &Window {
 		user_data: app
 		font_path: font_path
 		font_size: 32
-        ui_mode: false
+		ui_mode: false
 	)
 	return app
 }
@@ -193,8 +201,14 @@ fn (mut app Window) draw() {
 
 	// Draw components
 	for mut com in app.components {
+		if mut com is Button {
+			if com.in_modal && !app.modal_show {
+				continue
+			}
+		}
+
 		if app.show_menu_bar {
-        	com.draw()
+			com.draw()
 		} else {
 			draw_with_offset(mut com, 0, -25)
 		}
@@ -237,8 +251,14 @@ fn (mut app Window) draw() {
 		close.y = 230
 		close.width = 100
 		close.height = 25
+		app.add_child(close)
 		close.set_click(fn (mut win Window, btn Button) {
 			win.modal_show = false
+
+
+			mut co := win.components.index(Component(btn))
+			println(co)
+			win.components.delete( co )
 		})
 		close.in_modal = true
 		close.draw()
@@ -260,9 +280,27 @@ fn on_event(e &gg.Event, mut app Window) {
 		mut found := false
 		for mut com in app.components {
 			if point_in(mut com, app.click_x, app.click_y) && !found {
+				if mut com is Tabbox {
+					for _, mut val in com.kids {
+						for mut comm in val {
+							if point_in(mut comm, app.click_x - com.x, (app.click_y - com.y - 20)) && !found {
+								comm.is_mouse_down = true
+							}
+						}
+					}
+				}
 				com.is_mouse_down = true
 				found = true
 			} else {
+				if mut com is Tabbox {
+					for _, mut val in com.kids {
+						for mut comm in val {
+							if point_in(mut comm, app.click_x - com.x, (app.click_y - com.y - 20)) {
+								comm.is_mouse_down = false
+							}
+						}
+					}
+				}
 				com.is_mouse_down = false
 			}
 		}
@@ -271,12 +309,24 @@ fn on_event(e &gg.Event, mut app Window) {
 	if e.typ == .mouse_up {
 		app.click_x = -1
 		app.click_y = -1
+		mx := int(e.mouse_x)
+		my := int(e.mouse_y)
 		mut found := false
 		for mut com in app.components {
-			if point_in(mut com, int(e.mouse_x), int(e.mouse_y)) && !found {
+			if point_in(mut com, mx, my) && !found {
 				com.is_mouse_down = false
 				com.is_mouse_rele = true
 				found = true
+				if mut com is Tabbox {
+					for _, mut val in com.kids {
+						for mut comm in val {
+							if point_in(mut comm, mx - com.x, (my - com.y - 20)) {
+								comm.is_mouse_down = false
+								comm.is_mouse_rele = true
+							}
+						}
+					}
+				}
 			} else {
 				com.is_mouse_down = false
 			}
@@ -293,17 +343,17 @@ fn on_event(e &gg.Event, mut app Window) {
 	}
 
 	if e.typ == .mouse_scroll {
-        for mut a in app.components {
-            if a is Textbox {
-                if a.is_selected {
-                    if math.abs(e.scroll_y) != e.scroll_y {
-                        a.scroll_i += 1
-                    } else if a.scroll_i > 0 {
-                        a.scroll_i -= 1
-                    }
-                }
-            }
-        }
+		for mut a in app.components {
+			if a is Textbox {
+				if a.is_selected {
+					if math.abs(e.scroll_y) != e.scroll_y {
+						a.scroll_i += 1
+					} else if a.scroll_i > 0 {
+						a.scroll_i -= 1
+					}
+				}
+			}
+		}
 	}
 }
 

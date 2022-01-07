@@ -2,7 +2,6 @@ module iui
 
 import gg
 import gx
-import time
 import math
 
 // Button - implements Component interface
@@ -12,7 +11,7 @@ pub mut:
 	app            &Window
 	click_event_fn fn (mut Window, Button)
 	need_pack      bool
-	in_modal	   bool
+	in_modal       bool
 }
 
 pub fn button(app &Window, text string) Button {
@@ -65,34 +64,16 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	}
 
 	// Detect Click
-	//if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
 	if btn.is_mouse_down {
-		now := time.now().unix_time_milli()
-
-		// TODO: Better click time
-		//if now - btn.last_click > 100 {
-			// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without INVALID MEMORY ERROR.
-			if app.modal_show {
-				if !btn.in_modal {
-					return
-				}
+		// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without INVALID MEMORY ERROR.
+		if app.modal_show {
+			if !btn.in_modal {
+				return
 			}
-
-			//btn.click_event_fn(app, *btn)
-			btn.is_selected = true
-
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
-			//btn.last_click = time.now().unix_time_milli()
-		//}
-	} else {
-		now := time.now().unix_time_milli()
-		if now - btn.last_click > 80 {
-			btn.is_selected = false
-		} else {
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
 		}
+
+		bg = app.theme.button_bg_click
+		border = app.theme.button_border_click
 	}
 
 	// Draw Button Background & Border

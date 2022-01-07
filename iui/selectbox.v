@@ -62,7 +62,7 @@ pub fn (mut item Select) draw() {
 	// Detect Click
 	mut clicked := ((math.abs(midx - app.click_x) < (width / 2))
 		&& (math.abs(midy - app.click_y) < (height / 2)))
-	
+
 	if clicked && !item.show_items {
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
@@ -142,7 +142,7 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	}
 
 	// Detect Click
-	//if btn.is_mouse_down {
+	// if btn.is_mouse_down {
 	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
 		now := time.now().unix_time_milli()
 

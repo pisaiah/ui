@@ -2,8 +2,6 @@ module iui
 
 import gg
 import gx
-import time
-import math
 
 // Label - implements Component interface
 struct Label {
@@ -48,45 +46,28 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut btn Labe
 	size := text_width(app, text) / 2
 	sizh := text_height(app, text) / 2
 
-	mut bg := app.theme.button_bg_normal
-	mut border := app.theme.button_border_normal
+	//mut bg := app.theme.button_bg_normal
+	//mut border := app.theme.button_border_normal
 
-	mut mid := (x + (width / 2))
-	mut midy := (y + (height / 2))
+	//mut mid := (x + (width / 2))
+	//mut midy := (y + (height / 2))
 
 	// Detect Hover
-	if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
-		bg = app.theme.button_bg_hover
-		border = app.theme.button_border_hover
+	//if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+		//bg = app.theme.button_bg_hover
+		//border = app.theme.button_border_hover
+	//}
+
+	if btn.is_mouse_rele {
+		btn.is_mouse_rele = false
+		btn.click_event_fn(app, *btn)
+		//btn.is_selected = true
 	}
 
 	// Detect Click
-	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
-		now := time.now().unix_time_milli()
-
-		// TODO: Better click time
-		if now - btn.last_click > 100 {
-			if app.modal_show {
-				if !btn.in_modal {
-					return
-				}
-			}
-
-			btn.click_event_fn(app, *btn)
-			btn.is_selected = true
-
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
-			btn.last_click = time.now().unix_time_milli()
-		}
-	} else {
-		now := time.now().unix_time_milli()
-		if now - btn.last_click > 80 {
-			btn.is_selected = false
-		} else {
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
-		}
+	if btn.is_mouse_down {
+		//bg = app.theme.button_bg_click
+		//border = app.theme.button_border_click
 	}
 
 	// Draw Button Text

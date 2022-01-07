@@ -47,11 +47,11 @@ fn main() {
 	window.add_child(btn2)
 
 	mut tbox := ui.textbox(window, 'This is a Textbox.\nIt has an multiline mode that\ncan support\nmultiple lines\nIt also can scroll and stuff')
-    
-    for i := 0; i < 6; i++ {
-		tbox.text += "\nExtra line #" + i.str()
+
+	for i := 0; i < 6; i++ {
+		tbox.text += '\nExtra line #' + i.str()
 	}
-    
+
 	tbox.set_bounds(30, 110, 320, 100)
 
 	window.add_child(tbox)
@@ -83,7 +83,7 @@ fn main() {
 	pb2.set_bounds(250, 230, 100, 20)
 	window.add_child(pb2)
 
-	//go test(mut &pb2)
+	// go test(mut &pb2)
 
 	mut tree := ui.tree(window, 'Beverages')
 	tree.set_bounds(355, 40, 150, 200)
@@ -113,7 +113,7 @@ fn main() {
 	mut tb := ui.tabbox(window)
 	tb.set_bounds(247, 38, 100, 62)
 
-	mut tbtn := ui.label(window, 'Label in Tab A')
+	mut tbtn := ui.button(window, 'Label in Tab A')
 	tbtn.set_pos(0, 8)
 	tbtn.pack()
 	tb.add_child('Tab A', tbtn)
