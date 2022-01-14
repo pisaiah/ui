@@ -10,10 +10,23 @@ pub mut:
 	app   &Window
 	theme Theme
 	items []MenuItem
+	tik 		   int
 }
 
 pub fn (mut bar Menubar) add_child(com MenuItem) {
 	bar.items << com
+}
+
+
+pub fn (mut bar Menubar) is_hovering() bool {
+	for mut item in bar.items {
+		// for mut sub in item.items {
+		if item.show_items {
+			return true
+		}
+		//}
+	}
+	return false
 }
 
 [heap]
@@ -35,11 +48,8 @@ pub fn menuitem(text string) &MenuItem {
 		text: text
 		shown: false
 		show_items: false
-		click_event_fn: blank_event_mi
+		click_event_fn: fn (mut win Window, item MenuItem) {}
 	}
-}
-
-fn blank_event_mi(mut win Window, item MenuItem) {
 }
 
 pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
@@ -56,7 +66,7 @@ pub fn menubar(app &Window, theme Theme) &Menubar {
 fn (mut mb Menubar) draw() {
 	mut wid := gg.window_size().width
 	mb.app.gg.draw_rounded_rect(0, 0, wid, 25, 2, mb.app.theme.menubar_background)
-	mb.app.gg.draw_empty_rounded_rect(0, 0, wid, 25, 2, mb.app.theme.menubar_border)
+	mb.app.gg.draw_rounded_rect_empty(0, 0, wid, 25, 2, mb.app.theme.menubar_border)
 
 	mut mult := 0
 	for mut item in mb.items {
@@ -92,6 +102,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
 		item.show_items = true
+		app.bar.tik = 0
 
 		item.click_event_fn(app, *item)
 
@@ -104,6 +115,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 	if item.show_items && item.items.len > 0 {
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
+		app.bar.tik = 0
 		mut wid := 100
 
 		for mut sub in item.items {
@@ -126,14 +138,17 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 	if item.show_items && app.click_x != -1 && app.click_y != -1 && !clicked {
 		item.show_items = false
 	}
+	if !item.show_items && app.bar.tik < 99 {
+		app.bar.tik++
+	}
 
 	// Draw Button Background & Border
 	app.gg.draw_rounded_rect(x, y, width, height, 2, bg)
-	app.gg.draw_empty_rounded_rect(x, y, width, height, 2, border)
+	app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, item.text, gx.TextCfg{
-		size: 14
+		size: font_size
 		color: app.theme.text_color
 	})
 }

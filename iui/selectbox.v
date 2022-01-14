@@ -18,12 +18,13 @@ pub mut:
 	show_items      bool
 }
 
-pub fn selector(app &Window, text string) Select {
-	return Select{
+pub fn selector(app &Window, text string) &Select {
+	return &Select{
 		text: text
 		app: app
-		click_event_fn: blank_event_sel
+		click_event_fn: fn (mut win Window, a Select) {}
 		change_event_fn: fn (mut win Window, a Select, old string, neww string) {}
+		z_index: 1
 	}
 }
 
@@ -33,9 +34,6 @@ pub fn (mut com Select) set_click(b fn (mut Window, Select)) {
 
 pub fn (mut com Select) set_change(b fn (mut Window, Select, string, string)) {
 	com.change_event_fn = b
-}
-
-pub fn blank_event_sel(mut win Window, a Select) {
 }
 
 pub fn (mut item Select) draw() {
@@ -103,12 +101,12 @@ pub fn (mut item Select) draw() {
 
 	// Draw Button Background & Border
 	app.gg.draw_rounded_rect(x, y, width, height, 2, bg)
-	app.gg.draw_empty_rounded_rect(x, y, width, height, 2, border)
+	app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size - 4, y + (height / 2) - sizh, item.text,
 		gx.TextCfg{
-		size: 14
+		size: font_size
 		color: app.theme.text_color
 	})
 
@@ -165,11 +163,11 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 
 	// Draw Button Background & Border
 	app.gg.draw_rounded_rect(x, y1, width, height, 4, bg)
-	app.gg.draw_empty_rounded_rect(x, y1, width, height, 4, border)
+	app.gg.draw_rounded_rect_empty(x, y1, width, height, 4, border)
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
-		size: 14
+		size: font_size
 		color: app.theme.text_color
 	})
 }

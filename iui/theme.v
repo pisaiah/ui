@@ -24,7 +24,7 @@ pub fn theme_by_name(name string) Theme {
 	return theme_default()
 }
 
-struct Theme {
+pub struct Theme {
 pub:
 	name       string
 	text_color gx.Color

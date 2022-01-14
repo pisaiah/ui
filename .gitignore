@@ -1,2 +1,7 @@
 *.exe
 examples/*.exe
+
+#
+#  See: https://github.com/isaiahpatton/vide
+#
+examples/ide/

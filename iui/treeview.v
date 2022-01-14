@@ -4,6 +4,7 @@ import gg
 import gx
 import time
 import math
+import os
 
 // Treeview
 struct Tree {
@@ -12,6 +13,11 @@ pub mut:
 	app            &Window
 	click_event_fn fn (mut Window, Tree)
 	childs         []Component
+	open           int
+}
+
+pub fn (mut tree Tree) set_click(myfn fn (mut Window, Tree)) {
+	tree.click_event_fn = myfn
 }
 
 pub fn tree(app &Window, text string) Tree {
@@ -23,16 +29,20 @@ pub fn tree(app &Window, text string) Tree {
 }
 
 pub fn (mut tr Tree) draw() {
-	// tr.app.draw_bordered_rect(tr.x, tr.y, tr.width, tr.height, 2, tr.app.theme.button_bg_normal,
-	//	tr.app.theme.button_border_normal)
 	mut mult := 20
 	mut app := tr.app
 	mut bg := app.theme.button_bg_normal
+	mut bord := bg
 
-	// mut border := tr.app.theme.button_border_normal
 	mut mid := (tr.x + (tr.width / 2))
 	mut midy := (tr.y + 3 + (20 / 2))
-	if (math.abs(mid - app.click_x) < (tr.width / 2)) && (math.abs(midy - app.click_y) < (20 / 2)) {
+
+	if (math.abs(mid - app.mouse_x) < (tr.width / 2)) && (math.abs(midy - app.mouse_y) < (20 / 2)) {
+		bg = app.theme.button_bg_hover
+	}
+
+	if (math.abs(mid - app.click_x) < (tr.width / 2)) && (math.abs(midy - app.click_y) < (20 / 2)
+		&& app.bar.tik > 50) {
 		now := time.now().unix_time_milli()
 
 		if now - tr.last_click > 100 {
@@ -47,13 +57,15 @@ pub fn (mut tr Tree) draw() {
 	}
 	if tr.is_selected {
 		if tr.childs.len > 0 {
-			bg = app.theme.button_bg_hover
+			// bg = app.theme.button_bg_hover
+			bord = app.theme.button_bg_hover
 		} else {
 			tr.is_selected = false
 		}
 	}
 
-	tr.app.gg.draw_rounded_rect(tr.x + 4, tr.y + 3, tr.width - 8, 20, 2, bg)
+	// tr.app.gg.draw_rounded_rect(tr.x + 4, tr.y + 3, tr.width - 8, 20, 2, bg)
+	tr.app.draw_bordered_rect(tr.x + 4, tr.y + 3, tr.width - 8, 20, 2, bg, bord)
 
 	if tr.is_selected {
 		tr.app.gg.draw_triangle(tr.x + 5, tr.y + 8, tr.x + 12, tr.y + 8, tr.x + 8, tr.y + 14,
@@ -63,8 +75,8 @@ pub fn (mut tr Tree) draw() {
 			app.theme.text_color)
 	}
 
-	tr.app.gg.draw_text(tr.x + 16, tr.y + 4, tr.text, gx.TextCfg{
-		size: 14
+	tr.app.gg.draw_text(tr.x + 16, tr.y + 4, os.base(tr.text), gx.TextCfg{
+		size: font_size
 		color: tr.app.theme.text_color
 	})
 
@@ -73,7 +85,13 @@ pub fn (mut tr Tree) draw() {
 		for mut child in tr.childs {
 			child.width = tr.width - (multx * 2)
 			draw_with_offset(mut child, tr.x + multx, tr.y + mult)
-			mult += child.height
+
+			if mut child is Tree {
+				mult += child.open + 4
+			} else {
+				mult += child.height
+			}
 		}
 	}
+	tr.open = mult
 }

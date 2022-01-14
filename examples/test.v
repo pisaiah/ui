@@ -1,11 +1,12 @@
 import gg
 import iui as ui { debug }
 import time
+import os
 
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'My Window')
+	mut window := ui.window(ui.get_system_theme(), 'My Window', 510, 500)
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
@@ -86,7 +87,7 @@ fn main() {
 	// go test(mut &pb2)
 
 	mut tree := ui.tree(window, 'Beverages')
-	tree.set_bounds(355, 40, 150, 200)
+	tree.set_bounds(355, 110, 150, 200)
 
 	mut subtree := ui.tree(window, 'Water')
 	subtree.set_bounds(4, 4, 100, 25)
@@ -97,7 +98,7 @@ fn main() {
 	tree.childs << subtree2
 
 	mut subtree3 := ui.tree(window, 'Tea')
-	subtree3.set_bounds(4, 4, 100, 100)
+	subtree3.set_bounds(4, 4, 100, 25)
 	tree.childs << subtree3
 
 	mut subtree4 := ui.tree(window, 'Black Tea')
@@ -111,10 +112,10 @@ fn main() {
 	window.add_child(tree)
 
 	mut tb := ui.tabbox(window)
-	tb.set_bounds(247, 38, 100, 62)
+	tb.set_bounds(250, 38, 250, 62)
 
-	mut tbtn := ui.button(window, 'Label in Tab A')
-	tbtn.set_pos(0, 8)
+	mut tbtn := ui.button(window, 'In Tab A')
+	tbtn.set_pos(8, 8)
 	tbtn.pack()
 	tb.add_child('Tab A', tbtn)
 
@@ -124,6 +125,16 @@ fn main() {
 	tb.add_child('Tab B', tbtn1)
 
 	window.add_child(tb)
+
+	mut code_box := ui.textbox(window, 'module main\n\nfn main() {\n\tmut val := 0\n}')
+	code_box.set_bounds(30, 270, 320, 120)
+	code_box.set_codebox(true)
+	window.add_child(code_box)
+
+	mut v_img := window.gg.create_image(os.resource_abs_path('v.png'))
+	mut img := ui.image(window, v_img)
+	img.set_bounds(30,400, 50, 50)
+	window.add_child(img)
 
 	window.gg.run()
 }

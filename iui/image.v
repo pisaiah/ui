@@ -3,41 +3,44 @@ module iui
 import gg
 import gx
 
-// Label - implements Component interface
-struct Label {
+// Image - implements Component interface
+struct Image {
 	Component_A
 pub mut:
 	app            &Window
 	text           string
-	click_event_fn fn (mut Window, Label)
+	click_event_fn fn (mut Window, Image)
 	in_modal       bool
 	need_pack      bool
+	img            &gg.Image
 }
 
-pub fn label(app &Window, text string) Label {
-	return Label{
-		text: text
+pub fn image(app &Window, img &gg.Image) Image {
+	return Image{
+		text: ''
+		img: img
 		app: app
-		click_event_fn: blank_event_l
+		click_event_fn: blank_event_im
 	}
 }
 
-pub fn (mut btn Label) draw() {
-	btn.app.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn)
+pub fn (mut im Image) draw() {
+	// btn.app.draw_image(btn.x, btn.y, btn.width, btn.height, mut btn)
+	im.app.gg.draw_image(im.x, im.y, im.width, im.height, im.img)
 }
 
-pub fn (mut btn Label) pack() {
+pub fn (mut btn Image) pack() {
 	btn.need_pack = true
 }
 
-pub fn (mut btn Label) pack_do() {
+pub fn (mut btn Image) pack_do() {
 	width := text_width(btn.app, btn.text + 'ab')
 	btn.width = width
 	btn.height = text_height(btn.app, btn.text) + 4
 	btn.need_pack = false
 }
 
-fn (mut app Window) draw_label(x int, y int, width int, height int, mut btn Label) {
+fn (mut app Window) draw_image(x int, y int, width int, height int, mut btn Image) {
 	if btn.need_pack {
 		btn.pack_do()
 	}
@@ -71,21 +74,15 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut btn Labe
 	}
 
 	// Draw Button Text
-	mut line_height := text_height(app, '1A{')
-	mut my := 0
-	for mut spl in text.split('\n') {
-		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh + my, spl.replace('\t',
-			'  '.repeat(8)), gx.TextCfg{
-			size: font_size
-			color: app.theme.text_color
-		})
-		my += line_height
-	}
+	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
+		size: font_size
+		color: app.theme.text_color
+	})
 }
 
-pub fn (mut com Label) set_click(b fn (mut Window, Label)) {
+pub fn (mut com Image) set_click(b fn (mut Window, Image)) {
 	com.click_event_fn = b
 }
 
-pub fn blank_event_l(mut win Window, a Label) {
+pub fn blank_event_im(mut win Window, a Image) {
 }

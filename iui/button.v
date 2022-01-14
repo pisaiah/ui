@@ -18,7 +18,7 @@ pub fn button(app &Window, text string) Button {
 	return Button{
 		text: text
 		app: app
-		click_event_fn: blank_event
+		click_event_fn: fn (mut win Window, a Button) {}
 	}
 }
 
@@ -78,18 +78,15 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 
 	// Draw Button Background & Border
 	app.gg.draw_rounded_rect(x, y, width, height, 4, bg)
-	app.gg.draw_empty_rounded_rect(x, y, width, height, 4, border)
+	app.gg.draw_rounded_rect_empty(x, y, width, height, 4, border)
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
-		size: 14
+		size: font_size
 		color: app.theme.text_color
 	})
 }
 
 pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
 	com.click_event_fn = b
-}
-
-pub fn blank_event(mut win Window, a Button) {
 }
