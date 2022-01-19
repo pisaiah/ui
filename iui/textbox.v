@@ -9,14 +9,16 @@ import math
 struct Textbox {
 	Component_A
 pub mut:
-	app            &Window
-	text           string
-	click_event_fn fn (mut Window, Textbox)
-	is_blink       bool
-	last_blink     f64
-	wrap           bool = true
-	last_fit       int  = 1
-	code_highlight bool = false
+	app                  &Window
+	text                 string
+	click_event_fn       fn (mut Window, Textbox)
+	text_change_event_fn fn (mut Window, Textbox)
+	is_blink             bool
+	last_blink           f64
+	wrap                 bool = true
+	last_fit             int  = 1
+	code_highlight       bool
+	multiline            bool = true
 
 	carrot_left int
 	carrot_top  int
@@ -36,6 +38,10 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		.left_alt {
 			app.show_menu_bar = !app.show_menu_bar
 		}
+		.left_control {
+			// TODO: Copy & Paste, Undo & Redo
+			return
+		}
 		else {}
 	}
 	for mut a in app.components {
@@ -48,6 +54,13 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 					if mut comm is Textbox {
 						app.key_down_1(key, e, mut comm)
 					}
+				}
+			}
+		}
+		if mut a is Modal {
+			for mut child in a.children {
+				if mut child is Textbox {
+					app.key_down_1(key, e, mut child)
 				}
 			}
 		}
@@ -66,7 +79,11 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			letter = ' '
 		}
 		if letter == 'enter' {
-			letter = '\n'
+			if a.multiline {
+				letter = '\n'
+			} else {
+				letter = ''
+			}
 		}
 		if letter == 'left_shift' || letter == 'right_shift' {
 			letter = ''
@@ -139,12 +156,13 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 		}
 
 		if letter == 'backspace' {
-			mut spl := a.text.split('\n')
+			mut spl := a.text.split_into_lines()
 			mut lie := spl[a.carrot_top]
 
 			if a.carrot_left - 1 > 0 {
 				if a.carrot_left != lie.len {
-					lie = lie.substr_ni(0, a.carrot_left - 1) + lie.substr_ni(a.carrot_left, lie.len)
+					lie = lie.substr_ni(0, a.carrot_left - 1) +
+						lie.substr_ni(a.carrot_left, lie.len)
 				} else {
 					lie = lie.substr_ni(0, a.carrot_left - 1)
 				}
@@ -156,7 +174,14 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			mut nt := ''
 			for mut str in spl {
 				if nt.len == 0 {
-					nt = nt + str
+					if str.starts_with('_TO_REMOVE_LIE_') {
+						if str.len > '_TO_REMOVE_LIE_'.len {
+							nt = nt + str.replace('_TO_REMOVE_LIE_', '')
+							nt = nt.substr_ni(1, nt.len - 1)
+						}
+					} else {
+						nt = nt + str
+					}
 				} else {
 					if str.starts_with('_TO_REMOVE_LIE_') {
 						if str.len > '_TO_REMOVE_LIE_'.len {
@@ -181,7 +206,7 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 				}
 			}
 
-			mut spl := a.text.split('\n')
+			mut spl := a.text.split_into_lines()
 			mut lie := spl[a.carrot_top]
 			lie = lie.substr_ni(0, a.carrot_left) + letter + lie.substr_ni(a.carrot_left, lie.len)
 			spl[a.carrot_top] = lie
@@ -200,6 +225,7 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			}
 			a.carrot_left++
 		}
+		a.text_change_event_fn(app, *a)
 		a.key_down = false
 	}
 }
@@ -209,11 +235,16 @@ pub fn textbox(app &Window, text string) &Textbox {
 		text: text
 		app: app
 		click_event_fn: fn (mut win Window, a Textbox) {}
+		text_change_event_fn: fn (mut win Window, a Textbox) {}
 	}
 }
 
 pub fn (mut com Textbox) set_click(b fn (mut Window, Textbox)) {
 	com.click_event_fn = b
+}
+
+pub fn (mut com Textbox) set_text_change(b fn (mut Window, Textbox)) {
+	com.text_change_event_fn = b
 }
 
 pub fn (mut com Textbox) draw() {
@@ -223,7 +254,7 @@ pub fn (mut com Textbox) draw() {
 		com.text = com.text.replace('\t', ' '.repeat(8))
 	}
 
-	mut spl := com.text.split('\n')
+	mut spl := com.text.split_into_lines()
 	mut y_mult := 0
 	size := font_size
 	mut padding_x := 4
@@ -253,7 +284,7 @@ pub fn (mut com Textbox) draw() {
 		mut my := app.mouse_y - com.y
 
 		line_height := text_height(com.app, 'A{')
-		click := com.scroll_i + (my/line_height)
+		click := com.scroll_i + (my / line_height)
 
 		if click < spl.len {
 			com.carrot_top = click
@@ -290,7 +321,7 @@ pub fn (mut com Textbox) draw() {
 
 	for i := com.scroll_i; i < spl.len; i++ {
 		mut txt := spl[i]
-		txt = txt //.replace('\t', '                ')
+		// txt = txt.replace('\t', '                ')
 		mut skip := false
 
 		if y_mult + (text_height(com.app, 'A{')) > com.height {
@@ -312,7 +343,8 @@ pub fn (mut com Textbox) draw() {
 					size: size
 					color: com.text_color(wtxt)
 				})
-				wmul += text_width(com.app, wtxt + ' ') - (text_width(com.app, 'i') - 1)
+
+				wmul += text_width(com.app, wtxt + ' ')
 			}
 		}
 
@@ -357,6 +389,7 @@ pub fn (mut com Textbox) draw() {
 pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int, last_ym int, size int) {
 	// Blinking text cursor
 	mut now := time.now().unix_time_milli()
+
 	if now - com.last_blink >= 1000 {
 		com.is_blink = !com.is_blink
 		com.last_blink = now
@@ -364,12 +397,12 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 
 	mut color := com.app.theme.text_color
 	if com.is_blink {
-		color = com.app.theme.background
+		mut r := ((com.app.theme.text_color.r / 2) + com.app.theme.background.r) / 2
+		color = gx.rgb(r, r, r)
 	}
 
 	mut indx := com.carrot_top + 1
 	mut mtxt := spl[indx - 1]
-	mtxt = mtxt //.replace('\t', '                ')
 	mut lt := last_ym * (com.carrot_top) - (last_ym * com.scroll_i)
 
 	if com.carrot_left > mtxt.len && indx <= spl.len {
@@ -399,13 +432,17 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 	}
 
 	mut tw := mtxt.substr_ni(0, com.carrot_left)
-	mut lw := text_width(com.app, tw) + (padding_x - 4)
+	// println(tw)
+
+	mut lw := 0
+	for atxt in tw.split(' ') {
+		lw += text_width(com.app, atxt + ' ')
+	}
+
+	lw = (lw - text_width(com.app, ' ')) + (padding_x - 4)
+
 	if lw == 0 || lw == (padding_x - 4) {
-		if com.code_highlight {
-			lw = padding_x
-		} else {
-			lw = padding_x
-		}
+		lw = padding_x - 4
 	}
 
 	if lt < 0 {

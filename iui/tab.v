@@ -32,7 +32,7 @@ pub fn (mut tb Tabbox) draw() {
 		2, tb.win.theme.button_border_normal)
 	mut mx := 0
 	for key_, mut val in tb.kids {
-        key := os.base(key_)
+		key := os.base(key_)
 		mut theig := 20
 		mut my := 2
 		size := text_width(tb.win, key) / 2

@@ -10,21 +10,18 @@ pub mut:
 	app   &Window
 	theme Theme
 	items []MenuItem
-	tik 		   int
+	tik   int
 }
 
 pub fn (mut bar Menubar) add_child(com MenuItem) {
 	bar.items << com
 }
 
-
 pub fn (mut bar Menubar) is_hovering() bool {
 	for mut item in bar.items {
-		// for mut sub in item.items {
 		if item.show_items {
 			return true
 		}
-		//}
 	}
 	return false
 }
@@ -34,6 +31,7 @@ struct MenuItem {
 pub mut:
 	items          []MenuItem
 	text           string
+	icon           &Image
 	shown          bool
 	show_items     bool
 	click_event_fn fn (mut Window, MenuItem)
@@ -48,6 +46,7 @@ pub fn menuitem(text string) &MenuItem {
 		text: text
 		shown: false
 		show_items: false
+		icon: 0
 		click_event_fn: fn (mut win Window, item MenuItem) {}
 	}
 }
@@ -65,12 +64,12 @@ pub fn menubar(app &Window, theme Theme) &Menubar {
 
 fn (mut mb Menubar) draw() {
 	mut wid := gg.window_size().width
-	mb.app.gg.draw_rounded_rect(0, 0, wid, 25, 2, mb.app.theme.menubar_background)
+	mb.app.gg.draw_rounded_rect_filled(0, 0, wid, 25, 2, mb.app.theme.menubar_background)
 	mb.app.gg.draw_rounded_rect_empty(0, 0, wid, 25, 2, mb.app.theme.menubar_border)
 
 	mut mult := 0
 	for mut item in mb.items {
-		mb.app.draw_menu_button(50 * mult, 0, 50, 25, mut item)
+		mb.app.draw_menu_button(55 * mult, 0, 55, 25, mut item)
 		mult++
 	}
 }
@@ -143,12 +142,17 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 	}
 
 	// Draw Button Background & Border
-	app.gg.draw_rounded_rect(x, y, width, height, 2, bg)
+	app.gg.draw_rounded_rect_filled(x, y, width, height, 2, bg)
 	app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
 
 	// Draw Button Text
-	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, item.text, gx.TextCfg{
-		size: font_size
-		color: app.theme.text_color
-	})
+	if item.icon != 0 {
+		draw_with_offset(mut item.icon, x + (width / 2) - (item.icon.width / 2), y)
+	} else {
+		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, item.text,
+			gx.TextCfg{
+			size: font_size
+			color: app.theme.text_color
+		})
+	}
 }

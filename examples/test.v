@@ -3,7 +3,6 @@ import iui as ui { debug }
 import time
 import os
 
-[console]
 fn main() {
 	// Create Window
 	mut window := ui.window(ui.get_system_theme(), 'My Window', 510, 500)
@@ -133,7 +132,7 @@ fn main() {
 
 	mut v_img := window.gg.create_image(os.resource_abs_path('v.png'))
 	mut img := ui.image(window, v_img)
-	img.set_bounds(30,400, 50, 50)
+	img.set_bounds(30, 400, 50, 50)
 	window.add_child(img)
 
 	window.gg.run()

@@ -77,7 +77,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	}
 
 	// Draw Button Background & Border
-	app.gg.draw_rounded_rect(x, y, width, height, 4, bg)
+	app.gg.draw_rounded_rect_filled(x, y, width, height, 4, bg)
 	app.gg.draw_rounded_rect_empty(x, y, width, height, 4, border)
 
 	// Draw Button Text

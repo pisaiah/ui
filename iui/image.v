@@ -15,13 +15,39 @@ pub mut:
 	img            &gg.Image
 }
 
-pub fn image(app &Window, img &gg.Image) Image {
-	return Image{
+pub fn image(app &Window, img &gg.Image) &Image {
+	return &Image{
 		text: ''
 		img: img
 		app: app
 		click_event_fn: blank_event_im
 	}
+}
+
+pub fn image_with_size(app &Window, img &gg.Image, width int, height int) &Image {
+	return &Image{
+		text: ''
+		img: img
+		app: app
+		width: width
+		height: height
+		click_event_fn: blank_event_im
+	}
+}
+
+// b []byte
+pub fn image_from_byte_array_with_size(mut app Window, b []byte, width int, height int) &Image {
+	mut img := &Image{
+		text: ''
+		img: 0
+		app: app
+		width: width
+		height: height
+		click_event_fn: blank_event_im
+	}
+	gg_im := app.gg.create_image_from_byte_array(b)
+	img.img = &gg_im
+	return img
 }
 
 pub fn (mut im Image) draw() {

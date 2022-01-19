@@ -13,10 +13,18 @@ pub mut:
 	in_modal       bool
 	children       []Component
 	needs_init     bool
+	close          Button
+	shown          bool
 }
 
 pub fn (mut this Modal) add_child(com Component) {
-    this.children << com
+	this.children << com
+}
+
+pub fn (mut this Modal) add_children(coms []Component) {
+	for com in coms {
+		this.children << com
+	}
 }
 
 pub fn modal(app &Window, title string) &Modal {
@@ -26,6 +34,13 @@ pub fn modal(app &Window, title string) &Modal {
 		click_event_fn: fn (mut win Window, a Modal) {}
 		z_index: 500
 		needs_init: true
+		draw_event_fn: fn (mut win Window, mut com Component) {
+			if mut com is Modal {
+				for mut kid in com.children {
+					kid.draw_event_fn(mut win, kid)
+				}
+			}
+		}
 	}
 }
 
@@ -38,13 +53,13 @@ pub fn (mut this Modal) draw() {
 	this.width = ws.width
 	this.height = ws.height
 
-	app.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 200))
+	app.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 150))
 
 	wid := 500
 	hei := 300
 
 	xs := (ws.width / 2) - (wid / 2)
-	app.gg.draw_rounded_rect(xs, 50, wid, 26, 2, app.theme.button_bg_hover)
+	app.gg.draw_rounded_rect_filled(xs, 50, wid, 26, 2, app.theme.button_bg_hover)
 
 	mut title := this.text
 	tw := text_width(app, title)
@@ -59,50 +74,33 @@ pub fn (mut this Modal) draw() {
 			hei - (i * 2), 2, app.theme.background, app.theme.button_bg_hover)
 	}
 
-	/*mut spl := app.modal_text.split('\n')
-	mut mult := 10
-	for txt in spl {
-		app.gg.draw_text((ws.width / 2) - (wid / 2) + 26, 86 + mult, txt, gx.TextCfg{
-			size: 15
-			color: app.theme.text_color
-		})
-		mult += app.gg.text_height(txt) + 4
-	}*/
-
 	if this.needs_init {
-		mut close := button(app, 'OK')
-		close.x = (300/2) + (100/2)
-		println(close.x)
-		//close.x = (ws.width / 2) - 50
-		close.y = (300) - 35
-		close.width = 100
-		close.height = 25
-
-		close.set_click(fn (mut win Window, mutbtn Button) {
-			for mut com in win.components {
-				if mut com is Modal {
-					mut co := win.components.index(Component(com))
-					win.components.delete(co)
-				}
-			}
-		})
-
-		this.draw_event_fn = fn (mut win Window, mut com Component) {
-			if mut com is Modal {
-				for mut kid in com.children {
-					kid.draw_event_fn(mut win, kid)
-				}
-			}
-		}
-
-		this.children << close
+		this.create_close_btn(mut app, true)
 		this.needs_init = false
 	}
 
-	//mut sx := (ws.width / 2) - (500 / 2)
+	// mut sx := (ws.width / 2) - (500 / 2)
 	for mut com in this.children {
 		draw_with_offset(mut com, xs, this.y + 76)
 	}
+}
+
+pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) Button {
+	mut close := button(app, 'OK')
+	close.x = (300 / 2) + (100 / 2)
+	close.y = (300) - 35
+	close.width = 100
+	close.height = 25
+
+	if ce {
+		close.set_click(fn (mut win Window, mutbtn Button) {
+			win.components = win.components.filter(mut it !is Modal)
+		})
+	}
+
+	this.children << close
+	this.close = close
+	return close
 }
 
 pub fn (mut com Modal) set_click(b fn (mut Window, Modal)) {

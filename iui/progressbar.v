@@ -23,7 +23,7 @@ pub fn progressbar(win &Window, val f32) &Progressbar {
 // Draw this component
 pub fn (mut bar Progressbar) draw() {
 	mut wid := bar.width * (0.01 * bar.text.f32())
-	bar.win.gg.draw_rounded_rect(bar.x, bar.y, wid, bar.height, 4, bar.win.theme.progressbar_fill)
+	bar.win.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, bar.height, 4, bar.win.theme.progressbar_fill)
 	bar.win.gg.draw_rounded_rect_empty(bar.x, bar.y, bar.width, bar.height, 4, bar.win.theme.button_border_normal)
 
 	text := bar.text + '%'

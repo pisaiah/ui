@@ -6,11 +6,12 @@ import gg
 import gx
 import time
 import math
+import os.font
 
 pub const (
-	version = '0.0.1'
-	ui_mode = true
-	font_size = 15
+	version   = '0.0.1'
+	ui_mode   = false
+	font_size = 14
 )
 
 pub fn debug(o string) {
@@ -55,7 +56,11 @@ pub mut:
 	scroll_i      int
 	is_mouse_down bool
 	is_mouse_rele bool
-	draw_event_fn fn (mut Window, &Component) = fn (mut win Window, tree &Component) {}
+	draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
+}
+
+fn blank_draw_event_fn(mut win Window, tree &Component) {
+	// Stub
 }
 
 pub fn (mut com Component_A) draw() {
@@ -129,6 +134,7 @@ pub mut:
 	last_update i64
 	frame_time  int
 	has_event   bool = true
+	extra_map   map[string]string
 }
 
 pub fn (mut win Window) add_child(com Component) {
@@ -136,13 +142,22 @@ pub fn (mut win Window) add_child(com Component) {
 }
 
 pub fn window(theme Theme, title string, width int, height int) &Window {
+	return window_with_font(theme, title, width, height, font.default())
+}
+
+pub fn window_with_font(theme Theme, title string, width int, height int, font_path string) &Window {
 	mut app := &Window{
 		gg: 0
 		theme: theme
 		bar: 0
 	}
+
+	// Call blank function so -skip-unused won't skip it
+	blank_draw_event_fn(mut app, &Component_A{})
+
 	// go app.idle_draw()
-	mut font_path := gg.system_font_path()
+
+	// mut font_path := 'C:\\Users\\admin\\Downloads\\DroidSansMono.ttf'//font.default()
 	app.gg = gg.new_context(
 		bg_color: app.theme.background
 		width: width
@@ -153,7 +168,7 @@ pub fn window(theme Theme, title string, width int, height int) &Window {
 		event_fn: on_event
 		user_data: app
 		font_path: font_path
-		font_size: font_size
+		font_size: iui.font_size
 		ui_mode: iui.ui_mode
 	)
 	return app
@@ -187,7 +202,7 @@ fn (app &Window) display() {
 }
 
 fn (app &Window) draw_bordered_rect(x int, y int, width int, height int, a int, bg gx.Color, bord gx.Color) {
-	app.gg.draw_rounded_rect(x, y, width, height, a, bg)
+	app.gg.draw_rounded_rect_filled(x, y, width, height, a, bg)
 	app.gg.draw_rounded_rect_empty(x, y, width, height, a, bord)
 }
 
@@ -249,9 +264,10 @@ fn (mut app Window) draw() {
 	if app.modal_show {
 		mut ws := gg.window_size()
 
-		app.gg.draw_rounded_rect(0, 0, ws.width, ws.height, 2, gx.rgba(0, 0, 0, 100))
+		app.gg.draw_rounded_rect_filled(0, 0, ws.width, ws.height, 2, gx.rgba(0, 0, 0,
+			100))
 
-		app.gg.draw_rounded_rect((ws.width / 2) - (300 / 2), 50, 300, 26, 2, gx.rgb(80,
+		app.gg.draw_rounded_rect_filled((ws.width / 2) - (300 / 2), 50, 300, 26, 2, gx.rgb(80,
 			80, 80))
 
 		mut title := app.modal_title
@@ -331,6 +347,13 @@ fn on_event(e &gg.Event, mut app Window) {
 								&& !found {
 								comm.is_mouse_down = true
 							}
+						}
+					}
+				}
+				if mut com is Modal {
+					for mut child in com.children {
+						if point_in(mut child, app.click_x - com.x, (app.click_y - com.y)) && !found {
+							child.is_mouse_down = true
 						}
 					}
 				}

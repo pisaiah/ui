@@ -100,7 +100,7 @@ pub fn (mut item Select) draw() {
 	}
 
 	// Draw Button Background & Border
-	app.gg.draw_rounded_rect(x, y, width, height, 2, bg)
+	app.gg.draw_rounded_rect_filled(x, y, width, height, 2, bg)
 	app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
 
 	// Draw Button Text
@@ -112,7 +112,7 @@ pub fn (mut item Select) draw() {
 
 	// Draw down arrow
 	char_height := app.gg.text_height('.') / 2
-	app.gg.draw_triangle(x + width - 20, y + (height / 2) - char_height, x + width - 15,
+	app.gg.draw_triangle_filled(x + width - 20, y + (height / 2) - char_height, x + width - 15,
 		y + (height / 2) + 5 - char_height, x + width - 10, y + (height / 2) - char_height,
 		app.theme.text_color)
 }
@@ -162,7 +162,7 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	}
 
 	// Draw Button Background & Border
-	app.gg.draw_rounded_rect(x, y1, width, height, 4, bg)
+	app.gg.draw_rounded_rect_filled(x, y1, width, height, 4, bg)
 	app.gg.draw_rounded_rect_empty(x, y1, width, height, 4, border)
 
 	// Draw Button Text
