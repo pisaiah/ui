@@ -101,7 +101,7 @@ fn (mut app Window) draw_image(x int, y int, width int, height int, mut btn Imag
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
-		size: font_size
+		size: app.font_size
 		color: app.theme.text_color
 	})
 }

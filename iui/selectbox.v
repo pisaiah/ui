@@ -106,7 +106,7 @@ pub fn (mut item Select) draw() {
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size - 4, y + (height / 2) - sizh, item.text,
 		gx.TextCfg{
-		size: font_size
+		size: app.font_size
 		color: app.theme.text_color
 	})
 
@@ -167,7 +167,7 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
-		size: font_size
+		size: app.font_size
 		color: app.theme.text_color
 	})
 }

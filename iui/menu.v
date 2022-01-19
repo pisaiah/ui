@@ -151,7 +151,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 	} else {
 		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, item.text,
 			gx.TextCfg{
-			size: font_size
+			size: app.font_size
 			color: app.theme.text_color
 		})
 	}

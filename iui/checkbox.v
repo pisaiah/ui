@@ -73,7 +73,7 @@ pub fn (mut com Checkbox) draw() {
 	}
 	sizh := app.gg.text_height(com.text) / 2
 	app.gg.draw_text(com.x + com.height + 4, com.y + (height / 2) - sizh, com.text, gx.TextCfg{
-		size: font_size
+		size: app.font_size
 		color: app.theme.text_color
 	})
 }

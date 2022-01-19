@@ -11,7 +11,7 @@ import os.font
 pub const (
 	version   = '0.0.1'
 	ui_mode   = false
-	font_size = 14
+	//font_size = 14
 )
 
 pub fn debug(o string) {
@@ -114,6 +114,7 @@ pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
 struct Window {
 pub mut:
 	gg            &gg.Context
+	font_size     int = 14
 	mouse_x       int
 	mouse_y       int
 	click_x       int
@@ -168,7 +169,7 @@ pub fn window_with_font(theme Theme, title string, width int, height int, font_p
 		event_fn: on_event
 		user_data: app
 		font_path: font_path
-		font_size: iui.font_size
+		font_size: app.font_size
 		ui_mode: iui.ui_mode
 	)
 	return app

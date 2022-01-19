@@ -53,7 +53,7 @@ pub fn (mut tb Tabbox) draw() {
 		// Draw Button Text
 		tb.win.gg.draw_text((tb.x + mx) + 3, tb.y + my + (theig / 2) - sizh, ' ' + key,
 			gx.TextCfg{
-			size: font_size
+			size: tb.win.font_size
 			color: tb.win.theme.text_color
 		})
 
@@ -63,7 +63,7 @@ pub fn (mut tb Tabbox) draw() {
 			c_x := (tb.x + mx + tsize) - c_s - 4
 			c_y := tb.y + my + (theig / 2) - sizh
 			tb.win.gg.draw_text(c_x, c_y, 'x', gx.TextCfg{
-				size: font_size
+				size: tb.win.font_size
 				color: tb.win.theme.text_color
 			})
 

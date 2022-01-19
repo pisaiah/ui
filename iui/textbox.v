@@ -157,6 +157,10 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 
 		if letter == 'backspace' {
 			mut spl := a.text.split_into_lines()
+			if spl.len == 0 {
+				// No Text
+				return
+			}
 			mut lie := spl[a.carrot_top]
 
 			if a.carrot_left - 1 > 0 {
@@ -207,6 +211,9 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			}
 
 			mut spl := a.text.split_into_lines()
+			if spl.len == 0 {
+				spl = a.text.split('\n')
+			}
 			mut lie := spl[a.carrot_top]
 			lie = lie.substr_ni(0, a.carrot_left) + letter + lie.substr_ni(a.carrot_left, lie.len)
 			spl[a.carrot_top] = lie
@@ -256,7 +263,7 @@ pub fn (mut com Textbox) draw() {
 
 	mut spl := com.text.split_into_lines()
 	mut y_mult := 0
-	size := font_size
+	size := com.app.font_size
 	mut padding_x := 4
 	padding_y := 4
 
@@ -402,7 +409,12 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 	}
 
 	mut indx := com.carrot_top + 1
-	mut mtxt := spl[indx - 1]
+
+	mut mtxt := ''
+	if (indx-1) < spl.len {
+		mtxt = spl[indx - 1]
+	}
+
 	mut lt := last_ym * (com.carrot_top) - (last_ym * com.scroll_i)
 
 	if com.carrot_left > mtxt.len && indx <= spl.len {

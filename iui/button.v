@@ -33,7 +33,7 @@ pub fn (mut btn Button) pack() {
 pub fn (mut btn Button) pack_do() {
 	width := text_width(btn.app, btn.text + 'ab')
 	btn.width = width
-	btn.height = text_height(btn.app, btn.text) + 13
+	btn.height = text_height(btn.app, btn.text + 'a') + 13
 	btn.need_pack = false
 }
 
@@ -82,7 +82,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
-		size: font_size
+		size: app.font_size
 		color: app.theme.text_color
 	})
 }

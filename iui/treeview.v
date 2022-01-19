@@ -76,7 +76,7 @@ pub fn (mut tr Tree) draw() {
 	}
 
 	tr.app.gg.draw_text(tr.x + 16, tr.y + 4, os.base(tr.text), gx.TextCfg{
-		size: font_size
+		size: tr.app.font_size
 		color: tr.app.theme.text_color
 	})
 

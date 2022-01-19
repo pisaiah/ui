@@ -32,7 +32,7 @@ pub fn (mut bar Progressbar) draw() {
 
 	bar.win.gg.draw_text((bar.x + (bar.width / 2)) - size, bar.y + (bar.height / 2) - sizh,
 		text, gx.TextCfg{
-		size: font_size
+		size: bar.win.font_size
 		color: bar.win.theme.text_color
 	})
 }
