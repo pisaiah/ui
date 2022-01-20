@@ -18,11 +18,13 @@ pub mut:
 	wrap                 bool = true
 	last_fit             int  = 1
 	code_highlight       bool
+	code_high_str		 bool
 	multiline            bool = true
 
 	carrot_left int
 	carrot_top  int
 	key_down    bool
+	padding_x   int
 }
 
 pub fn (mut com Textbox) set_codebox(val bool) {
@@ -376,6 +378,7 @@ pub fn (mut com Textbox) draw() {
 			break
 		}
 	}
+	com.padding_x = padding_x
 
 	// Calculate postion for scroll
 	mut sth := int((f32((com.scroll_i)) / f32(spl.len)) * com.height)
@@ -469,22 +472,46 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 const (
 	code_blue = gx.rgb(90, 150, 230)
 	code_num  = gx.rgb(240, 200, 0)
+	code_str  = gx.rgb(200, 100, 0)
 	code_pur  = gx.rgb(200, 100, 200)
+
+	blue_words = ['mut','pub','fn','true','false','import','module','struct']
+	pur_words  = ['if','return','else','for']
 )
 
 pub fn (mut com Textbox) text_color(word string) gx.Color {
 	if !com.code_highlight {
 		return com.app.theme.text_color
 	}
-	if word == 'mut' || word == 'pub' || word == 'fn' || word == 'true' || word == 'false' {
+
+	//mut ch := false
+	/*if word.contains("'") && com.code_high_str {
+		println('end: ' + word)
+		com.code_high_str = false
+		ch = true
+	}
+
+	if word.contains("'") && !ch {
+		println(word)
+		com.code_high_str = true
+	}*/
+	if word.contains("('") || word.contains("')") {
+		com.code_high_str = !com.code_high_str
+	}
+
+	if word in blue_words {
 		return iui.code_blue
 	}
-	if word == 'if' || word == 'return' || word == 'else' || word == 'for' {
-		return iui.code_pur
+	if word in pur_words {
+		return code_pur
 	}
 
 	num := word.int()
 	if num == 0 && word != '0' {
+		// todo
+		//if com.code_high_str {
+		//	return code_str
+		//}
 		return com.app.theme.text_color
 	} else {
 		return iui.code_num

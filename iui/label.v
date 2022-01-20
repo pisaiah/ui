@@ -37,44 +37,24 @@ pub fn (mut btn Label) pack_do() {
 	btn.need_pack = false
 }
 
-fn (mut app Window) draw_label(x int, y int, width int, height int, mut btn Label) {
-	if btn.need_pack {
-		btn.pack_do()
+fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Label) {
+	if this.need_pack {
+		this.pack_do()
 	}
 
-	text := btn.text
-	size := text_width(app, text) / 2
+	text := this.text
 	sizh := text_height(app, text) / 2
 
-	// mut bg := app.theme.button_bg_normal
-	// mut border := app.theme.button_border_normal
-
-	// mut mid := (x + (width / 2))
-	// mut midy := (y + (height / 2))
-
-	// Detect Hover
-	// if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
-	// bg = app.theme.button_bg_hover
-	// border = app.theme.button_border_hover
-	//}
-
-	if btn.is_mouse_rele {
-		btn.is_mouse_rele = false
-		btn.click_event_fn(app, *btn)
-		// btn.is_selected = true
-	}
-
-	// Detect Click
-	if btn.is_mouse_down {
-		// bg = app.theme.button_bg_click
-		// border = app.theme.button_border_click
+	if this.is_mouse_rele {
+		this.is_mouse_rele = false
+		this.click_event_fn(app, *this)
 	}
 
 	// Draw Button Text
 	mut line_height := text_height(app, '1A{')
 	mut my := 0
 	for mut spl in text.split('\n') {
-		app.gg.draw_text((x), y + (height / 2) - sizh + my, spl.replace('\t',
+		app.gg.draw_text(x, y + (height / 2) - sizh + my, spl.replace('\t',
 			'  '.repeat(8)), gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
@@ -83,8 +63,8 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut btn Labe
 	}
 }
 
-pub fn (mut com Label) set_click(b fn (mut Window, Label)) {
-	com.click_event_fn = b
+pub fn (mut this Label) set_click(b fn (mut Window, Label)) {
+	this.click_event_fn = b
 }
 
 pub fn blank_event_l(mut win Window, a Label) {

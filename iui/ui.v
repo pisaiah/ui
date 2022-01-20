@@ -38,6 +38,7 @@ mut:
 	is_mouse_down bool
 	is_mouse_rele bool
 	draw_event_fn fn (mut Window, &Component)
+	after_draw_event_fn fn (mut Window, &Component)
 	draw()
 }
 
@@ -57,6 +58,7 @@ pub mut:
 	is_mouse_down bool
 	is_mouse_rele bool
 	draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
+	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
 }
 
 fn blank_draw_event_fn(mut win Window, tree &Component) {
@@ -254,6 +256,7 @@ fn (mut app Window) draw() {
 		} else {
 			draw_with_offset(mut com, 0, -25)
 		}
+		com.after_draw_event_fn(app, &com)
 	}
 
 	// Draw Menubar last

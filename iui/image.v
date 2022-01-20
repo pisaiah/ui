@@ -35,7 +35,6 @@ pub fn image_with_size(app &Window, img &gg.Image, width int, height int) &Image
 	}
 }
 
-// b []byte
 pub fn image_from_byte_array_with_size(mut app Window, b []byte, width int, height int) &Image {
 	mut img := &Image{
 		text: ''
@@ -50,13 +49,12 @@ pub fn image_from_byte_array_with_size(mut app Window, b []byte, width int, heig
 	return img
 }
 
-pub fn (mut im Image) draw() {
-	// btn.app.draw_image(btn.x, btn.y, btn.width, btn.height, mut btn)
-	im.app.gg.draw_image(im.x, im.y, im.width, im.height, im.img)
+pub fn (mut this Image) draw() {
+	this.app.gg.draw_image(this.x, this.y, this.width, this.height, this.img)
 }
 
-pub fn (mut btn Image) pack() {
-	btn.need_pack = true
+pub fn (mut this Image) pack() {
+	this.need_pack = true
 }
 
 pub fn (mut btn Image) pack_do() {

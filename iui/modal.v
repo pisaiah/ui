@@ -65,7 +65,7 @@ pub fn (mut this Modal) draw() {
 	tw := text_width(app, title)
 	th := text_height(app, title)
 	app.gg.draw_text((ws.width / 2) - (tw / 2), 50 + (th / 2) - 1, title, gx.TextCfg{
-		size: 16
+		size: app.font_size
 		color: app.theme.text_color
 	})
 

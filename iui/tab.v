@@ -89,6 +89,7 @@ pub fn (mut tb Tabbox) draw() {
 			for mut com in val {
 				com.draw_event_fn(tb.win, &com)
 				draw_with_offset(mut com, tb.x, tb.y + theig)
+				com.after_draw_event_fn(tb.win, &com)
 			}
 		}
 	}
