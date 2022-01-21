@@ -3,7 +3,6 @@ module iui
 import gg
 import gx
 import time
-import math
 
 // Textbox - implements Component interface
 struct Textbox {
@@ -18,8 +17,10 @@ pub mut:
 	wrap                 bool = true
 	last_fit             int  = 1
 	code_highlight       bool
-	code_high_str		 bool
+	code_high_str        bool
 	multiline            bool = true
+	ctrl_down            bool
+	last_letter          string
 
 	carrot_left int
 	carrot_top  int
@@ -73,6 +74,14 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 	// for mut a in app.components {
 	//	if mut a is Textbox {
 	if a.is_selected {
+		mod := e.modifiers
+		if mod == 8 {
+			// Windows Key
+			return
+		}
+		if mod == 2 {
+			a.ctrl_down = true
+		}
 		a.key_down = true
 		kc := u32(gg.KeyCode(e.key_code))
 		mut letter := e.key_code.str()
@@ -200,13 +209,13 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			}
 			a.text = nt
 			a.carrot_left--
-		} else {
+		} else if mod != 2 {
 			if app.shift_pressed && letter.len > 0 {
 				letter = letter.to_upper()
 			}
 			if letter.len > 1 {
 				if letter == 'tab' {
-					letter = ' '.repeat(8)
+					letter = ' '.repeat(4)
 				} else {
 					letter = res
 				}
@@ -229,13 +238,15 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 				}
 			}
 			a.text = nt
-			if letter.len >= 8 {
+			if letter.len >= 4 {
 				a.carrot_left += letter.len - 1
 			}
 			a.carrot_left++
 		}
+		a.last_letter = letter
 		a.text_change_event_fn(app, *a)
 		a.key_down = false
+		a.ctrl_down = false
 	}
 }
 
@@ -260,7 +271,7 @@ pub fn (mut com Textbox) draw() {
 	if com.text.contains('\t') {
 		// gg currently does not render tabs correctly.
 		// possible font issue?
-		com.text = com.text.replace('\t', ' '.repeat(8))
+		com.text = com.text.replace('\t', ' '.repeat(4))
 	}
 
 	mut spl := com.text.split_into_lines()
@@ -277,8 +288,7 @@ pub fn (mut com Textbox) draw() {
 	mut midy := (com.y + (com.height / 2))
 
 	// Detect Hover
-	if (math.abs(mid - app.mouse_x) < (com.width / 2))
-		&& (math.abs(midy - app.mouse_y) < (com.height / 2)) {
+	if (abs(mid - app.mouse_x) < (com.width / 2)) && (abs(midy - app.mouse_y) < (com.height / 2)) {
 		border = app.theme.button_border_hover
 	}
 
@@ -291,18 +301,21 @@ pub fn (mut com Textbox) draw() {
 		border = app.theme.button_border_click
 
 		mut my := app.mouse_y - com.y
+		mut mx := app.mouse_x - com.x
 
 		line_height := text_height(com.app, 'A{')
+		lw := text_width(com.app, 'A')
 		click := com.scroll_i + (my / line_height)
 
 		if click < spl.len {
 			com.carrot_top = click
+			com.carrot_left = mx / lw
 		}
 
 		com.is_mouse_rele = false
 	} else {
-		if app.click_x > -1 && !(math.abs(mid - app.mouse_x) < (com.width / 2)
-			&& math.abs(midy - app.mouse_y) < (com.height / 2)) {
+		if app.click_x > -1 && !(abs(mid - app.mouse_x) < (com.width / 2)
+			&& abs(midy - app.mouse_y) < (com.height / 2)) {
 			com.is_selected = false
 		}
 	}
@@ -398,7 +411,7 @@ pub fn (mut com Textbox) draw() {
 
 pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int, last_ym int, size int) {
 	// Blinking text cursor
-	mut now := time.now().unix_time_milli()
+	mut now := time.ticks()
 
 	if now - com.last_blink >= 1000 {
 		com.is_blink = !com.is_blink
@@ -414,7 +427,7 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 	mut indx := com.carrot_top + 1
 
 	mut mtxt := ''
-	if (indx-1) < spl.len {
+	if (indx - 1) < spl.len {
 		mtxt = spl[indx - 1]
 	}
 
@@ -470,13 +483,13 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 }
 
 const (
-	code_blue = gx.rgb(90, 150, 230)
-	code_num  = gx.rgb(240, 200, 0)
-	code_str  = gx.rgb(200, 100, 0)
-	code_pur  = gx.rgb(200, 100, 200)
+	code_blue  = gx.rgb(90, 150, 230)
+	code_num   = gx.rgb(240, 200, 0)
+	code_str   = gx.rgb(200, 100, 0)
+	code_pur   = gx.rgb(200, 100, 200)
 
-	blue_words = ['mut','pub','fn','true','false','import','module','struct']
-	pur_words  = ['if','return','else','for']
+	blue_words = ['mut', 'pub', 'fn', 'true', 'false', 'import', 'module', 'struct']
+	pur_words  = ['if', 'return', 'else', 'for']
 )
 
 pub fn (mut com Textbox) text_color(word string) gx.Color {
@@ -484,8 +497,9 @@ pub fn (mut com Textbox) text_color(word string) gx.Color {
 		return com.app.theme.text_color
 	}
 
-	//mut ch := false
-	/*if word.contains("'") && com.code_high_str {
+	// mut ch := false
+	/*
+	if word.contains("'") && com.code_high_str {
 		println('end: ' + word)
 		com.code_high_str = false
 		ch = true
@@ -499,17 +513,17 @@ pub fn (mut com Textbox) text_color(word string) gx.Color {
 		com.code_high_str = !com.code_high_str
 	}
 
-	if word in blue_words {
+	if word in iui.blue_words {
 		return iui.code_blue
 	}
-	if word in pur_words {
-		return code_pur
+	if word in iui.pur_words {
+		return iui.code_pur
 	}
 
 	num := word.int()
 	if num == 0 && word != '0' {
 		// todo
-		//if com.code_high_str {
+		// if com.code_high_str {
 		//	return code_str
 		//}
 		return com.app.theme.text_color

@@ -2,7 +2,7 @@ module iui
 
 import gg
 import gx
-import math
+import v.util.version { full_v_version }
 
 [heap]
 struct Menubar {
@@ -89,14 +89,14 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 	mut midy := (y + (height / 2))
 
 	// Detect Hover
-	if (math.abs(midx - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+	if (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
 		bg = app.theme.button_bg_hover
 		border = app.theme.button_border_hover
 	}
 
 	// Detect Click
-	mut clicked := ((math.abs(midx - app.click_x) < (width / 2))
-		&& (math.abs(midy - app.click_y) < (height / 2)))
+	mut clicked := ((abs(midx - app.click_x) < (width / 2))
+		&& (abs(midy - app.click_y) < (height / 2)))
 	if clicked && !item.show_items {
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
@@ -106,8 +106,25 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 		item.click_event_fn(app, *item)
 
 		if item.text == 'About iUI' {
-			app.message_box('About I-UI', "Isaiah's UI Toolkit for V.\nVersion: " + version +
-				'\n\n\nCopyright © 2021-2022 Isaiah.\nAll Rights Reserved.')
+			mut about := modal(app, 'About iUI')
+			mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: " + version +
+				'\n\nCompiled with ' + full_v_version(false))
+			lbl.set_pos(145, 65)
+			about.add_child(lbl)
+
+			mut gh := button(app, 'Github')
+			gh.set_pos(145, 122)
+			gh.set_click(fn (mut win Window, com Button) {
+				open_url('https://github.com/isaiahpatton/ui')
+			})
+			gh.pack()
+			about.add_child(gh)
+
+			mut copy := label(app, 'Copyright © 2021-2022 Isaiah.\nAll Rights Reserved.')
+			copy.set_pos(145, 173)
+			about.add_child(copy)
+
+			app.add_child(about)
 		}
 	}
 

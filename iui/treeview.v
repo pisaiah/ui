@@ -3,7 +3,6 @@ module iui
 import gg
 import gx
 import time
-import math
 import os
 
 // Treeview
@@ -37,11 +36,11 @@ pub fn (mut tr Tree) draw() {
 	mut mid := (tr.x + (tr.width / 2))
 	mut midy := (tr.y + 3 + (20 / 2))
 
-	if (math.abs(mid - app.mouse_x) < (tr.width / 2)) && (math.abs(midy - app.mouse_y) < (20 / 2)) {
+	if (abs(mid - app.mouse_x) < (tr.width / 2)) && (abs(midy - app.mouse_y) < (20 / 2)) {
 		bg = app.theme.button_bg_hover
 	}
 
-	if (math.abs(mid - app.click_x) < (tr.width / 2)) && (math.abs(midy - app.click_y) < (20 / 2)
+	if (abs(mid - app.click_x) < (tr.width / 2)) && (abs(midy - app.click_y) < (20 / 2)
 		&& app.bar.tik > 50) {
 		now := time.now().unix_time_milli()
 

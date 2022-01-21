@@ -2,7 +2,6 @@ module iui
 
 import gg
 import gx
-import math
 
 // Button - implements Component interface
 struct Button {
@@ -11,7 +10,6 @@ pub mut:
 	app            &Window
 	click_event_fn fn (mut Window, Button)
 	need_pack      bool
-	in_modal       bool
 }
 
 pub fn button(app &Window, text string) Button {
@@ -53,7 +51,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	mut midy := (y + (height / 2))
 
 	// Detect Hover
-	if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
 		bg = app.theme.button_bg_hover
 		border = app.theme.button_border_hover
 	}
@@ -65,13 +63,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 
 	// Detect Click
 	if btn.is_mouse_down {
-		// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without INVALID MEMORY ERROR.
-		if app.modal_show {
-			if !btn.in_modal {
-				return
-			}
-		}
-
+		// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without MEMORY ERROR.
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
 	}

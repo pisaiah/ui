@@ -3,7 +3,6 @@ module iui
 import gg
 import gx
 import time
-import math
 
 // Select - implements Component interface
 struct Select {
@@ -52,14 +51,14 @@ pub fn (mut item Select) draw() {
 	mut midy := (y + (height / 2))
 
 	// Detect Hover
-	if (math.abs(midx - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+	if (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
 		bg = app.theme.button_bg_hover
 		border = app.theme.button_border_hover
 	}
 
 	// Detect Click
-	mut clicked := ((math.abs(midx - app.click_x) < (width / 2))
-		&& (math.abs(midy - app.click_y) < (height / 2)))
+	mut clicked := ((abs(midx - app.click_x) < (width / 2))
+		&& (abs(midy - app.click_y) < (height / 2)))
 
 	if clicked && !item.show_items {
 		bg = app.theme.button_bg_click
@@ -134,14 +133,14 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	mut midy := (y1 + (height / 2))
 
 	// Detect Hover
-	if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
 		bg = app.theme.button_bg_hover
 		border = app.theme.button_border_hover
 	}
 
 	// Detect Click
 	// if btn.is_mouse_down {
-	if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
+	if (abs(mid - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)) {
 		now := time.now().unix_time_milli()
 
 		// TODO: Better click time

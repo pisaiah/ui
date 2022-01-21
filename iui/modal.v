@@ -79,7 +79,6 @@ pub fn (mut this Modal) draw() {
 		this.needs_init = false
 	}
 
-	// mut sx := (ws.width / 2) - (500 / 2)
 	for mut com in this.children {
 		draw_with_offset(mut com, xs, this.y + 76)
 	}

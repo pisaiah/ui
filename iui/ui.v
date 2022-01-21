@@ -5,13 +5,13 @@ module iui
 import gg
 import gx
 import time
-import math
+import os
 import os.font
 
 pub const (
-	version   = '0.0.1'
-	ui_mode   = false
-	//font_size = 14
+	version = '0.0.1'
+	ui_mode = false // Note: On N4100; ui_mode uses
+		// 	   more cpu while on than off.
 )
 
 pub fn debug(o string) {
@@ -45,19 +45,19 @@ mut:
 [heap]
 pub struct Component_A {
 pub mut:
-	text          string
-	x             int
-	y             int
-	width         int
-	height        int
-	last_click    f64
-	is_selected   bool
-	carrot_index  int
-	z_index       int
-	scroll_i      int
-	is_mouse_down bool
-	is_mouse_rele bool
-	draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
+	text                string
+	x                   int
+	y                   int
+	width               int
+	height              int
+	last_click          f64
+	is_selected         bool
+	carrot_index        int
+	z_index             int
+	scroll_i            int
+	is_mouse_down       bool
+	is_mouse_rele       bool
+	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
 }
 
@@ -73,7 +73,7 @@ pub fn point_in(mut com Component, px int, py int) bool {
 	midx := com.x + (com.width / 2)
 	midy := com.y + (com.height / 2)
 
-	return (math.abs(midx - px) < (com.width / 2)) && (math.abs(midy - py) < (com.height / 2))
+	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
 }
 
 pub fn draw_with_offset(mut com Component, offx int, offy int) {
@@ -130,10 +130,6 @@ pub mut:
 	show_menu_bar bool = true
 	shift_pressed bool
 
-	modal_show  bool
-	modal_title string
-	modal_text  string
-
 	last_update i64
 	frame_time  int
 	has_event   bool = true
@@ -158,9 +154,6 @@ pub fn window_with_font(theme Theme, title string, width int, height int, font_p
 	// Call blank function so -skip-unused won't skip it
 	blank_draw_event_fn(mut app, &Component_A{})
 
-	// go app.idle_draw()
-
-	// mut font_path := 'C:\\Users\\admin\\Downloads\\DroidSansMono.ttf'//font.default()
 	app.gg = gg.new_context(
 		bg_color: app.theme.background
 		width: width
@@ -175,19 +168,6 @@ pub fn window_with_font(theme Theme, title string, width int, height int, font_p
 		ui_mode: iui.ui_mode
 	)
 	return app
-}
-
-// Update at 1FPS during idle, (for text cursor blinking)
-pub fn (mut win Window) idle_draw() {
-	for {
-		now := time.now().unix_time_milli()
-		if now - win.last_update > 1000 {
-			win.gg.refresh_ui()
-			win.last_update = now
-			println(now)
-		}
-		time.sleep(1000 * time.millisecond)
-	}
 }
 
 pub fn (mut win Window) set_theme(theme Theme) {
@@ -231,18 +211,12 @@ fn (mut app Window) draw() {
 		color: app.theme.text_color
 	})*/
 
-	// Sort by Z-index
+	// Sort by Z-index; Lower draw first
 	app.components.sort(a.z_index < b.z_index)
 
 	// Draw components
 	mut bar_drawn := false
 	for mut com in app.components {
-		if mut com is Button {
-			if com.in_modal && !app.modal_show {
-				continue
-			}
-		}
-
 		com.draw_event_fn(app, &com)
 
 		if com.z_index > 100 && app.show_menu_bar {
@@ -265,49 +239,6 @@ fn (mut app Window) draw() {
 		bar.draw()
 	}
 
-	if app.modal_show {
-		mut ws := gg.window_size()
-
-		app.gg.draw_rounded_rect_filled(0, 0, ws.width, ws.height, 2, gx.rgba(0, 0, 0,
-			100))
-
-		app.gg.draw_rounded_rect_filled((ws.width / 2) - (300 / 2), 50, 300, 26, 2, gx.rgb(80,
-			80, 80))
-
-		mut title := app.modal_title
-		tw := text_width(app, title)
-		th := text_height(app, title)
-		app.gg.draw_text((ws.width / 2) - (tw / 2), 50 + (th / 2) - 1, title, gx.TextCfg{
-			size: 16
-			color: gx.rgb(240, 240, 240)
-		})
-		app.draw_bordered_rect((ws.width / 2) - (300 / 2), 74, 300, 200, 2, app.theme.background,
-			gx.rgb(80, 80, 80))
-
-		mut spl := app.modal_text.split('\n')
-		mut mult := 10
-		for txt in spl {
-			app.gg.draw_text((ws.width / 2) - (300 / 2) + 26, 86 + mult, txt, gx.TextCfg{
-				size: 15
-				color: app.theme.text_color
-			})
-			mult += app.gg.text_height(txt) + 4
-		}
-
-		mut close := button(app, 'OK')
-		close.x = (ws.width / 2) - 50
-		close.y = 230
-		close.width = 100
-		close.height = 25
-		app.add_child(close)
-		close.set_click(fn (mut win Window, btn Button) {
-			win.modal_show = false
-			mut co := win.components.index(Component(btn))
-			win.components.delete(co)
-		})
-		close.in_modal = true
-		close.draw()
-	}
 	end := time.now().unix_time_milli()
 	app.fpss++
 	if end - app.last_update > 1000 {
@@ -325,15 +256,11 @@ fn on_event(e &gg.Event, mut app Window) {
 		app.has_event = true
 	}
 
-	if e.typ == .mouse_move && !app.modal_show {
+	if e.typ == .mouse_move {
 		app.mouse_x = int(e.mouse_x)
 		app.mouse_y = int(e.mouse_y)
 	}
 	if e.typ == .mouse_down {
-		// if app.show_menu_bar && app.bar.is_hovering() {
-		//	return
-		//}
-
 		app.click_x = int(e.mouse_x)
 		app.click_y = int(e.mouse_y)
 
@@ -447,19 +374,12 @@ fn on_event(e &gg.Event, mut app Window) {
 fn text_box_scroll(e &gg.Event, mut a Textbox) {
 	if a.is_selected {
 		scroll_y := (int(e.scroll_y) / 2)
-		if math.abs(e.scroll_y) != e.scroll_y {
+		if abs(e.scroll_y) != e.scroll_y {
 			a.scroll_i += -scroll_y
 		} else if a.scroll_i > 0 {
 			a.scroll_i -= scroll_y
 		}
 	}
-}
-
-// Modal
-pub fn (mut win Window) message_box(title string, s string) {
-	win.modal_show = true
-	win.modal_title = title
-	win.modal_text = s
 }
 
 // Functions for GG
@@ -469,4 +389,24 @@ pub fn text_width(win Window, text string) int {
 
 pub fn text_height(win Window, text string) int {
 	return win.gg.text_height(text)
+}
+
+//
+[inline]
+pub fn abs<T>(a T) T {
+	return if a > 0 { a } else { -a }
+}
+
+pub fn open_url(url string) {
+	mut url_ := url
+	if !url.starts_with('http') {
+		url_ = 'https://' + url
+	}
+	$if windows {
+		os.execute('cmd.exe /c "start $url_"')
+	} $else $if macos {
+		os.execute('open "$url_"')
+	} $else $if linux {
+		os.execute('xdg-open "$url_"')
+	}
 }

@@ -2,7 +2,6 @@ module iui
 
 import gg
 import gx
-import math
 import os
 
 // Tabbox - implements Component interface
@@ -69,7 +68,7 @@ pub fn (mut tb Tabbox) draw() {
 
 			mut mid := c_x + (c_s / 2)
 			mut midy := c_y + (csy / 2)
-			if (math.abs(mid - tb.win.click_x) < c_s) && (math.abs(midy - tb.win.click_y) < csy)
+			if (abs(mid - tb.win.click_x) < c_s) && (abs(midy - tb.win.click_y) < csy)
 				&& tb.is_mouse_rele {
 				tb.is_mouse_rele = false
 				tb.kids.delete(key_)
@@ -79,8 +78,7 @@ pub fn (mut tb Tabbox) draw() {
 
 		mut mid := (tb.x + mx + (tsize / 2))
 		mut midy := (tb.y + (theig / 2))
-		if (math.abs(mid - tb.win.click_x) < (tsize / 2))
-			&& (math.abs(midy - tb.win.click_y) < (theig / 2)) {
+		if (abs(mid - tb.win.click_x) < (tsize / 2)) && (abs(midy - tb.win.click_y) < (theig / 2)) {
 			tb.active_tab = key_
 		}
 

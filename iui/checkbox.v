@@ -3,7 +3,6 @@ module iui
 import gg
 import gx
 import time
-import math
 
 // Checkbox - implements Component interface
 struct Checkbox {
@@ -40,7 +39,7 @@ pub fn (mut com Checkbox) draw() {
 	mut midy := (com.y + (height / 2))
 
 	// Detect Hover
-	if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
 		bg = app.theme.button_bg_hover
 		border = app.theme.button_border_hover
 	}
@@ -52,7 +51,7 @@ pub fn (mut com Checkbox) draw() {
 	}
 
 	// Detect Click
-	// if (math.abs(mid - app.click_x) < (width / 2)) && (math.abs(midy - app.click_y) < (height / 2)) {
+	// if (abs(mid - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)) {
 	if com.is_mouse_down {
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click

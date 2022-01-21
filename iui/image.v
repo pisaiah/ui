@@ -80,7 +80,7 @@ fn (mut app Window) draw_image(x int, y int, width int, height int, mut btn Imag
 	// mut midy := (y + (height / 2))
 
 	// Detect Hover
-	// if (math.abs(mid - app.mouse_x) < (width / 2)) && (math.abs(midy - app.mouse_y) < (height / 2)) {
+	// if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
 	// bg = app.theme.button_bg_hover
 	// border = app.theme.button_border_hover
 	//}

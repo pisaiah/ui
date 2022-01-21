@@ -54,8 +54,8 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 	mut line_height := text_height(app, '1A{')
 	mut my := 0
 	for mut spl in text.split('\n') {
-		app.gg.draw_text(x, y + (height / 2) - sizh + my, spl.replace('\t',
-			'  '.repeat(8)), gx.TextCfg{
+		app.gg.draw_text(x, y + (height / 2) - sizh + my, spl.replace('\t', '  '.repeat(8)),
+			gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})
