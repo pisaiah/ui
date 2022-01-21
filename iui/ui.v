@@ -330,7 +330,7 @@ fn on_event(e &gg.Event, mut app Window) {
 					for mut kid in com.children {
 						mut ws := gg.window_size()
 						mut sx := (ws.width / 2) - (500 / 2)
-						if point_in(mut kid, mx - com.x - sx, (my - com.y) - 76) {
+						if point_in(mut kid, mx - com.x - sx, (my - com.y) - (com.top_off + 26)) {
 							kid.is_mouse_down = false
 							kid.is_mouse_rele = true
 						}
@@ -361,6 +361,18 @@ fn on_event(e &gg.Event, mut app Window) {
 							text_box_scroll(e, mut comm)
 						}
 					}
+				}
+			}
+
+			if mut a is Modal {
+				scroll_y := (int(e.scroll_y) / 2)
+				if abs(e.scroll_y) != e.scroll_y {
+					a.scroll_i += -scroll_y
+				} else if a.scroll_i > 0 {
+					a.scroll_i -= scroll_y
+				}
+				if a.scroll_i < 0 {
+					a.scroll_i = 0
 				}
 			}
 

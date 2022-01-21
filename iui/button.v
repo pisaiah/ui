@@ -10,6 +10,7 @@ pub mut:
 	app            &Window
 	click_event_fn fn (mut Window, Button)
 	need_pack      bool
+	extra          string
 }
 
 pub fn button(app &Window, text string) Button {
