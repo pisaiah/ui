@@ -1,5 +1,6 @@
 *.exe
 examples/*.exe
+!upx.exe
 
 #
 #  See: https://github.com/isaiahpatton/vide
