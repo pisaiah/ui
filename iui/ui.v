@@ -37,6 +37,7 @@ mut:
 	scroll_i int
 	is_mouse_down bool
 	is_mouse_rele bool
+	parent &Component_A
 	draw_event_fn fn (mut Window, &Component)
 	after_draw_event_fn fn (mut Window, &Component)
 	draw()
@@ -59,6 +60,15 @@ pub mut:
 	is_mouse_rele       bool
 	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
+    parent &Component_A = 0
+}
+
+pub fn (mut com Component_A) set_parent(mut par Component_A) {
+	com.parent = par
+}
+
+pub fn (mut com Component_A) get_com() Component_A {
+	return com
 }
 
 fn blank_draw_event_fn(mut win Window, tree &Component) {
@@ -184,7 +194,7 @@ fn frame(mut app Window) {
 fn (app &Window) display() {
 }
 
-fn (app &Window) draw_bordered_rect(x int, y int, width int, height int, a int, bg gx.Color, bord gx.Color) {
+pub fn (app &Window) draw_bordered_rect(x int, y int, width int, height int, a int, bg gx.Color, bord gx.Color) {
 	app.gg.draw_rounded_rect_filled(x, y, width, height, a, bg)
 	app.gg.draw_rounded_rect_empty(x, y, width, height, a, bord)
 }

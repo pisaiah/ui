@@ -1,4 +1,4 @@
 @echo off
-echo v -cc gcc -gc boehm examples
-v -cc gcc -gc boehm -prod -cflags -static examples/ide
+v -cc gcc -gc boehm -prod -skip-unused -cflags -static examples/ide
+upx.exe -9 examples/ide/ide.exe
 pause

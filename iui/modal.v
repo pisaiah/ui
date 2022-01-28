@@ -20,17 +20,19 @@ pub mut:
 	in_height int
 	left_off  int
 	top_off   int = 50
+	xs        int
 }
 
-pub fn (mut this Modal) add_child(com Component) {
+pub fn (mut this Modal) add_child(mut com Component) {
+	com.parent = &this
 	this.children << com
 }
 
-pub fn (mut this Modal) add_children(coms []Component) {
+/*pub fn (mut this Modal) add_children(coms []Component) {
 	for com in coms {
 		this.children << com
 	}
-}
+}*/
 
 pub fn modal(app &Window, title string) &Modal {
 	return &Modal{
@@ -66,6 +68,7 @@ pub fn (mut this Modal) draw() {
 	hei := this.in_height
 
 	xs := (ws.width / 2) - (wid / 2) - this.left_off
+	this.xs = xs
 	app.gg.draw_rounded_rect_filled(xs, this.top_off, wid, 26, 2, app.theme.button_bg_hover)
 
 	mut title := this.text

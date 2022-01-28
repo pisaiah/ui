@@ -36,6 +36,7 @@ pub fn (mut tr Tree) draw() {
 	mut mid := (tr.x + (tr.width / 2))
 	mut midy := (tr.y + 3 + (20 / 2))
 
+	tr.app.draw_bordered_rect(tr.x + 4, tr.y + 3, tr.width - 8, tr.height, 2, bg, bord)
 	if (abs(mid - app.mouse_x) < (tr.width / 2)) && (abs(midy - app.mouse_y) < (20 / 2)) {
 		bg = app.theme.button_bg_hover
 	}
@@ -54,6 +55,7 @@ pub fn (mut tr Tree) draw() {
 			tr.last_click = time.now().unix_time_milli()
 		}
 	}
+
 	if tr.is_selected {
 		if tr.childs.len > 0 {
 			// bg = app.theme.button_bg_hover
