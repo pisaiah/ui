@@ -120,8 +120,8 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 			gh.pack()
 			about.add_child(gh)
 
-			mut copy := label(app, 'Copyright © 2021-2022 Isaiah.\nAll Rights Reserved.')
-			copy.set_pos(145, 173)
+			mut copy := label(app, 'Copyright © 2021-2022 Isaiah.\nLicensed under the MIT/BSL.')
+			copy.set_pos(140, 173)
 			about.add_child(copy)
 
 			app.add_child(about)
