@@ -267,12 +267,12 @@ fn on_event(e &gg.Event, mut app Window) {
 	}
 
 	if e.typ == .mouse_move {
-		app.mouse_x = int(e.mouse_x)
-		app.mouse_y = int(e.mouse_y)
+		app.mouse_x = app.gg.mouse_pos_x
+		app.mouse_y = app.gg.mouse_pos_y
 	}
 	if e.typ == .mouse_down {
-		app.click_x = int(e.mouse_x)
-		app.click_y = int(e.mouse_y)
+		app.click_x = app.gg.mouse_pos_x
+		app.click_y = app.gg.mouse_pos_y
 
 		// Sort by Z-index
 		app.components.sort(a.z_index > b.z_index)
@@ -317,8 +317,8 @@ fn on_event(e &gg.Event, mut app Window) {
 	if e.typ == .mouse_up {
 		app.click_x = -1
 		app.click_y = -1
-		mx := int(e.mouse_x)
-		my := int(e.mouse_y)
+		mx := app.gg.mouse_pos_x
+		my := app.gg.mouse_pos_y
 		mut found := false
 		app.components.sort(a.z_index > b.z_index)
 		for mut com in app.components {
