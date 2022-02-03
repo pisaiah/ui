@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<title>Isaiah's UI &middot; Index</title>
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<div class='navbar' style='posaition:fixed;top:0;'>
+   <button href='#' class='bar-item title w3-mobile bw'>Isaiah's UI</button>
+   <div class="r">
+	 <a href="#"><button class="bar-item w3-mbile bw">Home</button></a>
+	 <a href="#"><button class="bar-item w3-obile bw">About</button></a>
+	 <a href="#"><button class="bar-item w3-obile bw">Download</button></a>
+   </div>
+</div>
+
+<body>
+ <div class="main">
+	<div class="w3-container" style="padding-top:5vh;min-height:35vh;background:rgb(230,230,230)">
+		<div class="w3-content" style="padding-top:5vh;padding-bottom:5vh">
+		<p class="w3-container" style="display:inline-block;float:left;">
+			<div style="font-size:3rem;display:inline-block;margin:0;" class="w3-animate-left">
+				The <span id="tag"><span id="tagl">simple</span><div class="cmd cursor w3-hide-small w3-hide-medium" style="display:inline-block">&nbsp;<i></i></div></span> Widget Toolkit for V<br>
+			</div><br><p>&nbsp;</p>
+			<div class="w3-container" style="display:inline-block;float:left">
+			</div>
+		</p>
+		</div>
+	</div>
+
+	<div class="w3-container w3-auto" style="min-height:60vh">
+        <p>&nbsp;</p>
+		<div class="w3-container w3-row" style="text-align:center">
+            <div class="w3-third w3-animate-bottom">
+                <img src="./img/theme-default.png" style="width:98%" class="w3-border"><br>
+                Default Theme
+            </div>
+            <div class="w3-third w3-animate-bottom">
+                <img src="./img/theme-mint.png" style="width:98%"><br>
+                Mint Theme
+            </div>
+            <div class="w3-third w3-animate-bottom">
+                <img src="./img/theme-dark.png" style="width:98%"><br>
+                Dark Theme
+            </div>
+		</div>
+	</div>
+    
+    <div class="w3-container w3-content" style="min-height:60vh">
+		<h3>Example Widget Style</h3>
+		<div class="w3-container w3-row">
+                <figure><img src="./img/button.png"><figcaption>Button<figcaption></figure>
+                <figure><img src="./img/textbox.png"><figcaption>Textbox<figcaption></figure>
+                
+                <figure><img src="./img/menu.png"><figcaption>Menubar & Menu<figcaption></figure>
+
+                <figure><img src="./img/checkbox.png"><figcaption>Checkbox<figcaption></figure>
+                <figure><img src="./img/selectbox-both.png"><figcaption>Selectbox<figcaption></figure>
+                <figure><img src="./img/label.png"><figcaption>Label<figcaption></figure>
+                <figure><img src="./img/treeview.png"><figcaption>Treeview<figcaption></figure>
+                <figure><img src="./img/tab.png"><figcaption>Tabbox<figcaption></figure>
+		</div>
+	</div>
+
+	<div class="w3-container w3-content" style="margin-top:8vh">
+		<h3>Documentation</h3>
+		<p class="w3-container">
+			<a href="./docs/index.html">See docs.</a>
+		</p>
+	</div>
+
+	<div class="w3-container w3-content" style="min-height:50vh;margin-top:8vh">
+		<h3>Download</h3>
+		<div>
+            <div class="columns">
+              <ul class="price">
+                <li class="header">Source</li>
+                <li class="grey"><a href="https://github.com/isaiahpatton/ui"><button class="button">See Github</button></a></li>
+              </ul>
+            </div>
+		</div>
+	</div>
+ </div>
+
+ <script>
+var ti = 1;
+var ll = ["simple", "cross-platform", "modern", "lite"];
+
+function re(txt) {
+	var tl = document.getElementById("tagl");
+	var ih = tl.innerHTML;
+	const ol = ih.length;
+	for (var i=0; i < ih.length; i++){ setTimeout(function(){cutOne(tl);}, 70*i); }
+	setTimeout(function(){ runTxt(txt) }, (130 * (ol+1)));
+}
+
+function runTxt(txt) {
+  var ci = 0;
+  var tim;
+  tim = setInterval(function() {
+	if (ci < txt.toString().length) {
+		document.getElementById("tagl").innerHTML += txt.toString().charAt(ci);
+		ci += 1;
+	} else { setTimeout(function(){ if (ti >= ll.length){ti=0} re(ll[ti]); ti++; }, 2000); clearInterval(tim); }
+  }, 70);
+}
+
+function cutOne(el) {var ih=el.innerHTML; el.innerHTML=ih.substring(0,ih.length-1);}
+re("simple");
+</script>
+ 
+<div class="footer w3-border w3-row">
+	<small style="font-size:11px">Copyright &copy; 2021-2022 Isaiah.</small>
+</div>
+</body>
+</html>

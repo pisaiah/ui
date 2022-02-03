@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <title>doc/widgets/menu</title>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="../../styles.css">
+        <link rel="stylesheet" href="../../w3.css">
+        
+        <style>
+            figure{
+                padding-top:.5rem;
+                display:inline-block!important;
+                border:1px solid rgb(99,99,99);
+                border-radius:1rem;
+                vertical-align:middle;
+                width:210px;
+                margin:.5rem!important;
+                position:relative
+            }
+            figure img{padding-left:0rem;max-width:99%}
+            p {font-size:1rem}
+            .w3-code,.w3-codespan {font-size:12px;}
+            body {min-height:100vh;}
+            h3 {max-width:50vw;}
+        </style>
+     </head>
+
+    <body>
+        <div class='navbar w3-border' style='position:fixed;top:0;' >
+           <button href='#' class='bar-item title w3-mobile'></button>
+           <span class="bar-item bw bt tleft"><a href="../index.html">Main</a> &gt; Widgets &gt; All</span>
+           <div class="r">
+             <a href="#"><button class="bar-item w3-mbile bw">Home</button></a>
+           </div>
+        </div>
+        <div class="w3-ow">
+            <div class="w3-sidebar w3-bar-block w3-qauarter w3-border" style="width:15%;">
+              <div href="#" class="w3-bar-item w3-button" style="background:rgb(230,230,230);height:43px;"><a href="../index.html">Main</a> &gt; Widgets</div>
+              <a id="button" href="javascript:changeu('button')" class="w3-bar-item w3-button">Button</a>
+              <a id="menu"   href="javascript:changeu('menu')" class="w3-bar-item w3-button">Menu</a>
+              <a href="#" class="w3-bar-item w3-button">Link 3</a>
+            </div>
+            
+            <div class="w3-rest" style="margin-left:15%">
+                <iframe id="frame" src="./all-help.html" style="width:100%;height:100%;border:0"></iframe>
+            </div>
+        </div>
+    </body>
+
+    <script src="https://www.w3schools.com/lib/w3codecolor.js"></script>
+    <script>
+    var p = location.search.split('widget=')[1];
+    if (undefined != p) {
+        changeu(p);
+    }
+    
+    function changeu(a) {
+        var frame = document.getElementById('frame');
+        var href = window.location.href;
+        if (href.indexOf('/')) {
+            href = href.substring(0,href.lastIndexOf('/'));
+        }
+        var ht = a.toString()
+        if (ht.indexOf('.html') == -1) ht += ".html"
+        
+        frame.src = href + "/" + ht;
+        //location.search = "widget=" + a
+        
+        var loc = this.location
+        if (loc.toString().indexOf('?') != -1) {
+            loc = loc.toString().substring(0,loc.toString().lastIndexOf('?'));
+        }
+        loc += "?widget=" + a;
+
+        history.pushState({}, null, loc);
+        
+    }
+    </script>
+</html>

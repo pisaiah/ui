@@ -1,0 +1,134 @@
+<html>
+    <head>
+        <title>doc/widgets/menu</title>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="../styles.css">
+        <link rel="stylesheet" href="../w3.css">
+        <script>
+        function avoid_double_sidebar(a) {
+            var loc = a.contentWindow.location.href;
+            if (loc.includes('docs/index.html')) {
+                a.src = loc.replace('index.html','list.html')
+            }
+        }
+        </script>
+        
+        <style>
+            figure{
+                padding-top:.5rem;
+                display:inline-block!important;
+                border:1px solid rgb(99,99,99);
+                border-radius:1rem;
+                vertical-align:middle;
+                width:210px;
+                margin:.5rem!important;
+                position:relative
+            }
+            figure img{padding-left:0rem;max-width:99%}
+            p {font-size:1rem}
+            .w3-code,.w3-codespan {font-size:12px;}
+            body {min-height:100vh;}
+            h3 {max-width:50vw;}
+            .w3-border-bottom {margin-top:1rem}
+            
+            .w3-sidebar a {padding-left:15%!important}
+        </style>
+     </head>
+
+    <body>
+        <div class="w3-ow">
+            <div class="w3-sidebar w3-bar-block w3-qauarter" style="width:15%;background:rgb(75,108,136);color:white">
+              <!--<div href="#" class="w3-bar-item w3-button" style="background:rgb(75,108,136);height:43px;"><a href="../index.html">Home</a> &gt;
+                <a href="javascript:resetu()">Docs</a></div>-->
+
+               <div href="#" class="w3-bar-item w3-button w3-border-bottom" style="background:rgb(55,80,99);margin:0">Documentation</div>
+                <a href="../index.html" class="w3-bar-item w3-button">Home</a>
+                <a href="javascript:resetu()" class="w3-bar-item w3-button">Docs - Index</a>
+
+               <div href="#" class="w3-bar-item w3-button w3-border-bottom" style="background:rgb(55,80,99);">Basic</div>
+                <a id="button" href="javascript:changeu('window')" class="w3-bar-item w3-button">Window</a>
+                <a id="button" href="javascript:changeu('widgets+component')" class="w3-bar-item w3-button">Component</a>
+
+               <div href="#" class="w3-bar-item w3-button w3-border-bottom" style="background:rgb(55,80,99);">Widgets</div>
+                <a id="button" href="javascript:changeu('widgets+button')" class="w3-bar-item w3-button">Button</a>
+                <a href="javascript:changeu('widgets+menu')" class="w3-bar-item w3-button">Menu</a>
+                <a href="javascript:changeu('widgets+label')" class="w3-bar-item w3-button">Label</a>
+                <a href="javascript:changeu('widgets+textbox')" class="w3-bar-item w3-button">Textbox</a>
+                <a href="javascript:changeu('widgets+checkbox')" class="w3-bar-item w3-button">Checkbox</a>
+                <a href="javascript:changeu('widgets+selectbox')" class="w3-bar-item w3-button">Selectbox</a>
+                <a href="javascript:changeu('widgets+tree')" class="w3-bar-item w3-button">Treeview</a>
+                <a href="javascript:changeu('widgets+progress')" class="w3-bar-item w3-button">Progressbar</a>
+                <a href="javascript:changeu('widgets+tabbox')" class="w3-bar-item w3-button">Tabbox</a>
+
+               <div href="#" class="w3-bar-item w3-button w3-border-bottom" style="background:rgb(55,80,99)">Themes</div>
+                <a id="a" href="javascript:changeu('themes+index')" class="w3-bar-item w3-button">Overview</a>
+                <a href="javascript:changeu('themes+index.html#def-themes')" class="w3-bar-item w3-button">Default Themes</a>
+                <a href="javascript:changeu('themes+index.html#custom-themes')" class="w3-bar-item w3-button">Custom Themes</a>
+                
+                <p>&nbsp;</p>
+            </div>
+            
+            <div class="w3-rest" style="margin-left:15%">
+                <iframe id="frame" src="./list.html" style="width:100%;height:100%;border:0" onload="avoid_double_sidebar(this)"></iframe>
+            </div>
+        </div>
+    </body>
+
+    <script src="https://www.w3schools.com/lib/w3codecolor.js"></script>
+    <script>
+    var p = location.search.split('doc=')[1];
+    if (undefined != p) {
+        changeu(p);
+    }
+    
+    function resetu() {
+         var frame = document.getElementById('frame');
+         frame.src ="./list.html"
+    }
+    
+    function changeu(a) {
+        a = a.replace('+','/')
+        var frame = document.getElementById('frame');
+        var href = window.location.href;
+        if (href.indexOf('/')) {
+            href = href.substring(0,href.lastIndexOf('/'));
+        }
+        var ht = a.toString()
+        if (ht.indexOf('.html') == -1) ht += ".html"
+        
+        frame.src = href + "/" + ht;
+        
+        var loc = this.location
+        if (loc.toString().indexOf('?') != -1) {
+            loc = loc.toString().substring(0,loc.toString().lastIndexOf('?'));
+        }
+        loc += "?doc=" + a.replace('/','+');
+
+        history.pushState({}, null, loc);
+        
+    }
+    
+    new MutationObserver(function(mutations) {
+      mutations.some(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+          console.log(mutation);
+          console.log('Old src: ', mutation.oldValue);
+          console.log('New src: ', mutation.target.src);
+          return true;
+        }
+        console.log(mutation)
+
+        return false;
+      });
+    }).observe(document.getElementById('frame'), {
+      attributes: true,
+      attributeFilter: ['src'],
+      attributeOldValue: true,
+      characterData: false,
+      characterDataOldValue: false,
+      childList: false,
+      subtree: true
+    });
+
+    </script>
+</html>

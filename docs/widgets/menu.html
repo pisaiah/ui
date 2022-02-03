@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <title>doc/widgets/menu</title>
+        <link rel="stylesheet" href="../../styles.css">
+        <link rel="stylesheet" href="../../w3.css">
+        <style>figure img {width:100%;margin-bottom:4px;padding-left:2px!important} #left,#right {display:inline-block;}
+            #laeft {width:50%} #raight {width:30%}
+            
+            figure{
+                padding-top:.5rem;
+                display:inline-block!important;
+                border:1px solid rgb(99,99,99);
+                border-radius:1rem;
+                vertical-align:middle;
+                width:210px;
+                margin:.5rem!important;
+                position:relative
+            }
+            figure img{padding-left:0rem;max-width:99%}
+            p {font-size:1rem}
+            .w3-code,.w3-codespan {font-size:12px;}
+            body {min-height:100vh;}
+            h3 {max-width:50vw;}
+        </style>
+     </head>
+
+     <div class='navbar' style='posaition:fixed;top:0;'>
+       <button href='#' class='bar-item title w3-mobile'></button>
+       <span class="bar-item bw bt tleft"><a href="../index.html">Main</a> &gt; Widgets &gt; Menu</span>
+       <div class="r">
+         <a href="#"><button class="bar-item w3-mbile bw">Home</button></a>
+       </div>
+    </div>
+
+    <body>
+        
+        
+        <div class="w3-auto w3-margin-top" style="min-height:100vh">
+                    <div style="float:right">
+
+                        <div class="w3-code w3-small jsHigh" style="height:440px;width:340px;font-size:12px;">
+mut window := ... // The Window <br>
+<br>
+// Create Menubar<br>
+window.bar = ui.menubar(window, window.theme)
+<br><br>
+// Create 'Help' MenuItem<br>
+mut help := ui.menuitem('Click me')<br>
+<br>
+// Add a subitem that will show when 'Click me' clicked<br>
+mut subitem := ui.menuitem('A subitem')<br>
+help.add_child(subitem)<br>
+<br>
+// Add Help to Menubar<br>
+window.bar.add_child(help)
+            </div>
+        </div>
+
+            <h1>Menubar & MenuItem</h1>
+
+            <h3>Preview</h3>
+            <div id="preview">
+                <figure><img src="../../img/menu.png"><figcaption>Menubar in the Default Theme</figcaption></figure>
+            </div>
+
+            <h3>Details</h3>
+            <div id="about" style="">
+                <p>A Menubar is a bar containing MenuItem(s), it can either be set as the Window's Menubar <i>(traditional way)</i><br> or as a regular Component.<br><br>
+                   A MenuItem is an item inside the Menubar <i>(File, Edit, &amp; Help in the preview)</i>,<br>adding a MenuItem to a MenuItem produces a dropdown list<br>
+                </p>
+            </div>
+
+        </div>
+    </body>
+    <footer style="bottom:0">
+        <span>&copy; 2021 - 2022 Isaiah. Released under <a href="https://www.gnu.org/licenses/fdl-1.3.en.html">GNU FDL 1.3</a></span>
+    </footer>
+    <script src="https://www.w3schools.com/lib/w3codecolor.js"></script>
+    <script>
+    w3CodeColor();
+    </script>
+</html>

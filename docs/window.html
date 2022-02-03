@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <title>doc/widgets/button</title>
+        <link rel="stylesheet" href="../styles.css">
+        <link rel="stylesheet" href="../w3.css">
+        <style>#left,#right {display:inline-block;}
+            #laeft {width:50%} #raight {width:30%}
+            
+            figurea{
+                padding-top:.5rem;
+                display:inline-block!important;
+                border:1px solid rgb(99,99,99);
+                border-radius:1rem;
+                vertical-align:middle;
+                width:210px;
+                margin:.5rem!important;
+                position:relative
+            }
+            p {font-size:1rem}
+            .w3-code,.w3-codespan {font-size:12px;}
+            body {min-height:100vh;}
+            h3 {max-width:50vw;}
+        </style>
+     </head>
+
+     <div class='navbar' style='posaition:fixed;top:0;'>
+       <button href='#' class='bar-item title w3-mobile'></button>
+       <span class="bar-item bw bt tleft">Docs &gt; Window</span>
+    </div>
+
+    <body>
+        
+        
+        <div class="w3-auto w3-margin-top" style="min-height:100vh">
+                    <div style="float:right">
+
+                        <div class="w3-code w3-small jsHigh" style="height:440px;width:340px;font-size:12px;">
+fn main() {<br>
+    &emsp;mut win := ui.window(ui.theme_default(), 'My Window!')<br>
+    &emsp;mut lbl := ui.label('Hello world')<br>
+    &emsp;lbl.set_bounds(0,0, 100,25)<br>
+    &emsp;win.add_child(lbl) // Add Component to Window<br>
+    &emsp;win.show()<br>
+}<br>
+            </div>
+        </div>
+
+            <h1>Window</h1>
+            
+            <h3>Preview</h3>
+            <div id="preview">
+                <figure style="width:20vw"><img src="./themes/theme-default.png"><figcaption>Example Window</figcaption></figure>
+            </div>
+            
+            <h3>Details</h3>
+            <div id="about" style="">
+                <p>
+                Window is the Window &amp; root Component.
+                </p>
+            </div>
+            
+        </div>
+    </body>
+    <footer style="bottom:0">
+        <span>&copy; 2021 - 2022 Isaiah. Released under <a href="https://www.gnu.org/licenses/fdl-1.3.en.html">GNU FDL 1.3</a></span>
+    </footer>
+    <script src="https://www.w3schools.com/lib/w3codecolor.js"></script>
+    <script>
+    w3CodeColor();
+    </script>
+</html>

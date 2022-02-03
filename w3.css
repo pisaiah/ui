@@ -1,0 +1,74 @@
+/* Extract from W3.CSS 4.15 by Jan Egil and Borge Refsnes */
+html{box-sizing:border-box;-webkit-text-size-adjust:100%}*,*:before,*:after{box-sizing:inherit}
+body{margin:0} html,body{font-family:Verdana,sans-serif;font-size:14px;line-height:1.5}html{overflow-x:hidden}
+h1{font-size:36px}h2{font-size:30px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}
+h1,h2,h3,h4,h5,h6{font-family:"Segoe UI",Arial,sans-serif;font-weight:400;margin:10px 0}
+hr{border:0;border-top:1px solid #eee;margin:20px 0}img{vertical-align:middle}a{color:inherit}
+.table,.table-all{border-collapse:collapse;border-spacing:0;width:100%;display:table}.table-all{border:1px solid #ccc}
+.w3-bordered tr,.table-all tr{border-bottom:1px solid #ddd}.w3-striped tbody tr:nth-child(even){background-color:#f1f1f1}
+.table-all tr:nth-child(odd){background-color:#fff}.table-all tr:nth-child(even){background-color:#f1f1f1}
+.w3-centered tr th,.w3-centered tr td{text-align:center}.table td,.table th,.table-all td,.table-all th{padding:8px 8px;display:table-cell;text-align:left;vertical-align:top}
+.table th:first-child,.table td:first-child,.table-all th:first-child,.table-all td:first-child{padding-left:16px}
+.w3-tooltip,.di-container{position:relative}.w3-tooltip .w3-text{display:none}.w3-tooltip:hover .w3-text{display:inline-block}
+.main{transition:margin-left .4s}.modal{z-index:3;display:none;padding-top:100px;position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgb(0,0,0);background-color:rgba(0,0,0,0.4)}
+.modal-content{margin:auto;background-color:#fff;position:relative;padding:0;outline:0;width:600px}.w3-responsive{display:block;overflow-x:auto}
+.w3-container:after,.w3-container:before,.w3-panel:after,.w3-panel:before,.w3-row:after,.w3-row:before,.w3-row-padding:after,.w3-row-padding:before,
+.w3-cell-row:before,.w3-cell-row:after,.w3-clear:after,.w3-clear:before,.w3-bar:before,.w3-bar:after{content:"";display:table;clear:both}
+.w3-col,.w3-half,.w3-third,.w3-twothird,.w3-threequarter,.w3-quarter{float:left;width:100%}.w3-rest{overflow:hidden}
+.w3-content,.w3-auto{margin-left:auto;margin-right:auto}.w3-content{max-width:980px}.w3-auto{max-width:1140px}
+.w3-cell-row{display:table;width:100%}.w3-cell{display:table-cell}
+.w3-cell-top{vertical-align:top}.w3-cell-middle{vertical-align:middle}.w3-cell-bottom{vertical-align:bottom}
+.hide{display:none!important}.w3-show-block,.w3-show{display:block!important}.w3-show-inline-block{display:inline-block!important}
+@media (max-width:1205px){.w3-auto{max-width:95%}}
+@media (max-width:600px){.modal-content{margin:0 10px;width:auto!important}.modal{padding-top:30px}
+.hide-small{display:none!important}.w3-mobile{display:block;width:100%!important}}
+@media (max-width:768px){.modal-content{width:500px}.modal{padding-top:50px}}
+@media (min-width:993px){.modal-content{width:900px}.hide-large{display:none!important}}
+@media (max-width:992px) and (min-width:601px){.hide-medium{display:none!important}}
+@media (max-width:992px){.main{margin-left:0!important;margin-right:0!important}.w3-auto{max-width:100%}}
+.w3-top,.w3-bottom{position:fixed;width:100%;z-index:1}.w3-top{top:0}.w3-bottom{bottom:0}
+.w3-overlay{position:fixed;display:none;width:100%;height:100%;top:0;left:0;right:0;bottom:0;background-color:rgba(0,0,0,0.5);z-index:2}
+.di-topleft{position:absolute;left:0;top:0}.di-topright{position:absolute;right:0;top:0}
+.di-bottomleft{position:absolute;left:0;bottom:0}.di-bottomright{position:absolute;right:0;bottom:0}
+.di-middle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);-ms-transform:translate(-50%,-50%)}
+.di-left{position:absolute;top:50%;left:0%;transform:translate(0%,-50%);-ms-transform:translate(-0%,-50%)}
+.di-right{position:absolute;top:50%;right:0%;transform:translate(0%,-50%);-ms-transform:translate(0%,-50%)}
+.di-topmiddle{position:absolute;left:50%;top:0;transform:translate(-50%,0%);-ms-transform:translate(-50%,0%)}
+.di-bottommiddle{position:absolute;left:50%;bottom:0;transform:translate(-50%,0%);-ms-transform:translate(-50%,0%)}
+.di-container:hover .di-hover{display:block}.di-container:hover span.di-hover{display:inline-block}.di-hover{display:none}
+.di-abs{position:absolute} .w3-container,.w3-panel{padding:0.01em 16px}.w3-panel{margin-top:16px;margin-bottom:16px}
+.w3-code,.w3-codespan{font-family:Consolas,"courier new";font-size:16px}
+.w3-code{width:auto;background-color:#fff;padding:8px 12px;border-left:4px solid #4CAF50;word-wrap:break-word}
+.w3-codespan{color:crimson;background-color:#f1f1f1;padding-left:4px;padding-right:4px;font-size:110%}
+.w3-card,.w3-card-2{box-shadow:0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12)}
+.w3-card-4,.w3-hover-shadow:hover{box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19)}
+.small{font-size:12px!important}.large{font-size:18px!important}
+.xlarge{font-size:24px!important}.xxlarge{font-size:36px!important}.xxxlarge{font-size:48px!important}.w3-center{text-align:center!important}
+.w3-border{border:1px solid #ccc!important} .w3-border-top{border-top:1px solid #ccc!important}.w3-border-bottom{border-bottom:1px solid #ccc!important}
+.w3-border-left{border-left:1px solid #ccc!important}.w3-border-right{border-right:1px solid #ccc!important}
+.w3-section,.w3-code{margin-top:16px!important;margin-bottom:16px!important}
+.mar{margin:16px!important}.mar-top{margin-top:16px!important}.mar-bottom{margin-bottom:16px!important}
+.mar-left{margin-left:16px!important}.mar-right{margin-right:16px!important}
+.psmall{padding:4px 8px!important}.w3-pad{padding:8px 16px!important}.plarge{padding:12px 24px!important}
+.p16{padding-top:16px!important;padding-bottom:16px!important}.p24{padding-top:24px!important;padding-bottom:24px!important}
+.p32{padding-top:32px!important;padding-bottom:32px!important}.p48{padding-top:48px!important;padding-bottom:48px!important}
+.p64{padding-top:64px!important;padding-bottom:64px!important}
+.w3-transparent,.w3-hover-none:hover{background-color:transparent!important}
+.blue{color:#fff!important;background-color:#2196F3!important}
+.white{color:#000!important;background-color:#fff!important}
+.black{color:#fff!important;background-color:#000!important}
+.gray{color:#000!important;background-color:#9e9e9e!important}
+/**End W3 Extract**/
+
+/*Site Theme*/
+body {background:rgb(248,248,248)}
+button{border:1px solid #b4b4b4;background:#fff;border-radius:4px;padding:3px 15px 3px 15px;transition:background .2s,border .3s}
+button:hover, .bar-item:hover {background:rgb(229, 241, 251); border:1px solid rgb(0,120,215)}
+button:active, .bar-item:active {background:rgb(204, 228, 247); border:1px solid rgb(0,84,153)}
+.navbar {width:100vw;border-bottom:2px solid rgb(242, 242, 242);height:auto;background:white;overflow:auto}
+.bar-item, .navbar button {text-decoration:none;outline:0;margin-left:4px;background:transparent;border:1px solid transparent;font-family:inherit;letter-spacing:0;word-spacing:0}
+.bar-item {float:left;text-align:center;text-decoration:none;color:black;}
+.dropdown {overflow:hidden;float:left;display:inline-block;margin:0}
+.dropdown-content {display:none;position:absolute;background-color:#f9f9f9;min-width:160px;box-shadow:0px 8px 16px 0px rgba(0,0,0,.2);z-index:1;border:1px solid rgb(210,210,210)}
+.dropdown-content a {float:none;color:black;padding:12px 16px;text-decoration:none;display:block;text-align:left}
+.dropdown:hover .dropdown-content {display:block}

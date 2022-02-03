@@ -1,0 +1,111 @@
+<html>
+    <head>
+        <title>doc/themes</title>
+        <link rel="stylesheet" href="../../styles.css">
+        <link rel="stylesheet" href="../../w3.css">
+        <style>figure img {width:100%;margin-bottom:4px;padding-left:2px!important} #left,#right {display:inline-block;}
+            #laeft {width:50%} #raight {width:30%}
+            
+            figure{
+                padding-top:.5rem;
+                display:inline-block!important;
+                border:1px solid rgb(99,99,99);
+                border-radius:1rem;
+                vertical-align:middle;
+                width:210px;
+                margin:.5rem!important;
+                position:relative
+            }
+            figure img{padding-left:0rem;max-width:99%}
+            p {font-size:1rem}
+            .w3-code,.w3-codespan {font-size:12px;}
+            h3{margin-top:12vh;}
+        </style>
+     </head>
+
+     <div class='navbar' style='posaition:fixed;top:0;'>
+       <button href='#' class='bar-item title w3-mobile'></button>
+       <span class="bar-item bw bt tleft"><a href="../index.html">Main</a> &gt; Themes</span>
+       <div class="r">
+         <a href="#"><button class="bar-item w3-mbile bw">Home</button></a>
+       </div>
+    </div>
+
+    <body>
+        
+        
+        <div class="w3-auto w3-margin-top">
+                    <div style="float:right">
+
+                        <textarea class="w3-code w3-small" style="height:440px;width:300px;font-size:12px;">
+struct Theme {
+pub:
+    name                 string
+    text_color           gx.Color
+    background           gx.Color
+
+    button_bg_normal     gx.Color
+    button_bg_hover      gx.Color
+    button_bg_click      gx.Color
+    button_border_normal gx.Color
+    button_border_hover  gx.Color
+    button_border_click  gx.Color
+
+    menubar_background   gx.Color
+    menubar_border       gx.Color
+    dropdown_background  gx.Color
+    dropdown_border      gx.Color
+
+    textbox_background   gx.Color
+    textbox_border       gx.Color
+
+    checkbox_bg          gx.Color
+    checkbox_selected    gx.Color
+
+    progressbar_fill     gx.Color
+
+    scroll_track_color   gx.Color
+    scroll_bar_color     gx.Color
+}
+            </textarea>
+        </div>
+
+            <h1>Themes</h1>
+            
+            <div id="about" style="">
+                <p>A Theme provides the Look-and-Feel for the application.<br>Theme is defined by the struct to the right.</p>
+            </div>
+            
+            <h3>Default Themes</h3>
+            <div id="def-themes">
+                <p>Included Themes are Default Blue, Green Mint, Dark Gray, Dark High Contrast, Black Red.<br>Some previews are below:</p>
+                <figure>
+                    <img src="theme-default.png">
+                    <figcaption>Default Blue</figcaption>
+                </figure>
+                <figure>
+                    <img src="theme-mint.png">
+                    <figcaption>Green Mint</figcaption>
+                </figure>
+                <figure>
+                    <img src="theme-dark.png">
+                    <figcaption>Dark Silver</figcaption>
+                </figure>
+            </div>
+            <h3>Custom Theme</h3>
+            <div id="custom-themes">
+                <p>To have a custom theme, create an instance of Theme with the desired look. Then apply the Theme upon Window creation by<br>
+                <span class="w3-codespan w3-small" style="waidth:500px;font-size:12px;haeight:34px">
+mut window := ui.window(my_custom_theme, 'My Window')
+                </span>,<br>
+                <br>If the Window is already created, it is possible to change the theme by <code class="w3-codespan">win.set_theme(my_custom_theme)</code>
+                </p>
+            </div>
+            
+        </div>
+    </body>
+    <footer>
+        <span>&copy; 2021 - 2022 Isaiah. Released under <a href="https://www.gnu.org/licenses/fdl-1.3.en.html">GNU FDL 1.3</a></span>
+    </footer>
+
+</html>
