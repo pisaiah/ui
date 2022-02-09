@@ -107,13 +107,15 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 
 		if item.text == 'About iUI' {
 			mut about := modal(app, 'About iUI')
+			about.in_height = 250
+
 			mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: " + version +
 				'\n\nCompiled with ' + full_v_version(false))
-			lbl.set_pos(145, 65)
+			lbl.set_pos(145, 50)
 			about.add_child(lbl)
 
 			mut gh := button(app, 'Github')
-			gh.set_pos(145, 122)
+			gh.set_pos(145, 110)
 			gh.set_click(fn (mut win Window, com Button) {
 				open_url('https://github.com/isaiahpatton/ui')
 			})
@@ -121,7 +123,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 			about.add_child(gh)
 
 			mut copy := label(app, 'Copyright © 2021-2022 Isaiah.\nLicensed under the MIT/BSL.')
-			copy.set_pos(140, 173)
+			copy.set_pos(140, 155)
 			about.add_child(copy)
 
 			app.add_child(about)
