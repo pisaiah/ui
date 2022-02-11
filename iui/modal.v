@@ -28,7 +28,8 @@ pub fn (mut this Modal) add_child(mut com Component) {
 	this.children << com
 }
 
-/*pub fn (mut this Modal) add_children(coms []Component) {
+/*
+pub fn (mut this Modal) add_children(coms []Component) {
 	for com in coms {
 		this.children << com
 	}

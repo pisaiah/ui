@@ -6,6 +6,7 @@ import v.util.version { full_v_version }
 
 [heap]
 struct Menubar {
+    Component_A
 pub mut:
 	app   &Window
 	theme Theme
@@ -28,6 +29,7 @@ pub fn (mut bar Menubar) is_hovering() bool {
 
 [heap]
 struct MenuItem {
+    Component_A
 pub mut:
 	items          []MenuItem
 	text           string
@@ -62,14 +64,19 @@ pub fn menubar(app &Window, theme Theme) &Menubar {
 	}
 }
 
-fn (mut mb Menubar) draw() {
+pub fn (mut bar Menubar) draw() {
+    
 	mut wid := gg.window_size().width
-	mb.app.gg.draw_rounded_rect_filled(0, 0, wid, 25, 2, mb.app.theme.menubar_background)
-	mb.app.gg.draw_rounded_rect_empty(0, 0, wid, 25, 2, mb.app.theme.menubar_border)
+	if bar.width > 0 {
+        wid = bar.width
+    }
+
+    bar.app.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, 25, 2, bar.app.theme.menubar_background)
+	bar.app.gg.draw_rounded_rect_empty(bar.x, bar.y, wid, 25, 2, bar.app.theme.menubar_border)
 
 	mut mult := 0
-	for mut item in mb.items {
-		mb.app.draw_menu_button(55 * mult, 0, 55, 25, mut item)
+	for mut item in bar.items {
+		bar.app.draw_menu_button(55 * mult, 0, 55, 25, mut item)
 		mult++
 	}
 }

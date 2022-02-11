@@ -60,7 +60,7 @@ pub mut:
 	is_mouse_rele       bool
 	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
-    parent &Component_A = 0
+	parent              &Component_A = 0
 }
 
 pub fn (mut com Component_A) set_parent(mut par Component_A) {

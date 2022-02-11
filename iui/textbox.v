@@ -147,7 +147,7 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 		if letter == 'backslash' && app.shift_pressed {
 			letter = '|'
 		}
-		//println(letter)
+		// println(letter)
 		if letter == 'grave_accent' && app.shift_pressed {
 			letter = '~'
 		}
@@ -354,7 +354,7 @@ pub fn (mut com Textbox) draw() {
 
 		if click < spl.len {
 			com.carrot_top = click
-			com.carrot_left = mx/lw
+			com.carrot_left = mx / lw
 		}
 
 		com.is_mouse_rele = false
