@@ -15,6 +15,7 @@ pub mut:
 	items           []string
 	shown           bool
 	show_items      bool
+    center          bool
 }
 
 pub fn selector(app &Window, text string) &Select {
@@ -79,6 +80,9 @@ pub fn (mut item Select) draw() {
 				wid = sub_size
 			}
 		}
+        if wid < item.width {
+            wid = item.width
+        }
 
 		app.draw_bordered_rect(x, y + height, wid, (item.items.len * 26) + 2, 2, app.theme.dropdown_background,
 			app.theme.dropdown_border)
@@ -127,7 +131,7 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	sizh := text_height(app, text) / 2
 
 	mut bg := app.theme.button_bg_normal
-	mut border := app.theme.button_border_normal
+	mut border := app.theme.button_bg_normal
 
 	mut mid := (x + (width / 2))
 	mut midy := (y1 + (height / 2))
@@ -165,8 +169,15 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	app.gg.draw_rounded_rect_empty(x, y1, width, height, 4, border)
 
 	// Draw Button Text
-	app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
-		size: app.font_size
-		color: app.theme.text_color
-	})
+    if sel.center {
+        app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
+            size: app.font_size
+            color: app.theme.text_color
+        })
+    } else {
+        app.gg.draw_text(x + 8, y1 + (height / 2) - sizh, text, gx.TextCfg{
+            size: app.font_size
+            color: app.theme.text_color
+        })
+    }
 }
