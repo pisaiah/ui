@@ -518,7 +518,7 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 		lw += text_width(com.app, atxt + ' ')
 	}
 
-	lw = (lw - text_width(com.app, ' ')) + padding_x//(padding_x - 4)
+	lw = (lw - text_width(com.app, ' ')) + padding_x - 1//(padding_x - 4)
 
 	if lw == 0 || lw == (padding_x - 4) {
 		lw = padding_x - 4

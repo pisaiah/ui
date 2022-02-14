@@ -386,6 +386,28 @@ fn on_event(e &gg.Event, mut app Window) {
 				}
 			}
 
+			if mut a is Tree {
+				if a.is_hover {
+					scroll_y := int(e.scroll_y)
+					if a.open < a.height {
+						return
+					}
+
+					if abs(e.scroll_y) != e.scroll_y {
+						a.scroll_i += -scroll_y
+					} else if a.scroll_i > 0 {
+						a.scroll_i -= scroll_y
+					}
+					if a.scroll_i < 0 {
+						a.scroll_i = 0
+					}
+					if a.scroll_i > a.open - (a.height/2) {
+						a.scroll_i =  a.open - (a.height/2)
+					}
+					return
+				}
+			}
+
 			if mut a is Textbox {
 				text_box_scroll(e, mut a)
 			}
