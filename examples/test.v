@@ -158,7 +158,7 @@ fn on_click(mut win ui.Window, com ui.Button) {
 
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
 	text := com.text
-	//debug(text)
+	// debug(text)
 	mut theme := ui.theme_by_name(text)
 	win.set_theme(theme)
 }

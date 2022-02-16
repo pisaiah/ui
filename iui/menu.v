@@ -6,7 +6,7 @@ import v.util.version { full_v_version }
 
 [heap]
 struct Menubar {
-    Component_A
+	Component_A
 pub mut:
 	app   &Window
 	theme Theme
@@ -29,7 +29,7 @@ pub fn (mut bar Menubar) is_hovering() bool {
 
 [heap]
 struct MenuItem {
-    Component_A
+	Component_A
 pub mut:
 	items          []MenuItem
 	text           string
@@ -65,13 +65,12 @@ pub fn menubar(app &Window, theme Theme) &Menubar {
 }
 
 pub fn (mut bar Menubar) draw() {
-    
 	mut wid := gg.window_size().width
 	if bar.width > 0 {
-        wid = bar.width
-    }
+		wid = bar.width
+	}
 
-    bar.app.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, 25, 2, bar.app.theme.menubar_background)
+	bar.app.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, 25, 2, bar.app.theme.menubar_background)
 	bar.app.gg.draw_rounded_rect_empty(bar.x, bar.y, wid, 25, 2, bar.app.theme.menubar_border)
 
 	mut mult := 0
@@ -116,21 +115,28 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 			mut about := modal(app, 'About iUI')
 			about.in_height = 250
 
+			mut title := label(app, 'iUI ')
+			title.set_pos(140, 20)
+			title.set_config(16, false, true)
+			title.pack()
+			about.add_child(title)
+
 			mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: " + version +
-				'\n\nCompiled with ' + full_v_version(false))
-			lbl.set_pos(145, 50)
+				'\nCompiled with ' + full_v_version(false))
+			lbl.set_pos(140, 70)
 			about.add_child(lbl)
 
 			mut gh := button(app, 'Github')
-			gh.set_pos(145, 110)
+			gh.set_pos(140, 135)
 			gh.set_click(fn (mut win Window, com Button) {
 				open_url('https://github.com/isaiahpatton/ui')
 			})
 			gh.pack()
 			about.add_child(gh)
 
-			mut copy := label(app, 'Copyright © 2021-2022 Isaiah.\nLicensed under the MIT/BSL.')
-			copy.set_pos(140, 155)
+			mut copy := label(app, 'Copyright © 2021-2022 Isaiah.')
+			copy.set_pos(140, 185)
+			copy.set_config(12, true, false)
 			about.add_child(copy)
 
 			app.add_child(about)

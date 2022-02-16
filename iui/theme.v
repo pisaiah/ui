@@ -76,7 +76,7 @@ pub fn theme_default() Theme {
 		textbox_border: gx.rgb(215, 215, 215)
 		checkbox_selected: gx.rgb(37, 161, 218)
 		checkbox_bg: gx.rgb(254, 254, 254)
-		progressbar_fill: gx.rgb(37, 161, 218)//gx.rgb(81, 180, 225)
+		progressbar_fill: gx.rgb(37, 161, 218) // gx.rgb(81, 180, 225)
 		scroll_track_color: gx.rgb(240, 240, 240)
 		scroll_bar_color: gx.rgb(205, 205, 205)
 	}

@@ -24,7 +24,7 @@ fn main() {
 	}
 
 	help.add_child(about)
-    window.bar.add_child(theme_menu)
+	window.bar.add_child(theme_menu)
 	window.bar.add_child(help)
 
 	mut v_img := window.gg.create_image(os.resource_abs_path('mainBG.png'))
@@ -44,18 +44,18 @@ fn main() {
 fn create_card(mut window ui.Window, name string, x int) {
 	mut s_img := window.gg.create_image(os.resource_abs_path('cards/' + name))
 	mut card_sun := ui.image(window, s_img)
-    card_sun.draw_event_fn = card_draw
+	card_sun.draw_event_fn = card_draw
 	card_sun.set_bounds(90 + (65 * x), 25, 57, 80)
 
 	window.add_child(card_sun)
 }
 
 fn card_draw(mut win ui.Window, com &ui.Component) {
-    mut this := *com
-    if this.is_mouse_rele {
-        println('HELLO')
-        this.is_mouse_rele = false
-    }
+	mut this := *com
+	if this.is_mouse_rele {
+		println('HELLO')
+		this.is_mouse_rele = false
+	}
 }
 
 // card_sunflower.png

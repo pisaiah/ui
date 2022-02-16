@@ -12,6 +12,8 @@ pub mut:
 	click_event_fn fn (mut Window, Label)
 	in_modal       bool
 	need_pack      bool
+	size           int
+	bold           bool
 }
 
 pub fn label(app &Window, text string) Label {
@@ -56,11 +58,30 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 	for mut spl in text.split('\n') {
 		app.gg.draw_text(x, y + (height / 2) - sizh + my, spl.replace('\t', '  '.repeat(8)),
 			gx.TextCfg{
-			size: app.font_size
+			size: app.font_size + this.size
 			color: app.theme.text_color
+			bold: this.bold
 		})
+		if this.size != (app.font_size + this.size) {
+			// Reset for text_height
+			app.gg.set_cfg(gx.TextCfg{
+				size: app.font_size
+				color: app.theme.text_color
+				bold: false
+			})
+		}
+
 		my += line_height
 	}
+}
+
+pub fn (mut this Label) set_config(fs int, abs bool, bold bool) {
+	this.size = fs
+	if abs {
+		// Absolute font size
+		this.size = fs - this.app.font_size
+	}
+	this.bold = bold
 }
 
 pub fn (mut this Label) set_click(b fn (mut Window, Label)) {
