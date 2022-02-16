@@ -1,4 +1,4 @@
-# Isaiah's UI Toolkit `0.0.1`
+# Isaiah's UI Toolkit `0.0.2`
 
 My UI Widget Toolkit for V. Example: *([examples/test.v](examples/test.v))*
 

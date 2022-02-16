@@ -157,8 +157,8 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 				if a.scroll_i < 0 {
 					a.scroll_i = 0
 				}
-				if a.scroll_i > a.open - (a.height / 2) {
-					a.scroll_i = a.open - (a.height / 2)
+				if (a.scroll_i*2) > a.open - (a.height / 2) {
+					a.scroll_i = (a.open - (a.height / 2)) / 2
 				}
 				return
 			}

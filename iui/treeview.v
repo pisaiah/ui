@@ -35,7 +35,7 @@ pub fn (mut tr Tree) draw() {
 	mut bg := app.theme.button_bg_normal
 	mut bord := bg
 
-	y := tr.y - tr.scroll_i
+	y := tr.y - (tr.scroll_i * 2)
 	mut mid := (tr.x + (tr.width / 2))
 	mut midy := ((tr.y) + 3 + (20 / 2))
 
