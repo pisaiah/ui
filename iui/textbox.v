@@ -36,9 +36,6 @@ pub fn (mut com Textbox) set_codebox(val bool) {
 fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	// global keys
 	match key {
-		.escape {
-			app.gg.quit()
-		}
 		.left_alt {
 			app.show_menu_bar = !app.show_menu_bar
 			return
@@ -54,11 +51,10 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 			app.key_down_1(key, e, mut a)
 		}
 		if mut a is Tabbox {
-			for _, mut val in a.kids {
-				for mut comm in val {
-					if mut comm is Textbox {
-						app.key_down_1(key, e, mut comm)
-					}
+			mut kids := a.kids[a.active_tab]
+			for mut comm in kids {
+				if mut comm is Textbox {
+					app.key_down_1(key, e, mut comm)
 				}
 			}
 		}
@@ -73,8 +69,6 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 }
 
 fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
-	// for mut a in app.components {
-	//	if mut a is Textbox {
 	if a.is_selected {
 		mod := e.modifiers
 		if mod == 8 {
@@ -397,10 +391,10 @@ pub fn (mut com Textbox) draw() {
 			mut wmul := 0
 
 			for mut wtxt in wspl {
-				if padding_x + wmul > com.width {
-					y_mult += com.app.gg.text_height(wtxt)
-					wmul = 0
-				}
+				//if padding_x + wmul > com.width {
+				//	y_mult += com.app.gg.text_height(wtxt)
+				//	wmul = 0
+				//}
 
 				com.app.gg.draw_text(com.x + wmul + padding_x, com.y + y_mult + padding_y,
 					wtxt, gx.TextCfg{

@@ -3,9 +3,10 @@ import iui as ui { debug }
 import time
 import os
 
+[console]
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'My Window', 510, 500)
+	mut window := ui.window(ui.get_system_theme(), 'My Window', 520, 500)
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
@@ -52,15 +53,15 @@ fn main() {
 		tbox.text += '\nExtra line #' + i.str()
 	}
 
-	tbox.set_bounds(30, 110, 320, 100)
+	tbox.set_bounds(30, 110, 270, 100)
 
 	window.add_child(tbox)
 
 	mut cbox := ui.checkbox(window, 'Check me!')
-	cbox.set_bounds(145, 40, 90, 25)
+	cbox.set_bounds(170, 40, 90, 25)
 
 	mut cbox2 := ui.checkbox(window, 'Check me!')
-	cbox2.set_bounds(145, 70, 90, 25)
+	cbox2.set_bounds(170, 70, 90, 25)
 	cbox2.is_selected = true
 
 	window.add_child(cbox)
@@ -86,7 +87,7 @@ fn main() {
 	// go test(mut &pb2)
 
 	mut tree := ui.tree(window, 'Beverages')
-	tree.set_bounds(355, 110, 150, 200)
+	tree.set_bounds(355, 220, 150, 200)
 
 	mut subtree := ui.tree(window, 'Water')
 	subtree.set_bounds(4, 4, 100, 25)
@@ -111,15 +112,15 @@ fn main() {
 	window.add_child(tree)
 
 	mut tb := ui.tabbox(window)
-	tb.set_bounds(250, 38, 250, 62)
+	tb.set_bounds(310, 38, 200, 172)
 
 	mut tbtn := ui.button(window, 'In Tab A')
-	tbtn.set_pos(8, 8)
+	tbtn.set_pos(10, 10)
 	tbtn.pack()
 	tb.add_child('Tab A', tbtn)
 
 	mut tbtn1 := ui.label(window, 'Now in Tab B')
-	tbtn1.set_pos(1, 8)
+	tbtn1.set_pos(10, 10)
 	tbtn1.pack()
 	tb.add_child('Tab B', tbtn1)
 
@@ -157,8 +158,8 @@ fn on_click(mut win ui.Window, com ui.Button) {
 
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
 	text := com.text
-	debug(text)
-	theme := ui.theme_by_name(text)
+	//debug(text)
+	mut theme := ui.theme_by_name(text)
 	win.set_theme(theme)
 }
 

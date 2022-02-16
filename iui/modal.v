@@ -23,17 +23,9 @@ pub mut:
 	xs        int
 }
 
-pub fn (mut this Modal) add_child(mut com Component) {
-	com.parent = &this
+pub fn (mut this Modal) add_child(com &Component) {
 	this.children << com
 }
-
-/*
-pub fn (mut this Modal) add_children(coms []Component) {
-	for com in coms {
-		this.children << com
-	}
-}*/
 
 pub fn modal(app &Window, title string) &Modal {
 	return &Modal{
@@ -55,8 +47,6 @@ pub fn modal(app &Window, title string) &Modal {
 }
 
 pub fn (mut this Modal) draw() {
-	// DRAW
-
 	mut app := this.window
 	mut ws := gg.window_size()
 

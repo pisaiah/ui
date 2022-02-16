@@ -126,14 +126,14 @@ pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
 struct Window {
 pub mut:
 	gg            &gg.Context
-	font_size     int = 14
+	font_size     int = 16
 	mouse_x       int
 	mouse_y       int
 	click_x       int
 	click_y       int
 	lastt         f64
 	fps           int
-	fpss          int
+	fpss		  int
 	theme         Theme
 	bar           &Menubar
 	components    []Component
@@ -215,11 +215,6 @@ fn (mut app Window) draw() {
 	}
 
 	now := time.now().unix_time_milli()
-	/*
-	app.gg.draw_text(400, 80, app.fps.str() + ' FPS', gx.TextCfg{
-		size: font_size
-		color: app.theme.text_color
-	})*/
 
 	// Sort by Z-index; Lower draw first
 	app.components.sort(a.z_index < b.z_index)
@@ -250,10 +245,7 @@ fn (mut app Window) draw() {
 	}
 
 	end := time.now().unix_time_milli()
-	app.fpss++
 	if end - app.last_update > 1000 {
-		app.fps = app.fpss
-		app.fpss = 0
 		app.last_update = end
 	}
 	app.frame_time = int(end - now)
