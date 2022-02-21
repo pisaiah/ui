@@ -75,7 +75,7 @@ pub fn (mut bar Menubar) draw() {
 
 	mut mult := 0
 	for mut item in bar.items {
-		bar.app.draw_menu_button(55 * mult, 0, 55, 25, mut item)
+		bar.app.draw_menu_button(55 * mult, bar.y, 55, 25, mut item)
 		mult++
 	}
 }
@@ -166,8 +166,9 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 		}
 	}
 
-	if item.show_items && app.click_x != -1 && app.click_y != -1 && !clicked {
+	if item.show_items && (item.items.len == 0 || (app.click_x != -1 && app.click_y != -1)) && !clicked {
 		item.show_items = false
+        item.is_mouse_rele = true
 	}
 	if !item.show_items && app.bar.tik < 99 {
 		app.bar.tik++
@@ -187,4 +188,5 @@ fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut it
 			color: app.theme.text_color
 		})
 	}
+    item.draw_event_fn(app, &Component(item))
 }

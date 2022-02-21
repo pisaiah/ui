@@ -128,6 +128,7 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 					}
 				}
 			}
+			continue
 		}
 
 		if mut a is Modal {
@@ -140,6 +141,7 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 			if a.scroll_i < 0 {
 				a.scroll_i = 0
 			}
+			return
 		}
 
 		if mut a is Tree {
@@ -157,15 +159,26 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 				if a.scroll_i < 0 {
 					a.scroll_i = 0
 				}
-				if (a.scroll_i*2) > a.open - (a.height / 2) {
+				if (a.scroll_i * 2) > a.open - (a.height / 2) {
 					a.scroll_i = (a.open - (a.height / 2)) / 2
 				}
-				return
 			}
+            return
 		}
 
 		if mut a is Textbox {
 			text_box_scroll(e, mut a)
+            continue
+		}
+
+		scroll_y := int(e.scroll_y)
+		if abs(e.scroll_y) != e.scroll_y {
+			a.scroll_i += -scroll_y
+		} else if a.scroll_i > 0 {
+			a.scroll_i -= scroll_y
+		}
+		if a.scroll_i < 0 {
+			a.scroll_i = 0
 		}
 	}
 }

@@ -51,11 +51,9 @@ pub fn (mut com Checkbox) draw() {
 	}
 
 	// Detect Click
-	// if (abs(mid - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)) {
 	if com.is_mouse_down {
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
-		com.last_click = time.now().unix_time_milli()
 	}
 
 	com.app.draw_bordered_rect(com.x, com.y, com.height, com.height, 2, bg, border)

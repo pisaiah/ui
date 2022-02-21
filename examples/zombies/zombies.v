@@ -5,6 +5,7 @@ import os
 import math
 import gx
 
+[console]
 fn main() {
 	// Create Window
 	mut window := ui.window(ui.theme_dark(), 'Vlants vs Vombies', 800, 600)
@@ -44,6 +45,7 @@ fn main() {
 fn create_card(mut window ui.Window, name string, x int) {
 	mut s_img := window.gg.create_image(os.resource_abs_path('cards/' + name))
 	mut card_sun := ui.image(window, s_img)
+    card_sun.text = name
 	card_sun.draw_event_fn = card_draw
 	card_sun.set_bounds(90 + (65 * x), 25, 57, 80)
 
@@ -53,7 +55,7 @@ fn create_card(mut window ui.Window, name string, x int) {
 fn card_draw(mut win ui.Window, com &ui.Component) {
 	mut this := *com
 	if this.is_mouse_rele {
-		println('HELLO')
+		println('HELLO: ' + com.text)
 		this.is_mouse_rele = false
 	}
 }

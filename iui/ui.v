@@ -9,7 +9,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.2'
+	version = '0.0.3'
 	ui_mode = false // Note: On N4100; ui_mode uses
 		// 	   more cpu while on than off.
 )
@@ -144,6 +144,15 @@ pub mut:
 	frame_time  int
 	has_event   bool = true
 	extra_map   map[string]string
+    id_map      map[string]voidptr
+}
+
+pub fn (com &Component_A) set_id(mut win &Window, id string) {
+    win.id_map[id] = com
+}
+
+pub fn (mut win Window) get_from_id(id string) voidptr {
+    return win.id_map[id]  
 }
 
 pub fn (mut win Window) add_child(com Component) {
