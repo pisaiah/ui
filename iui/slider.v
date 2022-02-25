@@ -10,7 +10,6 @@ struct Slider {
 pub mut:
 	win            &Window
 	text           string
-	//click_event_fn fn (mut Window, Button)
     min f32
     cur f32
     max f32
@@ -18,6 +17,7 @@ pub mut:
     dir Direction
     last_s int
     hide bool
+    scroll bool
 }
 
 pub enum Direction {
@@ -33,6 +33,7 @@ pub fn slider(win &Window, min f32, max f32, dir Direction) &Slider {
         min: min
         max: max
         dir: dir
+        scroll: true
 	}
     //go test(mut slid)
     return slid
@@ -78,7 +79,7 @@ pub fn (mut this Slider) draw() {
     }
 
     // TODO: Scroll for .hor
-    if this.last_s != this.scroll_i && this.dir == .vert {
+    if this.last_s != this.scroll_i && this.dir == .vert && this.scroll {
         mut pos := this.scroll_i > this.last_s
         mut diff := abs(this.scroll_i - this.last_s) + 1
 
