@@ -208,6 +208,11 @@ pub fn (app &Window) draw_bordered_rect(x int, y int, width int, height int, a i
 	app.gg.draw_rounded_rect_empty(x, y, width, height, a, bord)
 }
 
+pub fn (app &Window) draw_filled_rect(x int, y int, width int, height int, a int, bg gx.Color, bord gx.Color) {
+	app.gg.draw_rect_filled(x, y, width, height, bg)
+	app.gg.draw_rect_empty(x, y, width, height, bord)
+}
+
 fn (mut app Window) draw() {
 	// Custom 'UI Mode' - Refresh text carrot
 	if !iui.ui_mode {

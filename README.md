@@ -63,3 +63,9 @@ Included Themes:
 - Dark (High Contrast)
 - Black Red
 - Mint
+
+## Used in
+- [Vide](https://github.com/isaiahpatton/vide)
+- [Verminal](https://github.com/isaiahpatton/verminal)
+- [GUI Builder](https://github.com/isaiahpatton/gui-builder)
+- [vPaint](https://github.com/isaiahpatton/vpaint)

@@ -75,8 +75,12 @@ pub fn (mut bar Menubar) draw() {
 
 	mut mult := 0
 	for mut item in bar.items {
-		bar.app.draw_menu_button(55 * mult, bar.y, 55, 25, mut item)
-		mult++
+		bar.app.draw_menu_button(mult, bar.y, 56, 25, mut item)
+        if item.width > 0 {
+            mult += item.width + 4
+        } else {
+            mult += 56
+        }
 	}
 }
 
@@ -84,9 +88,14 @@ fn (mut app Window) get_bar() &Menubar {
 	return app.bar
 }
 
-fn (mut app Window) draw_menu_button(x int, y int, width int, height int, mut item MenuItem) {
+fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut item MenuItem) {
 	size := text_width(app, item.text) / 2
 	sizh := text_height(app, item.text) / 2
+    
+    mut width := width_
+    if item.width > 0 {
+        width = item.width + 4
+    }
 
 	mut bg := app.theme.menubar_background
 	mut border := app.theme.menubar_border

@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 import time
 import math
 
@@ -18,6 +17,7 @@ pub mut:
     flip bool
     dir Direction
     last_s int
+    hide bool
 }
 
 pub enum Direction {
@@ -59,7 +59,9 @@ fn test(mut this &Slider) {
 
 // Draw this component
 pub fn (mut this Slider) draw() {
-    //println('SLIDER DRAW! ' + this.scroll_i.str())
+    if this.hide {
+        return
+    }
     
     if this.is_mouse_down {        
         if this.dir == .hor {
@@ -75,8 +77,8 @@ pub fn (mut this Slider) draw() {
         }
     }
 
-    // TODO: Scroll
-    /*if this.last_s != this.scroll_i {
+    // TODO: Scroll for .hor
+    if this.last_s != this.scroll_i && this.dir == .vert {
         mut pos := this.scroll_i > this.last_s
         mut diff := abs(this.scroll_i - this.last_s) + 1
 
@@ -88,7 +90,7 @@ pub fn (mut this Slider) draw() {
         this.cur = f32(math.clamp(this.cur, this.min, this.max))
 
         this.last_s = this.scroll_i
-    }*/
+    }
 
     mut per := this.cur / this.max
 
@@ -97,34 +99,16 @@ pub fn (mut this Slider) draw() {
         wid -= per * 20
     
         // Horizontal
+        this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, this.win.theme.scroll_track_color, this.win.theme.button_border_normal)
         this.win.gg.draw_rect_filled(this.x + wid, this.y, 20, this.height, this.win.theme.scroll_bar_color)
         this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, this.win.theme.button_border_normal)
-
-        text := this.cur.str() + ' / ' + this.max.str()
-        size := text_width(this.win, text) / 2
-        sizh := text_height(this.win, text) / 2
-
-        this.win.gg.draw_text((this.x + (this.width / 2)) - size, this.y + (this.height / 2) - sizh,
-            text, gx.TextCfg{
-            size: this.win.font_size
-            color: this.win.theme.text_color
-        })
     } else {
         mut wid := (this.height * per)
         wid -= per * 20
 
         // Vertical
+        this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, this.win.theme.scroll_track_color, this.win.theme.button_border_normal)
         this.win.gg.draw_rect_filled(this.x, this.y + wid, this.width, 20, this.win.theme.scroll_bar_color)
         this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, this.win.theme.button_border_normal)
-
-        text := this.cur.str() + ' / ' + this.max.str()
-        size := text_width(this.win, text) / 2
-        sizh := text_height(this.win, text) / 2
-
-        this.win.gg.draw_text((this.x + (this.width / 2)) - size, this.y + (this.height / 2) - sizh,
-            text, gx.TextCfg{
-            size: this.win.font_size
-            color: this.win.theme.text_color
-        })
     }
 }

@@ -2,7 +2,6 @@ module iui
 
 import gg
 import gx
-import time
 
 // Checkbox - implements Component interface
 struct Checkbox {
