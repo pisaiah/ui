@@ -87,8 +87,6 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 			}
 
 			if mut com is Modal {
-				mut xo := com.xs
-				mut yo := com.y + com.top_off + 26
 				for mut child in com.children {
 					child.is_mouse_down = false
 
