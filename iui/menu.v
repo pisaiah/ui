@@ -76,11 +76,11 @@ pub fn (mut bar Menubar) draw() {
 	mut mult := 0
 	for mut item in bar.items {
 		bar.app.draw_menu_button(mult, bar.y, 56, 25, mut item)
-        if item.width > 0 {
-            mult += item.width + 4
-        } else {
-            mult += 56
-        }
+		if item.width > 0 {
+			mult += item.width + 4
+		} else {
+			mult += 56
+		}
 	}
 }
 
@@ -91,11 +91,11 @@ fn (mut app Window) get_bar() &Menubar {
 fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut item MenuItem) {
 	size := text_width(app, item.text) / 2
 	sizh := text_height(app, item.text) / 2
-    
-    mut width := width_
-    if item.width > 0 {
-        width = item.width + 4
-    }
+
+	mut width := width_
+	if item.width > 0 {
+		width = item.width + 4
+	}
 
 	mut bg := app.theme.menubar_background
 	mut border := app.theme.menubar_border
@@ -175,9 +175,10 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 		}
 	}
 
-	if item.show_items && (item.items.len == 0 || (app.click_x != -1 && app.click_y != -1)) && !clicked {
+	if item.show_items && (item.items.len == 0 || (app.click_x != -1 && app.click_y != -1))
+		&& !clicked {
 		item.show_items = false
-        item.is_mouse_rele = true
+		item.is_mouse_rele = true
 	}
 	if !item.show_items && app.bar.tik < 99 {
 		app.bar.tik++
@@ -197,5 +198,5 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 			color: app.theme.text_color
 		})
 	}
-    item.draw_event_fn(app, &Component(item))
+	item.draw_event_fn(app, &Component(item))
 }

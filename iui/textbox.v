@@ -23,10 +23,11 @@ pub mut:
 	ctrl_down            bool
 	last_letter          string
 
-	carrot_left int
-	carrot_top  int
-	key_down    bool
-	padding_x   int
+	carrot_left_raw int
+	carrot_left     int
+	carrot_top      int
+	key_down        bool
+	padding_x       int
 }
 
 pub fn (mut com Textbox) set_codebox(val bool) {
@@ -95,12 +96,46 @@ pub fn (mut com Textbox) draw() {
 		mut my := com.app.mouse_y - com.y
 		mut mx := com.app.mouse_x - com.x
 
-		lw := text_width(com.app, 'A')
+		// lw := text_width(com.app, 'A')
 		click := com.scroll_i + (my / line_height)
 
-		if click < spl.len {
+		mut lw := 0
+		for atxt in com.text.split(' ') {
+			lw += text_width(com.app, atxt + ' ')
+		}
+
+		// lw = (lw - text_width(com.app, ' ')) + padding_x - 1 //(padding_x - 4)
+
+		if click < spl.len && mx > 0 {
 			com.carrot_top = click
-			com.carrot_left = mx / lw
+			mut ii := 0
+			for abs(mx - com.carrot_left_raw) > 5 {
+				if ii > 99 {
+					break
+				}
+				mut dirr := mx > com.carrot_left_raw
+				if dirr {
+					com.carrot_left += 1
+				} else {
+					com.carrot_left -= 1
+				}
+				mx = com.app.mouse_x - com.x
+
+				mut tw := com.text.substr_ni(0, com.carrot_left)
+				lw = 0
+				for atxt in tw.split(' ') {
+					lw += text_width(com.app, atxt + ' ')
+				}
+
+				lw = (lw - text_width(com.app, ' ')) + padding_x - 1 //(padding_x - 4)
+
+				if lw == 0 || lw == (padding_x - 4) {
+					lw = padding_x - 4
+				}
+				com.carrot_left_raw = lw
+				ii++
+			}
+			// com.carrot_left = mx / lw
 		}
 
 		com.is_mouse_rele = false
@@ -273,6 +308,8 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 	if lt < 0 {
 		return
 	}
+
+	com.carrot_left_raw = lw
 	com.app.gg.draw_text(com.x + lw, com.y + lt + padding_y, '|', gx.TextCfg{
 		size: size
 		color: color

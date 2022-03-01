@@ -57,9 +57,20 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 				}
 			}
 			if mut com is Modal {
+				mut xo := com.xs
+				mut yo := com.y + com.top_off + 26
 				for mut child in com.children {
-					if point_in(mut child, app.click_x - com.x, (app.click_y - com.y)) && !found {
+					if point_in(mut child, app.click_x - xo, (app.click_y - yo)) //&& !found {
 						child.is_mouse_down = true
+
+						if mut child is Tabbox {
+							mut val := child.kids[child.active_tab]
+							for mut comm in val {
+								if point_in_raw(mut comm, app.click_x, app.click_y) {
+									comm.is_mouse_down = true
+								}
+							}
+						}
 					}
 				}
 			}
@@ -74,6 +85,22 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 					}
 				}
 			}
+
+			if mut com is Modal {
+				mut xo := com.xs
+				mut yo := com.y + com.top_off + 26
+				for mut child in com.children {
+					child.is_mouse_down = false
+
+					if mut child is Tabbox {
+						mut val := child.kids[child.active_tab]
+						for mut comm in val {
+							comm.is_mouse_down = false
+						}
+					}
+				}
+			}
+
 			com.is_mouse_down = false
 		}
 	}
@@ -102,15 +129,24 @@ fn on_mouse_up_event(e &gg.Event, mut app Window) {
 			}
 
 			if mut com is Modal {
-				for mut kid in com.children {
-					mut ws := gg.window_size()
-					mut sx := (ws.width / 2) - (500 / 2)
-					if point_in(mut kid, mx - com.x - sx, (my - com.y) - (com.top_off + 26)) {
-						kid.is_mouse_down = false
-						kid.is_mouse_rele = true
+				for mut child in com.children {
+					if point_in_raw(mut child, mx, my) {
+						child.is_mouse_down = false
+						child.is_mouse_rele = true
+
+						if mut child is Tabbox {
+							mut val := child.kids[child.active_tab]
+							for mut comm in val {
+								if point_in_raw(mut comm, mx, my) {
+									comm.is_mouse_down = false
+									comm.is_mouse_rele = true
+								}
+							}
+						}
 					}
 				}
 			}
+
 			found = true
 		} else {
 			com.is_mouse_down = false
@@ -162,14 +198,14 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 				if (a.scroll_i * 2) > a.open - (a.height / 2) {
 					a.scroll_i = (a.open - (a.height / 2)) / 2
 				}
-                return
+				return
 			}
-            continue
+			continue
 		}
 
 		if mut a is Textbox {
 			text_box_scroll(e, mut a)
-            continue
+			continue
 		}
 
 		scroll_y := int(e.scroll_y)

@@ -28,6 +28,8 @@ mut:
 	text string
 	x int
 	y int
+	rx int
+	ry int
 	width int
 	height int
 	last_click f64
@@ -49,6 +51,8 @@ pub mut:
 	text                string
 	x                   int
 	y                   int
+	rx                  int
+	ry                  int
 	width               int
 	height              int
 	last_click          f64
@@ -79,6 +83,13 @@ pub fn (mut com Component_A) draw() {
 	// Stub
 }
 
+pub fn point_in_raw(mut com Component, px int, py int) bool {
+	midx := com.rx + (com.width / 2)
+	midy := com.ry + (com.height / 2)
+
+	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
+}
+
 pub fn point_in(mut com Component, px int, py int) bool {
 	midx := com.x + (com.width / 2)
 	midy := com.y + (com.height / 2)
@@ -89,6 +100,9 @@ pub fn point_in(mut com Component, px int, py int) bool {
 pub fn draw_with_offset(mut com Component, offx int, offy int) {
 	ox := com.x
 	oy := com.y
+
+	com.rx = com.x + offx
+	com.ry = com.y + offy
 
 	com.x = com.x + offx
 	com.y = com.y + offy
@@ -144,15 +158,15 @@ pub mut:
 	frame_time  int
 	has_event   bool = true
 	extra_map   map[string]string
-    id_map      map[string]voidptr
+	id_map      map[string]voidptr
 }
 
-pub fn (com &Component_A) set_id(mut win &Window, id string) {
-    win.id_map[id] = com
+pub fn (com &Component_A) set_id(mut win Window, id string) {
+	win.id_map[id] = com
 }
 
 pub fn (mut win Window) get_from_id(id string) voidptr {
-    return win.id_map[id]  
+	return win.id_map[id]
 }
 
 pub fn (mut win Window) add_child(com Component) {

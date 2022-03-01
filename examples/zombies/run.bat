@@ -1,2 +1,2 @@
-v run ../../examples/zombies
+v -compress run ../../examples/zombies
 pause

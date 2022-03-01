@@ -6,7 +6,7 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	// global keys
 	match key {
 		.left_alt {
-			app.show_menu_bar = !app.show_menu_bar
+			// app.show_menu_bar = !app.show_menu_bar
 			return
 		}
 		.left_control {
@@ -31,6 +31,14 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 			for mut child in a.children {
 				if mut child is Textbox {
 					app.key_down_1(key, e, mut child)
+				}
+				if mut child is Tabbox {
+					mut active := child.kids[child.active_tab]
+					for _, mut kid in active {
+						if mut kid is Textbox {
+							app.key_down_1(key, e, mut kid)
+						}
+					}
 				}
 			}
 		}
