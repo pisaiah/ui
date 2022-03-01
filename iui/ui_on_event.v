@@ -60,7 +60,7 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 				mut xo := com.xs
 				mut yo := com.y + com.top_off + 26
 				for mut child in com.children {
-					if point_in(mut child, app.click_x - xo, (app.click_y - yo)) //&& !found {
+					if point_in(mut child, app.click_x - xo, (app.click_y - yo)) {
 						child.is_mouse_down = true
 
 						if mut child is Tabbox {
