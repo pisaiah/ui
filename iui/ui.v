@@ -9,7 +9,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.3'
+	version = '0.0.4'
 	ui_mode = false // Note: On N4100; ui_mode uses
 		// 	   more cpu while on than off.
 )
@@ -139,26 +139,26 @@ pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
 [heap]
 struct Window {
 pub mut:
-	gg            &gg.Context
-	font_size     int = 16
-	mouse_x       int
-	mouse_y       int
-	click_x       int
-	click_y       int
-	lastt         f64
-	fps           int
-	fpss          int
-	theme         Theme
-	bar           &Menubar
-	components    []Component
-	show_menu_bar bool = true
-	shift_pressed bool
-
-	last_update i64
-	frame_time  int
-	has_event   bool = true
-	extra_map   map[string]string
-	id_map      map[string]voidptr
+	gg             &gg.Context
+	font_size      int = 16
+	mouse_x        int
+	mouse_y        int
+	click_x        int
+	click_y        int
+	lastt          f64
+	fps            int
+	fpss           int
+	theme          Theme
+	bar            &Menubar
+	components     []Component
+	show_menu_bar  bool = true
+	shift_pressed  bool
+	key_down_event fn (mut Window, gg.KeyCode, &gg.Event) = fn (mut win Window, key gg.KeyCode, e &gg.Event) {}
+	last_update    i64
+	frame_time     int
+	has_event      bool = true
+	extra_map      map[string]string
+	id_map         map[string]voidptr
 }
 
 pub fn (com &Component_A) set_id(mut win Window, id string) {

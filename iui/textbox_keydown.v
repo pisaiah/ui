@@ -43,6 +43,7 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 			}
 		}
 	}
+	app.key_down_event(app, key, e)
 }
 
 fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {

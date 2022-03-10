@@ -77,6 +77,11 @@ pub fn (mut this Slider) draw() {
 		}
 	}
 
+	if this.is_mouse_rele {
+		this.is_mouse_down = false
+		this.is_mouse_rele = false
+	}
+
 	// TODO: Scroll for .hor
 	if this.last_s != this.scroll_i && this.dir == .vert && this.scroll {
 		mut pos := this.scroll_i > this.last_s

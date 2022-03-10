@@ -43,16 +43,17 @@ fn main() {
 
 	mut btn2 := ui.button(window, 'This is a Button')
 	btn2.set_pos(30, 70)
-    //window.id_map['btn2'] = &btn2
-	//btn2.set_id(mut window, 'btn2')
-    btn2.pack() // Auto set width & height
+	// window.id_map['btn2'] = &btn2
+	// btn2.set_id(mut window, 'btn2')
+	btn2.pack() // Auto set width & height
 
-    // Testing code; ignore.
-   /*btn.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
+	// Testing code; ignore.
+	/*
+	btn.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
         ptr := win.id_map['btn2']
         mut btn := &ui.Button(ptr)
         mut this := *com
-    
+
         this.text = btn.text
         btn.text = 'hellooooo'
     }*/

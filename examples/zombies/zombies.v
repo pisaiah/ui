@@ -7,24 +7,23 @@ import time
 import sokol.audio
 
 struct App {
-    version int
+	version int
 mut:
-    selected_plant Card
-    balance int = 50
-    cache map[string]int
+	selected_plant Card
+	balance        int = 50
+	cache          map[string]int
 }
-
 
 [console]
 fn main() {
 	// Create Window
 	mut window := ui.window(ui.theme_dark(), 'Vlants vs Vombies', 800, 600)
 
-    // App
-    mut app := &App{
-        version: 1
-    }
-    window.id_map['app'] = app
+	// App
+	mut app := &App{
+		version: 1
+	}
+	window.id_map['app'] = app
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
@@ -55,132 +54,136 @@ fn main() {
 	create_card(mut window, 'card_peashooter.png', 2, .peashooter, 100)
 	create_card(mut window, 'card_repeater.png', 3, .repeater, 200)
 
-    create_grid(mut window)
-    
-    mut bal := ui.label(window, app.balance.str())
-    bal.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
-        mut this := *com
-        mut app := &App(win.get_from_id('app'))
-        this.text = app.balance.str()
-        
-        this.x = 25
-        this.y = 87
-        if mut this is ui.Label {
-            this.need_pack = true
-        }
-    }
-    window.add_child(bal)
+	create_grid(mut window)
+
+	mut bal := ui.label(window, app.balance.str())
+	bal.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
+		mut this := *com
+		mut app := &App(win.get_from_id('app'))
+		this.text = app.balance.str()
+
+		this.x = 25
+		this.y = 87
+		if mut this is ui.Label {
+			this.need_pack = true
+		}
+	}
+	window.add_child(bal)
 	window.gg.run()
 }
 
 struct GridBox {
-    ui.Component_A
+	ui.Component_A
 mut:
-    win &ui.Window
-    color gx.Color
-    
-    selected_image int = -1
-    selected_images []int
-    tik i64
+	win   &ui.Window
+	color gx.Color
+
+	selected_image  int = -1
+	selected_images []int
+	tik             i64
 }
 
 fn (mut this GridBox) draw() {
-    //this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, this.color, this.color)
-    // this.win.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 1, this.color)
-    if this.is_mouse_rele {
-        println('click')
-        mut app := &App(this.win.id_map['app'])
-        mut sel := app.selected_plant
+	// this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, this.color, this.color)
+	// this.win.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 1, this.color)
+	if this.is_mouse_rele {
+		println('click')
+		mut app := &App(this.win.id_map['app'])
+		mut sel := app.selected_plant
 
-        if app.balance < sel.cost {
-            this.is_mouse_rele = false
-            return
-        }
-        
-        app.balance -= sel.cost
+		if app.balance < sel.cost {
+			this.is_mouse_rele = false
+			return
+		}
 
-        folder := os.resource_abs_path('plants/' + sel.ptype.str())
-        
-        for file in os.ls(folder) or {[-1]} {
-            mut path := folder + '/' + file
-            if path.ends_with('.jar') {
-                continue
-            }
-            
-            if path in app.cache {
-                this.selected_images << app.cache[path]
-            } else {
-                s_img := this.win.gg.create_image(path)
-                img_id := this.win.gg.cache_image(s_img) 
-                this.selected_images << img_id
-                app.cache[path] = img_id
-            }
-            this.tik = time.ticks()
-        }
-        this.selected_image = 0
+		app.balance -= sel.cost
 
-        this.is_mouse_rele = false
-    }
-    if this.selected_image != -1 {
-        this.win.gg.draw_image_by_id(this.x + 10, this.y + 20, this.width - 15, this.height - 25, this.selected_images[this.selected_image])
-       
-        now := time.ticks()
-       
-        if now - this.tik > 50 {
-            this.selected_image += 1
-            if this.selected_image >= this.selected_images.len {
-                this.selected_image = 0
-            }
-            this.tik = now
-        }
-    }
+		folder := os.resource_abs_path('plants/' + sel.ptype.str())
+
+		for file in os.ls(folder) or { [-1] } {
+			mut path := folder + '/' + file
+			if path.ends_with('.jar') {
+				continue
+			}
+
+			if path in app.cache {
+				this.selected_images << app.cache[path]
+			} else {
+				s_img := this.win.gg.create_image(path)
+				img_id := this.win.gg.cache_image(s_img)
+				this.selected_images << img_id
+				app.cache[path] = img_id
+			}
+			this.tik = time.ticks()
+		}
+		this.selected_image = 0
+
+		this.is_mouse_rele = false
+	}
+	if this.selected_image != -1 {
+		this.win.gg.draw_image_by_id(this.x + 10, this.y + 20, this.width - 15, this.height - 25,
+			this.selected_images[this.selected_image])
+
+		now := time.ticks()
+
+		if now - this.tik > 50 {
+			this.selected_image += 1
+			if this.selected_image >= this.selected_images.len {
+				this.selected_image = 0
+			}
+			this.tik = now
+		}
+	}
 }
 
 fn create_grid(mut win ui.Window) {
-    mut dark := false
+	mut dark := false
 
-    for y in 0 .. 5 { 
-        for x in 0 .. 9 {
-            mut box := GridBox{
-                win: win,
-                x: 34 + (81 * x), y: 112 + (96 * y), width: 80, height: 95
-            }
-            if dark {
-                box.color = gx.rgb(5, 135, 25)
-            } else {
-                box.color = gx.rgb(5, 175, 25)
-            }
-            dark = !dark
-            win.add_child(box)
-        }
-    }
+	for y in 0 .. 5 {
+		for x in 0 .. 9 {
+			mut box := GridBox{
+				win: win
+				x: 34 + (81 * x)
+				y: 112 + (96 * y)
+				width: 80
+				height: 95
+			}
+			if dark {
+				box.color = gx.rgb(5, 135, 25)
+			} else {
+				box.color = gx.rgb(5, 175, 25)
+			}
+			dark = !dark
+			win.add_child(box)
+		}
+	}
 }
 
 struct Card {
-    ptype PlantType
-    cost int
+	ptype PlantType
+	cost  int
 }
 
 enum PlantType {
-    _unknown
-    peashooter
-    walnut
-    sunflower
-    repeater
+	_unknown
+	peashooter
+	walnut
+	sunflower
+	repeater
 }
 
 fn create_card(mut window ui.Window, name string, x int, ptype PlantType, cost int) {
 	mut s_img := window.gg.create_image(os.resource_abs_path('cards/' + name))
 	mut card_sun := ui.image(window, s_img)
-    card_sun.text = ptype.str()
+	card_sun.text = ptype.str()
 	card_sun.draw_event_fn = card_draw
 	card_sun.set_bounds(90 + (65 * x), 25, 64, 90)
-    
-    card_data := &Card{
-        ptype: ptype
-        cost: cost
-    }
-    window.id_map[ptype.str() + '-data'] = card_data
+
+	card_data := &Card{
+		ptype: ptype
+		cost: cost
+	}
+	window.id_map[ptype.str() + '-data'] = card_data
 
 	window.add_child(card_sun)
 }
@@ -188,10 +191,10 @@ fn create_card(mut window ui.Window, name string, x int, ptype PlantType, cost i
 fn card_draw(mut win ui.Window, com &ui.Component) {
 	mut this := *com
 	if this.is_mouse_rele {
-        card_data := &Card(win.id_map[com.text + '-data'])
-        mut app := &App(win.id_map['app'])
-        app.selected_plant = card_data
-        
+		card_data := &Card(win.id_map[com.text + '-data'])
+		mut app := &App(win.id_map['app'])
+		app.selected_plant = card_data
+
 		println('HELLO: ' + com.text)
 		this.is_mouse_rele = false
 	}
