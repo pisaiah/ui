@@ -19,11 +19,17 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		if mut a is Textbox {
 			app.key_down_1(key, e, mut a)
 		}
+		if mut a is Runebox {
+			app.runebox_key(key, e, mut a)
+		}
 		if mut a is Tabbox {
 			mut kids := a.kids[a.active_tab]
 			for mut comm in kids {
 				if mut comm is Textbox {
 					app.key_down_1(key, e, mut comm)
+				}
+				if mut comm is Runebox {
+					app.runebox_key(key, e, mut comm)
 				}
 			}
 		}
@@ -32,11 +38,17 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 				if mut child is Textbox {
 					app.key_down_1(key, e, mut child)
 				}
+				if mut child is Runebox {
+					app.runebox_key(key, e, mut child)
+				}
 				if mut child is Tabbox {
 					mut active := child.kids[child.active_tab]
 					for _, mut kid in active {
 						if mut kid is Textbox {
 							app.key_down_1(key, e, mut kid)
+						}
+						if mut kid is Runebox {
+							app.runebox_key(key, e, mut kid)
 						}
 					}
 				}
@@ -44,6 +56,115 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		}
 	}
 	app.key_down_event(app, key, e)
+}
+
+fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
+	if key == .right {
+		com.carrot_left += 1
+	} else if key == .left {
+		com.carrot_left -= 1
+	} else if key == .up {
+		com.carrot_top -= 1
+	} else if key == .down {
+		com.carrot_top += 1
+	} else {
+		if key == .backspace {
+			com.text = com.text.substr_ni(0, com.carrot_index - 1) +
+				com.text.substr_ni(com.carrot_index, com.text.len)
+			com.carrot_left -= 1
+		} else {
+			mut strr := key.str()
+			if key == .space {
+				strr = ' '
+			}
+			if key == .enter {
+				strr = '\n'
+			}
+
+			// if strr.len > 1 {
+			kc := u32(gg.KeyCode(ev.key_code))
+			mut letter := ev.key_code.str()
+			mut res := utf32_to_str(kc)
+
+			//}
+			if letter == 'left_shift' || letter == 'right_shift' {
+				letter = ''
+				app.shift_pressed = true
+				return
+			}
+
+			if letter.starts_with('_') {
+				letter = letter.replace('_', '')
+				nums := [')', '!', '@', '#', '$', '%', '^', '&', '*', '(']
+				if app.shift_pressed && letter.len > 0 {
+					letter = nums[letter.u32()]
+				}
+			}
+			if letter == 'minus' {
+				if app.shift_pressed {
+					letter = '_'
+				} else {
+					letter = '-'
+				}
+			}
+			if letter == 'left_bracket' && app.shift_pressed {
+				letter = '{'
+			}
+			if letter == 'right_bracket' && app.shift_pressed {
+				letter = '}'
+			}
+			if letter == 'equal' && app.shift_pressed {
+				letter = '+'
+			}
+			if letter == 'apostrophe' && app.shift_pressed {
+				letter = '"'
+			}
+			if letter == 'comma' && app.shift_pressed {
+				letter = '<'
+			}
+			if letter == 'period' && app.shift_pressed {
+				letter = '>'
+			}
+			if letter == 'slash' && app.shift_pressed {
+				letter = '?'
+			}
+
+			if letter == 'semicolon' && app.shift_pressed {
+				letter = ':'
+			}
+			if letter == 'backslash' && app.shift_pressed {
+				letter = '|'
+			}
+
+			if letter == 'grave_accent' && app.shift_pressed {
+				letter = '~'
+			}
+
+			if app.shift_pressed && letter.len > 0 {
+				letter = letter.to_upper()
+			}
+			if letter.len > 1 {
+				if letter == 'tab' {
+					letter = '\t'
+				} else {
+					letter = res
+				}
+			}
+			if strr != '\n' {
+				strr = letter
+			}
+
+			com.text = com.text.substr_ni(0, com.carrot_index) + strr +
+				com.text.substr_ni(com.carrot_index, com.text.len)
+			if key == .enter {
+				com.carrot_top += 1
+			} else {
+				com.carrot_left += 1
+			}
+
+			return
+		}
+	}
 }
 
 fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
@@ -111,9 +232,6 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			letter = '?'
 		}
 
-		// if letter == 'tab' {
-		//	letter = ' '.repeat(8)
-		//}
 		if letter == 'semicolon' && app.shift_pressed {
 			letter = ':'
 		}
@@ -121,7 +239,6 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			letter = '|'
 		}
 
-		// println(letter)
 		if letter == 'grave_accent' && app.shift_pressed {
 			letter = '~'
 		}

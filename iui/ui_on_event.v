@@ -45,7 +45,6 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 	mut found := false
 	for mut com in app.components {
 		if point_in(mut com, app.click_x, app.click_y) && !found {
-			found = true
 			if mut com is Tabbox {
 				for _, mut val in com.kids {
 					for mut comm in val {
@@ -56,6 +55,7 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 					}
 				}
 			}
+			found = true
 			if mut com is Modal {
 				mut xo := com.xs
 				mut yo := com.y + com.top_off + 26
@@ -160,12 +160,34 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 					if mut comm is Textbox {
 						text_box_scroll(e, mut comm)
 					}
+					if mut comm is Runebox {
+						rune_box_scroll(e, mut comm)
+					}
 				}
 			}
 			continue
 		}
 
 		if mut a is Modal {
+			for mut child in a.children {
+				if mut child is Tree {
+					if child.is_hover {
+						scroll_y := int(e.scroll_y)
+
+						child.scroll_i += -scroll_y
+
+						// if child.scroll_i < 0 {
+						//    child.scroll_i = 0
+						//}
+						// if (child.scroll_i * 2) > child.open - (child.height / 2) {
+						//    child.scroll_i = (child.open - (child.height / 2)) / 2
+						//}
+						return
+					}
+					continue
+				}
+			}
+
 			scroll_y := (int(e.scroll_y) / 2)
 			if abs(e.scroll_y) != e.scroll_y {
 				a.scroll_i += -scroll_y
@@ -204,6 +226,9 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 		if mut a is Textbox {
 			text_box_scroll(e, mut a)
 			continue
+		}
+		if mut a is Runebox {
+			rune_box_scroll(e, mut a)
 		}
 
 		scroll_y := int(e.scroll_y)

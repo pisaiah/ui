@@ -290,6 +290,17 @@ fn text_box_scroll(e &gg.Event, mut a Textbox) {
 	}
 }
 
+fn rune_box_scroll(e &gg.Event, mut a Runebox) {
+	if a.is_selected {
+		scroll_y := (int(e.scroll_y) / 2)
+		if abs(e.scroll_y) != e.scroll_y {
+			a.scroll_i += -scroll_y
+		} else if a.scroll_i > 0 {
+			a.scroll_i -= scroll_y
+		}
+	}
+}
+
 // Functions for GG
 pub fn text_width(win Window, text string) int {
 	return win.gg.text_width(text)

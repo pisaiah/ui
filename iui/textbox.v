@@ -319,7 +319,6 @@ pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int,
 const (
 	code_blue  = gx.rgb(90, 150, 230)
 	code_num   = gx.rgb(240, 200, 0)
-	code_str   = gx.rgb(200, 100, 0)
 	code_pur   = gx.rgb(200, 100, 200)
 
 	blue_words = ['mut', 'pub', 'fn', 'true', 'false', 'import', 'module', 'struct']

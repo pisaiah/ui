@@ -13,6 +13,7 @@ pub mut:
 	click_event_fn fn (mut Window, Tree)
 	childs         []Component
 	open           int
+	min_y          int
 	is_hover       bool
 }
 
@@ -39,7 +40,10 @@ pub fn (mut tr Tree) draw() {
 	mut mid := (tr.x + (tr.width / 2))
 	mut midy := ((tr.y) + 3 + (20 / 2))
 
-	tr.app.draw_bordered_rect(tr.x + 4, tr.y + 3, tr.width - 8, tr.height, 2, bg, bord)
+	if tr.y >= tr.min_y {
+		tr.app.draw_bordered_rect(tr.x + 4, tr.y + 3, tr.width - 8, tr.height, 2, bg,
+			bord)
+	}
 	if (abs(mid - app.mouse_x) < (tr.width / 2)) && (abs(midy - app.mouse_y) < (20 / 2)) {
 		bg = app.theme.button_bg_hover
 	}
@@ -75,25 +79,28 @@ pub fn (mut tr Tree) draw() {
 		}
 	}
 
-	tr.app.draw_bordered_rect(tr.x + 4, y + 3, tr.width - 8, 20, 2, bg, bord)
+	if y >= tr.min_y {
+		tr.app.draw_bordered_rect(tr.x + 4, y + 3, tr.width - 8, 20, 2, bg, bord)
 
-	if tr.is_selected {
-		tr.app.gg.draw_triangle_filled(tr.x + 5, y + 8, tr.x + 12, y + 8, tr.x + 8, y + 14,
-			app.theme.text_color)
-	} else if tr.childs.len > 0 {
-		tr.app.gg.draw_triangle_filled(tr.x + 7, y + 6, tr.x + 12, y + 11, tr.x + 7, y + 16,
-			app.theme.text_color)
+		if tr.is_selected {
+			tr.app.gg.draw_triangle_filled(tr.x + 5, y + 8, tr.x + 12, y + 8, tr.x + 8,
+				y + 14, app.theme.text_color)
+		} else if tr.childs.len > 0 {
+			tr.app.gg.draw_triangle_filled(tr.x + 7, y + 6, tr.x + 12, y + 11, tr.x + 7,
+				y + 16, app.theme.text_color)
+		}
+
+		tr.app.gg.draw_text(tr.x + 16, y + 4, os.base(tr.text), gx.TextCfg{
+			size: tr.app.font_size
+			color: tr.app.theme.text_color
+		})
 	}
-
-	tr.app.gg.draw_text(tr.x + 16, y + 4, os.base(tr.text), gx.TextCfg{
-		size: tr.app.font_size
-		color: tr.app.theme.text_color
-	})
 
 	mut multx := 4
 	if tr.is_selected {
 		for mut child in tr.childs {
 			child.width = tr.width - (multx * 2)
+
 			draw_with_offset(mut child, tr.x + multx, y + mult)
 
 			if mut child is Tree {
