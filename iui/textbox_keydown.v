@@ -68,6 +68,14 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 	} else if key == .down {
 		com.carrot_top += 1
 	} else {
+		mod := ev.modifiers
+		if mod == 8 {
+			// Windows Key
+			return
+		}
+		if mod == 2 {
+			com.ctrl_down = true
+		}
 		if key == .backspace {
 			com.text = com.text.substr_ni(0, com.carrot_index - 1) +
 				com.text.substr_ni(com.carrot_index, com.text.len)
@@ -143,6 +151,9 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 			if app.shift_pressed && letter.len > 0 {
 				letter = letter.to_upper()
 			}
+
+			com.last_letter = letter
+
 			if letter.len > 1 {
 				if letter == 'tab' {
 					letter = '\t'
@@ -154,16 +165,29 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 				strr = letter
 			}
 
-			com.text = com.text.substr_ni(0, com.carrot_index) + strr +
-				com.text.substr_ni(com.carrot_index, com.text.len)
-			if key == .enter {
-				com.carrot_top += 1
-			} else {
-				com.carrot_left += 1
+			mut bevnt := com.before_txtc_event_fn(app, *com)
+			if bevnt {
+				// 'true' indicates cancel event
+				return
 			}
+
+			if mod != 2 {
+				com.text = com.text.substr_ni(0, com.carrot_index) + strr +
+					com.text.substr_ni(com.carrot_index, com.text.len)
+
+				if key == .enter {
+					com.carrot_top += 1
+				} else {
+					com.carrot_left += 1
+				}
+			}
+
+			com.last_letter = letter
+			com.text_change_event_fn(app, com)
 
 			return
 		}
+		com.ctrl_down = true
 	}
 }
 

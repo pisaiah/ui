@@ -11,7 +11,6 @@ pub mut:
 	text           string
 	click_event_fn fn (mut Window, Modal)
 	in_modal       bool
-	children       []Component
 	needs_init     bool
 	close          Button
 	shown          bool
@@ -21,10 +20,6 @@ pub mut:
 	left_off  int
 	top_off   int = 50
 	xs        int
-}
-
-pub fn (mut this Modal) add_child(com &Component) {
-	this.children << com
 }
 
 pub fn modal(app &Window, title string) &Modal {

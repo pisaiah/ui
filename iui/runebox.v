@@ -11,12 +11,18 @@ import math
 struct Runebox {
 	Component_A
 pub mut:
-	win            &Window
-	carrot_top     int
-	carrot_left    int
-	carrot_index   int
-	code_highlight &SyntaxHighlighter
-	click_event_fn fn (voidptr, voidptr)
+	win                  &Window
+	carrot_top           int
+	carrot_left          int
+	carrot_index         int
+	multiline            bool = true
+	ctrl_down            bool
+	code_highlight       &SyntaxHighlighter
+	last_letter          string
+	click_event_fn       fn (voidptr, voidptr)
+	before_txtc_event_fn fn (mut Window, Runebox) bool
+	text_change_event_fn fn (voidptr, voidptr)
+	padding_x            int
 }
 
 pub fn runebox(mut win Window, text string) &Runebox {
@@ -25,6 +31,10 @@ pub fn runebox(mut win Window, text string) &Runebox {
 		text: text
 		code_highlight: syntax_highlight_for_v()
 		click_event_fn: fn (a voidptr, b voidptr) {}
+		before_txtc_event_fn: fn (mut a Window, b Runebox) bool {
+			return false
+		}
+		text_change_event_fn: fn (a voidptr, b voidptr) {}
 	}
 }
 
@@ -102,10 +112,13 @@ fn (mut this Runebox) draw() {
 	mut keep_color_for := 0
 	mut keep_color_util := ` `
 
-	line_height := ctx.text_height('A0{')
+	line_height := ctx.text_height('A{')
 
 	if this.carrot_top < 0 {
 		this.carrot_top = 0
+	}
+	if this.scroll_i < 0 {
+		this.scroll_i = 0
 	}
 
 	if this.carrot_left < 0 {
@@ -257,17 +270,25 @@ fn syntax_highlight_for_v() &SyntaxHighlighter {
 	sh.colors['string'] = gx.rgb(200, 100, 0)
 	sh.colors['oper'] = gx.rgb(120, 81, 255)
 	sh.colors['comment'] = gx.rgb(0, 150, 0)
-    sh.colors['dec2'] = gx.rgb(0, 0, 255)
-    sh.colors['dec3'] = gx.rgb(0, 0, 255)
+	sh.colors['dec2'] = gx.rgb(0, 0, 255)
+	sh.colors['dec3'] = gx.rgb(0, 0, 255)
 
 	sh.keywords['numbers'] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 	sh.keywords['decl'] = 'mut:,pub:,pub mut:,mut,pub ,unsafe ,default ,struct,type ,enum ,struct ,union ,const'.split(',')
-	sh.keywords['dec2'] = ['import', 'break ', 'byte ', 'continue ', 'else ', 'false ', 'fn ', 'for ', 'if ', 'import ', 'interface ']
-    sh.keywords['dec3'] = 'is |module |return |select |shared |true |typeof union'.split('|')
+	sh.keywords['dec2'] = ['import', 'break ', 'byte ', 'continue ', 'else ', 'false ', 'fn ',
+		'for ', 'if ', 'import ', 'interface ']
+	sh.keywords['dec3'] = 'is |module |return |select |shared |true |typeof union'.split('|')
 	sh.keywords['oper'] = '[,],{,}'.split(',')
 	sh.between['string'] = ["'", '"']
 	sh.between['comment'] = ['//\n']
 
+	return sh
+}
+
+fn syntax_highlight_for_html() &SyntaxHighlighter {
+	mut sh := &SyntaxHighlighter{}
+	sh.colors['bracket'] = gx.blue
+	sh.between['bracket'] = ['<>']
 	return sh
 }
 

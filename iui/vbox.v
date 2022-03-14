@@ -2,58 +2,47 @@ module iui
 
 import gg
 
-// HBox - implements Component interface
-struct HBox {
+// VBox - implements Component interface
+struct VBox {
 	Component_A
 pub mut:
 	win            &Window
 	click_event_fn fn (voidptr, voidptr)
 	needs_pack     bool
-	raw_width      int
-	is_width_per   bool
+	// raw_width      int
+	// is_width_per   bool
 }
 
-pub fn hbox(win &Window) &HBox {
-	return &HBox{
+pub fn vbox(win &Window) &VBox {
+	return &VBox{
 		win: win
 		click_event_fn: fn (a voidptr, b voidptr) {}
 	}
 }
 
-pub fn (mut this HBox) pack() {
+pub fn (mut this VBox) pack() {
 	this.needs_pack = true
 }
 
-pub fn (mut this HBox) set_width_as_percent(flag bool, width int) {
-	this.is_width_per = flag
-	this.raw_width = width
-}
+/*
+pub fn (mut this VBox) set_height_as_percent(flag bool, width int) {
+    this.is_width_per = flag
+    this.raw_height = width
+}*/
 
-pub fn (mut this HBox) draw() {
+pub fn (mut this VBox) draw() {
 	mut o_x := 0
 	mut o_y := 0
 
-	mut box_width := this.width
-	if this.is_width_per {
-		size := gg.window_size()
-		box_width = int((size.width) * (f32(this.raw_width) / 100))
-		this.width = box_width
-	}
-
 	mut width := 0
-	mut index := 0
 
-	for mut child in this.children {
-        child.draw_event_fn(this.win, child)
-		if o_x + child.width > box_width {
-			if o_x > width {
-				width = o_x
-			}
-			o_x = 0
-			o_y += child.height
-		}
-
-		draw_with_offset(mut child, this.x + o_x, this.y + o_y)
+    
+	//for mut child in this.children {
+	for i in this.scroll_i .. this.children.len {
+        mut child := this.children[i]
+        child.draw_event_fn(this.win, &child)
+        draw_with_offset(mut child, this.x + o_x, this.y + o_y)
+        
 
 		if this.is_mouse_down {
 			if point_in_raw(mut child, this.win.click_x, this.win.click_y) {
@@ -71,16 +60,21 @@ pub fn (mut this HBox) draw() {
 				child.is_mouse_down = false
 				child.is_mouse_rele = false
 			}
+			this.is_mouse_rele = false
 		} else {
 			child.is_mouse_rele = false
 		}
 
-		o_x += child.width
-		index += 1
+		o_y += child.height
 
-		if index == this.children.len {
-			o_y += child.height
+		if width < child.width {
+			width = child.width
 		}
+        
+        size := gg.screen_size()
+        if o_y > size.height {
+            break
+        }
 	}
 
 	// this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
@@ -88,12 +82,16 @@ pub fn (mut this HBox) draw() {
 	if o_y != this.height {
 		this.height = o_y
 	}
-
-	if this.needs_pack {
+	if width != this.width {
 		this.width = width
-		this.height = o_y
-		this.needs_pack = false
 	}
+
+	/*
+	if this.needs_pack {
+        this.width = width
+        this.height = o_y
+        this.needs_pack = false
+    }*/
 
 	// this.is_mouse_down = false
 	this.is_mouse_rele = false

@@ -33,10 +33,24 @@ pub fn (mut btn Label) pack() {
 }
 
 pub fn (mut btn Label) pack_do() {
+    // Set font size
+	btn.app.gg.set_cfg(gx.TextCfg{
+		size: btn.app.font_size + btn.size
+		color: btn.app.theme.text_color
+		bold: btn.bold
+	})
+
 	width := text_width(btn.app, btn.text + 'ab')
 	btn.width = width
-	btn.height = text_height(btn.app, btn.text) + 4
+	btn.height = text_height(btn.app, btn.text) + 4 + (btn.size)
 	btn.need_pack = false
+
+    // Reset for text_height
+	btn.app.gg.set_cfg(gx.TextCfg{
+		size: btn.app.font_size
+		color: btn.app.theme.text_color
+		bold: false
+	})
 }
 
 fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Label) {

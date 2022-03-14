@@ -42,6 +42,7 @@ mut:
 	parent &Component_A
 	draw_event_fn fn (mut Window, &Component)
 	after_draw_event_fn fn (mut Window, &Component)
+	children []Component
 	draw()
 }
 
@@ -65,6 +66,11 @@ pub mut:
 	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
 	parent              &Component_A = 0
+	children            []Component
+}
+
+pub fn (mut this Component_A) add_child(com &Component) {
+	this.children << com
 }
 
 pub fn (mut com Component_A) set_parent(mut par Component_A) {
@@ -84,6 +90,11 @@ pub fn (mut com Component_A) draw() {
 }
 
 pub fn point_in_raw(mut com Component, px int, py int) bool {
+	if com.rx == 0 && com.ry == 0 {
+		// Not drawn with offset
+		return point_in(mut com, px, py)
+	}
+
 	midx := com.rx + (com.width / 2)
 	midy := com.ry + (com.height / 2)
 
@@ -269,7 +280,9 @@ fn (mut app Window) draw() {
 	// Draw Menubar last
 	if app.show_menu_bar && !bar_drawn {
 		mut bar := app.get_bar()
-		bar.draw()
+		if bar != 0 {
+			bar.draw()
+		}
 	}
 
 	end := time.now().unix_time_milli()

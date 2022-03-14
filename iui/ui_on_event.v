@@ -101,6 +101,7 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 
 			com.is_mouse_down = false
 		}
+		// com.on_mouse_down_event_(e, mut app)
 	}
 }
 
@@ -145,8 +146,19 @@ fn on_mouse_up_event(e &gg.Event, mut app Window) {
 				}
 			}
 
+			for mut child in com.children {
+				if point_in_raw(mut child, mx, my) {
+					child.is_mouse_down = false
+					child.is_mouse_rele = true
+				}
+			}
+
 			found = true
 		} else {
+			for mut child in com.children {
+				child.is_mouse_down = false
+			}
+
 			com.is_mouse_down = false
 		}
 	}
@@ -241,4 +253,80 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 			a.scroll_i = 0
 		}
 	}
+}
+
+// TEST:
+
+fn (mut com Component) on_mouse_down_event_(e &gg.Event, mut app Window) bool {
+	app.click_x = app.gg.mouse_pos_x
+	app.click_y = app.gg.mouse_pos_y
+
+	// Sort by Z-index
+	app.components.sort(a.z_index > b.z_index)
+
+	mut found := false
+	// for mut com in app.components {
+	if point_in_raw(mut com, app.click_x, app.click_y) && !found {
+		if mut com is Tabbox {
+			for _, mut val in com.kids {
+				for mut comm in val {
+					if point_in_raw(mut comm, app.click_x, app.click_y) && !found {
+						comm.is_mouse_down = true
+					}
+				}
+			}
+		}
+
+		for mut child in com.children {
+			child.on_mouse_down_event_(e, mut app)
+		}
+
+		found = true
+		if mut com is Modal {
+			//mut xo := com.xs
+			//mut yo := com.y + com.top_off + 26
+			for mut child in com.children {
+				if point_in_raw(mut child, app.click_x, app.click_y) {
+					child.is_mouse_down = true
+
+					if mut child is Tabbox {
+						mut val := child.kids[child.active_tab]
+						for mut comm in val {
+							if point_in_raw(mut comm, app.click_x, app.click_y) {
+								comm.is_mouse_down = true
+							}
+						}
+					}
+				}
+			}
+		}
+		com.is_mouse_down = true
+	} else {
+		if mut com is Tabbox {
+			for _, mut val in com.kids {
+				for mut comm in val {
+					if point_in_raw(mut comm, app.click_x, app.click_y) {
+						comm.is_mouse_down = false
+					}
+				}
+			}
+		}
+
+		if mut com is Modal {
+			for mut child in com.children {
+				child.is_mouse_down = false
+
+				if mut child is Tabbox {
+					mut val := child.kids[child.active_tab]
+					for mut comm in val {
+						comm.is_mouse_down = false
+					}
+				}
+			}
+		}
+
+		com.is_mouse_down = false
+	}
+	//}
+	return found
 }
