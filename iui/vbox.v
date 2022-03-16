@@ -36,13 +36,11 @@ pub fn (mut this VBox) draw() {
 
 	mut width := 0
 
-    
-	//for mut child in this.children {
+	// for mut child in this.children {
 	for i in this.scroll_i .. this.children.len {
-        mut child := this.children[i]
-        child.draw_event_fn(this.win, &child)
-        draw_with_offset(mut child, this.x + o_x, this.y + o_y)
-        
+		mut child := this.children[i]
+		child.draw_event_fn(this.win, &child)
+		draw_with_offset(mut child, this.x + o_x, this.y + o_y)
 
 		if this.is_mouse_down {
 			if point_in_raw(mut child, this.win.click_x, this.win.click_y) {
@@ -70,11 +68,11 @@ pub fn (mut this VBox) draw() {
 		if width < child.width {
 			width = child.width
 		}
-        
-        size := gg.screen_size()
-        if o_y > size.height {
-            break
-        }
+
+		size := gg.screen_size()
+		if o_y > size.height {
+			break
+		}
 	}
 
 	// this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)

@@ -175,6 +175,9 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 					if mut comm is Runebox {
 						rune_box_scroll(e, mut comm)
 					}
+					if mut comm is TextEdit {
+						text_edit_scroll(e, mut comm)
+					}
 				}
 			}
 			continue
@@ -283,8 +286,8 @@ fn (mut com Component) on_mouse_down_event_(e &gg.Event, mut app Window) bool {
 
 		found = true
 		if mut com is Modal {
-			//mut xo := com.xs
-			//mut yo := com.y + com.top_off + 26
+			// mut xo := com.xs
+			// mut yo := com.y + com.top_off + 26
 			for mut child in com.children {
 				if point_in_raw(mut child, app.click_x, app.click_y) {
 					child.is_mouse_down = true

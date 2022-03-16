@@ -44,7 +44,7 @@ pub fn (mut this HBox) draw() {
 	mut index := 0
 
 	for mut child in this.children {
-        child.draw_event_fn(this.win, child)
+		child.draw_event_fn(this.win, child)
 		if o_x + child.width > box_width {
 			if o_x > width {
 				width = o_x

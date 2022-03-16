@@ -148,21 +148,21 @@ fn main() {
 	mut img := ui.image(window, v_img)
 	img.set_bounds(30, 400, 50, 50)
 	window.add_child(img)
-    
-    mut hbox := ui.hbox(window)
-    
-    mut btn_ := ui.button(window, 'Button in HBox')
-    btn_.pack()
-    
-    mut btn3 := ui.button(window, 'Button in HBox')
-    btn3.pack()
-    
-    hbox.add_child(btn_)
-    hbox.add_child(btn3)
-    
-    hbox.set_pos(100, 400)
-    hbox.set_bounds(100, 400, 200, 100)
-    window.add_child(hbox)
+
+	mut hbox := ui.hbox(window)
+
+	mut btn_ := ui.button(window, 'Button in HBox')
+	btn_.pack()
+
+	mut btn3 := ui.button(window, 'Button in HBox')
+	btn3.pack()
+
+	hbox.add_child(btn_)
+	hbox.add_child(btn3)
+
+	hbox.set_pos(100, 400)
+	hbox.set_bounds(100, 400, 200, 100)
+	window.add_child(hbox)
 
 	window.gg.run()
 }

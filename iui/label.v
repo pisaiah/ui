@@ -33,7 +33,7 @@ pub fn (mut btn Label) pack() {
 }
 
 pub fn (mut btn Label) pack_do() {
-    // Set font size
+	// Set font size
 	btn.app.gg.set_cfg(gx.TextCfg{
 		size: btn.app.font_size + btn.size
 		color: btn.app.theme.text_color
@@ -45,7 +45,7 @@ pub fn (mut btn Label) pack_do() {
 	btn.height = text_height(btn.app, btn.text) + 4 + (btn.size)
 	btn.need_pack = false
 
-    // Reset for text_height
+	// Reset for text_height
 	btn.app.gg.set_cfg(gx.TextCfg{
 		size: btn.app.font_size
 		color: btn.app.theme.text_color

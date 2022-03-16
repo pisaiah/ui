@@ -9,7 +9,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.4'
+	version = '0.0.5'
 	ui_mode = false // Note: On N4100; ui_mode uses
 		// 	   more cpu while on than off.
 )
@@ -304,6 +304,17 @@ fn text_box_scroll(e &gg.Event, mut a Textbox) {
 }
 
 fn rune_box_scroll(e &gg.Event, mut a Runebox) {
+	if a.is_selected {
+		scroll_y := (int(e.scroll_y) / 2)
+		if abs(e.scroll_y) != e.scroll_y {
+			a.scroll_i += -scroll_y
+		} else if a.scroll_i > 0 {
+			a.scroll_i -= scroll_y
+		}
+	}
+}
+
+fn text_edit_scroll(e &gg.Event, mut a TextEdit) {
 	if a.is_selected {
 		scroll_y := (int(e.scroll_y) / 2)
 		if abs(e.scroll_y) != e.scroll_y {

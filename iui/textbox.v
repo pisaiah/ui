@@ -5,6 +5,7 @@ import gx
 import time
 
 // Textbox - implements Component interface
+[deprecated: 'Replaced with TextEdit']
 struct Textbox {
 	Component_A
 pub mut:
@@ -22,7 +23,7 @@ pub mut:
 	multiline            bool = true
 	ctrl_down            bool
 	last_letter          string
-
+	// TODO carrot -> caret
 	carrot_left_raw int
 	carrot_left     int
 	carrot_top      int

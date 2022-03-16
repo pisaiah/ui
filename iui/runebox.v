@@ -256,13 +256,13 @@ const (
 )
 
 struct SyntaxHighlighter {
-mut:
+pub mut:
 	colors   map[string]gx.Color
 	keywords map[string][]string
 	between  map[string][]string
 }
 
-fn syntax_highlight_for_v() &SyntaxHighlighter {
+pub fn syntax_highlight_for_v() &SyntaxHighlighter {
 	mut sh := &SyntaxHighlighter{}
 
 	sh.colors['numbers'] = gx.rgb(240, 200, 0)
