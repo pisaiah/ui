@@ -16,11 +16,13 @@ pub mut:
 	carrot_top           int
 	carrot_left          int
 	code_highlight       &SyntaxHighlighter
+	code_syntax_on       bool = true
 	last_letter          string
 	click_event_fn       fn (voidptr, voidptr)
 	before_txtc_event_fn fn (mut Window, TextEdit) bool
 	text_change_event_fn fn (voidptr, voidptr)
 	padding_x            int
+	padding_y            int
 	ctrl_down            bool
 	hint                 string
 	hint_top             int = -1
@@ -51,9 +53,23 @@ pub fn textedit(window voidptr, text string) &TextEdit {
 	}
 }
 
+pub fn textedit_from_array(window voidptr, text []string) &TextEdit {
+	return &TextEdit{
+		win: &Window(window)
+		lines: text
+		code_highlight: syntax_highlight_for_v()
+		click_event_fn: fn (a voidptr, b voidptr) {}
+		before_txtc_event_fn: fn (mut a Window, b TextEdit) bool {
+			return false
+		}
+		text_change_event_fn: fn (a voidptr, b voidptr) {}
+		line_draw_event_fn: fn (a voidptr, b int, c int, d int) {}
+	}
+}
+
 // Draw line numbers
 fn (this &TextEdit) draw_line_number_background() int {
-	if this.code_highlight != 0 {
+	if this.code_highlight != 0 && this.code_syntax_on {
 		padding_x := text_width(this.win, (this.lines.len * 10).str())
 		this.win.draw_bordered_rect(this.x + 1, this.y + 1, padding_x, this.height - 2,
 			2, this.win.theme.button_bg_normal, this.win.theme.button_bg_normal)
@@ -220,7 +236,7 @@ fn (mut this TextEdit) draw() {
 	padding_x := this.draw_line_number_background()
 	this.padding_x = padding_x
 
-	mut oy := this.y
+	mut oy := this.y + this.padding_y
 
 	confg := gx.TextCfg{
 		size: this.win.font_size
@@ -245,12 +261,16 @@ fn (mut this TextEdit) draw() {
 			}
 
 			padd := padding_x - 4
-			this.win.gg.draw_rect_filled(this.x + padd, oy, this.width - padd, line_height,
-				this.win.theme.button_bg_hover)
+			if this.code_syntax_on || lines.len > 1 {
+				this.win.gg.draw_rect_filled(this.x + padd, oy, this.width - padd, line_height,
+					this.win.theme.button_bg_hover)
+			}
 		}
 
 		line_num := line_count + 1
-		this.win.gg.draw_text(this.x, oy, line_num.str(), confg)
+		if lines.len > 1 {
+			this.win.gg.draw_text(this.x, oy, line_num.str(), confg)
+		}
 
 		runes := line.runes()
 		mut xo := padding_x
@@ -263,7 +283,9 @@ fn (mut this TextEdit) draw() {
 		// TODO: Calculate matches, so we don't have to draw every rune.
 		for r in runes {
 			if keep_color_for == 0 && keep_color_util == ` ` {
-				color, keep_color_for, keep_color_util = this.get_color(left, line_count)
+				if this.code_syntax_on {
+					color, keep_color_for, keep_color_util = this.get_color(left, line_count)
+				}
 			} else {
 				if keep_color_for > 0 {
 					keep_color_for -= 1
@@ -315,13 +337,6 @@ fn (mut this TextEdit) draw() {
 			}
 		}
 
-		/*
-		if line_count == this.hint_top {
-            if this.hint.len > 0 {
-
-            }
-        }*/
-
 		this.line_draw_event_fn(this, line_count, xo, oy)
 
 		if runes.len == 0 && line_count == this.carrot_top {
@@ -335,4 +350,35 @@ fn (mut this TextEdit) draw() {
 		oy += line_height
 	}
 	this.draw_scrollbar(shown, this.lines.len)
+}
+
+// Syntax Highlight
+struct SyntaxHighlighter {
+pub mut:
+	colors   map[string]gx.Color
+	keywords map[string][]string
+	between  map[string][]string
+}
+
+pub fn syntax_highlight_for_v() &SyntaxHighlighter {
+	mut sh := &SyntaxHighlighter{}
+
+	sh.colors['numbers'] = gx.rgb(240, 200, 0)
+	sh.colors['decl'] = gx.rgb(0, 0, 200)
+	sh.colors['string'] = gx.rgb(200, 100, 0)
+	sh.colors['oper'] = gx.rgb(120, 81, 255)
+	sh.colors['comment'] = gx.rgb(0, 150, 0)
+	sh.colors['dec2'] = gx.rgb(0, 0, 255)
+	sh.colors['dec3'] = gx.rgb(0, 0, 255)
+
+	sh.keywords['numbers'] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+	sh.keywords['decl'] = 'mut:,pub:,pub mut:,mut,pub ,unsafe ,default ,struct,type ,enum ,struct ,union ,const'.split(',')
+	sh.keywords['dec2'] = ['import', 'break ', 'byte ', 'continue ', 'else ', 'false ', 'fn ',
+		'for ', 'if ', 'import ', 'interface ']
+	sh.keywords['dec3'] = 'is |module |return |select |shared |true |typeof union'.split('|')
+	sh.keywords['oper'] = '[,],{,}'.split(',')
+	sh.between['string'] = ["'", '"']
+	sh.between['comment'] = ['//\n']
+
+	return sh
 }

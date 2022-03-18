@@ -139,9 +139,12 @@ fn main() {
 
 	window.add_child(tb)
 
-	mut code_box := ui.textbox(window, 'module main\n\nfn main() {\n\tmut val := 0\n}')
+	// mut code_box := ui.textbox(window, 'module main\n\nfn main() {\n\tmut val := 0\n}')
+	// code_box.set_bounds(30, 270, 320, 120)
+	// code_box.set_codebox(true)
+	mut code_box := ui.textedit(window, 'module main\n\nfn main() {\n\tmut val := 0\n}')
 	code_box.set_bounds(30, 270, 320, 120)
-	code_box.set_codebox(true)
+
 	window.add_child(code_box)
 
 	mut v_img := window.gg.create_image(os.resource_abs_path('v.png'))
@@ -152,16 +155,16 @@ fn main() {
 	mut hbox := ui.hbox(window)
 
 	mut btn_ := ui.button(window, 'Button in HBox')
-	btn_.pack()
+	btn_.set_bounds(0, 0, 120, 30)
 
-	mut btn3 := ui.button(window, 'Button in HBox')
-	btn3.pack()
+	mut btn3 := ui.button(window, 'Button 2')
+	btn3.set_bounds(0, 0, 80, 30)
 
 	hbox.add_child(btn_)
 	hbox.add_child(btn3)
 
 	hbox.set_pos(100, 400)
-	hbox.set_bounds(100, 400, 200, 100)
+	hbox.set_bounds(100, 400, 250, 100)
 	window.add_child(hbox)
 
 	window.gg.run()

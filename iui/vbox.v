@@ -11,6 +11,7 @@ pub mut:
 	needs_pack     bool
 	// raw_width      int
 	// is_width_per   bool
+	update_width bool = true
 }
 
 pub fn vbox(win &Window) &VBox {
@@ -41,6 +42,13 @@ pub fn (mut this VBox) draw() {
 		mut child := this.children[i]
 		child.draw_event_fn(this.win, &child)
 		draw_with_offset(mut child, this.x + o_x, this.y + o_y)
+
+		if this.win.bar != 0 {
+			if this.win.bar.tik < 99 {
+				this.is_mouse_down = false
+				this.is_mouse_rele = false
+			}
+		}
 
 		if this.is_mouse_down {
 			if point_in_raw(mut child, this.win.click_x, this.win.click_y) {
@@ -80,7 +88,7 @@ pub fn (mut this VBox) draw() {
 	if o_y != this.height {
 		this.height = o_y
 	}
-	if width != this.width {
+	if width != this.width && this.update_width {
 		this.width = width
 	}
 

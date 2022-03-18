@@ -4,13 +4,12 @@ import os
 import math
 import gx
 import time
-import sokol.audio
 
 struct App {
 	version int
 mut:
 	selected_plant Card
-	balance        int = 50
+	balance        int = 550
 	cache          map[string]int
 }
 
@@ -84,8 +83,6 @@ mut:
 }
 
 fn (mut this GridBox) draw() {
-	// this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, this.color, this.color)
-	// this.win.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 1, this.color)
 	if this.is_mouse_rele {
 		println('click')
 		mut app := &App(this.win.id_map['app'])

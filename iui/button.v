@@ -7,10 +7,14 @@ import gx
 struct Button {
 	Component_A
 pub mut:
-	app            &Window
-	click_event_fn fn (mut Window, Button)
-	need_pack      bool
-	extra          string
+	app                &Window
+	click_event_fn     fn (mut Window, Button)
+	new_click_event_fn fn (voidptr, voidptr, voidptr)
+	need_pack          bool
+	extra              string
+	user_data          voidptr
+    override_bg        bool
+    override_bg_color  gx.Color
 }
 
 pub fn button(app &Window, text string) Button {
@@ -18,7 +22,14 @@ pub fn button(app &Window, text string) Button {
 		text: text
 		app: app
 		click_event_fn: fn (mut win Window, a Button) {}
+		new_click_event_fn: fn (a voidptr, b voidptr, c voidptr) {}
+		user_data: 0
 	}
+}
+
+pub fn (mut this Button) set_background(color gx.Color) {
+    this.override_bg = true
+    this.override_bg_color = color
 }
 
 pub fn (mut btn Button) draw() {
@@ -53,12 +64,21 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 
 	// Detect Hover
 	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
-		bg = app.theme.button_bg_hover
-		border = app.theme.button_border_hover
+		if app.bar == 0 || app.bar.tik > 90 {
+			bg = app.theme.button_bg_hover
+			border = app.theme.button_border_hover
+		}
 	}
+    
+    if btn.override_bg {
+        bg = btn.override_bg_color
+    }
 
 	if btn.is_mouse_rele {
-		btn.click_event_fn(app, *btn)
+		if app.bar == 0 || app.bar.tik > 90 {
+			btn.click_event_fn(app, *btn)
+			btn.new_click_event_fn(app, btn, btn.user_data)
+		}
 		btn.is_mouse_rele = false
 	}
 
@@ -80,6 +100,12 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	})
 }
 
+// TODO [deprecated: 'use set_click_fn']
 pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
 	com.click_event_fn = b
+}
+
+pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
+	com.new_click_event_fn = b
+	com.user_data = extra_data
 }
