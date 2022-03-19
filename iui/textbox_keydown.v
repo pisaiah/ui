@@ -94,6 +94,13 @@ fn (mut win Window) textedit_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 
 		if key == .backspace {
 			line := com.lines[com.carrot_top]
+            
+            com.last_letter = 'backspace'
+            mut bevnt := com.before_txtc_event_fn(win, *com)
+			if bevnt {
+				// 'true' indicates cancel event
+				return
+			}
 
 			if com.carrot_left - 1 >= 0 {
 				new_line := line.substr(0, com.carrot_left - 1) +
@@ -155,6 +162,8 @@ fn (mut win Window) textedit_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 				letter = letter.to_upper()
 			}
 
+            com.last_letter = letter
+
 			if letter.len > 1 {
 				if letter == 'tab' {
 					letter = '\t'
@@ -165,8 +174,6 @@ fn (mut win Window) textedit_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 			if strr != '\n' {
 				strr = letter
 			}
-
-			com.last_letter = letter
 
 			mut bevnt := com.before_txtc_event_fn(win, *com)
 			if bevnt {

@@ -17,6 +17,7 @@ pub mut:
 	carrot_left          int
 	code_highlight       &SyntaxHighlighter
 	code_syntax_on       bool = true
+    draw_line_numbers    bool = true
 	last_letter          string
 	click_event_fn       fn (voidptr, voidptr)
 	before_txtc_event_fn fn (mut Window, TextEdit) bool
@@ -268,7 +269,7 @@ fn (mut this TextEdit) draw() {
 		}
 
 		line_num := line_count + 1
-		if lines.len > 1 {
+		if lines.len > 1 && this.draw_line_numbers {
 			this.win.gg.draw_text(this.x, oy, line_num.str(), confg)
 		}
 
