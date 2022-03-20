@@ -17,7 +17,7 @@ pub mut:
 	carrot_left          int
 	code_highlight       &SyntaxHighlighter
 	code_syntax_on       bool = true
-    draw_line_numbers    bool = true
+	draw_line_numbers    bool = true
 	last_letter          string
 	click_event_fn       fn (voidptr, voidptr)
 	before_txtc_event_fn fn (mut Window, TextEdit) bool

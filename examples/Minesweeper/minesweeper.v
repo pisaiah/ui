@@ -14,17 +14,17 @@ struct ClickInfo {
 fn main() {
 	mut win := ui.window(ui.theme_default(), 'Minesweeper', 264, 330)
 
-    win.bar = ui.menubar(win, win.theme)
-    win.bar.add_child(ui.menuitem('Game'))
+	win.bar = ui.menubar(win, win.theme)
+	win.bar.add_child(ui.menuitem('Game'))
 
-    mut help := ui.menuitem('Help')
+	mut help := ui.menuitem('Help')
 
-    mut about := ui.menuitem('About iUI')
+	mut about := ui.menuitem('About iUI')
 	mut about_calc := ui.menuitem('About Minesweeper')
-    about_calc.set_click(about_click)
+	about_calc.set_click(about_click)
 	help.add_child(about_calc)
 	help.add_child(about)
-    win.bar.add_child(help)
+	win.bar.add_child(help)
 
 	mut vbox := ui.vbox(win)
 	vbox.set_bounds(4, 32, 256, 343)
@@ -69,8 +69,8 @@ fn btn_click(win_ptr voidptr, btn_ptr voidptr, info_ptr voidptr) {
 	if btn.text == '   ' {
 		if mut btn is ui.Button {
 			btn.set_background(gx.red)
-            game_over(win)
-        }
+			game_over(win)
+		}
 		return
 	} else {
 		btn.text = '0'
@@ -185,7 +185,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 }
 
 fn game_over(win_ptr voidptr) &ui.Modal {
-    mut win := &ui.Window(win_ptr)
+	mut win := &ui.Window(win_ptr)
 	mut modal := ui.modal(win, 'You Lost')
 	modal.in_height = 210
 	modal.in_width = 250
@@ -203,11 +203,10 @@ fn game_over(win_ptr voidptr) &ui.Modal {
 		win.components = win.components.filter(mut it !is ui.Modal)
 	})
 	modal.needs_init = false
-    modal.add_child(can)
+	modal.add_child(can)
 
 	modal.add_child(title)
 
-
 	win.add_child(modal)
-    return modal
+	return modal
 }

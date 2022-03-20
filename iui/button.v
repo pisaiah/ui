@@ -13,8 +13,8 @@ pub mut:
 	need_pack          bool
 	extra              string
 	user_data          voidptr
-    override_bg        bool
-    override_bg_color  gx.Color
+	override_bg        bool
+	override_bg_color  gx.Color
 }
 
 pub fn button(app &Window, text string) Button {
@@ -28,8 +28,8 @@ pub fn button(app &Window, text string) Button {
 }
 
 pub fn (mut this Button) set_background(color gx.Color) {
-    this.override_bg = true
-    this.override_bg_color = color
+	this.override_bg = true
+	this.override_bg_color = color
 }
 
 pub fn (mut btn Button) draw() {
@@ -69,10 +69,10 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 			border = app.theme.button_border_hover
 		}
 	}
-    
-    if btn.override_bg {
-        bg = btn.override_bg_color
-    }
+
+	if btn.override_bg {
+		bg = btn.override_bg_color
+	}
 
 	if btn.is_mouse_rele {
 		if app.bar == 0 || app.bar.tik > 90 {
