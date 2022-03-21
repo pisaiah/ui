@@ -10,7 +10,7 @@ import os.font
 
 pub const (
 	version = '0.0.5'
-	ui_mode = false // Note: On N4100; ui_mode uses
+	//ui_mode = false // Note: On N4100; ui_mode uses
 		// 	   more cpu while on than off.
 )
 
@@ -156,9 +156,6 @@ pub mut:
 	mouse_y        int
 	click_x        int
 	click_y        int
-	lastt          f64
-	fps            int
-	fpss           int
 	theme          Theme
 	bar            &Menubar
 	components     []Component
@@ -168,6 +165,7 @@ pub mut:
 	last_update    i64
 	frame_time     int
 	has_event      bool = true
+    config         &WindowConfig
 	extra_map      map[string]string
 	id_map         map[string]voidptr
 }
@@ -176,7 +174,7 @@ pub fn (com &Component_A) set_id(mut win Window, id string) {
 	win.id_map[id] = com
 }
 
-pub fn (mut win Window) get_from_id(id string) voidptr {
+pub fn (win Window) get_from_id(id string) voidptr {
 	return win.id_map[id]
 }
 
@@ -185,14 +183,26 @@ pub fn (mut win Window) add_child(com Component) {
 }
 
 pub fn window(theme Theme, title string, width int, height int) &Window {
-	return window_with_font(theme, title, width, height, font.default())
+	return window_with_config(theme, title, width, height, &WindowConfig{
+        font_path: font.default()
+        ui_mode: true
+        user_data: 0
+    })
 }
 
-pub fn window_with_font(theme Theme, title string, width int, height int, font_path string) &Window {
+[heap]
+struct WindowConfig {
+    font_path string = font.default()
+    ui_mode   bool
+    user_data voidptr
+}
+
+pub fn window_with_config(theme Theme, title string, width int, height int, config &WindowConfig) &Window {
 	mut app := &Window{
 		gg: 0
 		theme: theme
 		bar: 0
+        config: config
 	}
 
 	// Call blank function so -skip-unused won't skip it
@@ -206,10 +216,10 @@ pub fn window_with_font(theme Theme, title string, width int, height int, font_p
 		window_title: title
 		frame_fn: frame
 		event_fn: on_event
-		user_data: app
-		font_path: font_path
+		user_data: app // TODO config.user_data
+		font_path: config.font_path
 		font_size: app.font_size
-		ui_mode: iui.ui_mode
+		ui_mode: config.ui_mode
 	)
 	return app
 }
@@ -240,7 +250,7 @@ pub fn (app &Window) draw_filled_rect(x int, y int, width int, height int, a int
 
 fn (mut app Window) draw() {
 	// Custom 'UI Mode' - Refresh text carrot
-	if !iui.ui_mode {
+	if !app.config.ui_mode {
 		sleep := (50 - app.frame_time)
 		mut sleep_ := 0
 		if !app.has_event {

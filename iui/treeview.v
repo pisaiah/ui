@@ -30,7 +30,6 @@ pub fn tree(app &Window, text string) Tree {
 }
 
 pub fn (mut tr Tree) draw() {
-	// println(tr.scroll_i)
 	mut mult := 20
 	mut app := tr.app
 	mut bg := app.theme.button_bg_normal
@@ -41,7 +40,7 @@ pub fn (mut tr Tree) draw() {
 	mut midy := ((tr.y) + 3 + (20 / 2))
 
 	if tr.y >= tr.min_y {
-		tr.app.draw_bordered_rect(tr.x + 4, tr.y + 3, tr.width - 8, tr.height, 2, bg,
+		tr.app.draw_bordered_rect(tr.x, tr.y + 3, tr.width - 4, tr.height, 2, bg,
 			bord)
 	}
 	if (abs(mid - app.mouse_x) < (tr.width / 2)) && (abs(midy - app.mouse_y) < (20 / 2)) {
@@ -65,8 +64,6 @@ pub fn (mut tr Tree) draw() {
 			tr.click_event_fn(app, *tr)
 
 			bg = app.theme.button_bg_click
-
-			// border = app.theme.button_border_click
 			tr.last_click = time.now().unix_time_milli()
 		}
 	}

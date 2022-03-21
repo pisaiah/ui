@@ -176,7 +176,9 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 						rune_box_scroll(e, mut comm)
 					}
 					if mut comm is TextEdit {
-						text_edit_scroll(e, mut comm)
+                        if comm.is_selected {
+                            text_edit_scroll(e, mut comm)
+                        }
 					}
 				}
 			}
@@ -245,6 +247,12 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 		if mut a is Runebox {
 			rune_box_scroll(e, mut a)
 		}
+
+        if mut a is TextEdit {
+            if !a.is_selected {
+                continue
+            }
+        }
 
 		scroll_y := int(e.scroll_y)
 		if abs(e.scroll_y) != e.scroll_y {

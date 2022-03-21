@@ -19,7 +19,6 @@ pub mut:
 	wrap                 bool = true
 	last_fit             int  = 1
 	code_highlight       bool
-	code_high_str        bool
 	multiline            bool = true
 	ctrl_down            bool
 	last_letter          string
@@ -179,11 +178,6 @@ pub fn (mut com Textbox) draw() {
 			mut wmul := 0
 
 			for mut wtxt in wspl {
-				// if padding_x + wmul > com.width {
-				//	y_mult += com.app.gg.text_height(wtxt)
-				//	wmul = 0
-				//}
-
 				com.app.gg.draw_text(com.x + wmul + padding_x, com.y + y_mult + padding_y,
 					wtxt, gx.TextCfg{
 					size: size
@@ -331,22 +325,6 @@ pub fn (mut com Textbox) text_color(word string) gx.Color {
 		return com.app.theme.text_color
 	}
 
-	// mut ch := false
-	/*
-	if word.contains("'") && com.code_high_str {
-		println('end: ' + word)
-		com.code_high_str = false
-		ch = true
-	}
-
-	if word.contains("'") && !ch {
-		println(word)
-		com.code_high_str = true
-	}*/
-	if word.contains("('") || word.contains("')") {
-		com.code_high_str = !com.code_high_str
-	}
-
 	if word in iui.blue_words {
 		return iui.code_blue
 	}
@@ -356,10 +334,6 @@ pub fn (mut com Textbox) text_color(word string) gx.Color {
 
 	num := word.int()
 	if num == 0 && word != '0' {
-		// todo
-		// if com.code_high_str {
-		//	return code_str
-		//}
 		return com.app.theme.text_color
 	} else {
 		return iui.code_num
