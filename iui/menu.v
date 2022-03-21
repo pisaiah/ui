@@ -198,5 +198,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 			color: app.theme.text_color
 		})
 	}
-	item.draw_event_fn(app, &Component(item))
+    
+    mut com := &Component(item)
+	com.draw_event_fn(app, com)
 }
