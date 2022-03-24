@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 
 // Image - implements Component interface
 struct Image {
@@ -13,6 +12,7 @@ pub mut:
 	in_modal       bool
 	need_pack      bool
 	img            &gg.Image
+	rotate         int
 }
 
 pub fn image(app &Window, img &gg.Image) &Image {
@@ -50,7 +50,27 @@ pub fn image_from_byte_array_with_size(mut app Window, b []byte, width int, heig
 }
 
 pub fn (mut this Image) draw() {
-	this.app.gg.draw_image(this.x, this.y, this.width, this.height, this.img)
+	if this.is_mouse_rele {
+		this.is_mouse_rele = false
+		this.click_event_fn(this.app, *this)
+	}
+
+	/*
+	if this.need_pack {
+		this.pack_do()
+	}*/
+
+	// this.app.gg.draw_image_with_config(this.x, this.y, this.width, this.height, this.img)
+	this.app.gg.draw_image_with_config(gg.DrawImageConfig{
+		img: this.img
+		img_rect: gg.Rect{
+			x: this.x
+			y: this.y
+			width: this.width
+			height: this.height
+		}
+		rotate: this.rotate
+	})
 }
 
 pub fn (mut this Image) pack() {
@@ -64,49 +84,13 @@ pub fn (mut btn Image) pack_do() {
 	btn.need_pack = false
 }
 
-fn (mut app Window) draw_image(x int, y int, width int, height int, mut btn Image) {
-	if btn.need_pack {
-		btn.pack_do()
-	}
-
-	text := btn.text
-	size := text_width(app, text) / 2
-	sizh := text_height(app, text) / 2
-
-	// mut bg := app.theme.button_bg_normal
-	// mut border := app.theme.button_border_normal
-
-	// mut mid := (x + (width / 2))
-	// mut midy := (y + (height / 2))
-
-	// Detect Hover
-	// if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
-	// bg = app.theme.button_bg_hover
-	// border = app.theme.button_border_hover
-	//}
-
-	if btn.is_mouse_rele {
-		btn.is_mouse_rele = false
-		btn.click_event_fn(app, *btn)
-		// btn.is_selected = true
-	}
-
-	// Detect Click
-	if btn.is_mouse_down {
-		// bg = app.theme.button_bg_click
-		// border = app.theme.button_border_click
-	}
-
-	// Draw Button Text
-	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
-		size: app.font_size
-		color: app.theme.text_color
-	})
-}
-
 pub fn (mut com Image) set_click(b fn (mut Window, Image)) {
 	com.click_event_fn = b
 }
 
 pub fn blank_event_im(mut win Window, a Image) {
+}
+
+pub fn (mut this Image) set_draw_rotation(deg int) {
+	this.rotate = deg
 }

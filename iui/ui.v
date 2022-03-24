@@ -10,7 +10,7 @@ import os.font
 
 pub const (
 	version = '0.0.5'
-	//ui_mode = false // Note: On N4100; ui_mode uses
+		// ui_mode = false // Note: On N4100; ui_mode uses
 		// 	   more cpu while on than off.
 )
 
@@ -165,7 +165,7 @@ pub mut:
 	last_update    i64
 	frame_time     int
 	has_event      bool = true
-    config         &WindowConfig
+	config         &WindowConfig
 	extra_map      map[string]string
 	id_map         map[string]voidptr
 }
@@ -184,17 +184,17 @@ pub fn (mut win Window) add_child(com Component) {
 
 pub fn window(theme Theme, title string, width int, height int) &Window {
 	return window_with_config(theme, title, width, height, &WindowConfig{
-        font_path: font.default()
-        ui_mode: true
-        user_data: 0
-    })
+		font_path: font.default()
+		ui_mode: true
+		user_data: 0
+	})
 }
 
 [heap]
-struct WindowConfig {
-    font_path string = font.default()
-    ui_mode   bool
-    user_data voidptr
+pub struct WindowConfig {
+	font_path string = font.default()
+	ui_mode   bool
+	user_data voidptr
 }
 
 pub fn window_with_config(theme Theme, title string, width int, height int, config &WindowConfig) &Window {
@@ -202,7 +202,7 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 		gg: 0
 		theme: theme
 		bar: 0
-        config: config
+		config: config
 	}
 
 	// Call blank function so -skip-unused won't skip it

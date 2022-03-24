@@ -40,8 +40,7 @@ pub fn (mut tr Tree) draw() {
 	mut midy := ((tr.y) + 3 + (20 / 2))
 
 	if tr.y >= tr.min_y {
-		tr.app.draw_bordered_rect(tr.x, tr.y + 3, tr.width - 4, tr.height, 2, bg,
-			bord)
+		tr.app.draw_bordered_rect(tr.x, tr.y + 3, tr.width - 4, tr.height, 2, bg, bord)
 	}
 	if (abs(mid - app.mouse_x) < (tr.width / 2)) && (abs(midy - app.mouse_y) < (20 / 2)) {
 		bg = app.theme.button_bg_hover
