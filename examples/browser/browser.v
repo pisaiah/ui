@@ -7,7 +7,7 @@ fn main() {
 	println('Browser - Alpha Test')
 
 	mut win := ui.window(ui.get_system_theme(), 'Browser', 900, 550)
-	mut bar := ui.menubar(win, ui.theme_dark())
+	mut bar := ui.menubar(win, win.theme)
 
 	help_menu := ui.menu_item(
 		text: 'Help'
@@ -31,26 +31,40 @@ fn main() {
 	tb.draw_event_fn = tabs_draw
 	win.add_child(tb)
 
-	create_tab(win, mut tb)
+	create_tab(mut win, mut tb)
 
 	win.gg.run()
 }
 
-fn create_tab(win &ui.Window, mut tb ui.Tabbox) {
+// Make menu bar look like url bar.
+fn menu_bar_status_theme(cur ui.Theme) ui.Theme {
+	return ui.Theme{
+		...cur
+		menubar_background: cur.button_bg_normal
+		menubar_border: cur.button_bg_normal
+	}
+}
+
+// Create tab
+fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	mut lbl := ui.label(win, 'Hello world!')
 
 	lbl.pack()
 
-	mut bar := ui.menubar(win, win.theme)
+	menubar_has_tab_color := menu_bar_status_theme(win.theme)
+
+	mut bar := ui.menubar(win, menubar_has_tab_color)
 
 	// Back Button
 	mut back := ui.menuitem('<')
 	back.width = 30
+	back.no_paint_bg = true
 	bar.add_child(back)
 
 	// Forward Buttom
 	mut forward := ui.menuitem('>')
 	forward.width = 30
+	forward.no_paint_bg = true
 	bar.add_child(forward)
 
 	mut urlbar := ui.textedit(win, 'http://frogfind.com')
@@ -65,7 +79,29 @@ fn create_tab(win &ui.Window, mut tb ui.Tabbox) {
 	tb.add_child('Test Tab', bar)
 	tb.add_child('Test Tab', urlbar)
 
-	load_url(win, 'http://frogfind.com')
+	mut status := ui.menubar(win, menubar_has_tab_color)
+	status.z_index = 20
+	status.draw_event_fn = status_bar_draw
+
+	mut item := ui.menu_item(text: ' ')
+	item.no_paint_bg = true
+	item.draw_event_fn = status_item_draw
+	status.add_child(item)
+
+	tb.add_child('Test Tab', status)
+
+	set_status(mut win, 'Loading...')
+	load_url(mut win, 'http://frogfind.com')
+}
+
+fn set_status(mut win ui.Window, text string) {
+	win.extra_map['browser-status'] = text
+}
+
+fn status_item_draw(mut win ui.Window, com &ui.Component) {
+	mut this := *com
+	this.text = win.extra_map['browser-status']
+	this.width = ui.text_width(win, this.text)
 }
 
 fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
@@ -73,7 +109,7 @@ fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
 
 	if is_enter {
 		txt := tb.lines[tb.carrot_top]
-		load_url(win, txt)
+		load_url(mut win, txt)
 		return true
 	}
 	return false
@@ -84,8 +120,14 @@ fn width_draw_fn(mut win ui.Window, com &ui.Component) {
 	mut this := *com
 	this.width = size.width
 	if this.height > 40 {
-		this.height = size.height
+		this.height = size.height - 102
 	}
+}
+
+fn status_bar_draw(mut win ui.Window, com &ui.Component) {
+	size := win.gg.window_size()
+	mut this := *com
+	this.y = (size.height - 25) - 30 - 22
 }
 
 fn add_child(mut box ui.Component, child &ui.Component) {

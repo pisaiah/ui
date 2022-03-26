@@ -38,6 +38,7 @@ pub fn (mut tb Tabbox) draw() {
 	tb.win.gg.draw_rounded_rect_empty(tb.x, tb.y + t_heig - 1, tb.width, tb.height - (t_heig - 1),
 		2, tb.win.theme.button_border_normal)
 	mut mx := 0
+
 	for key_, mut val in tb.kids {
 		key := os.base(key_)
 		mut theig := 20
@@ -92,6 +93,7 @@ pub fn (mut tb Tabbox) draw() {
 
 		mx += tsize
 		if tb.active_tab == key_ {
+			val.sort(a.z_index < b.z_index)
 			for mut com in val {
 				com.draw_event_fn(tb.win, &com)
 				draw_with_offset(mut com, tb.x, tb.y + theig)

@@ -36,6 +36,7 @@ pub mut:
 	icon           &Image
 	shown          bool
 	show_items     bool
+	no_paint_bg    bool
 	click_event_fn fn (mut Window, MenuItem)
 }
 
@@ -93,8 +94,8 @@ pub fn (mut bar Menubar) draw() {
 		wid = bar.width
 	}
 
-	bar.app.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, 25, 2, bar.app.theme.menubar_background)
-	bar.app.gg.draw_rounded_rect_empty(bar.x, bar.y, wid, 25, 2, bar.app.theme.menubar_border)
+	bar.app.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, 25, 2, bar.theme.menubar_background)
+	bar.app.gg.draw_rounded_rect_empty(bar.x, bar.y, wid, 25, 2, bar.theme.menubar_border)
 
 	mut mult := 0
 	for mut item in bar.items {
@@ -209,8 +210,10 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 	}
 
 	// Draw Button Background & Border
-	app.gg.draw_rounded_rect_filled(x, y, width, height, 2, bg)
-	app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
+	if !item.no_paint_bg {
+		app.gg.draw_rounded_rect_filled(x, y, width, height, 2, bg)
+		app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
+	}
 
 	// Draw Button Text
 	if item.icon != 0 {

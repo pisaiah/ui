@@ -9,6 +9,8 @@ module main
 import iui as ui
 import net.http
 import net.html
+import os
+import time
 
 struct DocConfig {
 mut:
@@ -19,8 +21,10 @@ mut:
 	centered bool
 }
 
-fn load_url(win &ui.Window, url string) {
+fn load_url(mut win ui.Window, url string) {
 	println('Loading URL: ' + url)
+
+	start := time.now().unix_time_milli()
 
 	config := http.FetchConfig{
 		user_agent: 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0 FrogfindBrowser/0.1 FrogWeb/0.1'
@@ -34,7 +38,14 @@ fn load_url(win &ui.Window, url string) {
 
 	ctab := tb.active_tab
 
-	tb.kids[ctab] = tb.kids[ctab].filter(mut it !is ui.VBox)
+	// Remove old content; 25 is height of the navbar
+	tb.kids[ctab] = tb.kids[ctab].filter(it.y < 25 || it is ui.Menubar)
+
+	// Background
+	mut bg := bg_area(win)
+	bg.set_bounds(0, 25, 0, 45)
+	bg.draw_event_fn = width_draw_fn
+	tb.add_child(tb.active_tab, bg)
 
 	// TODO: Frogfind uses broken HTML (?)
 	fixed_text := resp.text.replace('Find!</font></a></b>', 'Find!</font></b></a>').replace('<p> </small></p>',
@@ -56,16 +67,20 @@ fn load_url(win &ui.Window, url string) {
 	// root.children.len == 1 (html tag)
 	for tag in root.children {
 		if tag.name == 'meta' {
+			println(tag)
 			continue
 		}
 
-		test(win, mut box, tag, mut conf)
+		render_tag_and_children(mut win, mut box, tag, mut conf)
 	}
 	mut vbox := box.get_vbox()
 
 	vbox.draw_event_fn = width_draw_fn
 	vbox.set_bounds(0, 25, 900, 500) // TODO; size
 	tb.add_child(tb.active_tab, vbox)
+
+	end := time.now().unix_time_milli()
+	set_status(mut win, 'Done. Took ' + (end - start).str() + 'ms')
 }
 
 fn set_conf_size(nam string, def int) int {
@@ -88,11 +103,15 @@ fn set_conf_size(nam string, def int) int {
 	return def
 }
 
-fn test(win &ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
+fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
 	conf.size = set_conf_size(tag.name, conf.size)
+
+	block_tags := ['H1', 'H2', 'H3', 'H4', 'H5', 'P', 'CENTER', 'UL', 'LI']
 
 	for sub in tag.children {
 		nam := sub.name.to_upper()
+
+		set_status(mut win, 'Layouting ' + nam + '...')
 
 		if nam == 'TITLE' {
 			mut tb := &ui.Tabbox(win.get_from_id('tabbar'))
@@ -103,12 +122,10 @@ fn test(win &ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
 		}
 
 		if nam == 'BR' {
-			box.add_break() // <br>
-			continue
+			box.add_break()
 		}
 
-		if nam == 'H1' || nam == 'H2' || nam == 'H3' || nam == 'H4' || nam == 'p' || nam == 'CENTER'
-			|| nam == 'UL' || nam == 'LI' {
+		if nam in block_tags || nam == 'H3' {
 			box.add_break()
 		}
 
@@ -121,6 +138,14 @@ fn test(win &ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
 
 		if nam == 'B' {
 			conf.bold = true
+		}
+
+		if nam == 'IMG' {
+			println('Image: ' + sub.str())
+			img := handle_image(mut win, sub, conf)
+			box.add_child(img)
+			box.set_current_height(img.height)
+			continue
 		}
 
 		conf.size = set_conf_size(sub.name, conf.size)
@@ -162,10 +187,10 @@ fn test(win &ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
 			box.add_child(lbl)
 		}
 		if sub.children.len > 0 {
-			test(win, mut box, sub, mut conf)
+			render_tag_and_children(mut win, mut box, sub, mut conf)
 		}
 
-		if nam == 'H1' || nam == 'H2' || nam == 'H3' || nam == 'H4' || nam == 'p' || nam == 'UL' {
+		if nam in block_tags {
 			box.add_break()
 		}
 
@@ -182,22 +207,67 @@ fn test(win &ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
 	}
 }
 
-fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hyperlink {
-	mut href := conf.href
+fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
+	src := tag.attributes['src']
 
-	if !(href.starts_with('http://') || href.starts_with('https://')) {
-		// Absolute URL
-		href = conf.page_url.split('?')[0].split('#')[0] + '/' + href // TODO: handle prams.
+	fixed_src := format_url(src, conf.page_url)
+
+	tmp := os.temp_dir()
+	cache := os.real_path(tmp + '/v-browser-cache/')
+	os.mkdir(cache) or {}
+
+	out := os.real_path(cache + '/test.png')
+
+	println('Loading image: ' + fixed_src)
+
+	http.download_file(fixed_src, out) or { println(err) }
+
+	bytes := os.read_bytes(out) or { [] }
+
+	mut w := 10
+	mut h := 10
+
+	if 'width' in tag.attributes {
+		w = tag.attributes['width'].int()
 	}
+
+	if 'height' in tag.attributes {
+		h = tag.attributes['height'].int()
+	}
+
+	img := ui.image_from_byte_array_with_size(mut win, bytes, w, h)
+	return img
+}
+
+fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hyperlink {
+	mut href := format_url(conf.href, conf.page_url)
 
 	mut lbl := ui.hyperlink(win, content, href)
 
 	lbl.click_event_fn = fn (a voidptr) {
-		this := &ui.Hyperlink(a)
-		load_url(this.app, this.url)
+		mut this := &ui.Hyperlink(a)
+		load_url(mut this.app, this.url)
 	}
 
 	lbl.set_config(conf.size, false, conf.bold)
 	lbl.pack()
 	return lbl
+}
+
+// Eg: /test -> https://example.com/test
+fn format_url(ref string, page_url string) string {
+	mut href := ref
+
+	if !(href.starts_with('http://') || href.starts_with('https://')) {
+		// Not-Absolute URL
+
+		if href.starts_with('/') {
+			// Root
+			test := page_url.split('?')[0].split('#')[0]
+			href = test.split('//')[0] + '//' + test.split('//')[1].split('/')[0] + '/' + href
+		} else {
+			href = page_url.split('?')[0].split('#')[0] + '/' + href // TODO: handle prams.
+		}
+	}
+	return href
 }
