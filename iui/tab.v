@@ -24,6 +24,14 @@ pub fn tabbox(win &Window) &Tabbox {
 	}
 }
 
+// TODO: Make this better
+pub fn (mut tb Tabbox) change_title(old_title string, new_title string) {
+    mut con := tb.kids[old_title]
+    tb.kids[new_title] = con
+    tb.active_tab = new_title
+    tb.kids.delete(old_title)
+}
+
 // Draw this component
 pub fn (mut tb Tabbox) draw() {
 	t_heig := 22

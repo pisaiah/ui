@@ -40,12 +40,29 @@ pub fn (mut btn Label) pack_do() {
 		bold: btn.bold
 	})
 
-	width := text_width(btn.app, btn.text + 'ab')
+	width := text_width(btn.app, btn.text)
 	btn.width = width
 
-	th := text_height(btn.app, btn.text)
-	btn.height = (th * btn.text.split('\n').len) + 4 + (btn.size)
-	btn.need_pack = false
+	th := text_height(btn.app, '{!A')
+    
+    
+	// btn.height = (th * btn.text.split('\n').len) + 4 + (btn.size)
+	
+    mut hi := 0
+    for line in btn.text.split_into_lines() {
+        if line.trim_space().len > 0 {
+            hi += text_height(btn.app, line)
+        } else {
+            hi += th
+        }
+    }
+    btn.height = hi + 4 + btn.size
+    
+    if btn.height < th {
+        btn.height = th
+    }
+    
+    btn.need_pack = false
 
 	// Reset for text_height
 	btn.app.gg.set_cfg(gx.TextCfg{
