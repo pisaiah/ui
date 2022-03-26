@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 
 // HBox - implements Component interface
 struct HBox {
