@@ -105,6 +105,10 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 
 		my += line_height
 	}
+
+	if 'debug_bounds' in this.app.extra_map {
+		this.app.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
+	}
 }
 
 pub fn (mut this Label) set_config(fs int, abs bool, bold bool) {

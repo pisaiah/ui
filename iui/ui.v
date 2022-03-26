@@ -109,17 +109,14 @@ pub fn point_in(mut com Component, px int, py int) bool {
 }
 
 pub fn draw_with_offset(mut com Component, offx int, offy int) {
-	ox := com.x
-	oy := com.y
-
 	com.rx = com.x + offx
 	com.ry = com.y + offy
 
 	com.x = com.x + offx
 	com.y = com.y + offy
 	com.draw()
-	com.x = ox
-	com.y = oy
+	com.x = com.x - offx
+	com.y = com.y - offy
 }
 
 pub fn (mut com Component_A) set_bounds(x int, y int, width int, height int) {

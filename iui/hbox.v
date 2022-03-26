@@ -1,6 +1,7 @@
 module iui
 
 import gg
+// import gx
 
 // HBox - implements Component interface
 struct HBox {
@@ -11,6 +12,7 @@ pub mut:
 	needs_pack     bool
 	raw_width      int
 	is_width_per   bool
+	center_screen  bool
 }
 
 pub fn hbox(win &Window) &HBox {
@@ -90,11 +92,17 @@ pub fn (mut this HBox) draw() {
 	}
 
 	if this.needs_pack {
-		this.width = width
+		this.width = o_x
 		this.height = o_y
 		this.needs_pack = false
 	}
 
-	// this.is_mouse_down = false
 	this.is_mouse_rele = false
+
+	if this.center_screen {
+		size := this.win.gg.window_size()
+
+		wid := this.width
+		this.x = (size.width / 2) - (wid / 2)
+	}
 }

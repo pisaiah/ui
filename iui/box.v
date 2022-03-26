@@ -29,6 +29,22 @@ pub fn (mut this Box) add_child(com &Component) {
 	}
 }
 
+pub fn (mut this Box) center_current_hbox() {
+	mut kids := this.vbox.children
+	mut cbox := kids[kids.len - 1]
+	/*
+	cbox.draw_event_fn = fn (mut win Window, com &Component) {
+        mut this := *com
+        size := win.gg.window_size()
+
+        wid := this.width
+        this.x = (size.width / 2) - (wid / 2)
+    }*/
+	if mut cbox is HBox {
+		cbox.center_screen = true
+	}
+}
+
 pub fn (mut this Box) add_break() {
 	if this.vbox.children.len > 0 {
 		mut kids := this.vbox.children
@@ -42,6 +58,7 @@ pub fn (mut this Box) add_break() {
 
 	mut h_box := hbox(this.win)
 	h_box.set_bounds(this.x, this.y, this.width, this.height)
+	h_box.pack()
 	this.vbox.add_child(h_box)
 }
 
