@@ -8,13 +8,19 @@ fn main() {
 
 	mut win := ui.window(ui.get_system_theme(), 'Browser', 900, 550)
 	mut bar := ui.menubar(win, ui.theme_dark())
-	mut help_menu := ui.menuitem('Help')
 
-	mut about := ui.menuitem('About Frogbrowser')
-	about.set_click(about_click)
-
-	help_menu.add_child(about)
-	help_menu.add_child(ui.menuitem('About iUI'))
+	help_menu := ui.menu_item(
+		text: 'Help'
+		children: [
+			ui.menu_item(
+				text: 'About Frogbrowser'
+				click_event_fn: about_click
+			),
+			ui.menu_item(
+				text: 'About iUI'
+			),
+		]
+	)
 
 	bar.add_child(help_menu)
 	win.bar = bar
@@ -52,7 +58,7 @@ fn create_tab(win &ui.Window, mut tb ui.Tabbox) {
 	urlbar.code_syntax_on = false
 	urlbar.padding_y = 5
 	urlbar.z_index = 5
-	urlbar.set_bounds(140, 0, 350, 25)
+	urlbar.set_bounds(140, 0, 600, 25)
 	urlbar.before_txtc_event_fn = before_txt_change
 
 	tb.add_child('Test Tab', lbl)

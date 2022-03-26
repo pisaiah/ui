@@ -39,10 +39,19 @@ pub mut:
 	click_event_fn fn (mut Window, MenuItem)
 }
 
+[parms]
+pub struct MenuItemConfig {
+	text           string
+	icon           &Image = 0
+	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
+	children       []&MenuItem
+}
+
 pub fn (mut item MenuItem) add_child(com MenuItem) {
 	item.items << com
 }
 
+// TODO: [deprecated: 'Replaced with menu_item(MenuItemConfig)']
 pub fn menuitem(text string) &MenuItem {
 	return &MenuItem{
 		text: text
@@ -51,6 +60,20 @@ pub fn menuitem(text string) &MenuItem {
 		icon: 0
 		click_event_fn: fn (mut win Window, item MenuItem) {}
 	}
+}
+
+pub fn menu_item(confg MenuItemConfig) &MenuItem {
+	mut item := &MenuItem{
+		text: confg.text
+		shown: false
+		show_items: false
+		icon: confg.icon
+		click_event_fn: confg.click_event_fn
+	}
+	for kid in confg.children {
+		item.add_child(kid)
+	}
+	return item
 }
 
 pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
