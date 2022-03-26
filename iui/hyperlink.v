@@ -22,9 +22,9 @@ pub fn hyperlink(app &Window, text string, url string) &Hyperlink {
 		text: text
 		app: app
 		click_event_fn: fn (a voidptr) {
-            this := &Hyperlink(a)
-            open_url(this.url)
-        }
+			this := &Hyperlink(a)
+			open_url(this.url)
+		}
 		url: url
 	}
 }
@@ -48,23 +48,22 @@ pub fn (mut btn Hyperlink) pack_do() {
 	width := text_width(btn.app, btn.text.replace('\t', ' '.repeat(8)))
 	btn.width = width
 	th := text_height(btn.app, '{!A')
-    
-    
+
 	// btn.height = (th * btn.text.split('\n').len) + 4 + (btn.size)
-	
-    mut hi := 0
-    for line in btn.text.split_into_lines() {
-        if line.trim_space().len > 0 {
-            hi += text_height(btn.app, line)
-        } else {
-            hi += th
-        }
-    }
-    btn.height = hi + 4 + btn.size
-    
-    if btn.height < th {
-        btn.height = th
-    }
+
+	mut hi := 0
+	for line in btn.text.split_into_lines() {
+		if line.trim_space().len > 0 {
+			hi += text_height(btn.app, line)
+		} else {
+			hi += th
+		}
+	}
+	btn.height = hi + 4 + btn.size
+
+	if btn.height < th {
+		btn.height = th
+	}
 	btn.need_pack = false
 
 	// Reset for text_height
@@ -82,7 +81,7 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 
 	text := this.text
 	sizh := text_height(app, text) / 2
-    
+
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
 
@@ -108,7 +107,7 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 
 		my += line_height
 	}
-    app.gg.draw_line(x, y + height - 2, x + width, y + height - 2, gx.rgb(0, 100, 200))
+	app.gg.draw_line(x, y + height - 2, x + width, y + height - 2, gx.rgb(0, 100, 200))
 }
 
 pub fn (mut this Hyperlink) set_config(fs int, abs bool, bold bool) {

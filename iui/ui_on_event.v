@@ -179,20 +179,18 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 						if comm.is_selected {
 							text_edit_scroll(e, mut comm)
 						}
-                        continue
+						continue
 					}
-                    
-                    
-                    scroll_y := int(e.scroll_y)
-                    if abs(e.scroll_y) != e.scroll_y {
-                        comm.scroll_i += -scroll_y
-                    } else if comm.scroll_i > 0 {
-                        comm.scroll_i -= scroll_y
-                    }
-                    if comm.scroll_i < 0 {
-                        comm.scroll_i = 0
-                    }
-                    
+
+					scroll_y := int(e.scroll_y)
+					if abs(e.scroll_y) != e.scroll_y {
+						comm.scroll_i += -scroll_y
+					} else if comm.scroll_i > 0 {
+						comm.scroll_i -= scroll_y
+					}
+					if comm.scroll_i < 0 {
+						comm.scroll_i = 0
+					}
 				}
 			}
 			continue

@@ -1,54 +1,52 @@
 module iui
 
-
 // Box -
-//     Box is a combination of VBox & HBox 
+//     Box is a combination of VBox & HBox
 //     This is similar to HTML's <br> rule
-// 
+//
 struct Box {
 	Component_A
 pub mut:
-	win            &Window
-    vbox           &VBox
+	win  &Window
+	vbox &VBox
 }
 
 pub fn box(win &Window) &Box {
 	return &Box{
 		win: win
-        vbox: vbox(win)
+		vbox: vbox(win)
 	}
 }
 
 pub fn (mut this Box) add_child(com &Component) {
-    if this.vbox.children.len == 0 {
-        this.add_break()
-    }
+	if this.vbox.children.len == 0 {
+		this.add_break()
+	}
 	mut kids := this.vbox.children
-    mut cbox := kids[kids.len - 1]
-    if mut cbox is HBox {
-        cbox.add_child(com)
-    }
+	mut cbox := kids[kids.len - 1]
+	if mut cbox is HBox {
+		cbox.add_child(com)
+	}
 }
 
 pub fn (mut this Box) add_break() {
+	if this.vbox.children.len > 0 {
+		mut kids := this.vbox.children
+		mut cbox := kids[kids.len - 1]
+		if mut cbox is HBox {
+			if cbox.children.len <= 0 {
+				return
+			}
+		}
+	}
 
-    if this.vbox.children.len > 0 {
-        mut kids := this.vbox.children
-        mut cbox := kids[kids.len - 1]
-        if mut cbox is HBox {
-            if cbox.children.len <= 0 {
-                return
-            }
-        }
-    }
-
-    mut h_box := hbox(this.win)
-    h_box.set_bounds(this.x, this.y, this.width, this.height)
-    this.vbox.add_child(h_box)
+	mut h_box := hbox(this.win)
+	h_box.set_bounds(this.x, this.y, this.width, this.height)
+	this.vbox.add_child(h_box)
 }
 
 pub fn (mut this Box) get_vbox() &VBox {
-    return this.vbox
+	return this.vbox
 }
 
 // Ignored; Box is a utility, and does not draw.

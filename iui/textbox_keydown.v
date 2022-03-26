@@ -101,10 +101,10 @@ fn (mut win Window) textedit_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 				// 'true' indicates cancel event
 				return
 			}
-            
-            if com.carrot_left == 0 && com.carrot_top == 0 {
-                return
-            }
+
+			if com.carrot_left == 0 && com.carrot_top == 0 {
+				return
+			}
 
 			if com.carrot_left - 1 >= 0 {
 				new_line := line.substr(0, com.carrot_left - 1) +
