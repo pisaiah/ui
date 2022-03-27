@@ -14,13 +14,13 @@ import time
 
 struct DocConfig {
 mut:
-	page_url string
-	bold     bool
-	size     int
-	href     string
-	centered bool
-    action   string
-    last_need voidptr
+	page_url  string
+	bold      bool
+	size      int
+	href      string
+	centered  bool
+	action    string
+	last_need voidptr
 }
 
 fn load_url(mut win ui.Window, url string) {
@@ -29,9 +29,9 @@ fn load_url(mut win ui.Window, url string) {
 	start := time.now().unix_time_milli()
 
 	config := http.FetchConfig{
-		//user_agent: 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0 FrogfindBrowser/0.1 FrogWeb/0.1'
-        user_agent: 'Vlang/0.2 FrogWeb/0.1'
-    }
+		// user_agent: 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0 FrogfindBrowser/0.1 FrogWeb/0.1'
+		user_agent: 'Vlang/0.2 FrogWeb/0.1'
+	}
 	resp := http.fetch(http.FetchConfig{ ...config, url: url }) or {
 		println('failed to fetch data from the server')
 		return
@@ -102,10 +102,10 @@ fn set_conf_size(nam string, def int) int {
 	if nam == 'h3' {
 		return 4 // 2.72
 	}
-    
-    if nam == 'h4' {
-        return 2
-    }
+
+	if nam == 'h4' {
+		return 2
+	}
 
 	return def
 }
@@ -114,10 +114,10 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 	conf.size = set_conf_size(tag.name, conf.size)
 
 	block_tags := ['H1', 'H2', 'H3', 'H4', 'H5', 'P', 'CENTER', 'UL', 'LI', 'OL']
-    
-    if tag.name in block_tags {
-			box.add_break()
-		}
+
+	if tag.name in block_tags {
+		box.add_break()
+	}
 
 	for sub in tag.children {
 		nam := sub.name.to_upper()
@@ -161,11 +161,11 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 
 		conf.size = set_conf_size(sub.name, conf.size)
 
-        if nam == 'FORM' {
-            if 'action' in sub.attributes {
-                conf.action = sub.attributes['action']
-            }
-        }
+		if nam == 'FORM' {
+			if 'action' in sub.attributes {
+				conf.action = sub.attributes['action']
+			}
+		}
 
 		if nam == 'INPUT' {
 			attr := sub.attributes.clone()
@@ -175,26 +175,26 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 				size = attr['size'].int()
 			}
 
-			if typ == 'text' || !('type' in attr) {
+			if typ == 'text' || 'type' !in attr {
 				mut te := ui.textedit(win, '')
 				te.draw_line_numbers = false
 				te.code_syntax_on = false
 
-                if 'name' in attr {
-                    conf.action = conf.action + '?' + attr['name'] + '='
-                }
+				if 'name' in attr {
+					conf.action = conf.action + '?' + attr['name'] + '='
+				}
 
 				te.set_bounds(0, 0, size * 8, 20)
-                conf.last_need = te
+				conf.last_need = te
 				box.add_child(te)
 			}
-            
-            if typ == 'submit' {
-                mut btn := ui.button(win, attr['value'])
-                btn.set_click_fn(form_submit, conf)
-                btn.pack()
-                box.add_child(btn)
-            }
+
+			if typ == 'submit' {
+				mut btn := ui.button(win, attr['value'])
+				btn.set_click_fn(form_submit, conf)
+				btn.pack()
+				box.add_child(btn)
+			}
 		}
 
 		if nam == 'A' {
@@ -209,13 +209,13 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			mut lbl := create_hyperlink_label(win, sub.content, conf)
 			box.add_child(lbl)
 		} else {
-            if !(nam == 'SCRIPT' || nam == 'STYLE') {
-                mut lbl := ui.label(win, sub.content)
-                lbl.set_config(conf.size, false, conf.bold)
-                lbl.pack()
+			if !(nam == 'SCRIPT' || nam == 'STYLE') {
+				mut lbl := ui.label(win, sub.content)
+				lbl.set_config(conf.size, false, conf.bold)
+				lbl.pack()
 
-                box.add_child(lbl)
-            }
+				box.add_child(lbl)
+			}
 		}
 		if sub.children.len > 0 {
 			render_tag_and_children(mut win, mut box, sub, mut conf)
@@ -228,33 +228,32 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		// Reset config
 		conf.bold = false
 		conf.href = ''
-        if nam == 'CENTER' {
-            conf.centered = false
-        }
+		if nam == 'CENTER' {
+			conf.centered = false
+		}
 		if conf.size > 0 {
 			conf.size = 0
 		}
 	}
-    
-    if tag.name == 'form' {
-        conf.action == ''
-    }
-    
+
+	if tag.name == 'form' {
+		conf.action == ''
+	}
+
 	if tag.name == 'small' {
 		conf.size = 0
 	}
 }
 
 fn form_submit(win_ptr voidptr, btn_ptr voidptr, data voidptr) {
-    mut win := &ui.Window(win_ptr)
-    conf := &DocConfig(data)
-    te := &ui.TextEdit(conf.last_need)
-    
-    
-    formatted_url := format_url(conf.action, conf.page_url)
-    full_url := formatted_url + te.lines[0]
+	mut win := &ui.Window(win_ptr)
+	conf := &DocConfig(data)
+	te := &ui.TextEdit(conf.last_need)
 
-    load_url(mut win, full_url)
+	formatted_url := format_url(conf.action, conf.page_url)
+	full_url := formatted_url + te.lines[0]
+
+	load_url(mut win, full_url)
 }
 
 fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
@@ -283,13 +282,13 @@ fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
 		h = tag.attributes['height'].int()
 	}
 
-    gg_img := win.gg.create_image(out)
-    if w == -1 {
-        w = gg_img.width
-        h = gg_img.height
-    }
-    
-    img := ui.image_with_size(win, gg_img, w, h)
+	gg_img := win.gg.create_image(out)
+	if w == -1 {
+		w = gg_img.width
+		h = gg_img.height
+	}
+
+	img := ui.image_with_size(win, gg_img, w, h)
 
 	return img
 }
@@ -312,10 +311,10 @@ fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hy
 // Eg: /test -> https://example.com/test
 fn format_url(ref string, page_url string) string {
 	mut href := ref
-    
-    if href.starts_with('./') {
-        href = href.replace('./', '/')
-    } 
+
+	if href.starts_with('./') {
+		href = href.replace('./', '/')
+	}
 
 	if !(href.starts_with('http://') || href.starts_with('https://')) {
 		// Not-Absolute URL
@@ -328,6 +327,6 @@ fn format_url(ref string, page_url string) string {
 			href = page_url.split('?')[0].split('#')[0] + '/' + href // TODO: handle prams.
 		}
 	}
-    
+
 	return href
 }

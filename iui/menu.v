@@ -219,8 +219,8 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 	if item.icon != 0 {
 		draw_with_offset(mut item.icon, x + (width / 2) - (item.icon.width / 2), y)
 	} else {
-		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height, item.text,
-			gx.TextCfg{
+		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height,
+			item.text, gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})

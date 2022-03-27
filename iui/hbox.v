@@ -44,8 +44,8 @@ pub fn (mut this HBox) draw() {
 
 	mut width := 0
 	mut index := 0
-    
-    mut yyy := 0
+
+	mut yyy := 0
 
 	for mut child in this.children {
 		child.draw_event_fn(this.win, child)
@@ -85,11 +85,11 @@ pub fn (mut this HBox) draw() {
 		if index == this.children.len {
 			o_y += child.height
 		}
-        if yyy < child.height {
-            yyy = child.height
-        }
+		if yyy < child.height {
+			yyy = child.height
+		}
 	}
-    yyy += 1
+	yyy += 1
 
 	// this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
 
@@ -111,8 +111,8 @@ pub fn (mut this HBox) draw() {
 		wid := this.width
 		this.x = (size.width / 2) - (wid / 2)
 	}
-    
-    if this.win.debug_draw {
+
+	if this.win.debug_draw {
 		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.red)
 	}
 }

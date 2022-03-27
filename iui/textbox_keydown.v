@@ -3,8 +3,7 @@ module iui
 import gg
 
 fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool {
-
-    if mut a is Textbox {
+	if mut a is Textbox {
 		app.key_down_1(key, e, mut a)
 	}
 	if mut a is Runebox {
@@ -12,7 +11,7 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 	}
 	if mut a is TextEdit {
 		app.textedit_key_down(key, e, mut a)
-        return a.is_selected
+		return a.is_selected
 	}
 	if mut a is Tabbox {
 		mut kids := a.kids[a.active_tab]
@@ -20,28 +19,28 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			app.check_box(key, e, mut comm)
 		}
 	}
-    if mut a is VBox {
-        for mut comm in a.children {
+	if mut a is VBox {
+		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
-                return true
-            }
+				return true
+			}
 		}
-    }
-    if mut a is HBox {
-        for mut comm in a.children {
+	}
+	if mut a is HBox {
+		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
-                return true
-            }
+				return true
+			}
 		}
-    }
-    return false
+	}
+	return false
 }
 
 fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	// global keys
 	match key {
 		.left_alt {
-            app.debug_draw = !app.debug_draw
+			app.debug_draw = !app.debug_draw
 			// app.show_menu_bar = !app.show_menu_bar
 			return
 		}
@@ -52,11 +51,11 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		else {}
 	}
 	for mut a in app.components {
-        app.check_box(key, e, mut a)
+		app.check_box(key, e, mut a)
 
 		if mut a is Modal {
 			for mut child in a.children {
-                app.check_box(key, e, mut child)
+				app.check_box(key, e, mut child)
 			}
 		}
 	}

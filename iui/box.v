@@ -53,11 +53,10 @@ pub fn (mut this Box) add_break() {
 		mut cbox := kids[kids.len - 1]
 		if mut cbox is HBox {
 			if cbox.children.len <= 0 {
-				//return
+				// return
 			}
 		}
-    }
-    
+	}
 
 	mut h_box := hbox(this.win)
 	h_box.set_bounds(this.x, this.y, this.width, this.height)

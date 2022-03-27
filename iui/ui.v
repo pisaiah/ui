@@ -165,7 +165,7 @@ pub mut:
 	config         &WindowConfig
 	extra_map      map[string]string
 	id_map         map[string]voidptr
-    debug_draw     bool
+	debug_draw     bool
 }
 
 pub fn (com &Component_A) set_id(mut win Window, id string) {
@@ -224,9 +224,9 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 
 pub fn (mut win Window) set_theme(theme Theme) {
 	win.theme = theme
-    if win.bar != voidptr(0) {
-        win.bar.theme = theme
-    }
+	if win.bar != voidptr(0) {
+		win.bar.theme = theme
+	}
 	win.gg.set_bg_color(theme.background)
 }
 

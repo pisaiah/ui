@@ -116,7 +116,7 @@ fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
 }
 
 fn box_draw_fn(mut win ui.Window, com &ui.Component) {
-    size := win.gg.window_size()
+	size := win.gg.window_size()
 	mut this := *com
 	this.width = size.width
 	if this.height > 40 {

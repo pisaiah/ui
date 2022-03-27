@@ -8,8 +8,8 @@ import os
 fn main() {
 	// Create Window
 	mut window := ui.window_with_config(ui.get_system_theme(), 'Notepad', 464, 500, &ui.WindowConfig{
-        font_path: os.resource_abs_path('scientifica.ttf')
-    })
+		font_path: os.resource_abs_path('scientifica.ttf')
+	})
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
