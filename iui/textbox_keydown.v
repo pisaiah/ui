@@ -178,6 +178,11 @@ fn (mut win Window) textedit_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 			}
 
 			if key != .enter && mod != 2 {
+				if com.lines.len == 0 {
+					com.lines << ' '
+					com.carrot_top = 0
+				}
+
 				line := com.lines[com.carrot_top]
 
 				new_line := line.substr_ni(0, com.carrot_left) + strr +
