@@ -80,7 +80,7 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 	}
 
 	text := this.text
-	sizh := text_height(app, text) / 2
+	sizh := (text_height(app, '!{A') + 1) / 2
 
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false

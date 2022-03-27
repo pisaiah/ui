@@ -6,7 +6,7 @@ import iui as ui
 fn main() {
 	println('Browser - Alpha Test')
 
-	mut win := ui.window(ui.get_system_theme(), 'Browser', 900, 550)
+	mut win := ui.window(ui.get_system_theme(), 'Browser', 800, 600)
 	mut bar := ui.menubar(win, win.theme)
 
 	help_menu := ui.menu_item(
@@ -113,6 +113,15 @@ fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
 		return true
 	}
 	return false
+}
+
+fn box_draw_fn(mut win ui.Window, com &ui.Component) {
+    size := win.gg.window_size()
+	mut this := *com
+	this.width = size.width
+	if this.height > 40 {
+		this.height = size.height
+	}
 }
 
 fn width_draw_fn(mut win ui.Window, com &ui.Component) {

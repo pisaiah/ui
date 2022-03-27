@@ -2,7 +2,8 @@ module iui
 
 import gg
 
-fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) {
+fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool {
+
     if mut a is Textbox {
 		app.key_down_1(key, e, mut a)
 	}
@@ -11,6 +12,7 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) {
 	}
 	if mut a is TextEdit {
 		app.textedit_key_down(key, e, mut a)
+        return a.is_selected
 	}
 	if mut a is Tabbox {
 		mut kids := a.kids[a.active_tab]
@@ -20,20 +22,26 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) {
 	}
     if mut a is VBox {
         for mut comm in a.children {
-			app.check_box(key, e, mut comm)
+			if app.check_box(key, e, mut comm) {
+                return true
+            }
 		}
     }
     if mut a is HBox {
         for mut comm in a.children {
-			app.check_box(key, e, mut comm)
+			if app.check_box(key, e, mut comm) {
+                return true
+            }
 		}
     }
+    return false
 }
 
 fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	// global keys
 	match key {
 		.left_alt {
+            app.debug_draw = !app.debug_draw
 			// app.show_menu_bar = !app.show_menu_bar
 			return
 		}

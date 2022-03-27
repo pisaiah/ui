@@ -19,6 +19,8 @@ mut:
 	size     int
 	href     string
 	centered bool
+    action   string
+    last_need voidptr
 }
 
 fn load_url(mut win ui.Window, url string) {
@@ -27,8 +29,9 @@ fn load_url(mut win ui.Window, url string) {
 	start := time.now().unix_time_milli()
 
 	config := http.FetchConfig{
-		user_agent: 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0 FrogfindBrowser/0.1 FrogWeb/0.1'
-	}
+		//user_agent: 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0 FrogfindBrowser/0.1 FrogWeb/0.1'
+        user_agent: 'Vlang/0.2 FrogWeb/0.1'
+    }
 	resp := http.fetch(http.FetchConfig{ ...config, url: url }) or {
 		println('failed to fetch data from the server')
 		return
@@ -58,7 +61,7 @@ fn load_url(mut win ui.Window, url string) {
 	mut box := ui.box(win)
 
 	// HTML body, margin of 8.
-	box.set_bounds(8, 8, 900, 25)
+	box.set_bounds(8, 8, 900, 55)
 
 	mut conf := &DocConfig{
 		page_url: url
@@ -75,7 +78,7 @@ fn load_url(mut win ui.Window, url string) {
 	}
 	mut vbox := box.get_vbox()
 
-	vbox.draw_event_fn = width_draw_fn
+	vbox.draw_event_fn = box_draw_fn
 	vbox.set_bounds(0, 25, 900, 500) // TODO; size
 	tb.add_child(tb.active_tab, vbox)
 
@@ -97,8 +100,12 @@ fn set_conf_size(nam string, def int) int {
 	}
 
 	if nam == 'h3' {
-		return 3 // 2.72
+		return 4 // 2.72
 	}
+    
+    if nam == 'h4' {
+        return 2
+    }
 
 	return def
 }
@@ -106,7 +113,11 @@ fn set_conf_size(nam string, def int) int {
 fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
 	conf.size = set_conf_size(tag.name, conf.size)
 
-	block_tags := ['H1', 'H2', 'H3', 'H4', 'H5', 'P', 'CENTER', 'UL', 'LI']
+	block_tags := ['H1', 'H2', 'H3', 'H4', 'H5', 'P', 'CENTER', 'UL', 'LI', 'OL']
+    
+    if tag.name in block_tags {
+			box.add_break()
+		}
 
 	for sub in tag.children {
 		nam := sub.name.to_upper()
@@ -150,6 +161,12 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 
 		conf.size = set_conf_size(sub.name, conf.size)
 
+        if nam == 'FORM' {
+            if 'action' in sub.attributes {
+                conf.action = sub.attributes['action']
+            }
+        }
+
 		if nam == 'INPUT' {
 			attr := sub.attributes.clone()
 			typ := attr['type']
@@ -158,14 +175,26 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 				size = attr['size'].int()
 			}
 
-			if typ == 'text' {
+			if typ == 'text' || !('type' in attr) {
 				mut te := ui.textedit(win, '')
 				te.draw_line_numbers = false
 				te.code_syntax_on = false
 
+                if 'name' in attr {
+                    conf.action = conf.action + '?' + attr['name'] + '='
+                }
+
 				te.set_bounds(0, 0, size * 8, 20)
+                conf.last_need = te
 				box.add_child(te)
 			}
+            
+            if typ == 'submit' {
+                mut btn := ui.button(win, attr['value'])
+                btn.set_click_fn(form_submit, conf)
+                btn.pack()
+                box.add_child(btn)
+            }
 		}
 
 		if nam == 'A' {
@@ -180,11 +209,13 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			mut lbl := create_hyperlink_label(win, sub.content, conf)
 			box.add_child(lbl)
 		} else {
-			mut lbl := ui.label(win, sub.content)
-			lbl.set_config(conf.size, false, conf.bold)
-			lbl.pack()
+            if !(nam == 'SCRIPT' || nam == 'STYLE') {
+                mut lbl := ui.label(win, sub.content)
+                lbl.set_config(conf.size, false, conf.bold)
+                lbl.pack()
 
-			box.add_child(lbl)
+                box.add_child(lbl)
+            }
 		}
 		if sub.children.len > 0 {
 			render_tag_and_children(mut win, mut box, sub, mut conf)
@@ -197,14 +228,33 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		// Reset config
 		conf.bold = false
 		conf.href = ''
-		conf.centered = false
+        if nam == 'CENTER' {
+            conf.centered = false
+        }
 		if conf.size > 0 {
 			conf.size = 0
 		}
 	}
+    
+    if tag.name == 'form' {
+        conf.action == ''
+    }
+    
 	if tag.name == 'small' {
 		conf.size = 0
 	}
+}
+
+fn form_submit(win_ptr voidptr, btn_ptr voidptr, data voidptr) {
+    mut win := &ui.Window(win_ptr)
+    conf := &DocConfig(data)
+    te := &ui.TextEdit(conf.last_need)
+    
+    
+    formatted_url := format_url(conf.action, conf.page_url)
+    full_url := formatted_url + te.lines[0]
+
+    load_url(mut win, full_url)
 }
 
 fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
@@ -216,15 +266,13 @@ fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
 	cache := os.real_path(tmp + '/v-browser-cache/')
 	os.mkdir(cache) or {}
 
-	out := os.real_path(cache + '/' + os.base(fixed_src))
+	out := os.real_path(cache + '/' + os.base(fixed_src).replace(':', '_'))
 
 	println('Loading image: ' + fixed_src)
 
 	http.download_file(fixed_src, out) or { println(err) }
 
-	bytes := os.read_bytes(out) or { [] }
-
-	mut w := 10
+	mut w := -1
 	mut h := 10
 
 	if 'width' in tag.attributes {
@@ -235,7 +283,14 @@ fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
 		h = tag.attributes['height'].int()
 	}
 
-	img := ui.image_from_byte_array_with_size(mut win, bytes, w, h)
+    gg_img := win.gg.create_image(out)
+    if w == -1 {
+        w = gg_img.width
+        h = gg_img.height
+    }
+    
+    img := ui.image_with_size(win, gg_img, w, h)
+
 	return img
 }
 
@@ -257,6 +312,10 @@ fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hy
 // Eg: /test -> https://example.com/test
 fn format_url(ref string, page_url string) string {
 	mut href := ref
+    
+    if href.starts_with('./') {
+        href = href.replace('./', '/')
+    } 
 
 	if !(href.starts_with('http://') || href.starts_with('https://')) {
 		// Not-Absolute URL
@@ -269,5 +328,6 @@ fn format_url(ref string, page_url string) string {
 			href = page_url.split('?')[0].split('#')[0] + '/' + href // TODO: handle prams.
 		}
 	}
+    
 	return href
 }

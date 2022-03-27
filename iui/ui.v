@@ -165,6 +165,7 @@ pub mut:
 	config         &WindowConfig
 	extra_map      map[string]string
 	id_map         map[string]voidptr
+    debug_draw     bool
 }
 
 pub fn (com &Component_A) set_id(mut win Window, id string) {

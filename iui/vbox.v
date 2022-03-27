@@ -1,6 +1,7 @@
 module iui
 
 import gg
+import gx
 
 // VBox - implements Component interface
 struct VBox {
@@ -73,8 +74,8 @@ pub fn (mut this VBox) draw() {
 
 		o_y += child.height
 
-		if width < child.width {
-			width = child.width
+		if width < (child.width + child.x) {
+			width = (child.width + child.x)
 		}
 
 		size := gg.screen_size()
@@ -101,4 +102,8 @@ pub fn (mut this VBox) draw() {
 
 	// this.is_mouse_down = false
 	this.is_mouse_rele = false
+    
+    if this.win.debug_draw {
+		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.orange)
+	}
 }
