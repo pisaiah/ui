@@ -222,6 +222,22 @@ fn (mut com TextEdit) draw_scrollbar(cl int, spl_len int) {
 	}
 }
 
+// Clamp caret
+fn (mut this TextEdit) clamp_caret() {
+    if this.carrot_top < 0 {
+        this.carrot_top = 0
+    }
+    
+    max_top := this.lines.len - 1
+    if this.carrot_top > max_top {
+        this.carrot_top = max_top
+    }
+
+	if this.carrot_left < 0 {
+		this.carrot_left = 0
+	}
+}
+
 // Main draw function.
 // TODO: simplify, split function.
 fn (mut this TextEdit) draw() {
@@ -244,9 +260,7 @@ fn (mut this TextEdit) draw() {
 		color: this.win.theme.text_color
 	}
 
-	if this.carrot_left < 0 {
-		this.carrot_left = 0
-	}
+    this.clamp_caret()
 
 	if this.scroll_i < 0 {
 		this.scroll_i = 0

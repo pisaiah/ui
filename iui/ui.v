@@ -223,6 +223,9 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 
 pub fn (mut win Window) set_theme(theme Theme) {
 	win.theme = theme
+    if win.bar != voidptr(0) {
+        win.bar.theme = theme
+    }
 	win.gg.set_bg_color(theme.background)
 }
 
@@ -246,7 +249,7 @@ pub fn (app &Window) draw_filled_rect(x int, y int, width int, height int, a int
 }
 
 fn (mut app Window) draw() {
-	// Custom 'UI Mode' - Refresh text carrot
+	// Custom 'UI Mode' - Refresh text caret
 	if !app.config.ui_mode {
 		sleep := (50 - app.frame_time)
 		mut sleep_ := 0

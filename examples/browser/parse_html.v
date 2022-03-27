@@ -216,7 +216,7 @@ fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
 	cache := os.real_path(tmp + '/v-browser-cache/')
 	os.mkdir(cache) or {}
 
-	out := os.real_path(cache + '/test.png')
+	out := os.real_path(cache + '/' + os.base(fixed_src))
 
 	println('Loading image: ' + fixed_src)
 

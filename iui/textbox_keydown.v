@@ -2,6 +2,34 @@ module iui
 
 import gg
 
+fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) {
+    if mut a is Textbox {
+		app.key_down_1(key, e, mut a)
+	}
+	if mut a is Runebox {
+		app.runebox_key(key, e, mut a)
+	}
+	if mut a is TextEdit {
+		app.textedit_key_down(key, e, mut a)
+	}
+	if mut a is Tabbox {
+		mut kids := a.kids[a.active_tab]
+		for mut comm in kids {
+			app.check_box(key, e, mut comm)
+		}
+	}
+    if mut a is VBox {
+        for mut comm in a.children {
+			app.check_box(key, e, mut comm)
+		}
+    }
+    if mut a is HBox {
+        for mut comm in a.children {
+			app.check_box(key, e, mut comm)
+		}
+    }
+}
+
 fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	// global keys
 	match key {
@@ -16,54 +44,11 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		else {}
 	}
 	for mut a in app.components {
-		if mut a is Textbox {
-			app.key_down_1(key, e, mut a)
-		}
-		if mut a is Runebox {
-			app.runebox_key(key, e, mut a)
-		}
-		if mut a is TextEdit {
-			app.textedit_key_down(key, e, mut a)
-		}
-		if mut a is Tabbox {
-			mut kids := a.kids[a.active_tab]
-			for mut comm in kids {
-				if mut comm is Textbox {
-					app.key_down_1(key, e, mut comm)
-				}
-				if mut comm is Runebox {
-					app.runebox_key(key, e, mut comm)
-				}
-				if mut comm is TextEdit {
-					app.textedit_key_down(key, e, mut comm)
-				}
-			}
-		}
+        app.check_box(key, e, mut a)
+
 		if mut a is Modal {
 			for mut child in a.children {
-				if mut child is Textbox {
-					app.key_down_1(key, e, mut child)
-				}
-				if mut child is Runebox {
-					app.runebox_key(key, e, mut child)
-				}
-				if mut child is TextEdit {
-					app.textedit_key_down(key, e, mut child)
-				}
-				if mut child is Tabbox {
-					mut active := child.kids[child.active_tab]
-					for _, mut kid in active {
-						if mut kid is Textbox {
-							app.key_down_1(key, e, mut kid)
-						}
-						if mut kid is Runebox {
-							app.runebox_key(key, e, mut kid)
-						}
-						if mut kid is TextEdit {
-							app.textedit_key_down(key, e, mut kid)
-						}
-					}
-				}
+                app.check_box(key, e, mut child)
 			}
 		}
 	}
@@ -279,37 +264,22 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 					letter = '-'
 				}
 			}
-			if letter == 'left_bracket' && app.shift_pressed {
-				letter = '{'
-			}
-			if letter == 'right_bracket' && app.shift_pressed {
-				letter = '}'
-			}
-			if letter == 'equal' && app.shift_pressed {
-				letter = '+'
-			}
-			if letter == 'apostrophe' && app.shift_pressed {
-				letter = '"'
-			}
-			if letter == 'comma' && app.shift_pressed {
-				letter = '<'
-			}
-			if letter == 'period' && app.shift_pressed {
-				letter = '>'
-			}
-			if letter == 'slash' && app.shift_pressed {
-				letter = '?'
+			shift_keys := {
+				'minus':         '_'
+				'left_bracket':  '{'
+				'right_bracket': '}'
+				'equal':         '+'
+				'apostrophe':    '"'
+				'comma':         '>'
+				'period':        '>'
+				'slash':         '?'
+				'semicolon':     ':'
+				'backslash':     '|'
+				'grave_accent':  '~'
 			}
 
-			if letter == 'semicolon' && app.shift_pressed {
-				letter = ':'
-			}
-			if letter == 'backslash' && app.shift_pressed {
-				letter = '|'
-			}
-
-			if letter == 'grave_accent' && app.shift_pressed {
-				letter = '~'
+			if app.shift_pressed && letter in shift_keys {
+				letter = shift_keys[letter]
 			}
 
 			if app.shift_pressed && letter.len > 0 {

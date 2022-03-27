@@ -114,7 +114,7 @@ fn (mut app Window) get_bar() &Menubar {
 
 fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut item MenuItem) {
 	size := text_width(app, item.text) / 2
-	sizh := text_height(app, item.text) / 2
+	half_line_height := text_height(app, 'A!{') / 2
 
 	mut width := width_
 	if item.width > 0 {
@@ -219,7 +219,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 	if item.icon != 0 {
 		draw_with_offset(mut item.icon, x + (width / 2) - (item.icon.width / 2), y)
 	} else {
-		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, item.text,
+		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height, item.text,
 			gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
