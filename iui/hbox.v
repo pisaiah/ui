@@ -48,17 +48,32 @@ pub fn (mut this HBox) draw() {
 	mut yyy := 0
 
 	for mut child in this.children {
+		if yyy < child.height {
+			yyy = child.height
+		}
 		child.draw_event_fn(this.win, child)
 		if o_x + child.width > box_width {
 			if o_x > width {
 				width = o_x
 			}
 			o_x = 0
-			o_y += child.height
+
+			o_y += yyy + 2
 		}
 
 		draw_with_offset(mut child, this.x + o_x, this.y + o_y)
 
+		if this.is_mouse_rele {
+			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
+				child.is_mouse_rele = true
+				this.is_mouse_rele = false
+			} else {
+				child.is_mouse_down = false
+				child.is_mouse_rele = false
+			}
+		} else {
+			child.is_mouse_rele = false
+		}
 		if this.is_mouse_down {
 			if point_in_raw(mut child, this.win.click_x, this.win.click_y) {
 				child.is_mouse_down = true
@@ -67,16 +82,6 @@ pub fn (mut this HBox) draw() {
 			}
 		} else {
 			child.is_mouse_down = false
-		}
-		if this.is_mouse_rele {
-			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
-				child.is_mouse_rele = true
-			} else {
-				child.is_mouse_down = false
-				child.is_mouse_rele = false
-			}
-		} else {
-			child.is_mouse_rele = false
 		}
 
 		o_x += child.width

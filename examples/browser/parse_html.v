@@ -11,6 +11,8 @@ import net.http
 import net.html
 import os
 import time
+import v.util.version
+import encoding.base64
 
 struct DocConfig {
 mut:
@@ -29,8 +31,7 @@ fn load_url(mut win ui.Window, url string) {
 	start := time.now().unix_time_milli()
 
 	config := http.FetchConfig{
-		// user_agent: 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0 FrogfindBrowser/0.1 FrogWeb/0.1'
-		user_agent: 'Vlang/0.2 FrogWeb/0.1'
+		user_agent: 'V/' + version.v_version + ' PascoBrowser/0.1'
 	}
 	resp := http.fetch(http.FetchConfig{ ...config, url: url }) or {
 		println('failed to fetch data from the server')
@@ -259,17 +260,9 @@ fn form_submit(win_ptr voidptr, btn_ptr voidptr, data voidptr) {
 fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
 	src := tag.attributes['src']
 
-	fixed_src := format_url(src, conf.page_url)
-
 	tmp := os.temp_dir()
 	cache := os.real_path(tmp + '/v-browser-cache/')
 	os.mkdir(cache) or {}
-
-	out := os.real_path(cache + '/' + os.base(fixed_src).replace(':', '_'))
-
-	println('Loading image: ' + fixed_src)
-
-	http.download_file(fixed_src, out) or { println(err) }
 
 	mut w := -1
 	mut h := 10
@@ -281,6 +274,34 @@ fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
 	if 'height' in tag.attributes {
 		h = tag.attributes['height'].int()
 	}
+
+	if src.starts_with('data:') && src.contains('base64') {
+		// Base64 encoded image
+
+		encoded := src.split('base64,')[1]
+
+		decode_str := base64.decode_str(encoded)
+		out := os.real_path(cache + '/base64-' + os.base(encoded) + '.png')
+		os.write_file(out, decode_str) or {}
+
+		gg_img := win.gg.create_image(out)
+		if w == -1 {
+			w = gg_img.width
+			h = gg_img.height
+		}
+
+		img := ui.image_with_size(win, gg_img, w, h)
+
+		return img
+	}
+
+	fixed_src := format_url(src, conf.page_url)
+
+	out := os.real_path(cache + '/' + os.base(fixed_src).replace(':', '_'))
+
+	println('Loading image: ' + fixed_src)
+
+	http.download_file(fixed_src, out) or { println(err) }
 
 	gg_img := win.gg.create_image(out)
 	if w == -1 {

@@ -14,27 +14,43 @@ fn main() {
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
 
-	mut help := ui.menuitem('Help')
 	mut theme_menu := ui.menuitem('Theme')
-	mut about := ui.menuitem('About Notepad')
 
 	mut themes := [ui.get_system_theme(), ui.theme_dark(), ui.theme_black_red()]
 	for theme2 in themes {
-		mut item := ui.menuitem(theme2.name)
-		item.set_click(theme_click)
+		item := ui.menu_item(
+			text: theme2.name
+			click_event_fn: theme_click
+		)
+
 		theme_menu.add_child(item)
 	}
 
-	mut file := ui.menuitem('File')
-	mut save := ui.menuitem('Save')
-	save.set_click(save_as_click)
-	file.add_child(save)
-	window.bar.add_child(file)
+	file_menu := ui.menu_item(
+		text: 'File'
+		children: [
+			ui.menu_item(
+				text: 'Save'
+				click_event_fn: save_as_click
+			),
+		]
+	)
 
-	about.set_click(about_click)
-	help.add_child(about)
-	help.add_child(ui.menuitem('About iUI'))
-	window.bar.add_child(help)
+	help_menu := ui.menu_item(
+		text: 'Help'
+		children: [
+			ui.menu_item(
+				text: 'About Notepad'
+				click_event_fn: about_click
+			),
+			ui.menu_item(
+				text: 'About iUI'
+			),
+		]
+	)
+
+	window.bar.add_child(file_menu)
+	window.bar.add_child(help_menu)
 	window.bar.add_child(theme_menu)
 
 	mut res_box := ui.textedit(window, '')

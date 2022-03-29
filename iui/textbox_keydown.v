@@ -41,7 +41,6 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	match key {
 		.left_alt {
 			app.debug_draw = !app.debug_draw
-			// app.show_menu_bar = !app.show_menu_bar
 			return
 		}
 		.left_control {
@@ -136,26 +135,8 @@ fn (mut win Window) textedit_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 				}
 			}
 
-			shift_keys := {
-				'minus':         '_'
-				'left_bracket':  '{'
-				'right_bracket': '}'
-				'equal':         '+'
-				'apostrophe':    '"'
-				'comma':         '>'
-				'period':        '>'
-				'slash':         '?'
-				'semicolon':     ':'
-				'backslash':     '|'
-				'grave_accent':  '~'
-			}
-
-			if win.shift_pressed && letter in shift_keys {
-				letter = shift_keys[letter]
-			}
-
-			if win.shift_pressed && letter.len > 0 {
-				letter = letter.to_upper()
+			if win.shift_pressed {
+				letter = get_shifted_letter(letter)
 			}
 
 			com.last_letter = letter
@@ -219,6 +200,26 @@ fn (mut win Window) textedit_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 	}
 }
 
+fn get_shifted_letter(letter string) string {
+	shift_keys := {
+		'minus':         '_'
+		'left_bracket':  '{'
+		'right_bracket': '}'
+		'equal':         '+'
+		'apostrophe':    '"'
+		'comma':         '>'
+		'period':        '>'
+		'slash':         '?'
+		'semicolon':     ':'
+		'backslash':     '|'
+		'grave_accent':  '~'
+	}
+	if letter in shift_keys {
+		return shift_keys[letter]
+	}
+	return letter.to_upper()
+}
+
 fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 	if key == .right {
 		com.carrot_left += 1
@@ -276,26 +277,9 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 					letter = '-'
 				}
 			}
-			shift_keys := {
-				'minus':         '_'
-				'left_bracket':  '{'
-				'right_bracket': '}'
-				'equal':         '+'
-				'apostrophe':    '"'
-				'comma':         '>'
-				'period':        '>'
-				'slash':         '?'
-				'semicolon':     ':'
-				'backslash':     '|'
-				'grave_accent':  '~'
-			}
 
-			if app.shift_pressed && letter in shift_keys {
-				letter = shift_keys[letter]
-			}
-
-			if app.shift_pressed && letter.len > 0 {
-				letter = letter.to_upper()
+			if app.shift_pressed {
+				letter = get_shifted_letter(letter)
 			}
 
 			com.last_letter = letter
@@ -368,10 +352,6 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 		}
 		if letter.starts_with('_') {
 			letter = letter.replace('_', '')
-			nums := [')', '!', '@', '#', '$', '%', '^', '&', '*', '(']
-			if app.shift_pressed && letter.len > 0 {
-				letter = nums[letter.u32()]
-			}
 		}
 		if letter == 'minus' {
 			if app.shift_pressed {
@@ -380,38 +360,11 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 				letter = '-'
 			}
 		}
-		if letter == 'left_bracket' && app.shift_pressed {
-			letter = '{'
-		}
-		if letter == 'right_bracket' && app.shift_pressed {
-			letter = '}'
-		}
-		if letter == 'equal' && app.shift_pressed {
-			letter = '+'
-		}
-		if letter == 'apostrophe' && app.shift_pressed {
-			letter = '"'
-		}
-		if letter == 'comma' && app.shift_pressed {
-			letter = '<'
-		}
-		if letter == 'period' && app.shift_pressed {
-			letter = '>'
-		}
-		if letter == 'slash' && app.shift_pressed {
-			letter = '?'
+
+		if app.shift_pressed {
+			letter = get_shifted_letter(letter)
 		}
 
-		if letter == 'semicolon' && app.shift_pressed {
-			letter = ':'
-		}
-		if letter == 'backslash' && app.shift_pressed {
-			letter = '|'
-		}
-
-		if letter == 'grave_accent' && app.shift_pressed {
-			letter = '~'
-		}
 		if letter == 'left' {
 			a.carrot_left--
 			a.key_down = false

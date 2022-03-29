@@ -8,15 +8,15 @@ import gx
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'Calculator', 270, 325)
+	mut window := ui.window_with_config(ui.get_system_theme(), 'Calculator', 270, 325,
+		&ui.WindowConfig{
+		ui_mode: false
+	})
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
 
-	mut help := ui.menuitem('Help')
 	mut theme_menu := ui.menuitem('Theme')
-	mut about := ui.menuitem('About iUI')
-	mut about_calc := ui.menuitem('About Calculator')
 
 	mut themes := [ui.get_system_theme(), theme_dark(), ui.theme_black_red()]
 	for theme2 in themes {
@@ -25,10 +25,20 @@ fn main() {
 		theme_menu.add_child(item)
 	}
 
-	about_calc.set_click(about_click)
-	help.add_child(about_calc)
-	help.add_child(about)
-	window.bar.add_child(help)
+	help_menu := ui.menu_item(
+		text: 'Help'
+		children: [
+			ui.menu_item(
+				text: 'About Calculator'
+				click_event_fn: about_click
+			),
+			ui.menu_item(
+				text: 'About iUI'
+			),
+		]
+	)
+
+	window.bar.add_child(help_menu)
 	window.bar.add_child(theme_menu)
 
 	mut vbox := ui.vbox(window)
@@ -101,27 +111,16 @@ fn vbtn_draw(mut win ui.Window, com &ui.Component) {
 
 fn btn_draw(mut win ui.Window, com &ui.Component) {
 	size := gg.window_size()
+	width := size.width - 10
+	height := size.height - 74
 
 	mut this := *com
-	this.width = (size.width - 10) / 4
-	this.height = (size.height - 70) / 6
-}
-
-fn test(mut pb ui.Progressbar) {
-	for true {
-		mut val := pb.text.f32()
-		if val < 100 {
-			val++
-		} else {
-			val = 5
-		}
-		pb.text = val.str().replace('.', '')
-		time.sleep(80 * time.millisecond)
-	}
+	this.width = width / 4
+	this.height = height / 6
 }
 
 fn on_click_fn(ptr_win voidptr, ptr_btn voidptr, extra voidptr) {
-	btn := &ui.Button(ptr_btn)
+	mut btn := &ui.Button(ptr_btn)
 	mut res_box := &ui.TextEdit(extra)
 
 	mut txt := btn.text
