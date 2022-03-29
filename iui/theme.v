@@ -13,15 +13,15 @@ pub fn get_system_theme() Theme {
 }
 
 pub fn get_all_themes() []Theme {
-	return [theme_default(), theme_dark(), theme_dark_hc(),
-		theme_black_red(), theme_minty()]
+	return [theme_default(), theme_dark(), theme_dark_hc(), theme_black_red(),
+		theme_minty()]
 }
 
 pub fn theme_by_name(name string) Theme {
 	themes := get_all_themes().filter(it.name == name)
-    if themes.len == 0 {
-        return get_system_theme()
-    }
+	if themes.len == 0 {
+		return get_system_theme()
+	}
 	return themes[0]
 }
 
