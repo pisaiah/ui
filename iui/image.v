@@ -49,6 +49,10 @@ pub fn image_from_byte_array_with_size(mut app Window, b []byte, width int, heig
 	return img
 }
 
+pub fn image_from_bytes(mut app Window, b []byte, width int, height int) &Image {
+	return image_from_byte_array_with_size(mut app, b, width, height)
+}
+
 pub fn (mut this Image) draw() {
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
@@ -60,7 +64,6 @@ pub fn (mut this Image) draw() {
 		this.pack_do()
 	}*/
 
-	// this.app.gg.draw_image_with_config(this.x, this.y, this.width, this.height, this.img)
 	this.app.gg.draw_image_with_config(gg.DrawImageConfig{
 		img: this.img
 		img_rect: gg.Rect{

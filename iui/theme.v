@@ -1,5 +1,4 @@
 // Copyright (c) 2021-2022 Isaiah.
-// All Rights Reserved.
 module iui
 
 import gx
@@ -13,15 +12,17 @@ pub fn get_system_theme() Theme {
 	}
 }
 
-pub fn theme_by_name(name string) Theme {
-	mut themes := [theme_default(), theme_dark(), theme_dark_hc(),
+pub fn get_all_themes() []Theme {
+	return [theme_default(), theme_dark(), theme_dark_hc(),
 		theme_black_red(), theme_minty()]
-	for mut theme in themes {
-		if theme.name == name {
-			return theme
-		}
-	}
-	return theme_default()
+}
+
+pub fn theme_by_name(name string) Theme {
+	themes := get_all_themes().filter(it.name == name)
+    if themes.len == 0 {
+        return get_system_theme()
+    }
+	return themes[0]
 }
 
 pub struct Theme {
@@ -54,9 +55,7 @@ pub:
 	scroll_bar_color   gx.Color
 }
 
-//
 //	Default Theme - Memics Windows 10
-//
 pub fn theme_default() Theme {
 	return Theme{
 		name: 'Default'
@@ -82,9 +81,7 @@ pub fn theme_default() Theme {
 	}
 }
 
-//
 //	Dark Theme
-//
 pub fn theme_dark() Theme {
 	return Theme{
 		name: 'Dark'
@@ -110,9 +107,7 @@ pub fn theme_dark() Theme {
 	}
 }
 
-//
 //	Dark Theme - High Contrast
-//
 pub fn theme_dark_hc() Theme {
 	return Theme{
 		name: 'Dark High Contrast'
@@ -137,9 +132,7 @@ pub fn theme_dark_hc() Theme {
 	}
 }
 
-//
 //	Black Red
-//
 pub fn theme_black_red() Theme {
 	return Theme{
 		name: 'Black Red'
@@ -164,9 +157,7 @@ pub fn theme_black_red() Theme {
 	}
 }
 
-//
 //	MintY - Memics LinuxMint's Default Theme
-//
 pub fn theme_minty() Theme {
 	return Theme{
 		name: 'Minty'

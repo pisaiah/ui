@@ -55,7 +55,7 @@ pub fn (mut tr Tree) draw() {
 	}
 
 	if (abs(mid - app.click_x) < (tr.width / 2)) && (abs(midy - app.click_y) < (20 / 2)
-		&& app.bar.tik > 50) {
+		&& app.bar.tik > 98 && app.click_y > 25) {
 		now := time.now().unix_time_milli()
 
 		if now - tr.last_click > 100 {
