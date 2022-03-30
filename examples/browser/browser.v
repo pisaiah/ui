@@ -1,6 +1,7 @@
 module main
 
 import iui as ui
+import os
 
 [console]
 fn main() {
@@ -13,7 +14,7 @@ fn main() {
 		text: 'Help'
 		children: [
 			ui.menu_item(
-				text: 'About Frogbrowser'
+				text: 'About Browser'
 				click_event_fn: about_click
 			),
 			ui.menu_item(
@@ -67,7 +68,10 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	forward.no_paint_bg = true
 	bar.add_child(forward)
 
-	mut urlbar := ui.textedit(win, 'http://frogfind.com')
+	// default_page_url := 'http://frogfind.com'
+	default_page_url := 'file://' + os.resource_abs_path('test.html')
+
+	mut urlbar := ui.textedit(win, default_page_url)
 	urlbar.draw_line_numbers = false
 	urlbar.code_syntax_on = false
 	urlbar.padding_y = 5
@@ -91,7 +95,9 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	tb.add_child('Test Tab', status)
 
 	set_status(mut win, 'Loading...')
-	load_url(mut win, 'http://frogfind.com')
+
+	load_url(mut win, default_page_url)
+	// load_url(mut win, 'http://frogfind.com')
 }
 
 fn set_status(mut win ui.Window, text string) {

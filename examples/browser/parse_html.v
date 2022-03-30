@@ -16,13 +16,36 @@ import encoding.base64
 
 struct DocConfig {
 mut:
-	page_url  string
-	bold      bool
-	size      int
-	href      string
-	centered  bool
-	action    string
-	last_need voidptr
+    stylesheets   []StyleSheet
+	page_url      string
+	bold          bool
+	size          int
+	href          string
+	centered      bool
+	action        string
+	last_need     voidptr
+	margin_top    int
+	margin_bottom int
+}
+
+fn (this &DocConfig) get_css_val(element string, key string, def string) string {
+    for ss in this.stylesheets {
+        if element in ss.rules {
+            if key in ss.rules[element] {
+                return ss.rules[element][key]
+            }
+        }
+    }
+    return def
+}
+
+fn em(val f32) f32 {
+	// TODO: font size
+	return 16 * val
+}
+
+fn iem(val f32) int {
+	return int(em(val))
 }
 
 fn load_url(mut win ui.Window, url string) {
@@ -33,10 +56,22 @@ fn load_url(mut win ui.Window, url string) {
 	config := http.FetchConfig{
 		user_agent: 'V/' + version.v_version + ' PascoBrowser/0.1'
 	}
-	resp := http.fetch(http.FetchConfig{ ...config, url: url }) or {
-		println('failed to fetch data from the server')
-		return
+
+	mut resp := http.Response{}
+
+	if !url.starts_with('file://') {
+		resp = http.fetch(http.FetchConfig{ ...config, url: url }) or {
+			println('failed to fetch data from the server')
+			return
+		}
+	} else {
+		lines := os.read_lines(os.real_path(url.split('file://')[1])) or { [] }
+		resp.text = lines.join('\n')
 	}
+
+	// TODO: Frogfind uses broken HTML (?)
+	fixed_text := resp.text.replace('Find!</font></a></b>', 'Find!</font></b></a>').replace('<p> </small></p>',
+		'<p></p>')
 
 	mut tb := &ui.Tabbox(win.get_from_id('tabbar'))
 
@@ -49,11 +84,8 @@ fn load_url(mut win ui.Window, url string) {
 	mut bg := bg_area(win)
 	bg.set_bounds(0, 25, 0, 45)
 	bg.draw_event_fn = width_draw_fn
+    bg.set_id(mut win, 'body')
 	tb.add_child(tb.active_tab, bg)
-
-	// TODO: Frogfind uses broken HTML (?)
-	fixed_text := resp.text.replace('Find!</font></a></b>', 'Find!</font></b></a>').replace('<p> </small></p>',
-		'<p></p>')
 
 	mut doc := html.parse(fixed_text)
 	mut root := doc.get_root()
@@ -87,41 +119,70 @@ fn load_url(mut win ui.Window, url string) {
 	set_status(mut win, 'Done. Took ' + (end - start).str() + 'ms')
 }
 
-fn set_conf_size(nam string, def int) int {
+// TODO: CSS
+fn set_conf_size(nam string, mut config DocConfig) {
 	if nam == 'small' {
-		return -4
+		config.size = -4
 	}
 
 	if nam == 'h1' {
-		return 16
+		config.margin_top = iem(0.67)
+		config.margin_bottom = iem(0.67)
+		config.size = 16
 	}
 
 	if nam == 'h2' {
-		return 8
+		config.size = 8
+		config.margin_top = iem(0.83)
+		config.margin_bottom = iem(0.83)
 	}
 
 	if nam == 'h3' {
-		return 4 // 2.72
+		config.size = 4
+		config.margin_top = iem(1)
+		config.margin_bottom = iem(1)
+		config.bold = true
 	}
 
 	if nam == 'h4' {
-		return 2
+		config.size = 2
+		config.margin_top = iem(1.33)
+		config.margin_bottom = iem(1.33)
 	}
-
-	return def
 }
 
 fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
-	conf.size = set_conf_size(tag.name, conf.size)
+	// conf.size = set_conf_size(tag.name, conf.size)
+	set_conf_size(tag.name, mut conf)
 
-	block_tags := ['H1', 'H2', 'H3', 'H4', 'H5', 'P', 'CENTER', 'UL', 'LI', 'OL']
+	block_tags := ['H1', 'H2', 'H3', 'H4', 'H5', 'P', 'CENTER', 'UL', 'LI', 'OL', 'BR']
 
 	if tag.name in block_tags {
-		box.add_break()
+        display_rule := conf.get_css_val(tag.name, 'display', '')
+        if !display_rule.contains('inline') {
+            box.add_break(conf.margin_top)
+        }
 	}
+    
+    if tag.name == 'body' {
+        mut body := &BackgroundBox(win.get_from_id('body'))
+        color := conf.get_css_val('body', 'background', 'white')
+        body.background = parse_color(color)
+    }
+    
+    if tag.name == 'style' {
+        cont := tag.content.replace('{', '{\n').replace('}', '\n}\n').replace(';', ';\n')
+        ss := parse_css(cont)
+        conf.stylesheets << ss
+    }
 
 	for sub in tag.children {
 		nam := sub.name.to_upper()
+        
+        if nam == 'STYLE' {
+            ss := parse_css(sub.content)
+            conf.stylesheets << ss
+        }
 
 		set_status(mut win, 'Layouting ' + nam + '...')
 
@@ -132,13 +193,11 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			}
 			continue
 		}
+        
+        display_rule := conf.get_css_val(sub.name, 'display', '')
 
-		if nam == 'BR' {
-			box.add_break()
-		}
-
-		if nam in block_tags || nam == 'H3' {
-			box.add_break()
+		if nam in block_tags && !display_rule.contains('inline') {
+			box.add_break(conf.margin_top)
 		}
 
 		if nam == 'CENTER' {
@@ -160,7 +219,8 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			continue
 		}
 
-		conf.size = set_conf_size(sub.name, conf.size)
+		set_conf_size(sub.name, mut conf)
+		// conf.size = set_conf_size(sub.name, conf.size)
 
 		if nam == 'FORM' {
 			if 'action' in sub.attributes {
@@ -197,6 +257,13 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 				box.add_child(btn)
 			}
 		}
+        
+        if nam == 'BUTTON' {
+            mut btn := ui.button(win, sub.content)
+            //btn.set_click_fn(form_submit, conf)
+			btn.pack()
+			box.add_child(btn)
+        }
 
 		if nam == 'A' {
 			// Link
@@ -210,8 +277,8 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			mut lbl := create_hyperlink_label(win, sub.content, conf)
 			box.add_child(lbl)
 		} else {
-			if !(nam == 'SCRIPT' || nam == 'STYLE') {
-				mut lbl := ui.label(win, sub.content)
+			if !(nam == 'SCRIPT' || nam == 'STYLE' || nam == 'BUTTON') && sub.content.trim_space().len > 0 {
+				mut lbl := ui.label(win, sub.content.replace('&nbsp;', ' '))
 				lbl.set_config(conf.size, false, conf.bold)
 				lbl.pack()
 
@@ -223,7 +290,14 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		}
 
 		if nam in block_tags {
-			box.add_break()
+			box.add_break(conf.margin_bottom)
+			if nam.len == 2 && nam.starts_with('H') {
+				box.add_break(10)
+			}
+		}
+
+		if nam == 'BR' {
+			box.add_break(20)
 		}
 
 		// Reset config
@@ -235,6 +309,11 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		if conf.size > 0 {
 			conf.size = 0
 		}
+		if nam.len == 2 && nam.starts_with('H') {
+			conf.margin_top = 0
+			conf.margin_bottom = 0
+			conf.bold = false
+		}
 	}
 
 	if tag.name == 'form' {
@@ -243,6 +322,12 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 
 	if tag.name == 'small' {
 		conf.size = 0
+	}
+
+	if tag.name.starts_with('h') && tag.name.len == 2 {
+		conf.margin_top = 0
+		conf.margin_bottom = 0
+		conf.bold = false
 	}
 }
 
@@ -297,11 +382,16 @@ fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
 
 	fixed_src := format_url(src, conf.page_url)
 
-	out := os.real_path(cache + '/' + os.base(fixed_src).replace(':', '_'))
+	mut out := os.real_path(cache + '/' + os.base(fixed_src).replace(':', '_'))
 
 	println('Loading image: ' + fixed_src)
 
-	http.download_file(fixed_src, out) or { println(err) }
+	if os.exists(fixed_src) {
+		// Local file
+		out = fixed_src
+	} else {
+		http.download_file(fixed_src, out) or { println(err) }
+	}
 
 	gg_img := win.gg.create_image(out)
 	if w == -1 {
@@ -339,6 +429,10 @@ fn format_url(ref string, page_url string) string {
 
 	if !(href.starts_with('http://') || href.starts_with('https://')) {
 		// Not-Absolute URL
+
+		if page_url.starts_with('file://') {
+			return os.dir(page_url.split('file://')[1]) + '/' + href
+		}
 
 		if href.starts_with('/') {
 			// Root

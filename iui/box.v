@@ -20,7 +20,7 @@ pub fn box(win &Window) &Box {
 
 pub fn (mut this Box) add_child(com &Component) {
 	if this.vbox.children.len == 0 {
-		this.add_break()
+		this.add_break(1)
 	}
 	mut kids := this.vbox.children
 	mut cbox := kids[kids.len - 1]
@@ -47,7 +47,7 @@ pub fn (mut this Box) set_current_height(val int) {
 	}
 }
 
-pub fn (mut this Box) add_break() {
+pub fn (mut this Box) add_break(min_height int) {
 	if this.vbox.children.len > 0 {
 		mut kids := this.vbox.children
 		mut cbox := kids[kids.len - 1]
@@ -60,7 +60,8 @@ pub fn (mut this Box) add_break() {
 
 	mut h_box := hbox(this.win)
 	h_box.set_bounds(this.x, this.y, this.width, this.height)
-	h_box.pack()
+	h_box.set_min_height(min_height)
+    h_box.pack()
 	this.vbox.add_child(h_box)
 }
 
