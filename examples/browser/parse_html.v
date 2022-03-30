@@ -174,19 +174,19 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		conf.stylesheets << ss
 	}
 
-    if tag.name == 'li' {
-        should := conf.get_css_val('li', 'list-style-type', 'bullet') != 'none'
+	if tag.name == 'li' {
+		should := conf.get_css_val('li', 'list-style-type', 'bullet') != 'none'
 
-        if should {
-            mut lbl := ui.label(win, '• ')
-            padding_left := conf.get_css_val('li', 'padding-left', '40px')
+		if should {
+			mut lbl := ui.label(win, '• ')
+			padding_left := conf.get_css_val('li', 'padding-left', '40px')
 
-            lbl.x = padding_left.int()
-            lbl.set_config(conf.size, false, conf.bold)
-            lbl.pack()
-            box.add_child(lbl)
-        }
-    }
+			lbl.x = padding_left.int()
+			lbl.set_config(conf.size, false, conf.bold)
+			lbl.pack()
+			box.add_child(lbl)
+		}
+	}
 
 	for sub in tag.children {
 		nam := sub.name.to_upper()
@@ -257,9 +257,8 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		} else {
 			if !(nam == 'SCRIPT' || nam == 'STYLE' || nam == 'BUTTON')
 				&& sub.content.trim_space().len > 0 {
-
-                content := sub.content.replace('&nbsp;', ' ')
-                mut lbl := ui.label(win, content)
+				content := sub.content.replace('&nbsp;', ' ')
+				mut lbl := ui.label(win, content)
 				lbl.set_config(conf.size, false, conf.bold)
 				lbl.pack()
 

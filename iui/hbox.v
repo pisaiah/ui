@@ -13,7 +13,7 @@ pub mut:
 	raw_width      int
 	is_width_per   bool
 	center_screen  bool
-    min_height     int
+	min_height     int
 }
 
 pub fn hbox(win &Window) &HBox {
@@ -28,7 +28,7 @@ pub fn (mut this HBox) pack() {
 }
 
 pub fn (mut this HBox) set_min_height(val int) {
-    this.min_height = val
+	this.min_height = val
 }
 
 pub fn (mut this HBox) set_width_as_percent(flag bool, width int) {
@@ -109,17 +109,17 @@ pub fn (mut this HBox) draw() {
 
 	if this.needs_pack {
 		this.width = o_x
-        if yyy > this.min_height {
-            this.height = yyy
-        } else {
-            this.height = this.min_height
-        }
+		if yyy > this.min_height {
+			this.height = yyy
+		} else {
+			this.height = this.min_height
+		}
 		this.needs_pack = false
 	}
-    
-    if this.height < this.min_height {
-        this.height = this.min_height
-    }
+
+	if this.height < this.min_height {
+		this.height = this.min_height
+	}
 
 	this.is_mouse_rele = false
 

@@ -54,7 +54,7 @@ pub fn (mut btn Hyperlink) pack_do() {
 	mut hi := 0
 	for line in btn.text.split_into_lines() {
 		if line.trim_space().len > 0 {
-			hi += th//text_height(btn.app, line)
+			hi += th // text_height(btn.app, line)
 		} else {
 			hi += th
 		}
@@ -87,8 +87,8 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 
 		this.click_event_fn(this)
 	}
-    
-    app.gg.set_cfg(gx.TextCfg{
+
+	app.gg.set_cfg(gx.TextCfg{
 		size: app.font_size + this.size
 		color: app.theme.text_color
 		bold: this.bold
@@ -114,13 +114,11 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 		my += line_height
 	}
 	app.gg.draw_line(x, y + height - 2, x + width, y + height - 2, gx.rgb(0, 100, 200))
-    
-    if app.debug_draw {
+
+	if app.debug_draw {
 		app.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
-		app.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height,
-			gx.blue)
-		app.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y,
-			gx.blue)
+		app.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
+		app.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
 	}
 }
 

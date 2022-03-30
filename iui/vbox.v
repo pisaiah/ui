@@ -42,11 +42,11 @@ pub fn (mut this VBox) draw() {
 		mut child := this.children[i]
 		child.draw_event_fn(this.win, &child)
 
-        ypos := this.y + o_y //- (this.scroll_i*8)
-        if ypos < this.y {
-            o_y += child.height
-            continue
-        }
+		ypos := this.y + o_y //- (this.scroll_i*8)
+		if ypos < this.y {
+			o_y += child.height
+			continue
+		}
 		draw_with_offset(mut child, this.x + o_x, ypos)
 
 		if this.win.bar != 0 {

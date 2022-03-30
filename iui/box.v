@@ -61,7 +61,7 @@ pub fn (mut this Box) add_break(min_height int) {
 	mut h_box := hbox(this.win)
 	h_box.set_bounds(this.x, this.y, this.width, this.height)
 	h_box.set_min_height(min_height)
-    h_box.pack()
+	h_box.pack()
 	this.vbox.add_child(h_box)
 }
 
