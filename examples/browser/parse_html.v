@@ -12,11 +12,10 @@ import net.html
 import os
 import time
 import v.util.version
-import encoding.base64
 
 struct DocConfig {
 mut:
-    stylesheets   []StyleSheet
+	stylesheets   []StyleSheet
 	page_url      string
 	bold          bool
 	size          int
@@ -29,14 +28,14 @@ mut:
 }
 
 fn (this &DocConfig) get_css_val(element string, key string, def string) string {
-    for ss in this.stylesheets {
-        if element in ss.rules {
-            if key in ss.rules[element] {
-                return ss.rules[element][key]
-            }
-        }
-    }
-    return def
+	for ss in this.stylesheets {
+		if element in ss.rules {
+			if key in ss.rules[element] {
+				return ss.rules[element][key]
+			}
+		}
+	}
+	return def
 }
 
 fn em(val f32) f32 {
@@ -84,7 +83,7 @@ fn load_url(mut win ui.Window, url string) {
 	mut bg := bg_area(win)
 	bg.set_bounds(0, 25, 0, 45)
 	bg.draw_event_fn = width_draw_fn
-    bg.set_id(mut win, 'body')
+	bg.set_id(mut win, 'body')
 	tb.add_child(tb.active_tab, bg)
 
 	mut doc := html.parse(fixed_text)
@@ -111,6 +110,7 @@ fn load_url(mut win ui.Window, url string) {
 	}
 	mut vbox := box.get_vbox()
 
+	vbox.z_index = -1
 	vbox.draw_event_fn = box_draw_fn
 	vbox.set_bounds(0, 25, 900, 500) // TODO; size
 	tb.add_child(tb.active_tab, vbox)
@@ -152,37 +152,49 @@ fn set_conf_size(nam string, mut config DocConfig) {
 }
 
 fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut conf DocConfig) {
-	// conf.size = set_conf_size(tag.name, conf.size)
 	set_conf_size(tag.name, mut conf)
 
 	block_tags := ['H1', 'H2', 'H3', 'H4', 'H5', 'P', 'CENTER', 'UL', 'LI', 'OL', 'BR']
 
 	if tag.name in block_tags {
-        display_rule := conf.get_css_val(tag.name, 'display', '')
-        if !display_rule.contains('inline') {
-            box.add_break(conf.margin_top)
-        }
+		display_rule := conf.get_css_val(tag.name, 'display', '')
+		if !display_rule.contains('inline') {
+			box.add_break(conf.margin_top)
+		}
 	}
-    
-    if tag.name == 'body' {
-        mut body := &BackgroundBox(win.get_from_id('body'))
-        color := conf.get_css_val('body', 'background', 'white')
-        body.background = parse_color(color)
-    }
-    
-    if tag.name == 'style' {
-        cont := tag.content.replace('{', '{\n').replace('}', '\n}\n').replace(';', ';\n')
-        ss := parse_css(cont)
-        conf.stylesheets << ss
+
+	if tag.name == 'body' {
+		mut body := &BackgroundBox(win.get_from_id('body'))
+		color := conf.get_css_val('body', 'background', 'white')
+		body.background = parse_color(color)
+	}
+
+	if tag.name == 'style' {
+		ss := parse_min_css(tag.content)
+		conf.stylesheets << ss
+	}
+
+    if tag.name == 'li' {
+        should := conf.get_css_val('li', 'list-style-type', 'bullet') != 'none'
+
+        if should {
+            mut lbl := ui.label(win, '• ')
+            padding_left := conf.get_css_val('li', 'padding-left', '40px')
+
+            lbl.x = padding_left.int()
+            lbl.set_config(conf.size, false, conf.bold)
+            lbl.pack()
+            box.add_child(lbl)
+        }
     }
 
 	for sub in tag.children {
 		nam := sub.name.to_upper()
-        
-        if nam == 'STYLE' {
-            ss := parse_css(sub.content)
-            conf.stylesheets << ss
-        }
+
+		if nam == 'STYLE' {
+			ss := parse_min_css(sub.content)
+			conf.stylesheets << ss
+		}
 
 		set_status(mut win, 'Layouting ' + nam + '...')
 
@@ -193,8 +205,8 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			}
 			continue
 		}
-        
-        display_rule := conf.get_css_val(sub.name, 'display', '')
+
+		display_rule := conf.get_css_val(sub.name, 'display', '')
 
 		if nam in block_tags && !display_rule.contains('inline') {
 			box.add_break(conf.margin_top)
@@ -212,7 +224,6 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		}
 
 		if nam == 'IMG' {
-			println('Image: ' + sub.str())
 			img := handle_image(mut win, sub, conf)
 			box.add_child(img)
 			box.set_current_height(img.height)
@@ -220,50 +231,17 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		}
 
 		set_conf_size(sub.name, mut conf)
-		// conf.size = set_conf_size(sub.name, conf.size)
 
-		if nam == 'FORM' {
-			if 'action' in sub.attributes {
-				conf.action = sub.attributes['action']
-			}
+		if nam == 'FORM' || nam == 'INPUT' {
+			handle_form_tags(mut win, mut box, sub, mut conf)
 		}
 
-		if nam == 'INPUT' {
-			attr := sub.attributes.clone()
-			typ := attr['type']
-			mut size := 20 // 20 is Default value
-			if 'size' in attr {
-				size = attr['size'].int()
-			}
-
-			if typ == 'text' || 'type' !in attr {
-				mut te := ui.textedit(win, '')
-				te.draw_line_numbers = false
-				te.code_syntax_on = false
-
-				if 'name' in attr {
-					conf.action = conf.action + '?' + attr['name'] + '='
-				}
-
-				te.set_bounds(0, 0, size * 8, 20)
-				conf.last_need = te
-				box.add_child(te)
-			}
-
-			if typ == 'submit' {
-				mut btn := ui.button(win, attr['value'])
-				btn.set_click_fn(form_submit, conf)
-				btn.pack()
-				box.add_child(btn)
-			}
-		}
-        
-        if nam == 'BUTTON' {
-            mut btn := ui.button(win, sub.content)
-            //btn.set_click_fn(form_submit, conf)
+		if nam == 'BUTTON' {
+			mut btn := ui.button(win, sub.content)
+			// btn.set_click_fn(form_submit, conf)
 			btn.pack()
 			box.add_child(btn)
-        }
+		}
 
 		if nam == 'A' {
 			// Link
@@ -277,8 +255,11 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			mut lbl := create_hyperlink_label(win, sub.content, conf)
 			box.add_child(lbl)
 		} else {
-			if !(nam == 'SCRIPT' || nam == 'STYLE' || nam == 'BUTTON') && sub.content.trim_space().len > 0 {
-				mut lbl := ui.label(win, sub.content.replace('&nbsp;', ' '))
+			if !(nam == 'SCRIPT' || nam == 'STYLE' || nam == 'BUTTON')
+				&& sub.content.trim_space().len > 0 {
+
+                content := sub.content.replace('&nbsp;', ' ')
+                mut lbl := ui.label(win, content)
 				lbl.set_config(conf.size, false, conf.bold)
 				lbl.pack()
 
@@ -329,79 +310,6 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		conf.margin_bottom = 0
 		conf.bold = false
 	}
-}
-
-fn form_submit(win_ptr voidptr, btn_ptr voidptr, data voidptr) {
-	mut win := &ui.Window(win_ptr)
-	conf := &DocConfig(data)
-	te := &ui.TextEdit(conf.last_need)
-
-	formatted_url := format_url(conf.action, conf.page_url)
-	full_url := formatted_url + te.lines[0]
-
-	load_url(mut win, full_url)
-}
-
-fn handle_image(mut win ui.Window, tag &html.Tag, conf DocConfig) &ui.Image {
-	src := tag.attributes['src']
-
-	tmp := os.temp_dir()
-	cache := os.real_path(tmp + '/v-browser-cache/')
-	os.mkdir(cache) or {}
-
-	mut w := -1
-	mut h := 10
-
-	if 'width' in tag.attributes {
-		w = tag.attributes['width'].int()
-	}
-
-	if 'height' in tag.attributes {
-		h = tag.attributes['height'].int()
-	}
-
-	if src.starts_with('data:') && src.contains('base64') {
-		// Base64 encoded image
-
-		encoded := src.split('base64,')[1]
-
-		decode_str := base64.decode_str(encoded)
-		out := os.real_path(cache + '/base64-' + os.base(encoded) + '.png')
-		os.write_file(out, decode_str) or {}
-
-		gg_img := win.gg.create_image(out)
-		if w == -1 {
-			w = gg_img.width
-			h = gg_img.height
-		}
-
-		img := ui.image_with_size(win, gg_img, w, h)
-
-		return img
-	}
-
-	fixed_src := format_url(src, conf.page_url)
-
-	mut out := os.real_path(cache + '/' + os.base(fixed_src).replace(':', '_'))
-
-	println('Loading image: ' + fixed_src)
-
-	if os.exists(fixed_src) {
-		// Local file
-		out = fixed_src
-	} else {
-		http.download_file(fixed_src, out) or { println(err) }
-	}
-
-	gg_img := win.gg.create_image(out)
-	if w == -1 {
-		w = gg_img.width
-		h = gg_img.height
-	}
-
-	img := ui.image_with_size(win, gg_img, w, h)
-
-	return img
 }
 
 fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hyperlink {

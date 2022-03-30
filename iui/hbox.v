@@ -89,7 +89,7 @@ pub fn (mut this HBox) draw() {
 			child.is_mouse_down = false
 		}
 
-		o_x += child.width
+		o_x += child.x + child.width
 		index += 1
 
 		if index == this.children.len {

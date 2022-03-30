@@ -19,22 +19,27 @@ pub mut:
 
 // Parses a CSS color string to gx.Color
 fn parse_color(val string) gx.Color {
-    if val.starts_with('rgb(') {
-        inside := val.split('rgb(')[1].split(')')[0]
-        splt := inside.split(',')
-        if splt.len == 3 {
-            r := splt[0].trim_space().byte()
-            g := splt[1].trim_space().byte()
-            b := splt[2].trim_space().byte()
-            return gx.rgb(r, g, b)
-        }
-    }
-    
-    if val.starts_with('#') {
-        
-    }
-    
-    return gx.white
+	if val.starts_with('rgb(') {
+		inside := val.split('rgb(')[1].split(')')[0]
+		splt := inside.split(',')
+		if splt.len == 3 {
+			r := splt[0].trim_space().byte()
+			g := splt[1].trim_space().byte()
+			b := splt[2].trim_space().byte()
+			return gx.rgb(r, g, b)
+		}
+	}
+
+	if val.starts_with('#') {
+	}
+
+	return gx.white
+}
+
+//
+fn parse_min_css(val string) &StyleSheet {
+	fixed_val := val.replace('{', '{\n').replace('}', '\n}\n').replace(';', ';\n')
+	return parse_css(fixed_val)
 }
 
 // Parse CSS content into a StyleSheet
@@ -62,6 +67,6 @@ fn parse_css(val string) &StyleSheet {
 			ss.rules[current_id][rule.key] = rule.value
 		}
 	}
-    dump(ss) // debug
+	dump(ss) // debug
 	return ss
 }

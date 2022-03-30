@@ -9,14 +9,14 @@ struct BackgroundBox {
 	ui.Component_A
 	win &ui.Window
 pub mut:
-    background gx.Color
+	background gx.Color
 }
 
 fn bg_area(win &ui.Window) &BackgroundBox {
 	return &BackgroundBox{
 		win: win
 		z_index: -1
-        background: gx.white
+		background: gx.white
 	}
 }
 

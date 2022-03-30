@@ -1,0 +1,18 @@
+// TODO: Load CSS defaults from this file
+// Reference: https://www.w3schools.com/cssref/css_default_values.asp
+
+body {
+    background: rgb(255, 255, 255);
+}
+
+li {
+    
+}
+
+p {
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
+}

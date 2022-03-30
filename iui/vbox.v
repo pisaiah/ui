@@ -38,11 +38,16 @@ pub fn (mut this VBox) draw() {
 
 	mut width := 0
 
-	// for mut child in this.children {
 	for i in this.scroll_i .. this.children.len {
 		mut child := this.children[i]
 		child.draw_event_fn(this.win, &child)
-		draw_with_offset(mut child, this.x + o_x, this.y + o_y)
+
+        ypos := this.y + o_y //- (this.scroll_i*8)
+        if ypos < this.y {
+            o_y += child.height
+            continue
+        }
+		draw_with_offset(mut child, this.x + o_x, ypos)
 
 		if this.win.bar != 0 {
 			if this.win.bar.tik < 99 {
