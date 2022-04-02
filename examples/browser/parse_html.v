@@ -238,7 +238,12 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 
 		if nam == 'BUTTON' {
 			mut btn := ui.button(win, sub.content)
-			// btn.set_click_fn(form_submit, conf)
+
+			if conf.href.len > 0 {
+				href := format_url(conf.href, conf.page_url)
+				btn.set_click_fn(btn_href_click, &StringPtr{href})
+			}
+
 			btn.pack()
 			box.add_child(btn)
 		}
@@ -246,14 +251,22 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		if nam == 'A' {
 			// Link
 			conf.href = sub.attributes['href']
+
 			if sub.content.len > 0 {
 				mut lbl := create_hyperlink_label(win, sub.content, conf)
 				box.add_child(lbl)
 			}
-		} else if conf.href.len > 0 {
+		} else if conf.href.len > 0 && tag.name == 'a' {
 			// Link
-			mut lbl := create_hyperlink_label(win, sub.content, conf)
-			box.add_child(lbl)
+			if nam == 'BUTTON' {
+				// TODO: Button link
+			} else {
+				if !(nam == 'SCRIPT' || nam == 'STYLE' || nam == 'BUTTON')
+					&& sub.content.trim_space().len > 0 {
+					mut lbl := create_hyperlink_label(win, sub.content, conf)
+					box.add_child(lbl)
+				}
+			}
 		} else {
 			if !(nam == 'SCRIPT' || nam == 'STYLE' || nam == 'BUTTON')
 				&& sub.content.trim_space().len > 0 {
@@ -282,7 +295,7 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 
 		// Reset config
 		conf.bold = false
-		conf.href = ''
+
 		if nam == 'CENTER' {
 			conf.centered = false
 		}
@@ -294,6 +307,10 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			conf.margin_bottom = 0
 			conf.bold = false
 		}
+	}
+
+	if 'href' in tag.attributes && tag.name == 'a' {
+		conf.href = ''
 	}
 
 	if tag.name == 'form' {
@@ -309,6 +326,17 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		conf.margin_bottom = 0
 		conf.bold = false
 	}
+}
+
+// TODO: how to cast voidptr to string?
+struct StringPtr {
+	val string
+}
+
+fn btn_href_click(a voidptr, b voidptr, c voidptr) {
+	mut win := &ui.Window(a)
+	urll := &StringPtr(c)
+	load_url(mut win, urll.val)
 }
 
 fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hyperlink {

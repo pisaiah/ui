@@ -80,11 +80,10 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 	}
 
 	text := this.text
-	sizh := (text_height(app, '!{A') + 1) / 2
+	// sizh := (text_height(app, '!{A') + 1) / 2
 
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
-
 		this.click_event_fn(this)
 	}
 
@@ -95,7 +94,11 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 	})
 
 	// Draw Button Text
-	mut line_height := text_height(app, '1A{')
+	line_height := text_height(app, '1A{')
+	if this.height < (line_height / 2) {
+		this.height = line_height
+	}
+
 	mut my := 0
 	for mut spl in text.split('\n') {
 		app.gg.draw_text(x, y + height - line_height + my, spl.replace('\t', '  '.repeat(8)),

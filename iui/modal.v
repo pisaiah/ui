@@ -70,12 +70,16 @@ pub fn (mut this Modal) draw() {
 			wid - (i * 2), hei - (i * 2), 2, app.theme.background, app.theme.button_bg_hover)
 	}
 
+	// Do component draw event again to fix z-index
+	this.draw_event_fn(mut app, &Component(this))
+
 	if this.needs_init {
 		this.create_close_btn(mut app, true)
 		this.needs_init = false
 	}
 
 	for mut com in this.children {
+		com.draw_event_fn(mut app, com)
 		draw_with_offset(mut com, xs, this.y + this.top_off + 26)
 	}
 }

@@ -125,6 +125,7 @@ fn box_draw_fn(mut win ui.Window, com &ui.Component) {
 	size := win.gg.window_size()
 	mut this := *com
 	this.width = size.width
+
 	if this.height > 40 {
 		this.height = size.height
 	}

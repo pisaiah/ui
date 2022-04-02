@@ -10,9 +10,8 @@ pub mut:
 	win            &Window
 	click_event_fn fn (voidptr, voidptr)
 	needs_pack     bool
-	// raw_width      int
-	// is_width_per   bool
-	update_width bool = true
+	overflow       bool = true
+	update_width   bool = true
 }
 
 pub fn vbox(win &Window) &VBox {
@@ -26,19 +25,21 @@ pub fn (mut this VBox) pack() {
 	this.needs_pack = true
 }
 
-/*
-pub fn (mut this VBox) set_height_as_percent(flag bool, width int) {
-    this.is_width_per = flag
-    this.raw_height = width
-}*/
-
 pub fn (mut this VBox) draw() {
 	mut o_x := 0
 	mut o_y := 0
 
 	mut width := 0
 
+	max_scroll := this.children.len - 1
+	if this.scroll_i > max_scroll {
+		this.scroll_i = max_scroll
+	}
+
 	for i in this.scroll_i .. this.children.len {
+		if i < 0 {
+			continue
+		}
 		mut child := this.children[i]
 		child.draw_event_fn(this.win, &child)
 
@@ -47,6 +48,11 @@ pub fn (mut this VBox) draw() {
 			o_y += child.height
 			continue
 		}
+
+		if !this.overflow && ypos > this.y + this.height {
+			continue
+		}
+
 		draw_with_offset(mut child, this.x + o_x, ypos)
 
 		if this.win.bar != 0 {
@@ -93,7 +99,7 @@ pub fn (mut this VBox) draw() {
 	// this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
 
 	if o_y != this.height {
-		this.height = o_y
+		this.height = o_y + (this.children.len)
 	}
 	if width != this.width && this.update_width {
 		this.width = width

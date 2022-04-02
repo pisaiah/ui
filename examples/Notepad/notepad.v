@@ -16,7 +16,7 @@ fn main() {
 
 	mut theme_menu := ui.menuitem('Theme')
 
-	mut themes := [ui.get_system_theme(), ui.theme_dark(), ui.theme_black_red()]
+	mut themes := ui.get_all_themes()
 	for theme2 in themes {
 		item := ui.menu_item(
 			text: theme2.name
@@ -85,7 +85,6 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	mut modal := ui.modal(win, 'About Notepad')
 	modal.in_height = 210
 	modal.in_width = 250
-	modal.top_off = 20
 
 	mut title := ui.label(win, 'Notepad')
 	title.set_pos(20, 4)
