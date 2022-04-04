@@ -165,6 +165,7 @@ fn on_mouse_up_event(e &gg.Event, mut app Window) {
 }
 
 fn on_scroll_event(e &gg.Event, mut app Window) {
+	app.components.sort(a.z_index > b.z_index)
 	for mut a in app.components {
 		if mut a is Tabbox {
 			for _, mut val in a.kids {

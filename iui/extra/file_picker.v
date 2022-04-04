@@ -1,4 +1,4 @@
-module main
+module extra
 
 import gg
 import iui as ui
@@ -7,21 +7,55 @@ import os
 // File Picker
 struct FilePicker {
 pub mut:
-	dir_input &ui.TextEdit
-	file_list &ui.VBox
-	file_name &ui.HBox
+	dir_input      &ui.TextEdit
+	file_list      &ui.VBox
+	file_name      &ui.HBox
+	path_change_fn fn (voidptr, voidptr)
 }
 
-fn create_file_picker(mut window ui.Window, in_modal bool, dir string) &FilePicker {
+pub fn (this &FilePicker) get_full_path() string {
+	dir := this.dir_input.lines[0]
+	mut te := this.file_name.children[1]
+	if mut te is ui.TextEdit {
+		return os.join_path(dir, te.lines[0])
+	}
+	return dir
+}
+
+pub fn (this &FilePicker) get_dir() string {
+	dir := this.dir_input.lines[0]
+	return dir
+}
+
+pub fn (this &FilePicker) get_file_name() string {
+	mut te := this.file_name.children[1]
+	if mut te is ui.TextEdit {
+		return te.lines[0]
+	}
+	return ''
+}
+
+[parms]
+pub struct FilePickerConfig {
+	in_modal       bool
+	path           string = os.home_dir()
+	path_change_fn fn (voidptr, voidptr)
+	show_icons     bool
+}
+
+pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePicker {
+	dir := os.dir(conf.path)
+	file_name := if os.is_dir(conf.path) { '' } else { os.base(conf.path) }
+
 	mut dir_input := ui.textedit(window, dir)
 	dir_input.code_syntax_on = false
 	dir_input.padding_y = 4
 
-	mut file_input := ui.textedit(window, '')
+	mut file_input := ui.textedit(window, file_name)
 	file_input.code_syntax_on = false
 	file_input.padding_y = 4
 
-	padding := if in_modal { 10 } else { 30 }
+	padding := if conf.in_modal { 10 } else { 30 }
 
 	dir_input.set_bounds(4, padding, 491, 25)
 	dir_input.set_id(mut window, 'dir-input')
@@ -47,7 +81,7 @@ fn create_file_picker(mut window ui.Window, in_modal bool, dir string) &FilePick
 	hbox.set_bounds(0, padding + fi_y, 491, 25)
 	hbox.add_child(file_input)
 
-	return &FilePicker{dir_input, res_box, hbox}
+	return &FilePicker{dir_input, res_box, hbox, conf.path_change_fn}
 }
 
 fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
@@ -104,7 +138,12 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	size.draw_event_fn = lbl_draw_ev
 	size.set_bounds(0, 0, 130, 32)
 
-	hbox.add_child(img1)
+	if 'img_folder' in win.id_map {
+		hbox.add_child(img1)
+	} else {
+		lbl.x -= 32
+		lbl.width += 32
+	}
 	hbox.add_child(lbl)
 	hbox.add_child(size)
 
@@ -116,7 +155,7 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	return hbox
 }
 
-fn format_size(size f64) string {
+pub fn format_size(size f64) string {
 	if size == 0 {
 		return ''
 	}
@@ -134,7 +173,7 @@ fn format_size(size f64) string {
 	return round(mb.str()) + ' MB'
 }
 
-fn round(str string) string {
+pub fn round(str string) string {
 	spl := str.split('.')
 	if spl.len == 1 {
 		return spl[0]
@@ -187,7 +226,7 @@ fn draw_bg(this &ui.VBox) {
 		this.win.theme.textbox_border)
 }
 
-fn draw_scrollbar(mut com ui.VBox, cl int, spl_len int) {
+pub fn draw_scrollbar(mut com ui.VBox, cl int, spl_len int) {
 	// Calculate postion for scroll
 	if com.scroll_i > spl_len - cl {
 		com.scroll_i = spl_len - cl
@@ -210,4 +249,44 @@ fn draw_scrollbar(mut com ui.VBox, cl int, spl_len int) {
 		com.win.draw_bordered_rect(x + com.width - wido, y + sth + 1, wid, enh - 2, 2,
 			com.win.theme.scroll_bar_color, com.win.theme.scroll_track_color)
 	}
+}
+
+struct FilePickerModalData {
+	picker    &FilePicker
+	user_data voidptr
+}
+
+pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data voidptr) {
+	mut modal := ui.modal(win, 'Choose Folder & File')
+	modal.top_off = 20
+	modal.in_width = 500
+	modal.in_height = 450
+	modal.set_id(mut win, 'file_picker_modal')
+
+	modal.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
+		mut vbox := &ui.VBox(win.get_from_id('edit'))
+		vbox.scroll_i = com.scroll_i
+	}
+
+	mut picker := create_file_picker(mut win, conf)
+	modal.add_child(picker.dir_input)
+	modal.add_child(picker.file_list)
+	modal.add_child(picker.file_name)
+
+	mut can := ui.button(win, 'OK')
+	can.set_bounds(10, 410, 70, 25)
+	can.set_click_fn(fn (a voidptr, b voidptr, c voidptr) {
+		mut win := &ui.Window(a)
+		data := &FilePickerModalData(c)
+
+		data.picker.path_change_fn(data.picker, data.user_data)
+
+		win.components = win.components.filter(it.id != 'file_picker_modal')
+	}, &FilePickerModalData{picker, user_data})
+	modal.z_index = 600
+	modal.needs_init = false
+	modal.add_child(can)
+
+	load_directory(os.dir(conf.path), picker.file_list)
+	win.add_child(modal)
 }

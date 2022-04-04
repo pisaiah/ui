@@ -252,7 +252,7 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			// Link
 			conf.href = sub.attributes['href']
 
-			if sub.content.len > 0 {
+			if sub.content.trim_space().len > 0 {
 				mut lbl := create_hyperlink_label(win, sub.content, conf)
 				box.add_child(lbl)
 			}

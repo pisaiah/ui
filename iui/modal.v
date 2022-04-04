@@ -48,7 +48,10 @@ pub fn (mut this Modal) draw() {
 	this.width = ws.width
 	this.height = ws.height
 
-	app.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 150))
+	if this.z_index <= 501 {
+		// Only draw background for one modal.
+		app.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 150))
+	}
 
 	wid := this.in_width
 	hei := this.in_height

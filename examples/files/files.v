@@ -3,11 +3,12 @@ module main
 import gg
 import iui as ui
 import os
+import iui.extra
 
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'Files', 550, 510)
+	mut window := ui.window(ui.get_system_theme(), 'File Picker Test', 550, 510)
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
@@ -67,18 +68,16 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 }
 
 fn about_click(mut win ui.Window, com ui.MenuItem) {
-	mut modal := ui.modal(win, 'About vFiles')
+	mut modal := ui.modal(win, 'About')
 	modal.in_height = 210
 	modal.in_width = 250
 
-	mut title := ui.label(win, 'vFiles')
+	mut title := ui.label(win, 'About')
 	title.set_pos(20, 4)
 	title.set_config(28, true, true)
 	title.pack()
 
-	mut label := ui.label(win,
-		'Small File Picker made in\nthe V Programming Language.\n\nVersion: 0.1' +
-		'\nUI Version: ' + ui.version)
+	mut label := ui.label(win, 'Test of the File Picker\nUI Version: ' + ui.version)
 
 	label.set_pos(22, 14)
 	label.pack()
@@ -86,7 +85,6 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	mut can := ui.button(win, 'OK')
 	can.set_bounds(10, 170, 70, 25)
 	can.set_click(fn (mut win ui.Window, btn ui.Button) {
-		open_file_picker(mut win, 'D:/')
 		win.components = win.components.filter(mut it !is ui.Modal)
 	})
 	modal.needs_init = false
@@ -99,42 +97,8 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 }
 
 fn modal_test(mut win ui.Window, com ui.MenuItem) {
-	open_file_picker(mut win, 'D:/')
-}
-
-struct FilePickerModalData {
-	picker &FilePicker
-	modal  &ui.Modal
-}
-
-fn open_file_picker(mut win ui.Window, dir string) {
-	mut modal := ui.modal(win, 'Choose Folder & File')
-	modal.top_off = 20
-	modal.in_width = 500
-	modal.in_height = 450
-
-	modal.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
-		mut vbox := &ui.VBox(win.get_from_id('edit'))
-		vbox.scroll_i = com.scroll_i
-	}
-
-	mut picker := create_file_picker(mut win, true, dir)
-	modal.add_child(picker.dir_input)
-	modal.add_child(picker.file_list)
-	modal.add_child(picker.file_name)
-
-	mut can := ui.button(win, 'OK')
-	can.set_bounds(10, 410, 70, 25)
-	can.set_click_fn(fn (a voidptr, b voidptr, c voidptr) {
-		mut win := &ui.Window(a)
-		data := &FilePickerModalData(c)
-		modal := data.modal
-
-		win.components = win.components.filter(mut it !is ui.Modal)
-	}, &FilePickerModalData{picker, modal})
-	modal.needs_init = false
-	modal.add_child(can)
-
-	load_directory(dir, picker.file_list)
-	win.add_child(modal)
+	extra.open_file_picker(mut win, extra.FilePickerConfig{true, 'D:/gc.dll', fn (a voidptr, b voidptr) {
+		picker := &extra.FilePicker(a)
+		println(picker.get_full_path())
+	}}, voidptr(0))
 }

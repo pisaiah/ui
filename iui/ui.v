@@ -1,5 +1,4 @@
 // Copyright (c) 2021-2022 Isaiah.
-// All Rights Reserved.
 module iui
 
 import gg
@@ -9,9 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.5'
-		// ui_mode = false // Note: On N4100; ui_mode uses
-		// 	   more cpu while on than off.
+	version = '0.0.6'
 )
 
 pub fn debug(o string) {
@@ -43,6 +40,7 @@ mut:
 	draw_event_fn fn (mut Window, &Component)
 	after_draw_event_fn fn (mut Window, &Component)
 	children []Component
+	id string
 	draw()
 }
 
@@ -67,6 +65,7 @@ pub mut:
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
 	parent              &Component_A = 0
 	children            []Component
+	id                  string
 }
 
 pub fn (mut this Component_A) add_child(com &Component) {
@@ -168,7 +167,8 @@ pub mut:
 	debug_draw     bool
 }
 
-pub fn (com &Component_A) set_id(mut win Window, id string) {
+pub fn (mut com Component_A) set_id(mut win Window, id string) {
+	com.id = id
 	win.id_map[id] = com
 }
 
@@ -274,17 +274,13 @@ fn (mut app Window) draw() {
 	for mut com in app.components {
 		com.draw_event_fn(app, &com)
 
-		if com.z_index > 100 && app.show_menu_bar {
+		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()
 			bar.draw()
 			bar_drawn = true
 		}
 
-		if app.show_menu_bar {
-			com.draw()
-		} else {
-			draw_with_offset(mut com, 0, -25)
-		}
+		com.draw()
 		com.after_draw_event_fn(app, &com)
 	}
 

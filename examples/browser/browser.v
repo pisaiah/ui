@@ -68,8 +68,8 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	forward.no_paint_bg = true
 	bar.add_child(forward)
 
-	// default_page_url := 'http://frogfind.com'
-	default_page_url := 'file://' + os.resource_abs_path('test.html')
+	res_path := os.resource_abs_path('test.html')
+	default_page_url := 'file://' + res_path
 
 	mut urlbar := ui.textedit(win, default_page_url)
 	urlbar.draw_line_numbers = false
@@ -96,7 +96,11 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 
 	set_status(mut win, 'Loading...')
 
-	load_url(mut win, default_page_url)
+	if os.exists(res_path) {
+		load_url(mut win, default_page_url)
+	} else {
+		load_url(mut win, 'http://google.com')
+	}
 	// load_url(mut win, 'http://frogfind.com')
 }
 
