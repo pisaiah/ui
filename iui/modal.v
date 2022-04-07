@@ -95,14 +95,16 @@ pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) Button {
 	close.height = 25
 
 	if ce {
-		close.set_click(fn (mut win Window, mutbtn Button) {
-			win.components = win.components.filter(mut it !is Modal)
-		})
+		close.set_click(default_modal_close_fn)
 	}
 
 	this.children << close
 	this.close = close
 	return close
+}
+
+pub fn default_modal_close_fn(mut win Window, btn Button) {
+    win.components = win.components.filter(mut it !is Modal)
 }
 
 pub fn (mut com Modal) set_click(b fn (mut Window, Modal)) {

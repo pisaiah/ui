@@ -16,10 +16,24 @@ pub mut:
 	bold           bool
 }
 
-pub fn label(app &Window, text string) Label {
+[params]
+pub struct LabelConfig {
+    should_pack bool
+    x int
+    y int
+    height int
+    width int
+}
+
+pub fn label(app &Window, text string, conf LabelConfig) Label {
 	return Label{
 		text: text
 		app: app
+        x: conf.x
+        y: conf.y
+        height: conf.height
+        width: conf.width
+        need_pack: conf.should_pack
 		click_event_fn: blank_event_l
 	}
 }
@@ -28,8 +42,8 @@ pub fn (mut btn Label) draw() {
 	btn.app.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn)
 }
 
-pub fn (mut btn Label) pack() {
-	btn.need_pack = true
+pub fn (mut this Label) pack() {
+	this.need_pack = true
 }
 
 pub fn (mut btn Label) pack_do() {

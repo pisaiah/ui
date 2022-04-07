@@ -116,26 +116,18 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 	size := text_width(app, item.text) / 2
 	half_line_height := text_height(app, 'A!{') / 2
 
-	mut width := width_
-	if item.width > 0 {
-		width = item.width + 4
-	}
+	width := if item.width > 0 { item.width + 4 } else { width_ }
 
-	mut bg := app.theme.menubar_background
-	mut border := app.theme.menubar_border
+	midx := x + (width / 2)
+	midy := y + (height / 2)
 
-	mut midx := (x + (width / 2))
-	mut midy := (y + (height / 2))
+	hover := (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2))
+	clicked := ((abs(midx - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)))
 
-	// Detect Hover
-	if (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
-		bg = app.theme.button_bg_hover
-		border = app.theme.button_border_hover
-	}
+	mut bg := if hover { app.theme.button_bg_hover } else { app.theme.menubar_background }
+	mut border := if hover { app.theme.button_border_hover } else { app.theme.menubar_border }
 
 	// Detect Click
-	mut clicked := ((abs(midx - app.click_x) < (width / 2))
-		&& (abs(midy - app.click_y) < (height / 2)))
 	if clicked && !item.show_items {
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
@@ -145,34 +137,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 		item.click_event_fn(app, *item)
 
 		if item.text == 'About iUI' {
-			mut about := modal(app, 'About iUI')
-			about.in_height = 250
-			about.in_width = 320
-
-			mut title := label(app, 'iUI ')
-			title.set_pos(40, 16)
-			title.set_config(16, false, true)
-			title.pack()
-			about.add_child(title)
-
-			mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: " + version +
-				'\nCompiled with ' + full_v_version(false))
-			lbl.set_pos(40, 70)
-			about.add_child(lbl)
-
-			mut gh := button(app, 'Github')
-			gh.set_pos(40, 135)
-			gh.set_click(fn (mut win Window, com Button) {
-				open_url('https://github.com/isaiahpatton/ui')
-			})
-			gh.pack()
-			about.add_child(gh)
-
-			mut copy := label(app, 'Copyright © 2021-2022 Isaiah.')
-			copy.set_pos(40, 185)
-			copy.set_config(12, true, false)
-			about.add_child(copy)
-
+			about := open_about_modal(app)
 			app.add_child(about)
 		}
 	}
@@ -181,7 +146,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
 		app.bar.tik = 0
-		mut wid := 100
+		mut wid := 120
 
 		for mut sub in item.items {
 			sub_size := text_width(app, sub.text + '...')
@@ -228,4 +193,35 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 
 	mut com := &Component(item)
 	com.draw_event_fn(app, com)
+}
+
+fn open_about_modal(app &Window) &Modal {
+	mut about := modal(app, 'About iUI')
+	about.in_height = 250
+	about.in_width = 320
+
+	mut title := label(app, 'iUI ')
+	title.set_pos(40, 16)
+	title.set_config(16, false, true)
+	title.pack()
+	about.add_child(title)
+
+	mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: " + version + '\nCompiled with ' +
+		full_v_version(false))
+	lbl.set_pos(40, 70)
+	about.add_child(lbl)
+
+	mut gh := button(app, 'Github')
+	gh.set_pos(40, 135)
+	gh.set_click_fn(fn (win voidptr, btn voidptr, data voidptr) {
+		open_url('https://github.com/isaiahpatton/ui')
+	}, 0)
+	gh.pack()
+	about.add_child(gh)
+
+	mut copy := label(app, 'Copyright © 2021-2022 Isaiah.')
+	copy.set_pos(40, 185)
+	copy.set_config(12, true, false)
+	about.add_child(copy)
+	return about
 }
