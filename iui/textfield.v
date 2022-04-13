@@ -100,11 +100,11 @@ fn (mut this TextField) mouse_down_caret() {
 
 	mx := this.win.mouse_x - x
 	wid_char := text_width(this.win, 'A')
-    full_wid := text_width(this.win, this.text)
+	full_wid := text_width(this.win, this.text)
 
-    if mx > full_wid {
-        this.carrot_left = this.text.len
-    }
+	if mx > full_wid {
+		this.carrot_left = this.text.len
+	}
 
 	for i in 0 .. this.text.len + 1 {
 		substr := this.text[0..i]

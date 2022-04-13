@@ -84,7 +84,7 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 
 [params]
 struct MenubarConfig {
-    // children
+	// children
 }
 
 pub fn menubar(app &Window, theme Theme) &Menubar {
@@ -92,7 +92,7 @@ pub fn menubar(app &Window, theme Theme) &Menubar {
 		app: app
 		theme: theme
 	}
-} 
+}
 
 pub fn (mut bar Menubar) draw() {
 	mut wid := gg.window_size().width
@@ -119,23 +119,23 @@ fn (mut app Window) get_bar() &Menubar {
 }
 
 fn (mut app Window) set_bar_tick(val int) {
-    if app.bar != voidptr(0) {
-        app.bar.tik = val
-    }
+	if app.bar != voidptr(0) {
+		app.bar.tik = val
+	}
 }
 
 fn (item &MenuItem) get_bg(app &Window, hover bool, click bool) gx.Color {
-    shown_items := item.show_items && item.items.len > 0
-    
-    if click || shown_items {
-        return app.theme.button_bg_click
-    }
+	shown_items := item.show_items && item.items.len > 0
 
-    if hover {
-        return app.theme.button_bg_hover
-    }
+	if click || shown_items {
+		return app.theme.button_bg_click
+	}
 
-    return app.theme.menubar_background
+	if hover {
+		return app.theme.button_bg_hover
+	}
+
+	return app.theme.menubar_background
 }
 
 fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut item MenuItem) {

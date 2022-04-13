@@ -33,9 +33,9 @@ pub fn (mut tr Tree) draw() {
 	mut mult := 20
 	mut app := tr.app
 	mut bg := app.theme.button_bg_normal
-	bord := if tr.is_selected && tr.childs.len > 0 { app.theme.button_bg_hover } else { bg } 
+	bord := if tr.is_selected && tr.childs.len > 0 { app.theme.button_bg_hover } else { bg }
 
-    half_wid := tr.width / 2
+	half_wid := tr.width / 2
 
 	y := tr.y - (tr.scroll_i * 2)
 	mid := tr.x + half_wid
@@ -56,8 +56,8 @@ pub fn (mut tr Tree) draw() {
 		tr.is_hover = false
 	}
 
-	if (abs(mid - app.click_x) < half_wid) && (abs(midy - app.click_y) < 10
-		&& app.bar.tik > 98 && app.click_y > 25) {
+	if (abs(mid - app.click_x) < half_wid) && (abs(midy - app.click_y) < 10 && app.bar.tik > 98
+		&& app.click_y > 25) {
 		now := time.now().unix_time_milli()
 
 		if now - tr.last_click > 100 {

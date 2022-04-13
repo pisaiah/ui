@@ -40,13 +40,13 @@ fn main() {
 	window.add_child(tbox)
 
 	cbox := ui.checkbox(window, 'Check me!', ui.CheckboxConfig{
-        bounds: ui.Bounds{170, 40, 90, 25}
-    })
+		bounds: ui.Bounds{170, 40, 90, 25}
+	})
 
 	cbox2 := ui.checkbox(window, 'Check me!', ui.CheckboxConfig{
-        bounds: ui.Bounds{170, 70, 90, 25}
-        selected: true
-    })
+		bounds: ui.Bounds{170, 70, 90, 25}
+		selected: true
+	})
 
 	window.add_child(cbox)
 	window.add_child(cbox2)
@@ -115,7 +115,7 @@ fn main() {
 
 // Make a 'Theme' menu item to select themes
 fn create_theme_menu() &ui.MenuItem {
-    mut theme_menu := ui.menuitem('Themes')
+	mut theme_menu := ui.menuitem('Themes')
 
 	themes := ui.get_all_themes()
 	for theme in themes {
@@ -125,32 +125,32 @@ fn create_theme_menu() &ui.MenuItem {
 		)
 		theme_menu.add_child(item)
 	}
-    return theme_menu
+	return theme_menu
 }
 
 // Make a 'Help' menu item
 fn create_help_menu() &ui.MenuItem {
-    help_menu := ui.menu_item(
-        text: 'Help'
-        children: [
-            ui.menu_item(
-                text: 'Item 1'
-            ),
-            ui.menu_item(
-                text: 'Item 2'
-                // click_event_fn: menu_click
-            ),
-            ui.menu_item(
-                text: 'About iUI'
-            )
-        ]
-    )
-    return help_menu
+	help_menu := ui.menu_item(
+		text: 'Help'
+		children: [
+			ui.menu_item(
+				text: 'Item 1'
+			),
+			ui.menu_item(
+				text: 'Item 2'
+				// click_event_fn: menu_click
+			),
+			ui.menu_item(
+				text: 'About iUI'
+			),
+		]
+	)
+	return help_menu
 }
 
 // Create the tree demo
 fn create_tree(window &ui.Window) ui.Tree {
-    mut tree := ui.tree(window, 'Beverages')
+	mut tree := ui.tree(window, 'Beverages')
 	tree.set_bounds(355, 220, 150, 200)
 
 	mut subtree := ui.tree(window, 'Water')
@@ -172,7 +172,7 @@ fn create_tree(window &ui.Window) ui.Tree {
 	mut subtree5 := ui.tree(window, 'Green Tea')
 	subtree5.set_bounds(4, 4, 100, 25)
 	subtree3.childs << subtree5
-    return tree
+	return tree
 }
 
 // Button click

@@ -284,8 +284,8 @@ fn (mut app Window) draw() {
 		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()
 			if bar != voidptr(0) {
-                bar.draw()
-            }
+				bar.draw()
+			}
 			bar_drawn = true
 		}
 

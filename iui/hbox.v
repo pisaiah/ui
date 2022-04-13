@@ -132,6 +132,7 @@ pub fn (mut this HBox) draw() {
 
 	if this.win.debug_draw {
 		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.red)
-		this.win.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y + this.height, gx.red)
+		this.win.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y +
+			this.height, gx.red)
 	}
 }

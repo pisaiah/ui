@@ -57,7 +57,7 @@ fn main() {
 }
 
 fn load_url_from_menu(mut win ui.Window, item ui.MenuItem) {
-    url := if item.text.contains('://') { item.text } else { 'http://' + item.text }
+	url := if item.text.contains('://') { item.text } else { 'http://' + item.text }
 
 	load_url(mut win, url)
 }

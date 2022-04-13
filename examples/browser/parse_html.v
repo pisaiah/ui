@@ -76,8 +76,8 @@ fn load_url(mut win ui.Window, url string) {
 	// TODO: Frogfind uses broken HTML (?)
 	fixed_text := resp.text.replace('Find!</font></a></b>', 'Find!</font></b></a>').replace('<p> </small></p>',
 		'<p></p>')
-    
-    os.write_file('E:/outputs/' + time.now().unix_time_milli().str() + '.html', fixed_text) or {} // Debug output
+
+	os.write_file('E:/outputs/' + time.now().unix_time_milli().str() + '.html', fixed_text) or {} // Debug output
 
 	mut tb := &ui.Tabbox(win.get_from_id('tabbar'))
 
@@ -125,9 +125,9 @@ fn load_url(mut win ui.Window, url string) {
 	end := time.now().unix_time_milli()
 	set_status(mut win, 'Done. Took ' + (end - start).str() + 'ms')
 
-    unsafe {
-        fixed_text.free()
-    }
+	unsafe {
+		fixed_text.free()
+	}
 }
 
 // TODO: CSS
