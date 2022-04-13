@@ -37,7 +37,8 @@ pub fn (mut tr Tree) draw() {
 
 	half_wid := tr.width / 2
 
-	y := tr.y - (tr.scroll_i * 2)
+	scroll_height := text_height(app, 'A') / 2
+	y := tr.y - (tr.scroll_i * scroll_height)
 	mid := tr.x + half_wid
 	midy := tr.y + 10
 

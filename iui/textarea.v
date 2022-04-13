@@ -22,6 +22,7 @@ pub mut:
 	line_draw_event_fn   fn (voidptr, int, int, int)
 	down_pos             CaretPos
 	drawn_select         bool
+	code_syntax_on       bool
 }
 
 struct CaretPos {
@@ -43,6 +44,7 @@ pub fn textarea(win &Window, lines []string) &TextArea {
 		}
 		text_change_event_fn: fn (a voidptr, b voidptr) {}
 		line_draw_event_fn: fn (a voidptr, b int, c int, d int) {}
+		code_syntax_on: true
 	}
 }
 
@@ -104,6 +106,10 @@ fn (mut this TextArea) draw() {
 		this.caret_left = 0
 	}
 
+	if this.scroll_i < 0 {
+		this.scroll_i = 0
+	}
+
 	for i in this.scroll_i .. this.lines.len {
 		line := this.lines[i]
 		y_off := line_height * (i - this.scroll_i)
@@ -113,7 +119,7 @@ fn (mut this TextArea) draw() {
 			return
 		}
 
-		matched := make_match(line, iui.keys) // TODO: cache
+		matched := if this.code_syntax_on { make_match(line, iui.keys) } else { [line] } // TODO: cache
 		is_cur_line := this.caret_top == i
 
 		if is_cur_line {

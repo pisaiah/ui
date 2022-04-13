@@ -17,10 +17,19 @@ pub mut:
 	url            string
 }
 
-pub fn hyperlink(app &Window, text string, url string) &Hyperlink {
+[params]
+pub struct HyperlinkConfig {
+	bounds Bounds
+}
+
+pub fn hyperlink(app &Window, text string, url string, conf HyperlinkConfig) &Hyperlink {
 	return &Hyperlink{
 		text: text
 		app: app
+		x: conf.bounds.x
+		y: conf.bounds.y
+		width: conf.bounds.width
+		height: conf.bounds.height
 		click_event_fn: fn (a voidptr) {
 			this := &Hyperlink(a)
 			open_url(this.url)
