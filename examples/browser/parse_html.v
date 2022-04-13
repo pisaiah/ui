@@ -53,13 +53,15 @@ fn load_url(mut win ui.Window, url string) {
 	start := time.now().unix_time_milli()
 
 	config := http.FetchConfig{
-		user_agent: 'V/' + version.v_version + ' PascoBrowser/0.1'
+		user_agent: 'V/' + version.v_version + ' Browser/0.1'
 	}
 
 	mut resp := http.Response{}
 
 	if !url.starts_with('file://') {
-		resp = http.fetch(http.FetchConfig{ ...config, url: url }) or {
+		fixed_url := if url.contains('://') { url } else { 'http://' + url }
+
+		resp = http.fetch(http.FetchConfig{ ...config, url: fixed_url }) or {
 			println('failed to fetch data from the server')
 			return
 		}
@@ -68,9 +70,14 @@ fn load_url(mut win ui.Window, url string) {
 		resp.text = lines.join('\n')
 	}
 
+	mut url_field := &ui.TextField(win.get_from_id('browser_url_bar'))
+	url_field.text = url
+
 	// TODO: Frogfind uses broken HTML (?)
 	fixed_text := resp.text.replace('Find!</font></a></b>', 'Find!</font></b></a>').replace('<p> </small></p>',
 		'<p></p>')
+    
+    os.write_file('E:/outputs/' + time.now().unix_time_milli().str() + '.html', fixed_text) or {} // Debug output
 
 	mut tb := &ui.Tabbox(win.get_from_id('tabbar'))
 
@@ -117,6 +124,10 @@ fn load_url(mut win ui.Window, url string) {
 
 	end := time.now().unix_time_milli()
 	set_status(mut win, 'Done. Took ' + (end - start).str() + 'ms')
+
+    unsafe {
+        fixed_text.free()
+    }
 }
 
 // TODO: CSS
@@ -271,7 +282,7 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 			if !(nam == 'SCRIPT' || nam == 'STYLE' || nam == 'BUTTON')
 				&& sub.content.trim_space().len > 0 {
 				content := sub.content.replace('&nbsp;', ' ')
-				mut lbl := ui.label(win, content)
+				mut lbl := ui.label(win, unescape(content))
 				lbl.set_config(conf.size, false, conf.bold)
 				lbl.pack()
 

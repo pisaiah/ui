@@ -3,6 +3,7 @@ module iui
 import gg
 import gx
 
+//
 // Button - implements Component interface
 struct Button {
 	Component_A
@@ -17,13 +18,26 @@ pub mut:
 	override_bg_color  gx.Color
 }
 
-pub fn button(app &Window, text string) Button {
+[params]
+pub struct ButtonConfig {
+	bounds         Bounds
+	click_event_fn fn (voidptr, voidptr, voidptr) = fn (a voidptr, b voidptr, c voidptr) {}
+	should_pack    bool
+	user_data      voidptr
+}
+
+pub fn button(app &Window, text string, conf ButtonConfig) Button {
 	return Button{
 		text: text
+		x: conf.bounds.x
+		y: conf.bounds.y
+		width: conf.bounds.width
+		height: conf.bounds.height
 		app: app
 		click_event_fn: fn (mut win Window, a Button) {}
-		new_click_event_fn: fn (a voidptr, b voidptr, c voidptr) {}
-		user_data: 0
+		new_click_event_fn: conf.click_event_fn
+		user_data: conf.user_data
+		need_pack: conf.should_pack
 	}
 }
 
@@ -47,6 +61,51 @@ pub fn (mut btn Button) pack_do() {
 	btn.need_pack = false
 }
 
+fn (this &Button) draw_background() {
+	mid_x := this.x + (this.width / 2)
+	mid_y := this.y + (this.height / 2)
+
+	mouse_x := this.app.mouse_x
+	mouse_y := this.app.mouse_y
+
+	mouse_in_x := abs(mid_x - mouse_x) < this.width / 2
+	mouse_in_y := abs(mid_y - mouse_y) < this.height / 2
+
+	mouse_in := mouse_in_x && mouse_in_y
+
+	bg := this.get_bg(mouse_in)
+	border := this.get_border(mouse_in)
+
+	this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 4, bg)
+	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 4, border)
+}
+
+fn (this &Button) get_border(is_hover bool) gx.Color {
+	if this.is_mouse_down {
+		return this.app.theme.button_border_click
+	}
+	if is_hover {
+		return this.app.theme.button_border_hover
+	}
+	return this.app.theme.button_border_normal
+}
+
+fn (this &Button) get_bg(is_hover bool) gx.Color {
+	if this.override_bg {
+		return this.override_bg_color
+	}
+
+	should := this.app.bar == 0 || this.app.bar.tik > 90
+
+	if this.is_mouse_down && should {
+		return this.app.theme.button_bg_click
+	}
+	if is_hover && should {
+		return this.app.theme.button_bg_hover
+	}
+	return this.app.theme.button_bg_normal
+}
+
 fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn Button) {
 	if btn.need_pack {
 		btn.pack_do()
@@ -56,24 +115,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	size := text_width(app, text) / 2
 	sizh := text_height(app, text) / 2
 
-	mut bg := app.theme.button_bg_normal
-	mut border := app.theme.button_border_normal
-
-	mut mid := (x + (width / 2))
-	mut midy := (y + (height / 2))
-
-	// Detect Hover
-	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
-		if app.bar == 0 || app.bar.tik > 90 {
-			bg = app.theme.button_bg_hover
-			border = app.theme.button_border_hover
-		}
-	}
-
-	if btn.override_bg {
-		bg = btn.override_bg_color
-	}
-
+	// Handle click
 	if btn.is_mouse_rele {
 		if app.bar == 0 || app.bar.tik > 90 {
 			btn.click_event_fn(app, *btn)
@@ -82,16 +124,8 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 		btn.is_mouse_rele = false
 	}
 
-	// Detect Click
-	if btn.is_mouse_down {
-		// btn.eb.publish('click', work, error) // TODO: How to use Eventbus without MEMORY ERROR.
-		bg = app.theme.button_bg_click
-		border = app.theme.button_border_click
-	}
-
 	// Draw Button Background & Border
-	app.gg.draw_rounded_rect_filled(x, y, width, height, 4, bg)
-	app.gg.draw_rounded_rect_empty(x, y, width, height, 4, border)
+	btn.draw_background()
 
 	// Draw Button Text
 	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{

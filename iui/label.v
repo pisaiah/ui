@@ -14,26 +14,27 @@ pub mut:
 	need_pack      bool
 	size           int
 	bold           bool
+    abs_fsize      bool
 }
 
 [params]
 pub struct LabelConfig {
-    should_pack bool
-    x int
-    y int
-    height int
-    width int
+	should_pack bool
+	x           int
+	y           int
+	height      int
+	width       int
 }
 
 pub fn label(app &Window, text string, conf LabelConfig) Label {
 	return Label{
 		text: text
 		app: app
-        x: conf.x
-        y: conf.y
-        height: conf.height
-        width: conf.width
-        need_pack: conf.should_pack
+		x: conf.x
+		y: conf.y
+		height: conf.height
+		width: conf.width
+		need_pack: conf.should_pack
 		click_event_fn: blank_event_l
 	}
 }
@@ -62,14 +63,17 @@ pub fn (mut btn Label) pack_do() {
 	// btn.height = (th * btn.text.split('\n').len) + 4 + (btn.size)
 
 	mut hi := 0
-	for line in btn.text.split_into_lines() {
+    lines := btn.text.split_into_lines()
+	for line in lines {
 		if line.trim_space().len > 0 {
 			hi += text_height(btn.app, line)
 		} else {
 			hi += th
 		}
 	}
-	btn.height = hi + 4 + btn.size
+
+    font_size := btn.size //+ btn.app.font_size
+	btn.height = hi + 4 + (font_size * lines.len)
 
 	if btn.height < th {
 		btn.height = th
@@ -134,7 +138,10 @@ pub fn (mut this Label) set_config(fs int, abs bool, bold bool) {
 	if abs {
 		// Absolute font size
 		this.size = fs - this.app.font_size
-	}
+        this.abs_fsize = true
+	} else {
+        this.abs_fsize = false
+    } 
 	this.bold = bold
 }
 

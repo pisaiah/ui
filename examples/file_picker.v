@@ -73,7 +73,7 @@ fn main() {
 	up_arrow.set_id(mut window, 'up_btn')
 	up_arrow.pack()
 	up_arrow.click_event_fn = fn (mut win ui.Window, com ui.Button) {
-		mut pbox := &ui.Runebox(win.get_from_id('pbox'))
+		mut pbox := &ui.TextField(win.get_from_id('pbox'))
 		pbox.text = os.dir(pbox.text)
 	}
 
@@ -83,8 +83,8 @@ fn main() {
 	modal.after_draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
 		mut tree := &ui.Tree(win.get_from_id('fold.tree'))
 		mut mydata := &MyData(win.get_from_id('mydata'))
-		mut pbox := &ui.Runebox(win.get_from_id('pbox'))
-		mut up_btn := &ui.Runebox(win.get_from_id('up_btn'))
+		mut pbox := &ui.TextField(win.get_from_id('pbox'))
+		mut up_btn := &ui.TextField(win.get_from_id('up_btn'))
 		mut this := *com
 
 		if mut this is ui.Modal {
@@ -259,7 +259,7 @@ fn tree_click(mut win ui.Window, tree ui.Tree) {
 
 	// mut modal := &ui.Modal(win.get_from_id('file_modal'))
 
-	mut pbox := &ui.Runebox(win.get_from_id('pbox'))
+	mut pbox := &ui.TextField(win.get_from_id('pbox'))
 	pbox.text = os.real_path(tree.text)
 
 	win.extra_map['ppath'] = os.real_path(tree.text)

@@ -12,10 +12,22 @@ pub mut:
 	click_event_fn fn (mut Window, Checkbox)
 }
 
-pub fn checkbox(app &Window, text string) Checkbox {
+[params]
+pub struct CheckboxConfig {
+	bounds    Bounds
+	user_data voidptr
+	selected  bool
+}
+
+pub fn checkbox(app &Window, text string, conf CheckboxConfig) Checkbox {
 	return Checkbox{
 		text: text
 		app: app
+		x: conf.bounds.x
+		y: conf.bounds.y
+		width: conf.bounds.width
+		height: conf.bounds.height
+		is_selected: conf.selected
 		click_event_fn: blank_event_cbox
 	}
 }
@@ -27,49 +39,82 @@ pub fn (mut com Checkbox) set_click(b fn (mut Window, Checkbox)) {
 pub fn blank_event_cbox(mut win Window, a Checkbox) {
 }
 
-pub fn (mut com Checkbox) draw() {
-	app := com.app
-	width := com.width
-	height := com.height
-	mut bg := app.theme.checkbox_bg
-	mut border := app.theme.button_border_normal
-
-	mut mid := (com.x + (width / 2))
-	mut midy := (com.y + (height / 2))
-
-	// Detect Hover
-	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
-		bg = app.theme.button_bg_hover
-		border = app.theme.button_border_hover
+// Get border color
+fn (this &Checkbox) get_border(is_hover bool) gx.Color {
+	if this.is_mouse_down {
+		return this.app.theme.button_border_click
 	}
 
+	if is_hover {
+		return this.app.theme.button_border_hover
+	}
+	return this.app.theme.button_border_normal
+}
+
+// Get background color
+fn (this &Checkbox) get_background(is_hover bool) gx.Color {
+	if this.is_mouse_down {
+		return this.app.theme.button_bg_click
+	}
+
+	if is_hover {
+		return this.app.theme.button_bg_hover
+	}
+	return this.app.theme.checkbox_bg
+}
+
+// Draw checkbox
+pub fn (mut com Checkbox) draw() {
+	// Draw Background & Border
+	com.draw_background()
+
+	// Detect click
 	if com.is_mouse_rele {
 		com.is_mouse_rele = false
 		com.is_selected = !com.is_selected
-		com.click_event_fn(app, *com)
+		com.click_event_fn(com.app, *com)
 	}
 
-	// Detect Click
-	if com.is_mouse_down {
-		bg = app.theme.button_bg_click
-		border = app.theme.button_border_click
+	// Draw checkmark
+	if com.is_selected {
+		com.draw_checkmark()
 	}
+
+	// Draw text
+	com.draw_text()
+}
+
+// Draw background & border of Checkbox
+fn (com &Checkbox) draw_background() {
+	half_wid := com.width / 2
+	half_hei := com.height / 2
+
+	mid := com.x + half_wid
+	midy := com.y + half_hei
+
+	is_hover_x := abs(mid - com.app.mouse_x) < half_wid
+	is_hover_y := abs(midy - com.app.mouse_y) < half_hei
+	is_hover := is_hover_x && is_hover_y
+
+	bg := com.get_background(is_hover)
+	border := com.get_border(is_hover)
 
 	com.app.draw_bordered_rect(com.x, com.y, com.height, com.height, 2, bg, border)
-	if com.is_selected {
-		cut := 4
-		com.app.draw_bordered_rect(com.x + cut, com.y + cut, com.height - (cut * 2), com.height - (cut * 2),
-			2, com.app.theme.checkbox_selected, com.app.theme.checkbox_selected)
+}
 
-		// TODO: Better Checkmark
-		com.app.gg.draw_line(com.x + (com.height / 2) - 5, com.y + (com.height / 2) + 1,
-			com.x + (com.height / 2), com.y + (com.height / 2) + 5, com.app.theme.checkbox_selected)
-		com.app.gg.draw_line(com.x + (com.height / 2), com.y + (com.height / 2) + 5, com.x +
-			(com.height / 2) + 5, com.y + (com.height / 2) - 5, com.app.theme.checkbox_selected)
-	}
-	sizh := app.gg.text_height(com.text) / 2
-	app.gg.draw_text(com.x + com.height + 4, com.y + (height / 2) - sizh, com.text, gx.TextCfg{
-		size: app.font_size
-		color: app.theme.text_color
+// Draw the text of Checkbox
+fn (this &Checkbox) draw_text() {
+	sizh := this.app.gg.text_height(this.text) / 2
+	this.app.gg.draw_text(this.x + this.height + 4, this.y + (this.height / 2) - sizh,
+		this.text, gx.TextCfg{
+		size: this.app.font_size
+		color: this.app.theme.text_color
 	})
+}
+
+// TODO: Better Checkmark
+fn (com &Checkbox) draw_checkmark() {
+	cut := 4
+	com.app.draw_bordered_rect(com.x + cut, com.y + cut, com.height - (cut * 2), com.height - (cut * 2),
+		2, com.app.theme.checkbox_selected, com.app.theme.checkbox_selected)
 }

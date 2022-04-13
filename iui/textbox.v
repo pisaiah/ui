@@ -5,7 +5,7 @@ import gx
 import time
 
 // Textbox - implements Component interface
-[deprecated: 'Replaced with TextEdit']
+[deprecated: 'Replaced with TextArea (multiline), TextField (singleline-only)']
 struct Textbox {
 	Component_A
 pub mut:
@@ -34,6 +34,7 @@ pub fn (mut com Textbox) set_codebox(val bool) {
 	com.code_highlight = val
 }
 
+[deprecated: 'Replaced with TextArea/TextField']
 pub fn textbox(app &Window, text string) &Textbox {
 	return &Textbox{
 		text: text
@@ -70,7 +71,6 @@ pub fn (mut com Textbox) draw() {
 		com.carrot_top--
 	}
 
-	// mut app := com.app
 	mut bg := com.app.theme.textbox_background
 	mut border := com.app.theme.textbox_border
 

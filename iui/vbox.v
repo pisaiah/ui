@@ -90,7 +90,7 @@ pub fn (mut this VBox) draw() {
 			width = (child.width + child.x)
 		}
 
-		size := gg.screen_size()
+		size := gg.window_size()
 		if o_y > size.height {
 			break
 		}

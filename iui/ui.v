@@ -11,6 +11,13 @@ pub const (
 	version = '0.0.6'
 )
 
+pub struct Bounds {
+	x      int
+	y      int
+	width  int
+	height int
+}
+
 pub fn debug(o string) {
 	$if debug ? {
 		println('(Debug) ' + o)
@@ -276,7 +283,9 @@ fn (mut app Window) draw() {
 
 		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()
-			bar.draw()
+			if bar != voidptr(0) {
+                bar.draw()
+            }
 			bar_drawn = true
 		}
 
@@ -287,7 +296,7 @@ fn (mut app Window) draw() {
 	// Draw Menubar last
 	if app.show_menu_bar && !bar_drawn {
 		mut bar := app.get_bar()
-		if bar != 0 {
+		if bar != voidptr(0) {
 			bar.draw()
 		}
 	}
@@ -310,7 +319,7 @@ fn text_box_scroll(e &gg.Event, mut a Textbox) {
 	}
 }
 
-fn rune_box_scroll(e &gg.Event, mut a Runebox) {
+fn rune_box_scroll(e &gg.Event, mut a TextField) {
 	if a.is_selected {
 		scroll_y := (int(e.scroll_y) / 2)
 		if abs(e.scroll_y) != e.scroll_y {

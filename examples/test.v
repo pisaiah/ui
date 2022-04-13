@@ -1,6 +1,5 @@
 import gg
 import iui as ui { debug }
-import time
 import os
 
 [console]
@@ -13,50 +12,20 @@ fn main() {
 	window.bar.add_child(ui.menuitem('File'))
 	window.bar.add_child(ui.menuitem('Edit'))
 
-	mut help := ui.menuitem('Help')
-	mut theme_menu := ui.menuitem('Themes')
-	mut about := ui.menuitem('About iUI')
+	window.bar.add_child(create_help_menu())
+	window.bar.add_child(create_theme_menu())
 
-	for i := 0; i < 3; i++ {
-		mut item := ui.menuitem('Item ' + i.str())
-		help.add_child(item)
-	}
-
-	mut themes := [ui.theme_default(), ui.theme_dark(), ui.theme_dark_hc(),
-		ui.theme_black_red(), ui.theme_minty()]
-	for theme2 in themes {
-		mut item := ui.menuitem(theme2.name)
-		item.set_click(theme_click)
-		theme_menu.add_child(item)
-	}
-
-	help.add_child(about)
-	window.bar.add_child(help)
-	window.bar.add_child(theme_menu)
-
-	mut btn := ui.button(window, 'A Button')
-	btn.set_click(btn_click)
-	btn.set_bounds(30, 40, 100, 25)
-	btn.set_click(on_click)
+	btn := ui.button(window, 'A Button', ui.ButtonConfig{
+		bounds: ui.Bounds{30, 40, 100, 25}
+		click_event_fn: btn_click
+	})
 
 	window.add_child(btn)
 
-	mut btn2 := ui.button(window, 'This is a Button')
-	btn2.set_pos(30, 70)
-	// window.id_map['btn2'] = &btn2
-	// btn2.set_id(mut window, 'btn2')
-	btn2.pack() // Auto set width & height
-
-	// Testing code; ignore.
-	/*
-	btn.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
-        ptr := win.id_map['btn2']
-        mut btn := &ui.Button(ptr)
-        mut this := *com
-
-        this.text = btn.text
-        btn.text = 'hellooooo'
-    }*/
+	btn2 := ui.button(window, 'This is a Button', ui.ButtonConfig{
+		bounds: ui.Bounds{30, 70, 0, 0}
+		should_pack: true
+	})
 
 	window.add_child(btn2)
 
@@ -70,12 +39,14 @@ fn main() {
 
 	window.add_child(tbox)
 
-	mut cbox := ui.checkbox(window, 'Check me!')
-	cbox.set_bounds(170, 40, 90, 25)
+	cbox := ui.checkbox(window, 'Check me!', ui.CheckboxConfig{
+        bounds: ui.Bounds{170, 40, 90, 25}
+    })
 
-	mut cbox2 := ui.checkbox(window, 'Check me!')
-	cbox2.set_bounds(170, 70, 90, 25)
-	cbox2.is_selected = true
+	cbox2 := ui.checkbox(window, 'Check me!', ui.CheckboxConfig{
+        bounds: ui.Bounds{170, 70, 90, 25}
+        selected: true
+    })
 
 	window.add_child(cbox)
 	window.add_child(cbox2)
@@ -97,32 +68,7 @@ fn main() {
 	pb2.set_bounds(250, 230, 100, 20)
 	window.add_child(pb2)
 
-	// go test(mut &pb2)
-
-	mut tree := ui.tree(window, 'Beverages')
-	tree.set_bounds(355, 220, 150, 200)
-
-	mut subtree := ui.tree(window, 'Water')
-	subtree.set_bounds(4, 4, 100, 25)
-	tree.childs << subtree
-
-	mut subtree2 := ui.tree(window, 'Coke')
-	subtree2.set_bounds(4, 4, 100, 25)
-	tree.childs << subtree2
-
-	mut subtree3 := ui.tree(window, 'Tea')
-	subtree3.set_bounds(4, 4, 100, 25)
-	tree.childs << subtree3
-
-	mut subtree4 := ui.tree(window, 'Black Tea')
-	subtree4.set_bounds(4, 4, 100, 25)
-	subtree3.childs << subtree4
-
-	mut subtree5 := ui.tree(window, 'Green Tea')
-	subtree5.set_bounds(4, 4, 100, 25)
-	subtree3.childs << subtree5
-
-	window.add_child(tree)
+	window.add_child(create_tree(window))
 
 	mut tb := ui.tabbox(window)
 	tb.set_bounds(310, 38, 200, 172)
@@ -139,10 +85,7 @@ fn main() {
 
 	window.add_child(tb)
 
-	// mut code_box := ui.textbox(window, 'module main\n\nfn main() {\n\tmut val := 0\n}')
-	// code_box.set_bounds(30, 270, 320, 120)
-	// code_box.set_codebox(true)
-	mut code_box := ui.textedit(window, 'module main\n\nfn main() {\n\tmut val := 0\n}')
+	mut code_box := ui.textarea(window, ['module main', '', 'fn main() {', '\tmut val := 0', '}'])
 	code_box.set_bounds(30, 270, 320, 120)
 
 	window.add_child(code_box)
@@ -170,27 +113,77 @@ fn main() {
 	window.gg.run()
 }
 
-fn test(mut pb ui.Progressbar) {
-	for true {
-		mut val := pb.text.f32()
-		if val < 100 {
-			val++
-		} else {
-			val = 5
-		}
-		pb.text = val.str().replace('.', '')
-		time.sleep(80 * time.millisecond)
+// Make a 'Theme' menu item to select themes
+fn create_theme_menu() &ui.MenuItem {
+    mut theme_menu := ui.menuitem('Themes')
+
+	themes := ui.get_all_themes()
+	for theme in themes {
+		item := ui.menu_item(
+			text: theme.name
+			click_event_fn: theme_click
+		)
+		theme_menu.add_child(item)
 	}
+    return theme_menu
 }
 
+// Make a 'Help' menu item
+fn create_help_menu() &ui.MenuItem {
+    help_menu := ui.menu_item(
+        text: 'Help'
+        children: [
+            ui.menu_item(
+                text: 'Item 1'
+            ),
+            ui.menu_item(
+                text: 'Item 2'
+                // click_event_fn: menu_click
+            ),
+            ui.menu_item(
+                text: 'About iUI'
+            )
+        ]
+    )
+    return help_menu
+}
+
+// Create the tree demo
+fn create_tree(window &ui.Window) ui.Tree {
+    mut tree := ui.tree(window, 'Beverages')
+	tree.set_bounds(355, 220, 150, 200)
+
+	mut subtree := ui.tree(window, 'Water')
+	subtree.set_bounds(4, 4, 100, 25)
+	tree.childs << subtree
+
+	mut subtree2 := ui.tree(window, 'Coke')
+	subtree2.set_bounds(4, 4, 100, 25)
+	tree.childs << subtree2
+
+	mut subtree3 := ui.tree(window, 'Tea')
+	subtree3.set_bounds(4, 4, 100, 25)
+	tree.childs << subtree3
+
+	mut subtree4 := ui.tree(window, 'Black Tea')
+	subtree4.set_bounds(4, 4, 100, 25)
+	subtree3.childs << subtree4
+
+	mut subtree5 := ui.tree(window, 'Green Tea')
+	subtree5.set_bounds(4, 4, 100, 25)
+	subtree3.childs << subtree5
+    return tree
+}
+
+// Button click
 fn on_click(mut win ui.Window, com ui.Button) {
 	debug('on_click')
 }
 
+// MenuItem in the Theme section click event
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
 	text := com.text
-	// debug(text)
-	mut theme := ui.theme_by_name(text)
+	theme := ui.theme_by_name(text)
 	win.set_theme(theme)
 }
 
@@ -205,6 +198,6 @@ fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) 
 	}
 }
 
-fn btn_click(mut win ui.Window, com ui.Button) {
+fn btn_click(win voidptr, btn voidptr, data voidptr) {
 	debug('btn click')
 }

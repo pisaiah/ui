@@ -6,12 +6,17 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 	if mut a is Textbox {
 		app.key_down_1(key, e, mut a)
 	}
-	if mut a is Runebox {
+	if mut a is TextField {
 		app.runebox_key(key, e, mut a)
+		return a.is_selected
 	}
 	if mut a is TextEdit {
 		app.textedit_key_down(key, e, mut a)
 		return a.is_selected
+	}
+	if mut a is TextArea {
+		app.textarea_key_down(key, e, mut a)
+		return true
 	}
 	if mut a is Tabbox {
 		mut kids := a.kids[a.active_tab]
@@ -220,15 +225,15 @@ fn get_shifted_letter(letter string) string {
 	return letter.to_upper()
 }
 
-fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
+fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
+	if !com.is_selected {
+		return
+	}
+
 	if key == .right {
 		com.carrot_left += 1
 	} else if key == .left {
 		com.carrot_left -= 1
-	} else if key == .up {
-		com.carrot_top -= 1
-	} else if key == .down {
-		com.carrot_top += 1
 	} else {
 		mod := ev.modifiers
 		if mod == 8 {
@@ -239,8 +244,8 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 			com.ctrl_down = true
 		}
 		if key == .backspace {
-			com.text = com.text.substr_ni(0, com.carrot_index - 1) +
-				com.text.substr_ni(com.carrot_index, com.text.len)
+			com.text = com.text.substr_ni(0, com.carrot_left - 1) +
+				com.text.substr_ni(com.carrot_left, com.text.len)
 			com.carrot_left -= 1
 		} else {
 			mut strr := key.str()
@@ -254,7 +259,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 			// if strr.len > 1 {
 			kc := u32(gg.KeyCode(ev.key_code))
 			mut letter := ev.key_code.str()
-			mut res := utf32_to_str(kc)
+			res := utf32_to_str(kc)
 
 			//}
 			if letter == 'left_shift' || letter == 'right_shift' {
@@ -295,21 +300,17 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com Runebox) {
 				strr = letter
 			}
 
-			mut bevnt := com.before_txtc_event_fn(app, *com)
-			if bevnt {
+			bevnt := com.before_txtc_event_fn(app, *com)
+			if bevnt || key == .up || key == .down {
 				// 'true' indicates cancel event
 				return
 			}
 
-			if mod != 2 {
-				com.text = com.text.substr_ni(0, com.carrot_index) + strr +
-					com.text.substr_ni(com.carrot_index, com.text.len)
+			if mod != 2 && key != .enter {
+				com.text = com.text.substr_ni(0, com.carrot_left) + strr +
+					com.text.substr_ni(com.carrot_left, com.text.len)
 
-				if key == .enter {
-					com.carrot_top += 1
-				} else {
-					com.carrot_left += 1
-				}
+				com.carrot_left += 1
 			}
 
 			com.last_letter = letter

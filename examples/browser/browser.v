@@ -23,7 +23,26 @@ fn main() {
 		]
 	)
 
+	links_menu := ui.menu_item(
+		text: 'Links'
+		children: [
+			ui.menu_item(
+				text: 'Home'
+				click_event_fn: fn (mut win ui.Window, item ui.MenuItem) {
+					res_path := os.resource_abs_path('test.html')
+					load_url(mut win, 'file://' + res_path)
+				}
+			),
+			ui.menu_item(
+				text: 'google.com'
+				click_event_fn: load_url_from_menu
+			),
+		]
+	)
+
+	bar.add_child(links_menu)
 	bar.add_child(help_menu)
+
 	win.bar = bar
 
 	mut tb := ui.tabbox(win)
@@ -35,6 +54,12 @@ fn main() {
 	create_tab(mut win, mut tb)
 
 	win.gg.run()
+}
+
+fn load_url_from_menu(mut win ui.Window, item ui.MenuItem) {
+    url := if item.text.contains('://') { item.text } else { 'http://' + item.text }
+
+	load_url(mut win, url)
 }
 
 // Make menu bar look like url bar.
@@ -71,11 +96,9 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	res_path := os.resource_abs_path('test.html')
 	default_page_url := 'file://' + res_path
 
-	mut urlbar := ui.textedit(win, default_page_url)
-	urlbar.draw_line_numbers = false
-	urlbar.code_syntax_on = false
-	urlbar.padding_y = 5
+	mut urlbar := ui.textfield(win, default_page_url)
 	urlbar.z_index = 5
+	urlbar.set_id(mut win, 'browser_url_bar')
 	urlbar.set_bounds(140, 0, 600, 25)
 	urlbar.before_txtc_event_fn = before_txt_change
 
@@ -114,12 +137,17 @@ fn status_item_draw(mut win ui.Window, com &ui.Component) {
 	this.width = ui.text_width(win, this.text)
 }
 
-fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
+fn before_txt_change(mut win ui.Window, tb ui.TextField) bool {
 	mut is_enter := tb.last_letter == 'enter'
 
 	if is_enter {
-		txt := tb.lines[tb.carrot_top]
-		load_url(mut win, txt)
+		url := tb.text
+
+		if url.starts_with('http') || url.starts_with('file') {
+			load_url(mut win, tb.text)
+		} else {
+			load_url(mut win, 'http://' + tb.text)
+		}
 		return true
 	}
 	return false
@@ -169,24 +197,24 @@ fn tabs_draw(mut win ui.Window, com &ui.Component) {
 }
 
 fn about_click(mut win ui.Window, com ui.MenuItem) {
-	mut about := ui.modal(win, 'About FrogBrowser')
-	about.in_height = 350
-	about.in_width = 670
+	mut about := ui.modal(win, 'About Browser')
+	about.in_height = 300
+	about.in_width = 420
 
-	mut title := ui.label(win, 'Frog Browser')
-	title.set_pos(80, 8)
+	mut title := ui.label(win, 'Browser')
+	title.set_pos(40, 8)
 	title.set_config(16, false, true)
 	title.pack()
 	about.add_child(title)
 
 	mut lbl := ui.label(win,
-		'Version 0.1\nFrogbrowser is a simple web browser designed for Frogfind.com / 68k.news' +
+		'Version 0.1-alpha\n\nBrowser is a simple web browser made in\nthe V Programming Language' +
 		'\n\nThis program is free software licensed under\nthe GNU General Public License v2.\n\nIcons by Icons8')
-	lbl.set_pos(80, 80)
+	lbl.set_pos(40, 80)
 	about.add_child(lbl)
 
-	mut copy := ui.label(win, 'Copyright © 2021-2022 Isaiah. All Rights Reserved')
-	copy.set_pos(80, 210)
+	mut copy := ui.label(win, 'Copyright © 2021-2022 Isaiah.')
+	copy.set_pos(40, 250)
 	copy.set_config(12, true, false)
 	about.add_child(copy)
 

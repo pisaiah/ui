@@ -54,6 +54,7 @@ pub fn textedit(window voidptr, text string) &TextEdit {
 	}
 }
 
+[deprecated: 'Replaced by TextArea']
 pub fn textedit_from_array(window voidptr, text []string) &TextEdit {
 	return &TextEdit{
 		win: &Window(window)

@@ -18,6 +18,7 @@ pub fn (mut bar Menubar) add_child(com MenuItem) {
 	bar.items << com
 }
 
+[deprecated]
 pub fn (mut bar Menubar) is_hovering() bool {
 	for mut item in bar.items {
 		if item.show_items {
@@ -81,12 +82,17 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 	com.click_event_fn = b
 }
 
+[params]
+struct MenubarConfig {
+    // children
+}
+
 pub fn menubar(app &Window, theme Theme) &Menubar {
 	return &Menubar{
 		app: app
 		theme: theme
 	}
-}
+} 
 
 pub fn (mut bar Menubar) draw() {
 	mut wid := gg.window_size().width
@@ -112,6 +118,26 @@ fn (mut app Window) get_bar() &Menubar {
 	return app.bar
 }
 
+fn (mut app Window) set_bar_tick(val int) {
+    if app.bar != voidptr(0) {
+        app.bar.tik = val
+    }
+}
+
+fn (item &MenuItem) get_bg(app &Window, hover bool, click bool) gx.Color {
+    shown_items := item.show_items && item.items.len > 0
+    
+    if click || shown_items {
+        return app.theme.button_bg_click
+    }
+
+    if hover {
+        return app.theme.button_bg_hover
+    }
+
+    return app.theme.menubar_background
+}
+
 fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut item MenuItem) {
 	size := text_width(app, item.text) / 2
 	half_line_height := text_height(app, 'A!{') / 2
@@ -124,15 +150,14 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 	hover := (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2))
 	clicked := ((abs(midx - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)))
 
-	mut bg := if hover { app.theme.button_bg_hover } else { app.theme.menubar_background }
+	bg := item.get_bg(app, hover, clicked)
 	mut border := if hover { app.theme.button_border_hover } else { app.theme.menubar_border }
 
 	// Detect Click
 	if clicked && !item.show_items {
-		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
 		item.show_items = true
-		app.bar.tik = 0
+		app.set_bar_tick(0)
 
 		item.click_event_fn(app, *item)
 
@@ -143,9 +168,8 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 	}
 
 	if item.show_items && item.items.len > 0 {
-		bg = app.theme.button_bg_click
 		border = app.theme.button_border_click
-		app.bar.tik = 0
+		app.set_bar_tick(0)
 		mut wid := 120
 
 		for mut sub in item.items {
@@ -170,7 +194,7 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 		item.show_items = false
 		item.is_mouse_rele = true
 	}
-	if !item.show_items && app.bar.tik < 99 {
+	if app.bar != voidptr(0) && !item.show_items && app.bar.tik < 99 {
 		app.bar.tik++
 	}
 
