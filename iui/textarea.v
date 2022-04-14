@@ -27,10 +27,12 @@ pub mut:
 
 struct CaretPos {
 pub mut:
-	left int = -1
-	top  int = -1
-	x    int
-	y    int
+	left     int = -1
+	top      int = -1
+	x        int
+	y        int
+	end_left int = -1
+	end_x    int = -1
 }
 
 pub fn textarea(win &Window, lines []string) &TextArea {
@@ -92,16 +94,7 @@ fn (mut this TextArea) draw_background() {
 	this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
 }
 
-fn (mut this TextArea) draw() {
-	win := this.win
-	this.draw_background()
-
-	line_height := text_height(win, 'A!{}')
-
-	cfg := gx.TextCfg{
-		color: win.theme.text_color
-	}
-
+fn (mut this TextArea) clamp_values(lines_drawn int) {
 	if this.caret_left < 0 {
 		this.caret_left = 0
 	}
@@ -110,13 +103,34 @@ fn (mut this TextArea) draw() {
 		this.scroll_i = 0
 	}
 
+	max_scroll := this.lines.len - lines_drawn
+
+	if this.scroll_i > max_scroll {
+		this.scroll_i = max_scroll
+	}
+}
+
+fn (mut this TextArea) draw() {
+	win := this.win
+	this.draw_background()
+
+	line_height := text_height(win, 'A!{}')
+
+	cfg := gx.TextCfg{
+		size: this.win.font_size
+		color: win.theme.text_color
+	}
+
+	lines_drawn := this.height / line_height
+	this.clamp_values(lines_drawn)
+
 	for i in this.scroll_i .. this.lines.len {
 		line := this.lines[i]
 		y_off := line_height * (i - this.scroll_i)
 
 		if y_off > this.height {
 			this.ml_comment = false
-			return
+			break
 		}
 
 		matched := if this.code_syntax_on { make_match(line, iui.keys) } else { [line] } // TODO: cache
@@ -131,12 +145,20 @@ fn (mut this TextArea) draw() {
 		this.draw_matched_text(this.win, this.x + this.padding_x, this.y + y_off, matched,
 			cfg, is_cur_line, i)
 	}
+	this.draw_scrollbar(lines_drawn, this.lines.len)
 }
 
 fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, llen int, str_fix_tab string) {
 	in_min := this.caret_left >= current_len
 	in_max := this.caret_left <= current_len + llen
 	caret_zero := this.caret_left == 0 && current_len == 0
+
+	end_pos := this.down_pos.end_left
+
+	if end_pos >= current_len && end_pos <= current_len + llen {
+		this.win.gg.draw_rect_filled(this.x + this.down_pos.x, this.y + (17 * this.caret_top),
+			(this.down_pos.end_x - this.down_pos.x), 17, gx.rgba(0, 100, 200, 100))
+	}
 
 	if caret_zero || (in_min && in_max) {
 		caret_pos := this.caret_left - current_len
@@ -167,19 +189,25 @@ fn (mut this TextArea) move_caret(win &Window, x int, y int, current_len int, ll
 			if abs(mx - nx) < cwidth {
 				if this.down_pos.left == -1 {
 					this.caret_left = current_len + i
-					this.down_pos.left = this.caret_left
-					this.down_pos.top = this.caret_top
-					this.down_pos.x = nx
+					// this.down_pos.left = this.caret_left
+					// this.down_pos.top = this.caret_top
+					// this.down_pos.x = nx
+					return
 				} else {
-					this.win.gg.draw_rect_filled(this.x + this.down_pos.x, this.y +
-						(17 * this.caret_top), nx - (this.x + this.down_pos.x), 17, gx.rgba(0,
-						100, 200, 100))
-					line := this.lines[this.caret_top]
-					println(line.substr_ni(this.caret_left, current_len + i))
+					// line := this.lines[this.caret_top]
+					// this.down_pos.end_left = current_len + i
+					// this.down_pos.end_x = nx
+					// println(line.substr_ni(this.caret_left, current_len + i))
 				}
 			}
 		}
 	}
+}
+
+struct SyntaxRules {
+	in_comment    bool
+	in_str        bool
+	current_color gx.Color
 }
 
 fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []string, cfg gx.TextCfg, is_cur_line bool, line int) {
@@ -238,21 +266,41 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 		win.gg.draw_text(x + x_off, y, str_fix_tab, conf)
 
 		if this.is_mouse_down {
-			mx := win.mouse_x - this.x
-			my := win.mouse_y - this.y
-			line_height := text_height(win, 'A!{}')
-			my_lh := my / line_height
-
-			if this.down_pos.top == -1 {
-				this.caret_top = my_lh + this.scroll_i
-			}
-			if line == this.caret_top {
-				this.move_caret(win, x + x_off, y, current_len, llen, str_fix_tab, mx,
-					wid)
-			}
+			this.do_mouse_down(x + x_off, y, current_len, llen, str_fix_tab, wid, line)
 		}
 
 		x_off += wid
 		current_len += str.len
+	}
+}
+
+fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, str_fix_tab string, wid int, line int) {
+	mx := this.win.mouse_x - this.x
+	my := this.win.mouse_y - this.y
+	line_height := text_height(this.win, 'A!{}')
+	my_lh := my / line_height
+
+	if this.down_pos.top == -1 {
+		this.caret_top = my_lh + this.scroll_i
+	}
+	if line == this.caret_top {
+		this.move_caret(this.win, x, y, current_len, llen, str_fix_tab, mx, wid)
+	}
+}
+
+// Draw Scrollbar
+// TODO: use Slider component.
+fn (mut com TextArea) draw_scrollbar(cl int, spl_len int) {
+	// Calculate postion for scroll
+	sth := int((f32((com.scroll_i)) / f32(spl_len)) * com.height)
+	enh := int((f32(cl) / f32(spl_len)) * com.height)
+	requires_scrollbar := (com.height - enh) > 0
+
+	// Draw Scroll
+	if requires_scrollbar {
+		com.win.draw_bordered_rect(com.x + com.width - 11, com.y + 1, 10, com.height - 2,
+			2, com.win.theme.scroll_track_color, com.win.theme.button_bg_hover)
+		com.win.draw_bordered_rect(com.x + com.width - 11, com.y + sth + 1, 10, enh - 2,
+			2, com.win.theme.scroll_bar_color, com.win.theme.scroll_track_color)
 	}
 }
