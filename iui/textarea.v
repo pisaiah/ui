@@ -14,6 +14,7 @@ pub mut:
 	caret_left           int
 	caret_top            int
 	padding_x            int
+    padding_y            int
 	ml_comment           bool
 	last_letter          string
 	click_event_fn       fn (voidptr, voidptr)
@@ -122,8 +123,16 @@ fn (mut this TextArea) draw() {
 		color: win.theme.text_color
 	}
 
+	num_color := (win.theme.button_bg_hover.r + win.theme.text_color.r) / 2
+	cfg_num := gx.TextCfg{
+		size: this.win.font_size
+		color: gx.rgb(num_color, num_color, num_color)
+	}
+
 	lines_drawn := this.height / line_height
 	this.clamp_values(lines_drawn)
+
+	padding_x := this.padding_x + this.draw_line_number_background()
 
 	for i in this.scroll_i .. this.lines.len {
 		if i < 0 {
@@ -131,7 +140,7 @@ fn (mut this TextArea) draw() {
 		}
 
 		line := this.lines[i]
-		y_off := line_height * (i - this.scroll_i)
+		y_off := line_height * (i - this.scroll_i) + this.padding_y
 
 		if y_off > this.height {
 			this.ml_comment = false
@@ -147,10 +156,26 @@ fn (mut this TextArea) draw() {
 			}
 		}
 
-		this.draw_matched_text(this.win, this.x + this.padding_x, this.y + y_off, matched,
+		line_number := (i + 1).str()
+
+		if this.code_syntax_on {
+			win.gg.draw_text(this.x + (padding_x / 4), this.y + y_off, line_number, cfg_num)
+		}
+
+		this.draw_matched_text(this.win, this.x + padding_x, this.y + y_off, matched,
 			cfg, is_cur_line, i)
 	}
 	this.draw_scrollbar(lines_drawn, this.lines.len)
+}
+
+fn (this &TextArea) draw_line_number_background() int {
+	if this.code_syntax_on {
+		padding_x := text_width(this.win, (this.lines.len * 1000).str())
+		this.win.draw_bordered_rect(this.x + 1, this.y + 1, padding_x, this.height - 2,
+			2, this.win.theme.button_bg_normal, this.win.theme.button_bg_normal)
+		return padding_x
+	}
+	return 4
 }
 
 fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, llen int, str_fix_tab string) {
@@ -303,9 +328,12 @@ fn (mut com TextArea) draw_scrollbar(cl int, spl_len int) {
 
 	// Draw Scroll
 	if requires_scrollbar {
-		com.win.draw_bordered_rect(com.x + com.width - 11, com.y + 1, 10, com.height - 2,
+		wid := 15
+		min := wid + 1
+
+		com.win.draw_bordered_rect(com.x + com.width - min, com.y + 1, wid, com.height - 2,
 			2, com.win.theme.scroll_track_color, com.win.theme.button_bg_hover)
-		com.win.draw_bordered_rect(com.x + com.width - 11, com.y + sth + 1, 10, enh - 2,
+		com.win.draw_bordered_rect(com.x + com.width - min, com.y + sth + 1, wid, enh - 2,
 			2, com.win.theme.scroll_bar_color, com.win.theme.scroll_track_color)
 	}
 }
