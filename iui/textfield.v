@@ -2,11 +2,7 @@ module iui
 
 import gx
 
-//
-// TextField Component
-// --------------------
-// Single line text input
-//
+// TextField Component - Single line text input
 struct TextField {
 	Component_A
 pub mut:
@@ -19,6 +15,10 @@ pub mut:
 	before_txtc_event_fn fn (mut Window, TextField) bool
 	text_change_event_fn fn (voidptr, voidptr)
 	padding_x            int
+}
+
+pub fn (mut box TextField) set_text_change(b fn (a voidptr, b voidptr)) {
+	box.text_change_event_fn = b
 }
 
 pub fn textfield(win &Window, text string) &TextField {
@@ -37,8 +37,8 @@ fn (mut this TextField) draw_background() {
 	mut bg := this.win.theme.textbox_background
 	mut border := this.win.theme.textbox_border
 
-	mid := (this.x + (this.width / 2))
-	midy := (this.y + (this.height / 2))
+	mid := this.x + (this.width / 2)
+	midy := this.y + (this.height / 2)
 
 	// Detect Click
 	if this.is_mouse_rele {
@@ -50,8 +50,8 @@ fn (mut this TextField) draw_background() {
 
 		this.is_mouse_rele = false
 	} else {
-		if this.win.click_x > -1 && !(abs(mid - this.win.mouse_x) < (this.width / 2)
-			&& abs(midy - this.win.mouse_y) < (this.height / 2)) {
+		if this.win.click_x > -1 && !(abs(mid - this.win.mouse_x) < this.width / 2
+			&& abs(midy - this.win.mouse_y) < this.height / 2) {
 			this.is_selected = false
 		}
 	}

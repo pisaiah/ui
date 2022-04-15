@@ -21,7 +21,7 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 			return
 		}
 		if mod == 2 {
-			// com.ctrl_down = true
+			com.ctrl_down = true
 		}
 
 		if key == .backspace {
@@ -148,7 +148,7 @@ fn get_shifted_letter_1(letter string) string {
 		'right_bracket': '}'
 		'equal':         '+'
 		'apostrophe':    '"'
-		'comma':         '>'
+		'comma':         '<'
 		'period':        '>'
 		'slash':         '?'
 		'semicolon':     ':'

@@ -1,10 +1,9 @@
 module iui
 
-import gg
 import gx
-import time
 
 // Textbox - implements Component interface
+// Deprecated - Replaced by better TextArea/TextField
 [deprecated: 'Replaced with TextArea (multiline), TextField (singleline-only)']
 struct Textbox {
 	Component_A
@@ -14,24 +13,16 @@ pub mut:
 	click_event_fn       fn (mut Window, Textbox)
 	before_txtc_event_fn fn (mut Window, Textbox) bool
 	text_change_event_fn fn (mut Window, Textbox)
-	is_blink             bool
-	last_blink           f64
-	wrap                 bool = true
-	last_fit             int  = 1
-	code_highlight       bool
 	multiline            bool = true
 	ctrl_down            bool
 	last_letter          string
-	// TODO carrot -> caret
-	carrot_left_raw int
-	carrot_left     int
-	carrot_top      int
-	key_down        bool
-	padding_x       int
+	carrot_left          int
+	key_down             bool
 }
 
+[deprecated]
 pub fn (mut com Textbox) set_codebox(val bool) {
-	com.code_highlight = val
+	// com.code_highlight = val
 }
 
 [deprecated: 'Replaced with TextArea/TextField']
@@ -47,295 +38,94 @@ pub fn textbox(app &Window, text string) &Textbox {
 	}
 }
 
+[deprecated]
 pub fn (mut com Textbox) set_click(b fn (mut Window, Textbox)) {
 	com.click_event_fn = b
 }
 
+[deprecated]
 pub fn (mut com Textbox) set_text_change(b fn (mut Window, Textbox)) {
 	com.text_change_event_fn = b
 }
 
-pub fn (mut com Textbox) draw() {
-	if com.text.contains('\t') {
-		// gg currently does not render tabs correctly.
-		// possible font issue?
-		com.text = com.text.replace('\t', ' '.repeat(4))
+pub fn (mut this Textbox) draw() {
+	ctx := this.app.gg
+	this.draw_background()
+
+	xp := this.x + 4
+	yp := this.y + 4
+
+	color := this.app.theme.text_color
+
+	this.scroll_i = 0
+
+	if this.carrot_left < 0 {
+		this.carrot_left = 0
 	}
 
-	mut spl := com.text.split_into_lines()
-	mut y_mult := 0
-	size := com.app.font_size
-	mut padding_x := 4
-	padding_y := 4
-	if com.carrot_top >= spl.len {
-		com.carrot_top--
+	if this.carrot_left > this.text.len {
+		this.carrot_left = this.text.len
 	}
 
-	mut bg := com.app.theme.textbox_background
-	mut border := com.app.theme.textbox_border
-
-	mut mid := (com.x + (com.width / 2))
-	mut midy := (com.y + (com.height / 2))
-
-	// Detect Hover
-	if (abs(mid - com.app.mouse_x) < (com.width / 2))
-		&& (abs(midy - com.app.mouse_y) < (com.height / 2)) {
-		border = com.app.theme.button_border_hover
+	cfg := gx.TextCfg{
+		color: color
 	}
 
-	line_height := text_height(com.app, 'A{')
+	ctx.draw_text(xp, this.y + 4, this.text, cfg)
 
-	// Detect Click
-	if com.is_mouse_rele {
-		com.is_selected = true
-		com.click_event_fn(com.app, *com)
+	pipe_width := text_width(this.app, '|') / 2
+	wid := text_width(this.app, this.text[0..this.carrot_left])
 
-		bg = com.app.theme.button_bg_click
-		border = com.app.theme.button_border_click
-
-		mut my := com.app.mouse_y - com.y
-		mut mx := com.app.mouse_x - com.x
-
-		// lw := text_width(com.app, 'A')
-		click := com.scroll_i + (my / line_height)
-
-		mut lw := 0
-		for atxt in com.text.split(' ') {
-			lw += text_width(com.app, atxt + ' ')
-		}
-
-		// lw = (lw - text_width(com.app, ' ')) + padding_x - 1 //(padding_x - 4)
-
-		if click < spl.len && mx > 0 {
-			com.carrot_top = click
-			mut ii := 0
-			for abs(mx - com.carrot_left_raw) > 5 {
-				if ii > 99 {
-					break
-				}
-				mut dirr := mx > com.carrot_left_raw
-				if dirr {
-					com.carrot_left += 1
-				} else {
-					com.carrot_left -= 1
-				}
-				mx = com.app.mouse_x - com.x
-
-				mut tw := com.text.substr_ni(0, com.carrot_left)
-				lw = 0
-				for atxt in tw.split(' ') {
-					lw += text_width(com.app, atxt + ' ')
-				}
-
-				lw = (lw - text_width(com.app, ' ')) + padding_x - 1 //(padding_x - 4)
-
-				if lw == 0 || lw == (padding_x - 4) {
-					lw = padding_x - 4
-				}
-				com.carrot_left_raw = lw
-				ii++
-			}
-			// com.carrot_left = mx / lw
-		}
-
-		com.is_mouse_rele = false
-	} else {
-		if com.app.click_x > -1 && !(abs(mid - com.app.mouse_x) < (com.width / 2)
-			&& abs(midy - com.app.mouse_y) < (com.height / 2)) {
-			com.is_selected = false
-		}
-	}
-
-	if com.is_selected {
-		border = com.app.theme.button_border_click
-	}
-
-	com.app.draw_bordered_rect(com.x, com.y, com.width, com.height, 2, bg, border)
-
-	mut cl := 0
-	if com.scroll_i > spl.len - com.last_fit {
-		com.scroll_i = spl.len - com.last_fit
-	}
-	if com.scroll_i < 0 {
-		com.scroll_i = 0
-	}
-	if com.code_highlight {
-		padding_x += text_width(com.app, '1000')
-		com.app.draw_bordered_rect(com.x + 1, com.y + 1, padding_x - 3, com.height - 2,
-			2, com.app.theme.button_bg_normal, com.app.theme.button_bg_normal)
-	}
-
-	for i := com.scroll_i; i < spl.len; i++ {
-		mut txt := spl[i]
-		mut skip := false
-
-		if y_mult + line_height > com.height {
-			com.last_fit = cl
-			y_mult = y_mult - line_height
-			skip = true
-		} else if com.wrap {
-			mut wspl := txt.split(' ')
-			mut wmul := 0
-
-			for mut wtxt in wspl {
-				com.app.gg.draw_text(com.x + wmul + padding_x, com.y + y_mult + padding_y,
-					wtxt, gx.TextCfg{
-					size: size
-					color: com.text_color(wtxt)
-				})
-
-				wmul += text_width(com.app, wtxt + ' ')
-			}
-		}
-
-		if com.code_highlight && !skip {
-			com.app.gg.draw_text(com.x + 4, com.y + y_mult + padding_y, (i + 1).str(),
-				gx.TextCfg{
-				size: size
-				color: com.app.theme.text_color
-			})
-		}
-
-		if !skip {
-			if cl < spl.len - 1 {
-				y_mult += line_height
-			}
-			if y_mult < com.height {
-				cl++
-			} else {
-				cl--
-			}
-		} else {
-			break
-		}
-	}
-	com.padding_x = padding_x
-
-	com.draw_scrollbar(cl, spl.len)
-	com.draw_carrot(spl, padding_x, padding_y, line_height, size)
+	ctx.draw_text(xp + wid - pipe_width, yp, '|', cfg)
 }
 
-fn (mut com Textbox) draw_scrollbar(cl int, spl_len int) {
-	// Calculate postion for scroll
-	mut sth := int((f32((com.scroll_i)) / f32(spl_len)) * com.height)
-	mut enh := int((f32(cl) / f32(spl_len)) * com.height)
-	mut requires_scrollbar := ((com.height - enh) > 0) && com.multiline
-
-	// Draw Scroll
-	if requires_scrollbar {
-		com.app.draw_bordered_rect(com.x + com.width - 11, com.y + 1, 10, com.height - 2,
-			2, com.app.theme.scroll_track_color, com.app.theme.button_bg_hover)
-		com.app.draw_bordered_rect(com.x + com.width - 11, com.y + sth + 1, 10, enh - 2,
-			2, com.app.theme.scroll_bar_color, com.app.theme.scroll_track_color)
-	}
-}
-
-pub fn (mut com Textbox) draw_carrot(spl []string, padding_x int, padding_y int, line_height int, size int) {
-	// Blinking text cursor
-	mut now := time.ticks()
-
-	if now - com.last_blink >= 1000 {
-		com.is_blink = !com.is_blink
-		com.last_blink = now
-	}
-
-	mut color := com.app.theme.text_color
-	if com.is_blink {
-		mut r := ((com.app.theme.text_color.r / 2) + com.app.theme.background.r) / 2
-		color = gx.rgb(r, r, r)
-	}
-
-	mut indx := com.carrot_top + 1
-
-	mut mtxt := ''
-
-	if spl.len <= 1 {
-		if spl.len == 0 {
-			mtxt = ''
-		} else {
-			mtxt = spl[0]
-		}
-	} else if (indx - 1) < spl.len {
-		mtxt = spl[indx - 1]
-	}
-
-	mut lt := line_height * (com.carrot_top) - (line_height * com.scroll_i)
-
-	if com.carrot_left > mtxt.len && indx <= spl.len {
-		indx++
-		if !(indx - 1 >= spl.len) {
-			mtxt = spl[indx - 1]
-			com.carrot_top++
-			lt += line_height
-			com.carrot_left = 0
-		} else {
-			com.carrot_left--
-		}
-	}
-
-	if com.carrot_left < 0 && indx > 1 {
-		indx--
-		mtxt = spl[indx - 1]
-		com.carrot_top--
-		lt -= line_height
-		com.carrot_left = 0
-	}
-	if indx < 0 {
-		indx = 0
-	}
-	if com.carrot_left < 0 {
-		com.carrot_left = 0
-	}
-
-	mut tw := mtxt.substr_ni(0, com.carrot_left)
-
-	mut lw := 0
-	for atxt in tw.split(' ') {
-		lw += text_width(com.app, atxt + ' ')
-	}
-
-	lw = (lw - text_width(com.app, ' ')) + padding_x - 1 //(padding_x - 4)
-
-	if lw == 0 || lw == (padding_x - 4) {
-		lw = padding_x - 4
-	}
-
-	if lt < 0 {
+fn (mut this Textbox) mouse_down_caret() {
+	if !this.is_mouse_down {
 		return
 	}
 
-	com.carrot_left_raw = lw
-	com.app.gg.draw_text(com.x + lw, com.y + lt + padding_y, '|', gx.TextCfg{
-		size: size
-		color: color
-	})
+	x := if this.rx != 0 { this.rx } else { this.x }
+
+	mx := this.app.mouse_x - x
+	wid_char := text_width(this.app, 'A')
+	full_wid := text_width(this.app, this.text)
+
+	if mx > full_wid {
+		this.carrot_left = this.text.len
+	}
+
+	for i in 0 .. this.text.len + 1 {
+		substr := this.text[0..i]
+		wid := text_width(this.app, substr)
+
+		if abs(mx - wid) <= wid_char {
+			this.carrot_left = i
+			return
+		}
+	}
 }
 
-const (
-	code_blue  = gx.rgb(90, 150, 230)
-	code_num   = gx.rgb(240, 200, 0)
-	code_pur   = gx.rgb(200, 100, 200)
+fn (mut this Textbox) draw_background() {
+	mut bg := this.app.theme.textbox_background
+	mut border := this.app.theme.textbox_border
 
-	blue_words = ['mut', 'pub', 'fn', 'true', 'false', 'import', 'module', 'struct']
-	pur_words  = ['if', 'return', 'else', 'for']
-)
+	mid := (this.x + (this.width / 2))
+	midy := (this.y + (this.height / 2))
 
-pub fn (mut com Textbox) text_color(word string) gx.Color {
-	if !com.code_highlight {
-		return com.app.theme.text_color
-	}
+	// Detect Click
+	if this.is_mouse_rele {
+		this.is_selected = true
+		this.click_event_fn(this.app, *this)
 
-	if word in iui.blue_words {
-		return iui.code_blue
-	}
-	if word in iui.pur_words {
-		return iui.code_pur
-	}
+		bg = this.app.theme.button_bg_click
+		border = this.app.theme.button_border_click
 
-	num := word.int()
-	if num == 0 && word != '0' {
-		return com.app.theme.text_color
+		this.is_mouse_rele = false
 	} else {
-		return iui.code_num
+		if this.app.click_x > -1 && !(abs(mid - this.app.mouse_x) < (this.width / 2)
+			&& abs(midy - this.app.mouse_y) < (this.height / 2)) {
+			this.is_selected = false
+		}
 	}
+	this.app.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
 }

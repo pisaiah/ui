@@ -23,6 +23,7 @@ pub mut:
 	down_pos             CaretPos
 	drawn_select         bool
 	code_syntax_on       bool
+	ctrl_down            bool
 }
 
 struct CaretPos {
@@ -99,14 +100,14 @@ fn (mut this TextArea) clamp_values(lines_drawn int) {
 		this.caret_left = 0
 	}
 
-	if this.scroll_i < 0 {
-		this.scroll_i = 0
-	}
-
 	max_scroll := this.lines.len - lines_drawn
 
 	if this.scroll_i > max_scroll {
 		this.scroll_i = max_scroll
+	}
+
+	if this.scroll_i < 0 {
+		this.scroll_i = 0
 	}
 }
 
@@ -125,6 +126,10 @@ fn (mut this TextArea) draw() {
 	this.clamp_values(lines_drawn)
 
 	for i in this.scroll_i .. this.lines.len {
+		if i < 0 {
+			continue
+		}
+
 		line := this.lines[i]
 		y_off := line_height * (i - this.scroll_i)
 

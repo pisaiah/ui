@@ -376,25 +376,19 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 			a.key_down = false
 			return
 		}
-		if letter == 'down' {
-			a.carrot_top++
-			a.key_down = false
-			return
-		}
-		if letter == 'up' {
-			a.carrot_top--
+		if letter == 'down' || letter == 'up' {
 			a.key_down = false
 			return
 		}
 
 		a.last_letter = letter
-		mut bevnt := a.before_txtc_event_fn(app, *a)
+		bevnt := a.before_txtc_event_fn(app, *a)
 		if bevnt {
 			// 'true' indicates cancel event
 			return
 		}
 
-		mut spl := a.text.split_into_lines()
+		spl := a.text
 		if spl.len == 0 && letter == 'backspace' {
 			a.text = ''
 			return
@@ -404,59 +398,12 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 				// No Text
 				return
 			}
-			if a.carrot_top >= spl.len && spl.len > 0 {
-				a.carrot_top--
-			}
-			if a.carrot_top < 0 {
-				a.carrot_top = 0
-			}
-			mut lie := spl[a.carrot_top]
-			if lie.len == 0 {
-				spl.pop()
-				a.carrot_top = spl.len - 1
-				a.text = spl.join('\n')
 
-				// return
+			if a.carrot_left > 0 {
+				a.text = spl.substr_ni(0, a.carrot_left - 1) + spl.substr_ni(a.carrot_left, spl.len)
 			}
 
-			if a.carrot_left - 1 > 0 {
-				if a.carrot_left != lie.len {
-					lie = lie.substr_ni(0, a.carrot_left - 1) +
-						lie.substr_ni(a.carrot_left, lie.len)
-				} else {
-					lie = lie.substr_ni(0, a.carrot_left - 1)
-				}
-			} else {
-				lie = '_TO_REMOVE_LIE_' + lie
-			}
-			spl[a.carrot_top] = lie
-
-			mut nt := ''
-			for mut str in spl {
-				if nt.len == 0 {
-					if str.starts_with('_TO_REMOVE_LIE_') {
-						if str.len > '_TO_REMOVE_LIE_'.len {
-							nt = nt + str.replace('_TO_REMOVE_LIE_', '')
-							nt = nt.substr_ni(1, nt.len - 1)
-						}
-					} else {
-						nt = nt + str
-					}
-				} else {
-					if str.starts_with('_TO_REMOVE_LIE_') {
-						if str.len > '_TO_REMOVE_LIE_'.len {
-							nt = nt + str.replace('_TO_REMOVE_LIE_', '')
-						}
-					} else {
-						nt = nt + '\n' + str
-					}
-				}
-			}
-			a.text = nt
 			a.carrot_left--
-			if a.carrot_top >= spl.len && spl.len > 0 {
-				a.carrot_top = spl.len - 1
-			}
 		} else if mod != 2 {
 			if app.shift_pressed && letter.len > 0 {
 				letter = letter.to_upper()
@@ -469,25 +416,8 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 				}
 			}
 
-			if spl.len == 0 {
-				spl = a.text.split('\n')
-			}
-			if a.carrot_top < 0 {
-				a.carrot_top = 0
-			}
-			mut lie := spl[a.carrot_top]
-			lie = lie.substr_ni(0, a.carrot_left) + letter + lie.substr_ni(a.carrot_left, lie.len)
-			spl[a.carrot_top] = lie
-
-			mut nt := ''
-			for mut str in spl {
-				if nt.len == 0 {
-					nt = nt + str
-				} else {
-					nt = nt + '\n' + str
-				}
-			}
-			a.text = nt
+			a.text = spl.substr_ni(0, a.carrot_left) + letter +
+				spl.substr_ni(a.carrot_left, spl.len)
 			if letter.len >= 4 {
 				a.carrot_left += letter.len - 1
 			}
@@ -495,9 +425,6 @@ fn (mut app Window) key_down_1(key gg.KeyCode, e &gg.Event, mut a Textbox) {
 		}
 		a.last_letter = letter
 		a.text_change_event_fn(app, *a)
-		if letter == '\n' && (a.carrot_top + 1) == spl.len {
-			a.text = a.text + '\n'
-		}
 		a.key_down = false
 		a.ctrl_down = false
 	}
