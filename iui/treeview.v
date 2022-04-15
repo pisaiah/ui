@@ -2,7 +2,6 @@ module iui
 
 import gg
 import gx
-import time
 import os
 
 // Treeview
@@ -31,7 +30,7 @@ pub fn tree(app &Window, text string) Tree {
 
 pub fn (mut tr Tree) draw() {
 	mut mult := 20
-	mut app := tr.app
+	app := tr.app
 	mut bg := app.theme.button_bg_normal
 	bord := if tr.is_selected && tr.childs.len > 0 { app.theme.button_bg_hover } else { bg }
 
@@ -43,14 +42,9 @@ pub fn (mut tr Tree) draw() {
 	midy := tr.y + 10
 
 	if tr.y >= tr.min_y {
-		tr.app.draw_bordered_rect(tr.x, tr.y + 3, tr.width - 4, tr.height, 2, bg, bg)
+		tr.app.gg.draw_rect_filled(tr.x, tr.y + 3, tr.width - 4, tr.height, bg)
 	}
 	if (abs(mid - app.mouse_x) < half_wid) && (abs(midy - app.mouse_y) < 10) {
-		bg = app.theme.button_bg_hover
-	}
-
-	total_h := tr.height + (tr.open - 20)
-	if (abs(mid - app.mouse_x) < half_wid) && (abs(midy - app.mouse_y) < (total_h / 2)) {
 		bg = app.theme.button_bg_hover
 		tr.is_hover = true
 	} else {
@@ -59,15 +53,10 @@ pub fn (mut tr Tree) draw() {
 
 	if (abs(mid - app.click_x) < half_wid) && (abs(midy - app.click_y) < 10 && app.bar.tik > 98
 		&& app.click_y > 25) {
-		now := time.now().unix_time_milli()
+		tr.is_selected = !tr.is_selected
+		tr.click_event_fn(app, *tr)
 
-		if now - tr.last_click > 100 {
-			tr.is_selected = !tr.is_selected
-			tr.click_event_fn(app, *tr)
-
-			bg = app.theme.button_bg_click
-			tr.last_click = time.now().unix_time_milli()
-		}
+		bg = app.theme.button_bg_click
 	}
 
 	if tr.is_selected {
@@ -77,7 +66,9 @@ pub fn (mut tr Tree) draw() {
 	}
 
 	if y >= tr.min_y {
-		tr.app.draw_bordered_rect(tr.x, y + 3, tr.width - 8, 20, 2, bg, bord)
+		if tr.is_hover {
+			tr.app.draw_bordered_rect(tr.x, y + 3, tr.width - 8, 20, 2, bg, bord)
+		}
 
 		if tr.is_selected {
 			tr.app.gg.draw_triangle_filled(tr.x + 5, y + 8, tr.x + 12, y + 8, tr.x + 8,
@@ -95,12 +86,12 @@ pub fn (mut tr Tree) draw() {
 
 	if tr.is_selected {
 		for mut child in tr.childs {
-			child.width = tr.width - 4
+			child.width = tr.width - 8
 
 			draw_with_offset(mut child, tr.x, y + mult)
 
 			if mut child is Tree {
-				mult += child.open + 4
+				mult += child.open + 8
 			} else {
 				mult += child.height
 			}
