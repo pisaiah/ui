@@ -35,7 +35,7 @@ pub fn image_with_size(app &Window, img &gg.Image, width int, height int) &Image
 	}
 }
 
-pub fn image_from_byte_array_with_size(mut app Window, b []byte, width int, height int) &Image {
+pub fn image_from_byte_array_with_size(mut app Window, b []u8, width int, height int) &Image {
 	mut img := &Image{
 		text: ''
 		img: 0
@@ -49,7 +49,7 @@ pub fn image_from_byte_array_with_size(mut app Window, b []byte, width int, heig
 	return img
 }
 
-pub fn image_from_bytes(mut app Window, b []byte, width int, height int) &Image {
+pub fn image_from_bytes(mut app Window, b []u8, width int, height int) &Image {
 	return image_from_byte_array_with_size(mut app, b, width, height)
 }
 

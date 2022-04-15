@@ -14,7 +14,7 @@ pub mut:
 	caret_left           int
 	caret_top            int
 	padding_x            int
-    padding_y            int
+	padding_y            int
 	ml_comment           bool
 	last_letter          string
 	click_event_fn       fn (voidptr, voidptr)
