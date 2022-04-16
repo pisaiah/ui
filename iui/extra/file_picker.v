@@ -7,30 +7,30 @@ import os
 // File Picker
 struct FilePicker {
 pub mut:
-	dir_input      &ui.TextEdit
+	dir_input      &ui.TextField
 	file_list      &ui.VBox
 	file_name      &ui.HBox
 	path_change_fn fn (voidptr, voidptr)
 }
 
 pub fn (this &FilePicker) get_full_path() string {
-	dir := this.dir_input.lines[0]
+	dir := this.dir_input.text
 	mut te := this.file_name.children[1]
-	if mut te is ui.TextEdit {
-		return os.join_path(dir, te.lines[0])
+	if mut te is ui.TextField {
+		return os.join_path(dir, te.text)
 	}
 	return dir
 }
 
 pub fn (this &FilePicker) get_dir() string {
-	dir := this.dir_input.lines[0]
+	dir := this.dir_input.text
 	return dir
 }
 
 pub fn (this &FilePicker) get_file_name() string {
 	mut te := this.file_name.children[1]
-	if mut te is ui.TextEdit {
-		return te.lines[0]
+	if mut te is ui.TextField {
+		return te.text
 	}
 	return ''
 }
@@ -47,13 +47,11 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	dir := os.dir(conf.path)
 	file_name := if os.is_dir(conf.path) { '' } else { os.base(conf.path) }
 
-	mut dir_input := ui.textedit(window, dir)
-	dir_input.code_syntax_on = false
-	dir_input.padding_y = 4
+	mut dir_input := ui.textfield(window, dir)
+	// dir_input.padding_y = 4
 
-	mut file_input := ui.textedit(window, file_name)
-	file_input.code_syntax_on = false
-	file_input.padding_y = 4
+	mut file_input := ui.textfield(window, file_name)
+	// file_input.padding_y = 4
 
 	padding := if conf.in_modal { 10 } else { 30 }
 
@@ -84,10 +82,10 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	return &FilePicker{dir_input, res_box, hbox, conf.path_change_fn}
 }
 
-fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
+fn before_txt_change(mut win ui.Window, tb ui.TextField) bool {
 	mut is_enter := tb.last_letter == 'enter'
 	if is_enter {
-		mut txt := tb.lines[0]
+		mut txt := tb.text
 		mut vbox := win.get_from_id('edit')
 		if os.is_dir(txt) {
 			load_directory(txt, vbox)
@@ -99,9 +97,9 @@ fn before_txt_change(mut win ui.Window, tb ui.TextEdit) bool {
 
 fn load_directory(dir string, com voidptr) {
 	mut vbox := &ui.VBox(com)
-	mut input := &ui.TextEdit(vbox.win.get_from_id('dir-input'))
+	mut input := &ui.TextField(vbox.win.get_from_id('dir-input'))
 	real_dir := os.real_path(dir)
-	input.lines[0] = real_dir
+	input.text = real_dir
 	input.carrot_left = real_dir.len
 	mut files := os.ls(dir) or { [] }
 
@@ -199,9 +197,9 @@ fn hbox_draw_ev(mut win ui.Window, com &ui.Component) {
 		if os.is_dir(com.text) {
 			load_directory(com.text, vbox)
 		} else {
-			mut input := &ui.TextEdit(win.get_from_id('file-input'))
+			mut input := &ui.TextField(win.get_from_id('file-input'))
 			file_name := os.base(com.text)
-			input.lines[0] = file_name
+			input.text = file_name
 			input.carrot_left = file_name.len
 		}
 	}

@@ -235,11 +235,8 @@ fn open_about_modal(app &Window) &Modal {
 	lbl.set_pos(40, 70)
 	about.add_child(lbl)
 
-	mut gh := button(app, 'Github')
+	mut gh := hyperlink(app, 'Github', 'https://github.com/isaiahpatton/ui')
 	gh.set_pos(40, 135)
-	gh.set_click_fn(fn (win voidptr, btn voidptr, data voidptr) {
-		open_url('https://github.com/isaiahpatton/ui')
-	}, 0)
 	gh.pack()
 	about.add_child(gh)
 

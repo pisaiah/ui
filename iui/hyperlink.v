@@ -58,16 +58,8 @@ pub fn (mut btn Hyperlink) pack_do() {
 	btn.width = width + 1
 	th := text_height(btn.app, '{!A') + btn.size
 
-	// btn.height = (th * btn.text.split('\n').len) + 4 + (btn.size)
-
-	mut hi := 0
-	for line in btn.text.split_into_lines() {
-		if line.trim_space().len > 0 {
-			hi += th // text_height(btn.app, line)
-		} else {
-			hi += th
-		}
-	}
+	lines := btn.text.split_into_lines()
+	hi := (th * lines.len)
 	btn.height = hi + 4 + btn.size
 
 	if btn.height < th {
@@ -88,9 +80,6 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 		this.pack_do()
 	}
 
-	text := this.text
-	// sizh := (text_height(app, '!{A') + 1) / 2
-
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
 		this.click_event_fn(this)
@@ -109,7 +98,7 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 	}
 
 	mut my := 0
-	for mut spl in text.split('\n') {
+	for mut spl in this.text.split('\n') {
 		app.gg.draw_text(x, y + height - line_height + my, spl.replace('\t', '  '.repeat(8)),
 			gx.TextCfg{
 			size: app.font_size + this.size

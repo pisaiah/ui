@@ -1,12 +1,10 @@
-// Isaiah's UI Widgets for V.
-// (c) 2022 Isaiah.
 module iui
 
 import gg
 import gx
 
 //
-// Replacement for Textbox
+// Deprecated: Replaced by TextArea, just need to move a few things over.
 //
 struct TextEdit {
 	Component_A
@@ -40,6 +38,7 @@ pub fn (mut this TextEdit) add_number_hover_action(action &NumberHover) {
 }
 
 // Return new reference to Component.
+[deprecated: 'Replaced by TextArea']
 pub fn textedit(window voidptr, text string) &TextEdit {
 	return &TextEdit{
 		win: &Window(window)
@@ -81,7 +80,7 @@ fn (this &TextEdit) draw_line_number_background() int {
 }
 
 // Delete current line; Moving text to above line if necessary.
-// Usages: Backspace on empty line or backspace when caret_left == 0
+// Usages: Backspace on empty line or backspace when carrot_left == 0
 pub fn (mut this TextEdit) delete_current_line() {
 	this.lines.delete(this.carrot_top)
 	this.carrot_top -= 1
@@ -148,7 +147,7 @@ fn (mut this TextEdit) draw_background() {
 		this.is_selected = true
 
 		this.click_event_fn(this.win, this)
-		this.change_caret_on_click()
+		this.change_carrot_on_click()
 
 		this.is_mouse_rele = false
 	} else {
@@ -160,7 +159,7 @@ fn (mut this TextEdit) draw_background() {
 	this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
 }
 
-fn (mut this TextEdit) change_caret_on_click() {
+fn (mut this TextEdit) change_carrot_on_click() {
 	mx := this.win.mouse_x - (this.x + this.padding_x)
 	my := this.win.mouse_y - this.y
 
@@ -207,12 +206,11 @@ fn (mut this TextEdit) change_caret_on_click() {
 }
 
 // Draw Scrollbar
-// TODO: use Slider component.
 fn (mut com TextEdit) draw_scrollbar(cl int, spl_len int) {
 	// Calculate postion for scroll
-	mut sth := int((f32((com.scroll_i)) / f32(spl_len)) * com.height)
-	mut enh := int((f32(cl) / f32(spl_len)) * com.height)
-	mut requires_scrollbar := ((com.height - enh) > 0) //&& com.multiline
+	sth := int((f32((com.scroll_i)) / f32(spl_len)) * com.height)
+	enh := int((f32(cl) / f32(spl_len)) * com.height)
+	requires_scrollbar := ((com.height - enh) > 0)
 
 	// Draw Scroll
 	if requires_scrollbar {
@@ -239,133 +237,52 @@ fn (mut this TextEdit) clamp_caret() {
 	}
 }
 
-// Main draw function.
-// TODO: simplify, split function.
 fn (mut this TextEdit) draw() {
+	win := this.win
 	this.draw_background()
 
-	if this.text.contains('\r') {
-		this.text = this.text.replace('\r\n', '\n')
-	}
+	line_height := text_height(win, 'A!{}')
 
-	lines := this.lines
-
-	line_height := text_height(this.win, 'A0{')
-	padding_x := this.draw_line_number_background()
-	this.padding_x = padding_x
-
-	mut oy := this.y + this.padding_y
-
-	confg := gx.TextCfg{
+	cfg := gx.TextCfg{
 		size: this.win.font_size
-		color: this.win.theme.text_color
+		color: win.theme.text_color
 	}
+
+	lines_drawn := this.height / line_height
 
 	this.clamp_caret()
+	padding_x := this.padding_x + this.draw_line_number_background()
 
-	if this.scroll_i < 0 {
-		this.scroll_i = 0
-	}
+	for i in this.scroll_i .. this.lines.len {
+		if i < 0 {
+			continue
+		}
 
-	mut shown := 0
-	for line_count in this.scroll_i .. lines.len {
-		line := lines[line_count]
+		line := this.lines[i]
+		y_off := line_height * (i - this.scroll_i) + this.padding_y
 
-		if line_count == this.carrot_top {
+		if y_off > this.height {
+			break
+		}
+
+		is_cur_line := this.carrot_top == i
+
+		if is_cur_line {
 			if this.carrot_left > line.len {
 				this.carrot_left = line.len
 			}
-
-			padd := padding_x - 4
-			if this.code_syntax_on || lines.len > 1 {
-				this.win.gg.draw_rect_filled(this.x + padd, oy, this.width - padd, line_height,
-					this.win.theme.button_bg_hover)
-			}
 		}
 
-		line_num := line_count + 1
-		if lines.len > 1 && this.draw_line_numbers {
-			this.win.gg.draw_text(this.x, oy, line_num.str(), confg)
+		this.win.gg.draw_text(this.x + padding_x, this.y + y_off, line, cfg)
+
+		if is_cur_line {
+			wid := text_width(win, line[0..this.carrot_left])
+			pipe_width := text_width(win, '|')
+			this.win.gg.draw_text(this.x + padding_x + wid - pipe_width, this.y + y_off,
+				'|', cfg)
 		}
-
-		runes := line.runes()
-		mut xo := padding_x
-		mut left := 0
-
-		mut color := this.win.theme.text_color
-		mut keep_color_for := 0
-		mut keep_color_util := ` `
-
-		// TODO: Calculate matches, so we don't have to draw every rune.
-		for r in runes {
-			if keep_color_for == 0 && keep_color_util == ` ` {
-				if this.code_syntax_on {
-					color, keep_color_for, keep_color_util = this.get_color(left, line_count)
-				}
-			} else {
-				if keep_color_for > 0 {
-					keep_color_for -= 1
-				}
-				if r == keep_color_util {
-					keep_color_util = ` `
-				}
-			}
-
-			if xo > this.width {
-				break
-			}
-
-			mut strr := r.str()
-			if r == `\t` {
-				strr = ' '.repeat(8)
-			}
-
-			if !(r == ` ` || r == `\t`) {
-				this.win.gg.draw_text(this.x + xo, oy, strr, gx.TextCfg{
-					color: color
-					size: confg.size
-				})
-			}
-
-			rwid := text_width(this.win, strr)
-
-			if line_count == this.carrot_top {
-				if left == this.carrot_left {
-					this.draw_caret(xo, oy, confg)
-				}
-			}
-
-			if r == ` ` {
-				xo += text_width(this.win, '.')
-			} else {
-				if rwid > 5 {
-					xo += rwid - 1
-				} else {
-					xo += rwid
-				}
-			}
-			left += 1
-
-			if line_count == this.carrot_top {
-				if left == this.carrot_left {
-					this.draw_caret(xo, oy, confg)
-				}
-			}
-		}
-
-		this.line_draw_event_fn(this, line_count, xo, oy)
-
-		if runes.len == 0 && line_count == this.carrot_top {
-			this.draw_caret(xo, oy, confg)
-		}
-
-		if oy > (this.y + this.height) {
-			break
-		}
-		shown += 1
-		oy += line_height
 	}
-	this.draw_scrollbar(shown, this.lines.len)
+	this.draw_scrollbar(lines_drawn, this.lines.len)
 }
 
 // Syntax Highlight
