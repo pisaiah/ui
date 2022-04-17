@@ -2,7 +2,7 @@
 //
 // Very basic CSS parser
 //
-module main
+module webview
 
 import gx
 

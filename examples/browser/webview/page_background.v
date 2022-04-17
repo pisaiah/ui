@@ -1,4 +1,4 @@
-module main
+module webview
 
 import iui as ui
 import gg

@@ -4,7 +4,7 @@
 // References:
 // - https://www.w3schools.com/cssref/css_default_values.asp
 //
-module main
+module webview
 
 import iui as ui
 import net.http
@@ -47,7 +47,26 @@ fn iem(val f32) int {
 	return int(em(val))
 }
 
-fn load_url(mut win ui.Window, url string) {
+fn box_draw_fn(mut win ui.Window, com &ui.Component) {
+	size := win.gg.window_size()
+	mut this := *com
+	this.width = size.width
+
+	if this.height > 40 {
+		this.height = size.height
+	}
+}
+
+fn width_draw_fn(mut win ui.Window, com &ui.Component) {
+	size := win.gg.window_size()
+	mut this := *com
+	this.width = size.width
+	if this.height > 40 {
+		this.height = size.height - 102
+	}
+}
+
+pub fn load_url(mut win ui.Window, url string) {
 	println('Loading URL: ' + url)
 
 	start := time.now().unix_time_milli()

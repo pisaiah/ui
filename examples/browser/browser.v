@@ -1,7 +1,9 @@
 module main
 
 import iui as ui
+import examples.browser.webview
 import os
+
 
 [console]
 fn main() {
@@ -60,6 +62,10 @@ fn load_url_from_menu(mut win ui.Window, item ui.MenuItem) {
 	url := if item.text.contains('://') { item.text } else { 'http://' + item.text }
 
 	load_url(mut win, url)
+}
+
+fn load_url(mut win ui.Window, url string) {
+    webview.load_url(mut win, url)
 }
 
 // Make menu bar look like url bar.
