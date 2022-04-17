@@ -16,27 +16,22 @@ fn main() {
 	window.bar.add_child(create_theme_menu())
 
 	btn := ui.button(window, 'A Button', ui.ButtonConfig{
-		bounds: ui.Bounds{30, 40, 100, 25}
+		bounds: ui.Bounds{18, 40, 100, 25}
 		click_event_fn: btn_click
 	})
 
 	window.add_child(btn)
 
 	btn2 := ui.button(window, 'This is a Button', ui.ButtonConfig{
-		bounds: ui.Bounds{30, 70, 0, 0}
+		bounds: ui.Bounds{18, 70, 0, 0}
 		should_pack: true
 	})
 
 	window.add_child(btn2)
 
-	mut tbox := ui.textbox(window, 'This is a Textbox.\nIt has an multiline mode that\ncan support\nmultiple lines\nIt also can scroll and stuff')
+	mut tbox := ui.textfield(window, 'This is a TextField')
 
-	for i := 0; i < 6; i++ {
-		tbox.text += '\nExtra line #' + i.str()
-	}
-
-	tbox.set_bounds(30, 110, 270, 100)
-
+	tbox.set_bounds(18, 110, 270, 25)
 	window.add_child(tbox)
 
 	cbox := ui.checkbox(window, 'Check me!', ui.CheckboxConfig{
@@ -52,7 +47,7 @@ fn main() {
 	window.add_child(cbox2)
 
 	mut sel := ui.selector(window, 'Selectbox')
-	sel.set_bounds(30, 230, 100, 25)
+	sel.set_bounds(18, 145, 100, 25)
 
 	for i := 0; i < 4; i++ {
 		sel.items << (25 * (i + 1)).str() + '%'
@@ -61,12 +56,8 @@ fn main() {
 	window.add_child(sel)
 
 	mut pb := ui.progressbar(window, 30)
-	pb.set_bounds(140, 230, 100, 20)
+	pb.set_bounds(122, 145, 160, 24)
 	window.add_child(pb)
-
-	mut pb2 := ui.progressbar(window, 75)
-	pb2.set_bounds(250, 230, 100, 20)
-	window.add_child(pb2)
 
 	window.add_child(create_tree(window))
 
@@ -86,7 +77,7 @@ fn main() {
 	window.add_child(tb)
 
 	mut code_box := ui.textarea(window, ['module main', '', 'fn main() {', '\tmut val := 0', '}'])
-	code_box.set_bounds(30, 270, 320, 120)
+	code_box.set_bounds(18, 230, 300, 120)
 
 	window.add_child(code_box)
 
@@ -98,16 +89,15 @@ fn main() {
 	mut hbox := ui.hbox(window)
 
 	mut btn_ := ui.button(window, 'Button in HBox')
-	btn_.set_bounds(0, 0, 120, 30)
+	btn_.set_bounds(0, 0, 120, 27)
 
-	mut btn3 := ui.button(window, 'Button 2')
-	btn3.set_bounds(0, 0, 80, 30)
+	mut btn3 := ui.button(window, 'Button 2 in HBox')
+	btn3.pack()
 
 	hbox.add_child(btn_)
 	hbox.add_child(btn3)
 
-	hbox.set_pos(100, 400)
-	hbox.set_bounds(100, 400, 250, 100)
+	hbox.set_bounds(18, 182, 250, 100)
 	window.add_child(hbox)
 
 	window.gg.run()

@@ -142,7 +142,7 @@ fn (mut this TextArea) draw() {
 		line := this.lines[i]
 		y_off := line_height * (i - this.scroll_i) + this.padding_y
 
-		if y_off > this.height {
+		if (y_off + line_height) > this.height {
 			this.ml_comment = false
 			break
 		}

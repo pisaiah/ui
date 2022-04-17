@@ -23,9 +23,9 @@ fn parse_color(val string) gx.Color {
 		inside := val.split('rgb(')[1].split(')')[0]
 		splt := inside.split(',')
 		if splt.len == 3 {
-			r := splt[0].trim_space().byte()
-			g := splt[1].trim_space().byte()
-			b := splt[2].trim_space().byte()
+			r := splt[0].trim_space().u8()
+			g := splt[1].trim_space().u8()
+			b := splt[2].trim_space().u8()
 			return gx.rgb(r, g, b)
 		}
 	}

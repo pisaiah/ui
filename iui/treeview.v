@@ -52,7 +52,9 @@ pub fn (mut tr Tree) draw() {
 	}
 
 	if (abs(mid - app.click_x) < half_wid) && (abs(midy - app.click_y) < 10 && app.bar.tik > 98
-		&& app.click_y > 25) {
+		&& app.click_y > 25) && tr.is_mouse_rele {
+		tr.is_mouse_rele = false
+
 		tr.is_selected = !tr.is_selected
 		tr.click_event_fn(app, *tr)
 
@@ -87,8 +89,12 @@ pub fn (mut tr Tree) draw() {
 	if tr.is_selected {
 		for mut child in tr.childs {
 			child.width = tr.width - 8
+			child.is_mouse_down = tr.is_mouse_down
+			child.is_mouse_rele = tr.is_mouse_rele
 
 			draw_with_offset(mut child, tr.x, y + mult)
+
+			tr.is_mouse_rele = child.is_mouse_rele
 
 			if mut child is Tree {
 				mult += child.open + 8
