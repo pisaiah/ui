@@ -4,7 +4,6 @@ import iui as ui
 import examples.browser.webview
 import os
 
-
 [console]
 fn main() {
 	println('Browser - Alpha Test')
@@ -65,7 +64,7 @@ fn load_url_from_menu(mut win ui.Window, item ui.MenuItem) {
 }
 
 fn load_url(mut win ui.Window, url string) {
-    webview.load_url(mut win, url)
+	webview.load_url(mut win, url)
 }
 
 // Make menu bar look like url bar.
