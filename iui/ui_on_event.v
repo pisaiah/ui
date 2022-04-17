@@ -169,17 +169,8 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 		if mut a is Tabbox {
 			for _, mut val in a.kids {
 				for mut comm in val {
-					if mut comm is Textbox {
-						text_box_scroll(e, mut comm)
-					}
 					if mut comm is TextField {
 						rune_box_scroll(e, mut comm)
-					}
-					if mut comm is TextEdit {
-						if comm.is_selected {
-							text_edit_scroll(e, mut comm)
-						}
-						continue
 					}
 
 					if mut comm is TextArea && !comm.is_selected {
@@ -248,19 +239,10 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 			continue
 		}
 
-		if mut a is Textbox {
-			text_box_scroll(e, mut a)
-			continue
-		}
 		if mut a is TextField {
 			rune_box_scroll(e, mut a)
 		}
 
-		if mut a is TextEdit {
-			if !a.is_selected {
-				continue
-			}
-		}
 		if a is TextArea && !a.is_selected {
 			continue
 		}

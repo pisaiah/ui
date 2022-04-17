@@ -68,8 +68,8 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 				return
 			}
 
-			if letter.starts_with('_') {
-				letter = letter.replace('_', '')
+			if letter.starts_with('_') || letter.starts_with('kp_') {
+				letter = letter.replace('_', '').replace('kp', '')
 				nums := [')', '!', '@', '#', '$', '%', '^', '&', '*', '(']
 				if win.shift_pressed && letter.len > 0 {
 					letter = nums[letter.u32()]
@@ -107,9 +107,16 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 
 				line := com.lines[com.caret_top]
 
-				new_line := line.substr_ni(0, com.caret_left) + strr +
-					line.substr_ni(com.caret_left, line.len)
-				com.lines[com.caret_top] = new_line
+				if strr.len > 1 {
+					mut myrunes := line.runes()
+					myrunes.insert(com.caret_left, strr.runes()[0])
+					com.lines[com.caret_top] = myrunes.string()
+					myrunes.free()
+				} else {
+					new_line := line.substr_ni(0, com.caret_left) + strr +
+						line.substr_ni(com.caret_left, line.len)
+					com.lines[com.caret_top] = new_line
+				}
 			}
 
 			com.last_letter = letter
@@ -139,24 +146,4 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 			}
 		}
 	}
-}
-
-fn get_shifted_letter_1(letter string) string {
-	shift_keys := {
-		'minus':         '_'
-		'left_bracket':  '{'
-		'right_bracket': '}'
-		'equal':         '+'
-		'apostrophe':    '"'
-		'comma':         '<'
-		'period':        '>'
-		'slash':         '?'
-		'semicolon':     ':'
-		'backslash':     '|'
-		'grave_accent':  '~'
-	}
-	if letter in shift_keys {
-		return shift_keys[letter]
-	}
-	return letter.to_upper()
 }

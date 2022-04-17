@@ -308,29 +308,7 @@ fn (mut app Window) draw() {
 	app.frame_time = int(end - now)
 }
 
-fn text_box_scroll(e &gg.Event, mut a Textbox) {
-	if a.is_selected {
-		scroll_y := (int(e.scroll_y) / 2)
-		if abs(e.scroll_y) != e.scroll_y {
-			a.scroll_i += -scroll_y
-		} else if a.scroll_i > 0 {
-			a.scroll_i -= scroll_y
-		}
-	}
-}
-
 fn rune_box_scroll(e &gg.Event, mut a TextField) {
-	if a.is_selected {
-		scroll_y := (int(e.scroll_y) / 2)
-		if abs(e.scroll_y) != e.scroll_y {
-			a.scroll_i += -scroll_y
-		} else if a.scroll_i > 0 {
-			a.scroll_i -= scroll_y
-		}
-	}
-}
-
-fn text_edit_scroll(e &gg.Event, mut a TextEdit) {
 	if a.is_selected {
 		scroll_y := (int(e.scroll_y) / 2)
 		if abs(e.scroll_y) != e.scroll_y {
