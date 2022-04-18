@@ -15,7 +15,7 @@ pub mut:
 	size           int
 	bold           bool
 	abs_fsize      bool
-    center_text_y  bool
+	center_text_y  bool
 }
 
 [params]
@@ -55,15 +55,15 @@ pub fn (mut btn Label) pack_do() {
 		color: btn.app.theme.text_color
 		bold: btn.bold
 	})
-    
-    lines := btn.text.split_into_lines()
 
-    for line in lines {
-        width := text_width(btn.app, line)
-        if btn.width < width {
-            btn.width = width
-        }
-    }
+	lines := btn.text.split_into_lines()
+
+	for line in lines {
+		width := text_width(btn.app, line)
+		if btn.width < width {
+			btn.width = width
+		}
+	}
 
 	th := text_height(btn.app, '{!A')
 
@@ -105,10 +105,9 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 	mut line_height := text_height(app, '1A{')
 	mut my := 0
 	for mut spl in text.split('\n') {
-        yp := if this.center_text_y { y + (height / 2) - sizh + my } else { y + my }
-    
-		app.gg.draw_text(x, yp, spl.replace('\t', '  '.repeat(8)),
-			gx.TextCfg{
+		yp := if this.center_text_y { y + (height / 2) - sizh + my } else { y + my }
+
+		app.gg.draw_text(x, yp, spl.replace('\t', '  '.repeat(8)), gx.TextCfg{
 			size: app.font_size + this.size
 			color: app.theme.text_color
 			bold: this.bold
