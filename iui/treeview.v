@@ -31,8 +31,11 @@ pub fn tree(app &Window, text string) Tree {
 pub fn (mut tr Tree) draw() {
 	mut mult := 20
 	app := tr.app
-	mut bg := app.theme.button_bg_normal
-	bord := if tr.is_selected && tr.childs.len > 0 { app.theme.button_bg_hover } else { bg }
+	bord := if tr.is_selected && tr.childs.len > 0 {
+		app.theme.button_bg_hover
+	} else {
+		app.theme.button_bg_normal
+	}
 
 	half_wid := tr.width / 2
 
@@ -42,13 +45,21 @@ pub fn (mut tr Tree) draw() {
 	midy := tr.y + 10
 
 	if tr.y >= tr.min_y {
+		bg := app.theme.button_bg_normal
 		tr.app.gg.draw_rect_filled(tr.x, tr.y + 3, tr.width - 4, tr.height, bg)
 	}
-	if (abs(mid - app.mouse_x) < half_wid) && (abs(midy - app.mouse_y) < 10) {
-		bg = app.theme.button_bg_hover
+
+	if (abs(mid - app.mouse_x) < half_wid) && (abs(midy - app.mouse_y) < tr.height / 2) {
 		tr.is_hover = true
 	} else {
 		tr.is_hover = false
+	}
+
+	if (abs(mid - app.mouse_x) < half_wid) && (abs(midy - app.mouse_y) < 10) {
+		bg := app.theme.button_bg_hover
+		if y >= tr.min_y {
+			tr.app.draw_bordered_rect(tr.x, y + 3, tr.width - 8, 20, 2, bg, bord)
+		}
 	}
 
 	if (abs(mid - app.click_x) < half_wid) && (abs(midy - app.click_y) < 10 && app.bar.tik > 98
@@ -58,7 +69,8 @@ pub fn (mut tr Tree) draw() {
 		tr.is_selected = !tr.is_selected
 		tr.click_event_fn(app, *tr)
 
-		bg = app.theme.button_bg_click
+		bg := app.theme.button_bg_click
+		tr.app.draw_bordered_rect(tr.x, y + 3, tr.width - 8, 20, 2, bg, bord)
 	}
 
 	if tr.is_selected {
@@ -68,10 +80,6 @@ pub fn (mut tr Tree) draw() {
 	}
 
 	if y >= tr.min_y {
-		if tr.is_hover {
-			tr.app.draw_bordered_rect(tr.x, y + 3, tr.width - 8, 20, 2, bg, bord)
-		}
-
 		if tr.is_selected {
 			tr.app.gg.draw_triangle_filled(tr.x + 5, y + 8, tr.x + 12, y + 8, tr.x + 8,
 				y + 14, app.theme.text_color)
