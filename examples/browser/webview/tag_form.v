@@ -21,15 +21,13 @@ fn handle_form_tags(mut win ui.Window, mut box ui.Box, sub &html.Tag, mut conf D
 		}
 
 		if typ == 'text' || 'type' !in attr {
-			mut te := ui.textedit(win, '')
-			te.draw_line_numbers = false
-			te.code_syntax_on = false
+			mut te := ui.textfield(win, '')
 
 			if 'name' in attr {
 				conf.action = conf.action + '?' + attr['name'] + '='
 			}
 
-			te.set_bounds(0, 0, size * 8, 20)
+			te.set_bounds(0, 0, size * 8, 25)
 			conf.last_need = te
 			box.add_child(te)
 		}
@@ -46,10 +44,10 @@ fn handle_form_tags(mut win ui.Window, mut box ui.Box, sub &html.Tag, mut conf D
 fn form_submit(win_ptr voidptr, btn_ptr voidptr, data voidptr) {
 	mut win := &ui.Window(win_ptr)
 	conf := &DocConfig(data)
-	te := &ui.TextEdit(conf.last_need)
+	te := &ui.TextField(conf.last_need)
 
 	formatted_url := format_url(conf.action, conf.page_url)
-	full_url := formatted_url + te.lines[0]
+	full_url := formatted_url + te.text
 
 	load_url(mut win, full_url)
 }

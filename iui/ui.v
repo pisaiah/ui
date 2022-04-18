@@ -198,6 +198,7 @@ pub fn window(theme Theme, title string, width int, height int) &Window {
 [heap]
 pub struct WindowConfig {
 	font_path string = font.default()
+	font_size int    = 16
 	ui_mode   bool
 	user_data voidptr
 }
@@ -208,6 +209,7 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 		theme: theme
 		bar: 0
 		config: config
+		font_size: config.font_size
 	}
 
 	// Call blank function so -skip-unused won't skip it
@@ -223,7 +225,7 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 		event_fn: on_event
 		user_data: app // TODO config.user_data
 		font_path: config.font_path
-		font_size: app.font_size
+		font_size: config.font_size
 		ui_mode: config.ui_mode
 	)
 	return app

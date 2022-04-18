@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<div id="test"></div>
+
+<canvas id="myCanvas">Your browser does not support the canvas tag.</canvas>
+
+<script>
+function $(id) {return document.getElementById(id)}
+
+// Reference:
+// 
+// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/measureText
+// https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
+// https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics/actualBoundingBoxAscent
+// https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics/actualBoundingBoxDescent
+// Works in modern browsers (No IE)
+
+function do_stuff() {
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+  	ctx.font = "16px Arial";
+	ctx.fillText('Hello world', 20, 30);
+
+	var metrics = ctx.measureText('Hello world');
+    var width = int(metrics.width)
+
+	// Note: V's current text_size is broken
+    // 
+	var my_test = int(ctx.measureText('Hello').width) + int(ctx.measureText(' world').width);
+    var is_equal = width == my_test // in V, this would be false.
+
+	let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+	let actualHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+    $('test').innerHTML = width + ' | ' + my_test + ' | ' + is_equal + ' | ' + int(actualHeight)
+
+}
+
+function int(val) {
+	return parseInt(Math.round(val))
+}
+
+do_stuff()
+
+</script>
+
+</body>
+</html>

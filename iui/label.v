@@ -15,6 +15,7 @@ pub mut:
 	size           int
 	bold           bool
 	abs_fsize      bool
+    center_text_y  bool
 }
 
 [params]
@@ -54,23 +55,21 @@ pub fn (mut btn Label) pack_do() {
 		color: btn.app.theme.text_color
 		bold: btn.bold
 	})
+    
+    lines := btn.text.split_into_lines()
 
-	width := text_width(btn.app, btn.text)
-	btn.width = width
+    for line in lines {
+        width := text_width(btn.app, line)
+        if btn.width < width {
+            btn.width = width
+        }
+    }
 
 	th := text_height(btn.app, '{!A')
 
 	// btn.height = (th * btn.text.split('\n').len) + 4 + (btn.size)
 
-	mut hi := 0
-	lines := btn.text.split_into_lines()
-	for line in lines {
-		if line.trim_space().len > 0 {
-			hi += text_height(btn.app, line)
-		} else {
-			hi += th
-		}
-	}
+	hi := th * lines.len
 
 	font_size := btn.size //+ btn.app.font_size
 	btn.height = hi + 4 + (font_size * lines.len)
@@ -106,7 +105,9 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 	mut line_height := text_height(app, '1A{')
 	mut my := 0
 	for mut spl in text.split('\n') {
-		app.gg.draw_text(x, y + (height / 2) - sizh + my, spl.replace('\t', '  '.repeat(8)),
+        yp := if this.center_text_y { y + (height / 2) - sizh + my } else { y + my }
+    
+		app.gg.draw_text(x, yp, spl.replace('\t', '  '.repeat(8)),
 			gx.TextCfg{
 			size: app.font_size + this.size
 			color: app.theme.text_color
