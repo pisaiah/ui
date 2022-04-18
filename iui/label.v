@@ -58,12 +58,14 @@ pub fn (mut btn Label) pack_do() {
 
 	lines := btn.text.split_into_lines()
 
+	mut min_width := 0
 	for line in lines {
 		width := text_width(btn.app, line)
-		if btn.width < width {
-			btn.width = width
+		if min_width < width {
+			min_width = width
 		}
 	}
+	btn.width = min_width
 
 	th := text_height(btn.app, '{!A')
 
