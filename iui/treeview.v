@@ -14,6 +14,7 @@ pub mut:
 	open           int
 	min_y          int
 	is_hover       bool
+	padding_top    int
 }
 
 pub fn (mut tree Tree) set_click(myfn fn (mut Window, Tree)) {
@@ -40,7 +41,7 @@ pub fn (mut tr Tree) draw() {
 	half_wid := tr.width / 2
 
 	scroll_height := text_height(app, 'A') / 2
-	y := tr.y - (tr.scroll_i * scroll_height)
+	y := tr.y - (tr.scroll_i * scroll_height) + tr.padding_top
 	mid := tr.x + half_wid
 	midy := tr.y + 10
 
@@ -105,7 +106,7 @@ pub fn (mut tr Tree) draw() {
 			tr.is_mouse_rele = child.is_mouse_rele
 
 			if mut child is Tree {
-				mult += child.open + 8
+				mult += child.open + 6
 			} else {
 				mult += child.height
 			}

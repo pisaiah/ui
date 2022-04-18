@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.6'
+	version = '0.0.7'
 )
 
 pub struct Bounds {

@@ -43,9 +43,8 @@ fn main() {
 
 	mut vbox := ui.vbox(window)
 
-	mut res_box := ui.textedit(window, '')
-	res_box.code_syntax_on = false
-	res_box.padding_y = 10
+	mut res_box := ui.textfield(window, '')
+	// res_box.padding_y = 10
 	res_box.set_bounds(0, 0, 64 * 4, 35)
 	vbox.add_child(res_box)
 
@@ -69,7 +68,7 @@ fn main() {
 		for el in row {
 			mut num_btn := ui.button(window, el)
 			num_btn.set_bounds(0, 0, el_width, el_height)
-			num_btn.set_click_fn(on_click_fn, res_box)
+			// num_btn.set_click_fn(on_click_fn, res_box)
 			num_btn.draw_event_fn = btn_draw
 			hbox_br.add_child(num_btn)
 		}
@@ -117,16 +116,22 @@ fn btn_draw(mut win ui.Window, com &ui.Component) {
 	mut this := *com
 	this.width = width / 4
 	this.height = height / 6
+
+	if mut this is ui.Button {
+		if this.is_mouse_rele {
+			on_click_fn(voidptr(0), this, this.user_data)
+		}
+	}
 }
 
 fn on_click_fn(ptr_win voidptr, ptr_btn voidptr, extra voidptr) {
 	mut btn := &ui.Button(ptr_btn)
-	mut res_box := &ui.TextEdit(extra)
+	mut res_box := &ui.TextField(extra)
 
 	mut txt := btn.text
 
 	if txt == ' C ' || txt == ' CE ' {
-		res_box.lines[0] = ''
+		res_box.text = ''
 		return
 	}
 
@@ -135,26 +140,26 @@ fn on_click_fn(ptr_win voidptr, ptr_btn voidptr, extra voidptr) {
 	}
 
 	if txt == ' ← ' {
-		line := res_box.lines[0].trim_right(' ')
+		line := res_box.text.trim_right(' ')
 		if res_box.carrot_left > 0 {
-			res_box.lines[0] = line.substr(0, line.len - 1).trim_right(' ')
+			res_box.text = line.substr(0, line.len - 1).trim_right(' ')
 		}
 		return
 	}
 
 	if txt == ' = ' {
-		comput := compute_value(res_box.lines[0]).str()
+		comput := compute_value(res_box.text).str()
 
 		if comput.ends_with('.') {
-			res_box.lines[0] = comput.substr(0, comput.len - 1)
+			res_box.text = comput.substr(0, comput.len - 1)
 		} else {
-			res_box.lines[0] = comput
+			res_box.text = comput
 		}
 		return
 	}
 
-	res_box.lines[0] = res_box.lines[0] + txt
-	res_box.carrot_left = res_box.lines[0].len
+	res_box.text = res_box.text + txt
+	res_box.carrot_left = res_box.text.len
 }
 
 fn compute_value(input string) f32 {

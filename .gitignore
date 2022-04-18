@@ -2,6 +2,7 @@
 examples/*.exe
 !upx.exe
 !aupx.exe
+iui/tree.v
 
 #
 #  See: https://github.com/isaiahpatton/vide
