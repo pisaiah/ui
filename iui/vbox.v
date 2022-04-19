@@ -63,7 +63,7 @@ pub fn (mut this VBox) draw() {
 		}
 
 		if this.is_mouse_down {
-			if point_in_raw(mut child, this.win.click_x, this.win.click_y) {
+			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
 				child.is_mouse_down = true
 			} else {
 				child.is_mouse_down = false
@@ -84,7 +84,7 @@ pub fn (mut this VBox) draw() {
 			child.is_mouse_rele = false
 		}
 
-		o_y += child.height
+		o_y += child.height + child.y
 
 		if width < (child.width + child.x) {
 			width = (child.width + child.x)
@@ -95,6 +95,8 @@ pub fn (mut this VBox) draw() {
 			break
 		}
 	}
+
+	println(this.is_mouse_down)
 
 	// this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
 
@@ -113,7 +115,7 @@ pub fn (mut this VBox) draw() {
     }*/
 
 	// this.is_mouse_down = false
-	this.is_mouse_rele = false
+	// this.is_mouse_rele = false
 
 	if this.win.debug_draw {
 		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.orange)

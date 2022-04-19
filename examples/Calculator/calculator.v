@@ -68,6 +68,7 @@ fn main() {
 		for el in row {
 			mut num_btn := ui.button(window, el)
 			num_btn.set_bounds(0, 0, el_width, el_height)
+			num_btn.user_data = res_box
 			// num_btn.set_click_fn(on_click_fn, res_box)
 			num_btn.draw_event_fn = btn_draw
 			hbox_br.add_child(num_btn)
@@ -119,16 +120,17 @@ fn btn_draw(mut win ui.Window, com &ui.Component) {
 
 	if mut this is ui.Button {
 		if this.is_mouse_rele {
-			on_click_fn(voidptr(0), this, this.user_data)
+			on_click_fn(voidptr(0), mut this, voidptr(0))
 		}
 	}
 }
 
-fn on_click_fn(ptr_win voidptr, ptr_btn voidptr, extra voidptr) {
-	mut btn := &ui.Button(ptr_btn)
-	mut res_box := &ui.TextField(extra)
+fn on_click_fn(ptr_win voidptr, mut btn ui.Button, extra voidptr) {
+	// mut btn := &ui.Button(ptr_btn)
 
 	mut txt := btn.text
+	println(txt)
+	mut res_box := &ui.TextField(btn.user_data)
 
 	if txt == ' C ' || txt == ' CE ' {
 		res_box.text = ''
@@ -218,7 +220,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	modal.top_off = 20
 
 	mut title := ui.label(win, 'Calculator')
-	title.set_pos(20, 4)
+	title.set_pos(20, 20)
 	title.set_config(28, true, true)
 	title.bold = true
 	title.pack()
@@ -227,7 +229,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 		'Small Calculator made in\nthe V Programming Language.\n\nVersion: 0.1\nUI Version: ' +
 		ui.version)
 
-	label.set_pos(22, 14)
+	label.set_pos(22, 64)
 	label.pack()
 
 	mut can := ui.button(win, 'OK')

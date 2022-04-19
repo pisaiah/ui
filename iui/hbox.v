@@ -53,7 +53,7 @@ pub fn (mut this HBox) draw() {
 	mut yyy := 0
 
 	for mut child in this.children {
-		child.scroll_i = this.scroll_i
+		// child.scroll_i = this.scroll_i
 		if yyy < child.height {
 			yyy = child.height
 		}
@@ -69,7 +69,8 @@ pub fn (mut this HBox) draw() {
 
 		draw_with_offset(mut child, this.x + o_x, this.y + o_y)
 
-		/*if this.is_mouse_rele {
+		/*
+		if this.is_mouse_rele {
 			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
 				//child.is_mouse_rele = true
 				//this.is_mouse_rele = false
@@ -122,7 +123,7 @@ pub fn (mut this HBox) draw() {
 		this.height = this.min_height
 	}
 
-	//this.is_mouse_rele = false
+	// this.is_mouse_rele = false
 
 	if this.center_screen {
 		size := this.win.gg.window_size()
