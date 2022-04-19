@@ -2,15 +2,15 @@ module main
 
 import gg
 import iui as ui { debug }
-import time
 import gx
 
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window_with_config(ui.get_system_theme(), 'Calculator', 270, 325,
+	mut window := ui.window_with_config(ui.get_system_theme(), 'Calculator', 280, 340,
 		&ui.WindowConfig{
 		ui_mode: false
+		font_size: 18
 	})
 
 	// Setup Menubar and items

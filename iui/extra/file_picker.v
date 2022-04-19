@@ -10,6 +10,7 @@ pub mut:
 	dir_input      &ui.TextField
 	file_list      &ui.VBox
 	file_name      &ui.HBox
+	ok_btn         &ui.Button
 	path_change_fn fn (voidptr, voidptr)
 }
 
@@ -48,10 +49,7 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	file_name := if os.is_dir(conf.path) { '' } else { os.base(conf.path) }
 
 	mut dir_input := ui.textfield(window, dir)
-	// dir_input.padding_y = 4
-
 	mut file_input := ui.textfield(window, file_name)
-	// file_input.padding_y = 4
 
 	padding := if conf.in_modal { 10 } else { 30 }
 
@@ -65,11 +63,13 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	res_box.draw_event_fn = vbtn_draw
 	res_box.overflow = false
 
-	fi_y := (33 * 10) + 30
-	file_input.set_bounds(24, 0, 391, 25)
+	fi_y := (36 * 10) + 35
+	file_input.set_bounds(24, 0, 300, 25)
 	file_input.set_id(mut window, 'file-input')
 
 	mut hbox := ui.hbox(window)
+	hbox.set_bounds(0, 16, 0, 0)
+	hbox.pack()
 
 	mut lbl := ui.label(window, 'File name:')
 	lbl.set_bounds(10, 4, 0, 0)
@@ -79,7 +79,11 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	hbox.set_bounds(0, padding + fi_y, 491, 25)
 	hbox.add_child(file_input)
 
-	return &FilePicker{dir_input, res_box, hbox, conf.path_change_fn}
+	mut btn := ui.button(window, 'OK')
+	btn.set_bounds(8, 0, 64, 25)
+	hbox.add_child(btn)
+
+	return &FilePicker{dir_input, res_box, hbox, &btn, conf.path_change_fn}
 }
 
 fn before_txt_change(mut win ui.Window, tb ui.TextField) bool {
@@ -128,7 +132,7 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	img1.pack()
 
 	mut lbl := ui.label(win, file)
-	lbl.set_bounds(50, 0, 300, 32)
+	lbl.set_bounds(50, 0, 300, 28)
 	lbl.draw_event_fn = lbl_draw_ev
 
 	file_size := os.file_size(full_path)
@@ -148,8 +152,9 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	hbox.draw_event_fn = hbox_draw_ev
 	hbox.text = os.real_path(full_path)
 
-	hbox.set_bounds(1, 1, 490, 32)
-	hbox.set_min_height(32)
+	hbox.set_bounds(1, 0, 490, 40)
+	hbox.z_index = 18
+	// hbox.set_min_height(32)
 	return hbox
 }
 
@@ -186,8 +191,10 @@ pub fn round(str string) string {
 fn lbl_draw_ev(mut win ui.Window, com &ui.Component) {
 	mut this := *com
 	if mut this is ui.Label {
-		this.app.gg.draw_rect_empty(this.rx - 10, this.ry, this.width - 4, this.height - 2,
-			win.theme.button_border_normal)
+		this.height = ui.text_height(win, 'A{}') + 5
+
+		this.app.gg.draw_rect_filled(this.rx - 10, this.ry, this.width - 4, this.height - 2,
+			win.theme.button_bg_normal)
 	}
 }
 
@@ -208,7 +215,7 @@ fn hbox_draw_ev(mut win ui.Window, com &ui.Component) {
 fn vbtn_draw(mut win ui.Window, com &ui.Component) {
 	mut this := *com
 
-	this.height = (33 * 10) - 1
+	this.height = (34 * 10)
 
 	if mut this is ui.VBox {
 		draw_bg(this)
@@ -256,24 +263,17 @@ struct FilePickerModalData {
 
 pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data voidptr) {
 	mut modal := ui.modal(win, 'Choose Folder & File')
-	modal.top_off = 20
+	modal.top_off = 16
 	modal.in_width = 500
-	modal.in_height = 450
+	modal.in_height = 460
 	modal.set_id(mut win, 'file_picker_modal')
-
-	modal.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
-		mut vbox := &ui.VBox(win.get_from_id('edit'))
-		vbox.scroll_i = com.scroll_i
-	}
 
 	mut picker := create_file_picker(mut win, conf)
 	modal.add_child(picker.dir_input)
 	modal.add_child(picker.file_list)
 	modal.add_child(picker.file_name)
 
-	mut can := ui.button(win, 'OK')
-	can.set_bounds(10, 410, 70, 25)
-	can.set_click_fn(fn (a voidptr, b voidptr, c voidptr) {
+	picker.ok_btn.set_click_fn(fn (a voidptr, b voidptr, c voidptr) {
 		mut win := &ui.Window(a)
 		data := &FilePickerModalData(c)
 
@@ -283,7 +283,6 @@ pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data void
 	}, &FilePickerModalData{picker, user_data})
 	modal.z_index = 600
 	modal.needs_init = false
-	modal.add_child(can)
 
 	load_directory(os.dir(conf.path), picker.file_list)
 	win.add_child(modal)
