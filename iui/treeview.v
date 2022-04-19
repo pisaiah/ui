@@ -115,8 +115,6 @@ pub fn (mut tr Tree) draw() {
 		})
 	}
 
-	mut item_total := 1
-
 	if tr.is_selected {
 		for mut child in tr.childs {
 			child.width = tr.width - 8
@@ -138,10 +136,6 @@ pub fn (mut tr Tree) draw() {
 
 			if mut child is Tree {
 				mult += child.open + 5
-				item_total += 1
-				if child.is_selected {
-					item_total += child.childs.len
-				}
 			} else {
 				mult += child.height
 			}
@@ -151,7 +145,6 @@ pub fn (mut tr Tree) draw() {
 	tr.open = mult
 
 	if !tr.is_child {
-		can_fit := tr.height / 26
 		tr.draw_scrollbar((tr.height / 25) - 1, ((tr.open) / 25) + 1)
 	}
 }
