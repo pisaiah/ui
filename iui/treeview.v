@@ -13,8 +13,10 @@ pub mut:
 	childs         []Component
 	open           int
 	min_y          int
+    is_child       bool
 	is_hover       bool
 	padding_top    int
+    parent_height  int
 }
 
 pub fn (mut tree Tree) set_click(myfn fn (mut Window, Tree)) {
@@ -29,6 +31,25 @@ pub fn tree(app &Window, text string) Tree {
 	}
 }
 
+fn (mut com Tree) draw_scrollbar(cl int, spl_len int) {
+	// Calculate postion for scroll
+	sth := int((f32((com.scroll_i)) / f32(spl_len - 1)) * com.height) + com.padding_top
+	enh := int((f32(cl) / f32(spl_len)) * com.height) - (com.padding_top * 2) - com.padding_top
+	requires_scrollbar := (com.height - (enh)) > 0
+
+	// Draw Scroll
+	if requires_scrollbar {
+		wid := 10
+		min := wid + 1
+
+		com.app.draw_bordered_rect(com.x + com.width - min, com.y + 1, wid, com.height - 2,
+			2, com.app.theme.scroll_track_color, com.app.theme.button_bg_hover)
+		com.app.draw_bordered_rect(com.x + com.width - min, com.y + sth + 1, wid, enh - 2,
+			2, com.app.theme.scroll_bar_color, com.app.theme.scroll_track_color)
+	}
+}
+
+
 pub fn (mut tr Tree) draw() {
 	mut mult := 20
 	app := tr.app
@@ -40,7 +61,7 @@ pub fn (mut tr Tree) draw() {
 
 	half_wid := tr.width / 2
 
-	scroll_height := text_height(app, 'A') / 2
+	scroll_height := 25//text_height(app, 'A') / 2
 	y := tr.y - (tr.scroll_i * scroll_height) + tr.padding_top
 	mid := tr.x + half_wid
 	midy := tr.y + 10
@@ -95,22 +116,43 @@ pub fn (mut tr Tree) draw() {
 		})
 	}
 
+    mut item_total := 1
+
 	if tr.is_selected {
 		for mut child in tr.childs {
 			child.width = tr.width - 8
 			child.is_mouse_down = tr.is_mouse_down
 			child.is_mouse_rele = tr.is_mouse_rele
 
+            if mut child is Tree {
+                if !tr.is_child {
+                    child.parent_height = tr.height
+                } else {
+                    child.parent_height = tr.parent_height
+                }
+                child.is_child = true
+            }
+
 			draw_with_offset(mut child, tr.x, y + mult)
 
 			tr.is_mouse_rele = child.is_mouse_rele
 
 			if mut child is Tree {
-				mult += child.open + 6
+				mult += child.open + 5
+                item_total += 1
+                if child.is_selected {
+                    item_total += child.childs.len
+                }
 			} else {
 				mult += child.height
 			}
 		}
 	}
+    
 	tr.open = mult
+    
+    if !tr.is_child {
+        can_fit := tr.height / 26
+        tr.draw_scrollbar((tr.height / 25) - 1, ((tr.open) / 25) + 1)
+    }
 }

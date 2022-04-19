@@ -96,10 +96,6 @@ pub fn (mut this VBox) draw() {
 		}
 	}
 
-	println(this.is_mouse_down)
-
-	// this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
-
 	if o_y != this.height {
 		this.height = o_y + (this.children.len)
 	}
