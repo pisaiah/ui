@@ -71,20 +71,20 @@ fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	if mut com is Tabbox {
 		mut val := com.kids[com.active_tab]
 		for mut comm in val {
-        			comm.is_mouse_down = false
+			comm.is_mouse_down = false
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.is_mouse_rele = is_point_in
-                return true
+				return true
 			}
 		}
 	}
 
 	for mut child in com.children {
 		if child.on_mouse_rele_component(app) {
-            return true
-        }
+			return true
+		}
 	}
-    return is_point_in
+	return is_point_in
 }
 
 fn on_mouse_down_event(e &gg.Event, mut app Window) {
@@ -96,8 +96,8 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 
 	for mut com in app.components {
 		if com.on_mouse_down_component(app) {
-            return
-        }
+			return
+		}
 	}
 }
 
@@ -108,8 +108,8 @@ fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	app.components.sort(a.z_index > b.z_index)
 	for mut com in app.components {
 		if com.on_mouse_rele_component(app) {
-            return
-        }
+			return
+		}
 	}
 }
 
