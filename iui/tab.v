@@ -85,9 +85,9 @@ fn (mut tb Tabbox) draw_tab(key_ string, mut val []Component, mx int) int {
 	if tb.active_tab == key_ {
 		val.sort(a.z_index < b.z_index)
 		for mut com in val {
-			com.draw_event_fn(tb.win, &com)
+			com.draw_event_fn(tb.win, com)
 			draw_with_offset(mut com, tb.x, tb.y + theig)
-			com.after_draw_event_fn(tb.win, &com)
+			com.after_draw_event_fn(tb.win, com)
 		}
 	}
 	return tsize
