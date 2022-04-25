@@ -20,6 +20,6 @@ fn bg_area(win &ui.Window) &BackgroundBox {
 	}
 }
 
-fn (mut this BackgroundBox) draw() {
-	this.win.gg.draw_rect_filled(this.x, this.y, this.width, this.height, this.background)
+fn (mut this BackgroundBox) draw(ctx &ui.GraphicsContext) {
+	ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, this.background)
 }

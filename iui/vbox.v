@@ -62,7 +62,6 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 			}
 		}
 
-		/*
 		if this.is_mouse_down {
 			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
 				child.is_mouse_down = true
@@ -83,7 +82,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 			}
 		} else {
 			child.is_mouse_rele = false
-		}*/
+		}
 
 		o_y += child.height + child.y
 

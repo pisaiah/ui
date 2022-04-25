@@ -97,7 +97,7 @@ fn seperator(size int) &Seperator {
 	}
 }
 
-fn (mut this Seperator) draw() {
+fn (mut this Seperator) draw(ctx &ui.GraphicsContext) {
 }
 
 fn vbtn_draw(mut win ui.Window, com &ui.Component) {
