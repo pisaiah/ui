@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.7'
+	version = '0.0.8'
 )
 
 pub struct Bounds {
@@ -48,7 +48,7 @@ mut:
 	after_draw_event_fn fn (mut Window, &Component)
 	children []Component
 	id string
-	draw()
+	draw(&GraphicsContext)
 }
 
 [heap]
@@ -91,7 +91,7 @@ fn blank_draw_event_fn(mut win Window, tree &Component) {
 	// Stub
 }
 
-pub fn (mut com Component_A) draw() {
+pub fn (mut com Component_A) draw(ctx &GraphicsContext) {
 	// Stub
 }
 
@@ -114,15 +114,37 @@ pub fn point_in(mut com Component, px int, py int) bool {
 	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
 }
 
-pub fn draw_with_offset(mut com Component, offx int, offy int) {
+pub fn (win &Window) draw_with_offset(mut com Component, offx int, offy int) {
 	com.rx = com.x + offx
 	com.ry = com.y + offy
 
 	com.x = com.x + offx
 	com.y = com.y + offy
-	com.draw()
+	com.draw(win.graphics_context)
 	com.x = com.x - offx
 	com.y = com.y - offy
+}
+
+pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
+	com.rx = com.x + off_x
+	com.ry = com.y + off_y
+
+	com.x = com.x + off_x
+	com.y = com.y + off_y
+	com.draw(ctx)
+	com.x = com.x - off_x
+	com.y = com.y - off_y
+}
+
+pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
+	com.rx = com.x + off_x
+	com.ry = com.y + off_y
+
+	com.x = com.x + off_x
+	com.y = com.y + off_y
+	com.draw(ctx)
+	com.x = com.x - off_x
+	com.y = com.y - off_y
 }
 
 pub fn (mut com Component_A) set_bounds(x int, y int, width int, height int) {
@@ -153,25 +175,41 @@ pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
 [heap]
 struct Window {
 pub mut:
-	gg             &gg.Context
-	font_size      int = 16
-	mouse_x        int
-	mouse_y        int
-	click_x        int
-	click_y        int
-	theme          Theme
-	bar            &Menubar
-	components     []Component
-	show_menu_bar  bool = true
-	shift_pressed  bool
-	key_down_event fn (mut Window, gg.KeyCode, &gg.Event) = fn (mut win Window, key gg.KeyCode, e &gg.Event) {}
-	last_update    i64
-	frame_time     int
-	has_event      bool = true
-	config         &WindowConfig
-	extra_map      map[string]string
-	id_map         map[string]voidptr
-	debug_draw     bool
+	gg               &gg.Context
+	font_size        int = 16
+	mouse_x          int
+	mouse_y          int
+	click_x          int
+	click_y          int
+	theme            Theme
+	bar              &Menubar
+	components       []Component
+	show_menu_bar    bool = true
+	shift_pressed    bool
+	key_down_event   fn (mut Window, gg.KeyCode, &gg.Event) = fn (mut win Window, key gg.KeyCode, e &gg.Event) {}
+	last_update      i64
+	frame_time       int
+	has_event        bool = true
+	config           &WindowConfig
+	extra_map        map[string]string
+	id_map           map[string]voidptr
+	debug_draw       bool
+	graphics_context &GraphicsContext
+}
+
+// Struct for Graphics context
+// (Removes the need to pass Window everywhere for drawing)
+pub struct GraphicsContext {
+pub:
+	gg    &gg.Context
+	theme &Theme
+}
+
+fn new_graphics_context(win &Window) &GraphicsContext {
+	return &GraphicsContext{
+		gg: win.gg
+		theme: &win.theme
+	}
 }
 
 pub fn (mut com Component_A) set_id(mut win Window, id string) {
@@ -210,6 +248,7 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 		bar: 0
 		config: config
 		font_size: config.font_size
+		graphics_context: 0
 	}
 
 	// Call blank function so -skip-unused won't skip it
@@ -228,6 +267,7 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 		font_size: config.font_size
 		ui_mode: config.ui_mode
 	)
+	app.graphics_context = new_graphics_context(app)
 	return app
 }
 
@@ -286,12 +326,12 @@ fn (mut app Window) draw() {
 		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()
 			if bar != voidptr(0) {
-				bar.draw()
+				bar.draw(app.graphics_context)
 			}
 			bar_drawn = true
 		}
 
-		com.draw()
+		com.draw(app.graphics_context)
 		com.after_draw_event_fn(app, com)
 	}
 
@@ -299,7 +339,7 @@ fn (mut app Window) draw() {
 	if app.show_menu_bar && !bar_drawn {
 		mut bar := app.get_bar()
 		if bar != voidptr(0) {
-			bar.draw()
+			bar.draw(app.graphics_context)
 		}
 	}
 

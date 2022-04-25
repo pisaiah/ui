@@ -58,7 +58,7 @@ fn test(mut this Slider) {
 }
 
 // Draw this component
-pub fn (mut this Slider) draw() {
+pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 	if this.hide {
 		return
 	}
@@ -104,18 +104,18 @@ pub fn (mut this Slider) draw() {
 		wid -= per * 20
 
 		// Horizontal
-		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, this.win.theme.scroll_track_color,
-			this.win.theme.button_border_normal)
-		this.win.gg.draw_rect_filled(this.x + wid, this.y, 20, this.height, this.win.theme.scroll_bar_color)
-		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, this.win.theme.button_border_normal)
+		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, ctx.theme.scroll_track_color,
+			ctx.theme.button_border_normal)
+		ctx.gg.draw_rect_filled(this.x + wid, this.y, 20, this.height, ctx.theme.scroll_bar_color)
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
 	} else {
 		mut wid := (this.height * per)
 		wid -= per * 20
 
 		// Vertical
-		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, this.win.theme.scroll_track_color,
-			this.win.theme.button_border_normal)
-		this.win.gg.draw_rect_filled(this.x, this.y + wid, this.width, 20, this.win.theme.scroll_bar_color)
-		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, this.win.theme.button_border_normal)
+		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, ctx.theme.scroll_track_color,
+			ctx.theme.button_border_normal)
+		ctx.gg.draw_rect_filled(this.x, this.y + wid, this.width, 20, ctx.theme.scroll_bar_color)
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
 	}
 }

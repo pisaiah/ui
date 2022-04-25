@@ -112,11 +112,15 @@ fn (mut this TextArea) clamp_values(lines_drawn int) {
 	}
 }
 
-fn (mut this TextArea) draw() {
+fn get_line_height(win &Window) int {
+	return text_height(win, 'A!{}!') + 2
+}
+
+fn (mut this TextArea) draw(ctx &GraphicsContext) {
 	win := this.win
 	this.draw_background()
 
-	line_height := text_height(win, 'A!{}')
+	line_height := get_line_height(win)
 
 	cfg := gx.TextCfg{
 		size: this.win.font_size
@@ -307,7 +311,7 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, str_fix_tab string, wid int, line int) {
 	mx := this.win.mouse_x - this.x
 	my := this.win.mouse_y - this.y
-	line_height := text_height(this.win, 'A!{}')
+	line_height := get_line_height(this.win)
 	my_lh := my / line_height
 
 	if this.down_pos.top == -1 {

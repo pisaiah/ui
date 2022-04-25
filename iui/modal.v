@@ -41,7 +41,7 @@ pub fn modal(app &Window, title string) &Modal {
 	}
 }
 
-pub fn (mut this Modal) draw() {
+pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	mut app := this.window
 	mut ws := gg.window_size()
 
@@ -83,7 +83,7 @@ pub fn (mut this Modal) draw() {
 
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
-		draw_with_offset(mut com, xs, this.y + this.top_off + 26)
+		app.draw_with_offset(mut com, xs, this.y + this.top_off + 26)
 	}
 }
 

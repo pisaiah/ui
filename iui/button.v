@@ -46,7 +46,7 @@ pub fn (mut this Button) set_background(color gx.Color) {
 	this.override_bg_color = color
 }
 
-pub fn (mut btn Button) draw() {
+pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	btn.app.draw_button(btn.x, btn.y, btn.width, btn.height, mut btn)
 }
 

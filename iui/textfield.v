@@ -58,8 +58,8 @@ fn (mut this TextField) draw_background() {
 	this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
 }
 
-fn (mut this TextField) draw() {
-	ctx := this.win.gg
+fn (mut this TextField) draw(ctx &GraphicsContext) {
+	gctx := this.win.gg
 	this.draw_background()
 
 	xp := this.x + 4
@@ -81,12 +81,12 @@ fn (mut this TextField) draw() {
 		color: color
 	}
 
-	ctx.draw_text(xp, this.y + 4, this.text, cfg)
+	gctx.draw_text(xp, this.y + 4, this.text, cfg)
 
 	pipe_width := text_width(this.win, '|') / 2
 	wid := text_width(this.win, this.text[0..this.carrot_left])
 
-	ctx.draw_text(xp + wid - pipe_width, yp, '|', cfg)
+	gctx.draw_text(xp + wid - pipe_width, yp, '|', cfg)
 
 	this.mouse_down_caret()
 }

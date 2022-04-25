@@ -36,7 +36,7 @@ pub fn (mut com Select) set_change(b fn (mut Window, Select, string, string)) {
 	com.change_event_fn = b
 }
 
-pub fn (mut item Select) draw() {
+pub fn (mut item Select) draw(ctx &GraphicsContext) {
 	x := item.x
 	y := item.y
 	app := item.app
@@ -133,8 +133,8 @@ fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Butt
 	mut bg := app.theme.button_bg_normal
 	mut border := app.theme.button_bg_normal
 
-	mut mid := (x + (width / 2))
-	mut midy := (y1 + (height / 2))
+	mid := (x + (width / 2))
+	midy := (y1 + (height / 2))
 
 	// Detect Hover
 	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {

@@ -38,7 +38,7 @@ pub fn hyperlink(app &Window, text string, url string, conf HyperlinkConfig) &Hy
 	}
 }
 
-pub fn (mut btn Hyperlink) draw() {
+pub fn (mut btn Hyperlink) draw(ctx &GraphicsContext) {
 	btn.app.draw_hyperlink(btn.x, btn.y, btn.width, btn.height, mut btn)
 }
 

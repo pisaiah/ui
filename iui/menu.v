@@ -94,18 +94,18 @@ pub fn menubar(app &Window, theme Theme) &Menubar {
 	}
 }
 
-pub fn (mut bar Menubar) draw() {
+pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
 	mut wid := gg.window_size().width
 	if bar.width > 0 {
 		wid = bar.width
 	}
 
-	bar.app.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, 25, 2, bar.theme.menubar_background)
-	bar.app.gg.draw_rounded_rect_empty(bar.x, bar.y, wid, 25, 2, bar.theme.menubar_border)
+	ctx.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, 25, 2, bar.theme.menubar_background)
+	ctx.gg.draw_rounded_rect_empty(bar.x, bar.y, wid, 25, 2, bar.theme.menubar_border)
 
 	mut mult := 0
 	for mut item in bar.items {
-		bar.app.draw_menu_button(mult, bar.y, 56, 25, mut item)
+		bar.app.draw_menu_button(ctx, mult, bar.y, 56, 25, mut item)
 		if item.width > 0 {
 			mult += item.width + 4
 		} else {
@@ -138,7 +138,7 @@ fn (item &MenuItem) get_bg(app &Window, hover bool, click bool) gx.Color {
 	return app.theme.menubar_background
 }
 
-fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut item MenuItem) {
+fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ int, height int, mut item MenuItem) {
 	size := text_width(app, item.text) / 2
 	half_line_height := text_height(app, 'A!{') / 2
 
@@ -179,13 +179,13 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 			}
 		}
 
-		app.draw_bordered_rect(x, y + height, wid, (item.items.len * 26) + 2, 2, app.theme.dropdown_background,
+		app.draw_bordered_rect(x, y + height, wid, (item.items.len * 30) + 2, 2, app.theme.dropdown_background,
 			app.theme.dropdown_border)
 
 		mut mult := 0
 		for mut sub in item.items {
-			app.draw_menu_button(x + 1, y + height + mult + 1, wid - 2, 25, mut sub)
-			mult += 26
+			app.draw_menu_button(ctx, x + 1, y + height + mult + 1, wid - 2, 29, mut sub)
+			mult += 30
 		}
 	}
 
@@ -200,15 +200,16 @@ fn (mut app Window) draw_menu_button(x int, y int, width_ int, height int, mut i
 
 	// Draw Button Background & Border
 	if !item.no_paint_bg {
-		app.gg.draw_rounded_rect_filled(x, y, width, height, 2, bg)
-		app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
+		ctx.gg.draw_rect_filled(x, y, width, height, bg)
+		ctx.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
 	}
 
 	// Draw Button Text
 	if item.icon != 0 {
-		draw_with_offset(mut item.icon, x + (width / 2) - (item.icon.width / 2), y)
+		item.icon.set_pos(x + (width / 2) - (item.icon.width / 2), y)
+		item.icon.draw(ctx)
 	} else {
-		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height,
+		ctx.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height,
 			item.text, gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color

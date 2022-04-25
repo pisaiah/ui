@@ -21,7 +21,7 @@ pub fn progressbar(win &Window, val f32) &Progressbar {
 }
 
 // Draw this component
-pub fn (mut bar Progressbar) draw() {
+pub fn (mut bar Progressbar) draw(ctx &GraphicsContext) {
 	mut wid := bar.width * (0.01 * bar.text.f32())
 	bar.win.gg.draw_rounded_rect_filled(bar.x, bar.y, wid, bar.height, 4, bar.win.theme.checkbox_selected)
 	bar.win.gg.draw_rounded_rect_empty(bar.x, bar.y, bar.width, bar.height, 4, bar.win.theme.button_border_normal)

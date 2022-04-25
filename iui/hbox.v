@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 
 // HBox - implements Component interface
 struct HBox {
@@ -36,7 +35,7 @@ pub fn (mut this HBox) set_width_as_percent(flag bool, width int) {
 	this.raw_width = width
 }
 
-pub fn (mut this HBox) draw() {
+pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 	mut o_x := 0
 	mut o_y := 0
 
@@ -53,7 +52,6 @@ pub fn (mut this HBox) draw() {
 	mut yyy := 0
 
 	for mut child in this.children {
-		// child.scroll_i = this.scroll_i
 		if yyy < child.height {
 			yyy = child.height
 		}
@@ -67,29 +65,7 @@ pub fn (mut this HBox) draw() {
 			o_y += yyy + 2
 		}
 
-		draw_with_offset(mut child, this.x + o_x, this.y + o_y)
-
-		/*
-		if this.is_mouse_rele {
-			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
-				//child.is_mouse_rele = true
-				//this.is_mouse_rele = false
-			} else {
-				child.is_mouse_down = false
-				child.is_mouse_rele = false
-			}
-		} else {
-			// child.is_mouse_rele = false
-		}
-		if this.is_mouse_down {
-			if point_in_raw(mut child, this.win.click_x, this.win.click_y) {
-				child.is_mouse_down = true
-			} else {
-				child.is_mouse_down = false
-			}
-		} else {
-			// child.is_mouse_down = false
-		}*/
+		child.draw_with_offset(ctx, this.x + o_x, this.y + o_y)
 
 		o_x += child.x + child.width
 		index += 1
@@ -102,8 +78,6 @@ pub fn (mut this HBox) draw() {
 		}
 	}
 	yyy += 1
-
-	// this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
 
 	if yyy != this.height {
 		this.height = yyy
@@ -123,18 +97,17 @@ pub fn (mut this HBox) draw() {
 		this.height = this.min_height
 	}
 
-	// this.is_mouse_rele = false
-
 	if this.center_screen {
-		size := this.win.gg.window_size()
+		size := ctx.gg.window_size()
 
 		wid := this.width
 		this.x = (size.width / 2) - (wid / 2)
 	}
 
+	/*
 	if this.win.debug_draw {
 		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.red)
 		this.win.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y +
 			this.height, gx.red)
-	}
+	}*/
 }

@@ -40,7 +40,7 @@ pub fn label(app &Window, text string, conf LabelConfig) Label {
 	}
 }
 
-pub fn (mut btn Label) draw() {
+pub fn (mut btn Label) draw(ctx &GraphicsContext) {
 	btn.app.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn)
 }
 

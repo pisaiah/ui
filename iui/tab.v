@@ -33,7 +33,7 @@ pub fn (mut tb Tabbox) change_title(old_title string, new_title string) {
 }
 
 // Draw tab
-fn (mut tb Tabbox) draw_tab(key_ string, mut val []Component, mx int) int {
+fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Component, mx int) int {
 	key := os.base(key_)
 	is_active := tb.active_tab == key_
 
@@ -61,7 +61,7 @@ fn (mut tb Tabbox) draw_tab(key_ string, mut val []Component, mx int) int {
 		c_y := tb.y + my + (theig / 2) - sizh
 		tb.win.gg.draw_text(c_x, c_y, 'x', gx.TextCfg{
 			size: tb.win.font_size
-			color: tb.win.theme.text_color
+			color: ctx.theme.text_color
 		})
 
 		mid := c_x + (c_s / 2)
@@ -86,7 +86,7 @@ fn (mut tb Tabbox) draw_tab(key_ string, mut val []Component, mx int) int {
 		val.sort(a.z_index < b.z_index)
 		for mut com in val {
 			com.draw_event_fn(tb.win, com)
-			draw_with_offset(mut com, tb.x, tb.y + theig)
+			com.draw_with_offset(ctx, tb.x, tb.y + theig)
 			com.after_draw_event_fn(tb.win, com)
 		}
 	}
@@ -94,14 +94,14 @@ fn (mut tb Tabbox) draw_tab(key_ string, mut val []Component, mx int) int {
 }
 
 // Draw this component
-pub fn (mut tb Tabbox) draw() {
+pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	t_heig := 30
-	tb.win.gg.draw_rounded_rect_empty(tb.x, tb.y + t_heig - 1, tb.width, tb.height - (t_heig - 1),
-		2, tb.win.theme.button_border_normal)
+	ctx.gg.draw_rounded_rect_empty(tb.x, tb.y + t_heig - 1, tb.width, tb.height - (t_heig - 1),
+		2, ctx.theme.button_border_normal)
 	mut mx := 0
 
 	for key_, mut val in tb.kids {
-		mx += tb.draw_tab(key_, mut val, mx)
+		mx += tb.draw_tab(ctx, key_, mut val, mx)
 	}
 }
 

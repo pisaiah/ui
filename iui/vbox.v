@@ -25,7 +25,7 @@ pub fn (mut this VBox) pack() {
 	this.needs_pack = true
 }
 
-pub fn (mut this VBox) draw() {
+pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 	mut o_x := 0
 	mut o_y := 0
 
@@ -49,11 +49,11 @@ pub fn (mut this VBox) draw() {
 			continue
 		}
 
-		if !this.overflow && ypos > this.y + this.height {
+		if !this.overflow && (ypos + child.height) > this.y + this.height {
 			continue
 		}
 
-		draw_with_offset(mut child, this.x + o_x, ypos)
+		this.win.draw_with_offset(mut child, this.x + o_x, ypos)
 
 		if this.win.bar != 0 {
 			if this.win.bar.tik < 99 {
@@ -62,6 +62,7 @@ pub fn (mut this VBox) draw() {
 			}
 		}
 
+		/*
 		if this.is_mouse_down {
 			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
 				child.is_mouse_down = true
@@ -82,7 +83,7 @@ pub fn (mut this VBox) draw() {
 			}
 		} else {
 			child.is_mouse_rele = false
-		}
+		}*/
 
 		o_y += child.height + child.y
 
@@ -96,7 +97,7 @@ pub fn (mut this VBox) draw() {
 		}
 	}
 
-	if o_y != this.height {
+	if o_y != this.height && this.needs_pack {
 		this.height = o_y + (this.children.len)
 	}
 	if width != this.width && this.update_width {

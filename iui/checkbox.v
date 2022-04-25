@@ -64,7 +64,7 @@ fn (this &Checkbox) get_background(is_hover bool) gx.Color {
 }
 
 // Draw checkbox
-pub fn (mut com Checkbox) draw() {
+pub fn (mut com Checkbox) draw(ctx &GraphicsContext) {
 	// Draw Background & Border
 	com.draw_background()
 

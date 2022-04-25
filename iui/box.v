@@ -70,5 +70,5 @@ pub fn (mut this Box) get_vbox() &VBox {
 }
 
 // Ignored; Box is a utility, and does not draw.
-pub fn (mut this Box) draw() {
+pub fn (mut this Box) draw(ctx &GraphicsContext) {
 }

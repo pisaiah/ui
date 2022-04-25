@@ -50,7 +50,7 @@ fn (mut com Tree) draw_scrollbar(cl int, spl_len int) {
 	}
 }
 
-pub fn (mut tr Tree) draw() {
+pub fn (mut tr Tree) draw(ctx &GraphicsContext) {
 	mut mult := 20
 	app := tr.app
 	bord := if tr.is_selected && tr.childs.len > 0 {
@@ -131,7 +131,7 @@ pub fn (mut tr Tree) draw() {
 				child.is_child = true
 			}
 
-			draw_with_offset(mut child, tr.x, y + mult)
+			child.draw_with_offset(ctx, tr.x, y + mult)
 
 			tr.is_mouse_rele = child.is_mouse_rele
 
