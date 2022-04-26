@@ -85,8 +85,8 @@ pub fn theme_default() Theme {
 pub fn theme_dark() Theme {
 	return Theme{
 		name: 'Dark'
-		text_color: gx.rgb(245, 245, 245)
-		background: gx.rgb(50, 50, 50)
+		text_color: gx.rgb(230, 230, 230)
+		background: gx.rgb(30, 30, 30)
 		button_bg_normal: gx.rgb(10, 10, 10)
 		button_bg_hover: gx.rgb(70, 70, 70)
 		button_bg_click: gx.rgb(50, 50, 50)
@@ -97,7 +97,7 @@ pub fn theme_dark() Theme {
 		menubar_border: gx.rgb(30, 30, 30)
 		dropdown_background: gx.rgb(10, 10, 10)
 		dropdown_border: gx.rgb(0, 0, 0)
-		textbox_background: gx.rgb(10, 10, 10)
+		textbox_background: gx.rgb(42, 42, 42)
 		textbox_border: gx.rgb(130, 130, 130)
 		checkbox_selected: gx.rgb(130, 130, 130)
 		checkbox_bg: gx.rgb(5, 5, 5)

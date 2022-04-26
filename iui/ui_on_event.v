@@ -56,10 +56,17 @@ fn (mut com Component) on_mouse_down_component(app &Window) bool {
 		for mut comm in val {
 			if point_in_raw(mut comm, app.click_x, app.click_y) {
 				comm.is_mouse_down = is_point_in
-				return true
+				if comm.on_mouse_down_component(app) {
+					return true
+				}
 			}
 		}
 	}
+
+	if mut com is VBox || mut com is HBox {
+		return false
+	}
+
 	return true
 }
 
@@ -70,13 +77,18 @@ fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 
 	if mut com is Tabbox {
 		mut val := com.kids[com.active_tab]
+		val.sort(a.z_index > b.z_index)
 		for mut comm in val {
 			comm.is_mouse_down = false
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.is_mouse_rele = is_point_in
-				return true
+				if comm.on_mouse_rele_component(app) {
+					val.sort(a.z_index < b.z_index)
+					return true
+				}
 			}
 		}
+		val.sort(a.z_index < b.z_index)
 	}
 
 	for mut child in com.children {
@@ -84,6 +96,11 @@ fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 			return true
 		}
 	}
+
+	if mut com is VBox || mut com is HBox {
+		return false
+	}
+
 	return is_point_in
 }
 

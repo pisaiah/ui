@@ -103,6 +103,16 @@ pub fn load_url(mut win ui.Window, url string) {
 	ctab := tb.active_tab
 
 	// Remove old content; 25 is height of the navbar
+	/*
+	for mut child in tb.kids[ctab] {
+		if child.y > 30 {
+			if !(mut child is ui.Menubar) {
+				dump(child.type_name())
+				//child.children.free()
+			}
+		}
+	}*/
+
 	tb.kids[ctab] = tb.kids[ctab].filter(it.y < 25 || it is ui.Menubar)
 
 	// Background
@@ -119,7 +129,7 @@ pub fn load_url(mut win ui.Window, url string) {
 	mut box := ui.box(win)
 
 	// HTML body, margin of 8.
-	box.set_bounds(8, 8, 900, 55)
+	box.set_bounds(8, 8, 900, 4)
 
 	mut conf := &DocConfig{
 		page_url: url

@@ -53,7 +53,7 @@ pub fn (mut this Box) add_break(min_height int) {
 		mut cbox := kids[kids.len - 1]
 		if mut cbox is HBox {
 			if cbox.children.len <= 0 {
-				// return
+				return
 			}
 		}
 	}

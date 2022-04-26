@@ -99,7 +99,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 	if o_y != this.height && this.overflow {
 		this.height = o_y + (this.children.len)
 	}
-	if width != this.width && this.update_width {
+	if width >= this.width && this.update_width {
 		this.width = width
 	}
 
