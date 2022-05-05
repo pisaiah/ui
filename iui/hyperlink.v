@@ -48,7 +48,7 @@ pub fn (mut btn Hyperlink) pack() {
 
 pub fn (mut btn Hyperlink) pack_do() {
 	// Set font size
-	btn.app.gg.set_cfg(gx.TextCfg{
+	btn.app.graphics_context.set_cfg(gx.TextCfg{
 		size: btn.app.font_size + btn.size
 		color: btn.app.theme.text_color
 		bold: btn.bold
@@ -68,7 +68,7 @@ pub fn (mut btn Hyperlink) pack_do() {
 	btn.need_pack = false
 
 	// Reset for text_height
-	btn.app.gg.set_cfg(gx.TextCfg{
+	btn.app.graphics_context.set_cfg(gx.TextCfg{
 		size: btn.app.font_size
 		color: btn.app.theme.text_color
 		bold: false
@@ -85,28 +85,29 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 		this.click_event_fn(this)
 	}
 
-	app.gg.set_cfg(gx.TextCfg{
+	ctx := app.graphics_context
+	ctx.set_cfg(gx.TextCfg{
 		size: app.font_size + this.size
 		color: app.theme.text_color
 		bold: this.bold
 	})
 
 	// Draw Button Text
-	line_height := text_height(app, '1A{')
+	line_height := text_height(app, '1A{W') + 1
 	if this.height < (line_height / 2) {
 		this.height = line_height
 	}
 
 	mut my := 0
 	for mut spl in this.text.split('\n') {
-		app.gg.draw_text(x, y + height - line_height + my, spl.replace('\t', '  '.repeat(8)),
-			gx.TextCfg{
+		ctx.draw_text(x, y + height - line_height + my, spl.replace('\t', '  '.repeat(8)),
+			ctx.font, gx.TextCfg{
 			size: app.font_size + this.size
 			color: gx.rgb(0, 100, 200)
 			bold: this.bold
 		})
 
-		app.gg.set_cfg(gx.TextCfg{
+		ctx.set_cfg(gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 			bold: false

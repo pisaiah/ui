@@ -48,8 +48,14 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	tb.win.draw_bordered_rect(tb.x + mx, tb.y + my, tsize, theig, 2, tb.win.theme.button_bg_normal,
 		tb.win.theme.button_border_normal)
 
+	if tb.active_tab == key_ {
+		ctx.gg.draw_line(tb.x + mx + 1, tb.y + my + theig, tb.x + mx + tsize, tb.y + my + theig,
+			ctx.theme.button_bg_normal)
+	}
+
 	// Draw Button Text
-	tb.win.gg.draw_text((tb.x + mx) + 3, tb.y + my + (theig / 2) - sizh, ' ' + key, gx.TextCfg{
+	ctx.draw_text((tb.x + mx) + 3, tb.y + my + (theig / 2) - sizh, ' ' + key, ctx.font,
+		gx.TextCfg{
 		size: tb.win.font_size
 		color: tb.win.theme.text_color
 	})
@@ -59,7 +65,12 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 		csy := text_height(tb.win, 'x')
 		c_x := (tb.x + mx + tsize) - c_s - 4
 		c_y := tb.y + my + (theig / 2) - sizh
-		tb.win.gg.draw_text(c_x, c_y, 'x', gx.TextCfg{
+		ctx.draw_text(c_x, c_y, 'x', ctx.font, gx.TextCfg{
+			size: tb.win.font_size - 3
+			color: ctx.theme.text_color
+		})
+
+		ctx.set_cfg(gx.TextCfg{
 			size: tb.win.font_size
 			color: ctx.theme.text_color
 		})
@@ -96,8 +107,8 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 // Draw this component
 pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	t_heig := 30
-	ctx.gg.draw_rounded_rect_empty(tb.x, tb.y + t_heig - 1, tb.width, tb.height - (t_heig - 1),
-		2, ctx.theme.button_border_normal)
+	ctx.gg.draw_rect_empty(tb.x, tb.y + t_heig - 1, tb.width, tb.height - (t_heig - 1),
+		ctx.theme.button_border_normal)
 	mut mx := 0
 
 	for key_, mut val in tb.kids {

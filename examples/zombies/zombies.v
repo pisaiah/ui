@@ -82,7 +82,7 @@ mut:
 	tik             i64
 }
 
-fn (mut this GridBox) draw() {
+fn (mut this GridBox) draw(ctx &ui.GraphicsContext) {
 	if this.is_mouse_rele {
 		println('click')
 		mut app := &App(this.win.id_map['app'])

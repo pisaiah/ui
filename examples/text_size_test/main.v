@@ -49,9 +49,23 @@ fn get_text(win &ui.Window, use_custom bool) string {
 }
 
 fn get_info(ctx &gg.Context, input string, use_custom bool) (string, int) {
-	size := if use_custom { text_width(ctx, input) } else { ctx.text_width(input) }
+	size := if use_custom { txt_width(ctx, input) } else { ctx.text_width(input) }
 	text := 'text_width of "' + input + '" is ' + size.str()
 	return text, size
+}
+
+fn txt_width(ctx &gg.Context, s string) int {
+	mut buf := [4]f32{}
+	ctx.ft.fons.text_bounds(0, 0, s, &buf[0])
+
+	/*
+	bounds[0] is the x coordinate of the top-left point.
+	bounds[1] is the y coordinate of the top-left point.
+	bounds[2] is the x coordinate of the bottom-right point.
+	bounds[3] is the y coordinate of the bottom-right point.
+	*/
+	dump(buf)
+	return int((buf[2]) / ctx.scale)
 }
 
 // text_width returns the width of the `string` `s` in pixels.

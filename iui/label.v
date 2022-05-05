@@ -16,6 +16,7 @@ pub mut:
 	bold           bool
 	abs_fsize      bool
 	center_text_y  bool
+	// font           int
 }
 
 [params]
@@ -41,7 +42,7 @@ pub fn label(app &Window, text string, conf LabelConfig) Label {
 }
 
 pub fn (mut btn Label) draw(ctx &GraphicsContext) {
-	btn.app.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn)
+	btn.app.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn, ctx)
 }
 
 pub fn (mut this Label) pack() {
@@ -49,8 +50,10 @@ pub fn (mut this Label) pack() {
 }
 
 pub fn (mut btn Label) pack_do() {
+	ctx := btn.app.graphics_context
+
 	// Set font size
-	btn.app.gg.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gx.TextCfg{
 		size: btn.app.font_size + btn.size
 		color: btn.app.theme.text_color
 		bold: btn.bold
@@ -83,16 +86,17 @@ pub fn (mut btn Label) pack_do() {
 	btn.need_pack = false
 
 	// Reset for text_height
-	btn.app.gg.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gx.TextCfg{
 		size: btn.app.font_size
 		color: btn.app.theme.text_color
 		bold: false
 	})
 }
 
-fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Label) {
+fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Label, ctx &GraphicsContext) {
 	if this.need_pack {
 		this.pack_do()
+		this.need_pack = false
 	}
 
 	text := this.text
@@ -109,14 +113,15 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 	for mut spl in text.split('\n') {
 		yp := if this.center_text_y { y + (height / 2) - sizh + my } else { y + my }
 
-		app.gg.draw_text(x, yp, spl.replace('\t', '  '.repeat(8)), gx.TextCfg{
+		// dump(this.font)
+		ctx.draw_text(x, yp, spl.replace('\t', '  '.repeat(8)), ctx.font, gx.TextCfg{
 			size: app.font_size + this.size
 			color: app.theme.text_color
 			bold: this.bold
 		})
 		if this.size != (app.font_size + this.size) {
 			// Reset for text_height
-			app.gg.set_cfg(gx.TextCfg{
+			ctx.set_cfg(gx.TextCfg{
 				size: app.font_size
 				color: app.theme.text_color
 				bold: false

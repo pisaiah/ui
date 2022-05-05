@@ -5,7 +5,10 @@ import os
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'My Window', 520, 500)
+	mut window := ui.window_with_config(ui.get_system_theme(), 'My Window', 520, 500,
+		ui.WindowConfig{
+		ui_mode: true
+	})
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
@@ -92,7 +95,7 @@ fn main() {
 	btn_.set_bounds(0, 0, 120, 27)
 
 	mut btn3 := ui.button(window, 'Button 2 in HBox')
-	btn3.pack()
+	btn3.set_bounds(4, 0, 120, 27)
 
 	hbox.add_child(btn_)
 	hbox.add_child(btn3)

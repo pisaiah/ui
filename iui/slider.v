@@ -104,10 +104,10 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 		wid -= per * 20
 
 		// Horizontal
-		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, ctx.theme.scroll_track_color,
+		this.win.draw_bordered_rect(this.x, this.y, this.width, this.height, 8, ctx.theme.scroll_track_color,
 			ctx.theme.button_border_normal)
-		ctx.gg.draw_rect_filled(this.x + wid, this.y, 20, this.height, ctx.theme.scroll_bar_color)
-		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
+		ctx.gg.draw_rounded_rect_filled(this.x + wid, this.y, 20, this.height, 16, ctx.theme.scroll_bar_color)
+		// ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
 	} else {
 		mut wid := (this.height * per)
 		wid -= per * 20

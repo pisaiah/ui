@@ -168,5 +168,8 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 	app.components.sort(a.z_index > b.z_index)
 	for mut a in app.components {
 		a.on_scroll_component(app, e)
+		if mut a is Modal {
+			break
+		}
 	}
 }

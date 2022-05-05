@@ -2,7 +2,6 @@ module iui
 
 import gg
 import gx
-import time
 
 // Select - implements Component interface
 struct Select {
@@ -36,10 +35,19 @@ pub fn (mut com Select) set_change(b fn (mut Window, Select, string, string)) {
 	com.change_event_fn = b
 }
 
+// Items -> Children
+pub fn (mut this Select) make_items(app &Window) {
+	this.children.clear()
+	for item in this.items {
+		subb := button(app, item)
+		this.add_child(subb)
+	}
+}
+
 pub fn (mut item Select) draw(ctx &GraphicsContext) {
 	x := item.x
 	y := item.y
-	app := item.app
+	mut app := item.app
 	width := item.width
 	height := item.height
 	size := text_width(app, item.text) / 2
@@ -71,7 +79,7 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 
 	if item.show_items && item.items.len > 0 {
 		bg = app.theme.button_bg_click
-		border = app.theme.button_border_click
+		border = app.theme.button_border_normal
 		mut wid := 100
 
 		for mut sub in item.items {
@@ -84,15 +92,19 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 			wid = item.width
 		}
 
-		app.draw_bordered_rect(x, y + height, wid, (item.items.len * 26) + 2, 2, app.theme.dropdown_background,
+		app.draw_filled_rect(x, y + height, wid, (item.items.len * 26) + 1, 2, border,
 			app.theme.dropdown_border)
 
+		if item.items.len != item.children.len {
+			item.make_items(app)
+		}
+
 		mut mult := 0
-		for mut sub in item.items {
-			// app.draw_menu_button(x + 1, y + height + mult + 1, wid - 2, 25, mut sub)
-			mut subb := button(app, sub)
-			app.draw_button_2(x + 1, y + height + mult + 1, wid - 2, 25, mut subb, mut
-				item)
+		for mut subb in item.children {
+			if mut subb is Button {
+				app.draw_button_2(x + 1, y + height + mult, wid - 3, 25, mut subb, mut
+					item)
+			}
 
 			mult += 26
 		}
@@ -107,7 +119,7 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 	app.gg.draw_rounded_rect_empty(x, y, width, height, 2, border)
 
 	// Draw Button Text
-	app.gg.draw_text((x + (width / 2)) - size - 4, y + (height / 2) - sizh, item.text,
+	ctx.draw_text((x + (width / 2)) - size - 4, y + (height / 2) - sizh, item.text, ctx.font,
 		gx.TextCfg{
 		size: app.font_size
 		color: app.theme.text_color
@@ -120,62 +132,43 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 		app.theme.text_color)
 }
 
-fn (app &Window) draw_button_2(x int, y int, width int, height int, mut btn Button, mut sel Select) {
-	mut y1 := y
-	if !app.show_menu_bar {
-		y1 = y1 - 25
-	}
+fn (mut app Window) draw_button_2(x int, y int, width int, height int, mut btn Button, mut sel Select) {
+	app.bar.tik = 1
 
 	text := btn.text
 	size := text_width(app, text) / 2
 	sizh := text_height(app, text) / 2
 
-	mut bg := app.theme.button_bg_normal
-	mut border := app.theme.button_bg_normal
-
-	mid := (x + (width / 2))
-	midy := (y1 + (height / 2))
-
-	// Detect Hover
-	if (abs(mid - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
-		bg = app.theme.button_bg_hover
-		border = app.theme.button_border_hover
-	}
+	mid := x + (width / 2)
+	midy := y + (height / 2)
+	hover := abs(mid - app.mouse_x) < width / 2 && abs(midy - app.mouse_y) < height / 2
+	click := abs(mid - app.click_x) < width / 2 && abs(midy - app.click_y) < height / 2
+	bg := if hover { app.theme.button_bg_hover } else { app.theme.button_bg_normal }
 
 	// Detect Click
-	// if btn.is_mouse_down {
-	if (abs(mid - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)) {
-		now := time.now().unix_time_milli()
+	if click {
+		btn.click_event_fn(app, *btn)
+		btn.is_selected = true
 
-		// TODO: Better click time
-		if now - btn.last_click > 100 {
-			btn.click_event_fn(app, *btn)
-			btn.is_selected = true
+		old_text := sel.text
+		sel.text = btn.text
+		sel.change_event_fn(sel.app, *sel, old_text, sel.text)
 
-			old_text := sel.text
-			sel.text = btn.text
-			sel.change_event_fn(sel.app, *sel, old_text, sel.text)
-
-			bg = app.theme.button_bg_click
-			border = app.theme.button_border_click
-			btn.last_click = time.now().unix_time_milli()
-		}
+		click_bg := app.theme.button_bg_click
+		app.gg.draw_rect_filled(x, y, width, height, click_bg)
 	} else {
 		btn.is_selected = false
+		app.gg.draw_rect_filled(x, y, width, height, bg)
 	}
-
-	// Draw Button Background & Border
-	app.gg.draw_rounded_rect_filled(x, y1, width, height, 4, bg)
-	app.gg.draw_rounded_rect_empty(x, y1, width, height, 4, border)
 
 	// Draw Button Text
 	if sel.center {
-		app.gg.draw_text((x + (width / 2)) - size, y1 + (height / 2) - sizh, text, gx.TextCfg{
+		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})
 	} else {
-		app.gg.draw_text(x + 8, y1 + (height / 2) - sizh, text, gx.TextCfg{
+		app.gg.draw_text(x + 8, y + (height / 2) - sizh, text, gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})

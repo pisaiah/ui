@@ -59,13 +59,12 @@ fn (mut this TextField) draw_background() {
 }
 
 fn (mut this TextField) draw(ctx &GraphicsContext) {
-	gctx := this.win.gg
 	this.draw_background()
 
 	xp := this.x + 4
 	yp := this.y + 4
 
-	color := this.win.theme.text_color
+	color := ctx.theme.text_color
 
 	this.scroll_i = 0
 
@@ -79,14 +78,15 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	cfg := gx.TextCfg{
 		color: color
+		size: this.win.font_size
 	}
 
-	gctx.draw_text(xp, this.y + 4, this.text, cfg)
+	ctx.draw_text(xp, this.y + 4, this.text, ctx.font, cfg)
 
 	pipe_width := text_width(this.win, '|') / 2
 	wid := text_width(this.win, this.text[0..this.carrot_left])
 
-	gctx.draw_text(xp + wid - pipe_width, yp, '|', cfg)
+	ctx.draw_text(xp + wid - pipe_width, yp, '|', ctx.font, cfg)
 
 	this.mouse_down_caret()
 }

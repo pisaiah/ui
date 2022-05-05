@@ -81,7 +81,7 @@ pub fn (mut com Checkbox) draw(ctx &GraphicsContext) {
 	}
 
 	// Draw text
-	com.draw_text()
+	com.draw_text(ctx)
 }
 
 // Draw background & border of Checkbox
@@ -103,10 +103,10 @@ fn (com &Checkbox) draw_background() {
 }
 
 // Draw the text of Checkbox
-fn (this &Checkbox) draw_text() {
+fn (this &Checkbox) draw_text(ctx &GraphicsContext) {
 	sizh := this.app.gg.text_height(this.text) / 2
-	this.app.gg.draw_text(this.x + this.height + 4, this.y + (this.height / 2) - sizh,
-		this.text, gx.TextCfg{
+	ctx.draw_text(this.x + this.height + 4, this.y + (this.height / 2) - sizh, this.text,
+		ctx.font, gx.TextCfg{
 		size: this.app.font_size
 		color: this.app.theme.text_color
 	})

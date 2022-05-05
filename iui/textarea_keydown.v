@@ -11,9 +11,13 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 	} else if key == .left {
 		com.caret_left -= 1
 	} else if key == .up {
-		com.caret_top -= 1
+		if com.caret_top > 0 {
+			com.caret_top -= 1
+		}
 	} else if key == .down {
-		com.caret_top += 1
+		if com.caret_top < com.lines.len - 1 {
+			com.caret_top += 1
+		}
 	} else {
 		mod := ev.modifiers
 		if mod == 8 {

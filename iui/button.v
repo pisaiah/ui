@@ -76,8 +76,8 @@ fn (this &Button) draw_background() {
 	bg := this.get_bg(mouse_in)
 	border := this.get_border(mouse_in)
 
-	this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 4, bg)
-	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 4, border)
+	this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 1, bg)
+	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 1, border)
 }
 
 fn (this &Button) get_border(is_hover bool) gx.Color {
@@ -128,9 +128,10 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	btn.draw_background()
 
 	// Draw Button Text
-	app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
+	ctx := app.graphics_context
+	ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, ctx.font, gx.TextCfg{
 		size: app.font_size
-		color: app.theme.text_color
+		color: ctx.theme.text_color
 	})
 }
 

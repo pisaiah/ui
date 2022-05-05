@@ -6,6 +6,7 @@ import gx
 //
 // TextArea Component.
 //
+[minify]
 struct TextArea {
 	Component_A
 pub mut:
@@ -25,8 +26,11 @@ pub mut:
 	drawn_select         bool
 	code_syntax_on       bool
 	ctrl_down            bool
+	hide_border          bool
+	keys                 []string
 }
 
+[minify]
 struct CaretPos {
 pub mut:
 	left     int = -1
@@ -60,13 +64,6 @@ pub fn (mut this TextArea) delete_current_line() {
 	this.caret_left = this.lines[this.caret_top].len
 }
 
-const keys = ['import', 'fn', 'mut', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '// ', '\t',
-	"'", '(', ')', ' as ', '/*', '*/']
-
-const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-const blue_keys = ['import', 'mut', 'fn', '(', ')', ' as ']
-
 // Draw background box
 fn (mut this TextArea) draw_background() {
 	mut bg := this.win.theme.textbox_background
@@ -93,7 +90,12 @@ fn (mut this TextArea) draw_background() {
 			this.is_selected = false
 		}
 	}
-	this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
+	if this.hide_border {
+		border = bg
+		this.win.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
+	} else {
+		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
+	}
 }
 
 fn (mut this TextArea) clamp_values(lines_drawn int) {
@@ -117,6 +119,14 @@ fn get_line_height(win &Window) int {
 }
 
 fn (mut this TextArea) draw(ctx &GraphicsContext) {
+	if this.keys.len == 0 {
+		this.keys << iui.blue_keys
+		this.keys << iui.purp_keys
+		this.keys << iui.numbers
+		this.keys << iui.keys
+		this.keys << iui.red_keys
+	}
+
 	win := this.win
 	this.draw_background()
 
@@ -124,10 +134,10 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 
 	cfg := gx.TextCfg{
 		size: this.win.font_size
-		color: win.theme.text_color
+		color: ctx.theme.text_color
 	}
 
-	num_color := (win.theme.button_bg_hover.r + win.theme.text_color.r) / 2
+	num_color := (ctx.theme.button_bg_hover.r + ctx.theme.text_color.r) / 2
 	cfg_num := gx.TextCfg{
 		size: this.win.font_size
 		color: gx.rgb(num_color, num_color, num_color)
@@ -151,7 +161,9 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 			break
 		}
 
-		matched := if this.code_syntax_on { make_match(line, iui.keys) } else { [line] } // TODO: cache
+		matched := if this.code_syntax_on { make_match(line, this.keys) } else { [
+				line,
+			] } // TODO: cache
 		is_cur_line := this.caret_top == i
 
 		if is_cur_line {
@@ -163,7 +175,8 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 		line_number := (i + 1).str()
 
 		if this.code_syntax_on {
-			win.gg.draw_text(this.x + (padding_x / 4), this.y + y_off, line_number, cfg_num)
+			ctx.draw_text(this.x + (padding_x / 4), this.y + y_off, line_number, ctx.font,
+				cfg_num)
 		}
 
 		this.draw_matched_text(this.win, this.x + padding_x, this.y + y_off, matched,
@@ -197,12 +210,13 @@ fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, ll
 	if caret_zero || (in_min && in_max) {
 		caret_pos := this.caret_left - current_len
 		pretext := str_fix_tab[0..caret_pos]
+		ctx := win.graphics_context
 
 		pipe_wid := text_width(win, '|')
 		wid := text_width(win, pretext) - pipe_wid
 
-		win.gg.draw_text(x + wid, y, '|', gx.TextCfg{
-			color: win.theme.text_color
+		ctx.draw_text(x + wid, y, '|', ctx.font, gx.TextCfg{
+			color: ctx.theme.text_color
 			size: win.font_size
 		})
 	}
@@ -244,6 +258,17 @@ struct SyntaxRules {
 	current_color gx.Color
 }
 
+const keys = ['fn', 'mut', '// ', '\t', "'", '(', ')', ' as ', '/*', '*/']
+
+const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'if', 'else', 'for']
+
+const blue_keys = ['fn', 'module', 'import', 'interface', 'map', 'assert', 'sizeof', 'typeof',
+	'mut', '[', ']']
+
+const purp_keys = ' int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64, bool, byte,byteptr,charptr, voidptr,string,ustring, rune,(,)'.split(',')
+
+const red_keys = '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
+
 fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []string, cfg gx.TextCfg, is_cur_line bool, line int) {
 	mut x_off := 0
 
@@ -277,6 +302,13 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 		if str in iui.blue_keys {
 			color = gx.rgb(0, 100, 200)
 		}
+		if str in iui.red_keys {
+			color = gx.red
+		}
+
+		if str in iui.purp_keys {
+			color = gx.rgb(190, 40, 250)
+		}
 
 		if str == '/*' && !is_str {
 			this.ml_comment = true
@@ -297,7 +329,8 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 		}
 
 		wid := text_width(win, str_fix_tab)
-		win.gg.draw_text(x + x_off, y, str_fix_tab, conf)
+		ctx := win.graphics_context
+		ctx.draw_text(x + x_off, y, str_fix_tab, ctx.font, conf)
 
 		if this.is_mouse_down {
 			this.do_mouse_down(x + x_off, y, current_len, llen, str_fix_tab, wid, line)
@@ -309,8 +342,8 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 }
 
 fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, str_fix_tab string, wid int, line int) {
-	mx := this.win.mouse_x - this.x
-	my := this.win.mouse_y - this.y
+	mx := this.win.mouse_x - this.x //- this.padding_x
+	my := this.win.mouse_y - this.y - this.padding_y
 	line_height := get_line_height(this.win)
 	my_lh := my / line_height
 
@@ -337,7 +370,8 @@ fn (mut com TextArea) draw_scrollbar(cl int, spl_len int) {
 
 		com.win.draw_bordered_rect(com.x + com.width - min, com.y + 1, wid, com.height - 2,
 			2, com.win.theme.scroll_track_color, com.win.theme.button_bg_hover)
-		com.win.draw_bordered_rect(com.x + com.width - min, com.y + sth + 1, wid, enh - 2,
-			2, com.win.theme.scroll_bar_color, com.win.theme.scroll_track_color)
+
+		com.win.gg.draw_rounded_rect_filled(com.x + com.width - min, com.y + sth + 1,
+			wid, enh - 2, 16, com.win.theme.scroll_bar_color)
 	}
 }

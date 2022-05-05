@@ -54,9 +54,9 @@ pub fn (mut tr Tree) draw(ctx &GraphicsContext) {
 	mut mult := 20
 	app := tr.app
 	bord := if tr.is_selected && tr.childs.len > 0 {
-		app.theme.button_bg_hover
+		ctx.theme.button_bg_hover
 	} else {
-		app.theme.button_bg_normal
+		ctx.theme.button_bg_normal
 	}
 
 	half_wid := tr.width / 2
@@ -67,8 +67,8 @@ pub fn (mut tr Tree) draw(ctx &GraphicsContext) {
 	midy := tr.y + 10
 
 	if tr.y >= tr.min_y {
-		bg := app.theme.button_bg_normal
-		tr.app.gg.draw_rect_filled(tr.x, tr.y + 3, tr.width - 4, tr.height, bg)
+		bg := ctx.theme.button_bg_normal
+		ctx.gg.draw_rect_filled(tr.x, tr.y + 3, tr.width - 4, tr.height, bg)
 	}
 
 	if (abs(mid - app.mouse_x) < half_wid) && (abs(midy - app.mouse_y) < tr.height / 2) {
@@ -78,7 +78,7 @@ pub fn (mut tr Tree) draw(ctx &GraphicsContext) {
 	}
 
 	if (abs(mid - app.mouse_x) < half_wid) && (abs(midy - app.mouse_y) < 10) {
-		bg := app.theme.button_bg_hover
+		bg := ctx.theme.button_bg_hover
 		if y >= tr.min_y {
 			tr.app.draw_bordered_rect(tr.x, y + 3, tr.width - 8, 20, 2, bg, bord)
 		}
@@ -110,7 +110,7 @@ pub fn (mut tr Tree) draw(ctx &GraphicsContext) {
 				y + 16, app.theme.text_color)
 		}
 
-		tr.app.gg.draw_text(tr.x + 16, y + 4, os.base(tr.text), gx.TextCfg{
+		ctx.draw_text(tr.x + 16, y + 4, os.base(tr.text), ctx.font, gx.TextCfg{
 			size: tr.app.font_size
 			color: tr.app.theme.text_color
 		})

@@ -8,8 +8,18 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.8'
+	version = '0.0.9'
 )
+
+pub fn default_font() string {
+	/*
+	windows_def := 'C:/windows/fonts/segoeui.ttf'
+	if os.exists(windows_def) {
+		return windows_def
+	} else {*/
+	return font.default()
+	//}
+}
 
 pub struct Bounds {
 	x      int
@@ -22,77 +32,6 @@ pub fn debug(o string) {
 	$if debug ? {
 		println('(Debug) ' + o)
 	}
-}
-
-// Component Interface
-
-[heap]
-pub interface Component {
-mut:
-	text string
-	x int
-	y int
-	rx int
-	ry int
-	width int
-	height int
-	last_click f64
-	is_selected bool
-	carrot_index int
-	z_index int
-	scroll_i int
-	is_mouse_down bool
-	is_mouse_rele bool
-	parent &Component_A
-	draw_event_fn fn (mut Window, &Component)
-	after_draw_event_fn fn (mut Window, &Component)
-	children []Component
-	id string
-	draw(&GraphicsContext)
-}
-
-[heap]
-pub struct Component_A {
-pub mut:
-	text                string
-	x                   int
-	y                   int
-	rx                  int
-	ry                  int
-	width               int
-	height              int
-	last_click          f64
-	is_selected         bool
-	carrot_index        int
-	z_index             int
-	scroll_i            int
-	is_mouse_down       bool
-	is_mouse_rele       bool
-	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
-	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
-	parent              &Component_A = 0
-	children            []Component
-	id                  string
-}
-
-pub fn (mut this Component_A) add_child(com &Component) {
-	this.children << com
-}
-
-pub fn (mut com Component_A) set_parent(mut par Component_A) {
-	com.parent = par
-}
-
-pub fn (mut com Component_A) get_com() Component_A {
-	return com
-}
-
-fn blank_draw_event_fn(mut win Window, tree &Component) {
-	// Stub
-}
-
-pub fn (mut com Component_A) draw(ctx &GraphicsContext) {
-	// Stub
 }
 
 pub fn point_in_raw(mut com Component, px int, py int) bool {
@@ -112,39 +51,6 @@ pub fn point_in(mut com Component, px int, py int) bool {
 	midy := com.y + (com.height / 2)
 
 	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
-}
-
-pub fn (win &Window) draw_with_offset(mut com Component, offx int, offy int) {
-	com.rx = com.x + offx
-	com.ry = com.y + offy
-
-	com.x = com.x + offx
-	com.y = com.y + offy
-	com.draw(win.graphics_context)
-	com.x = com.x - offx
-	com.y = com.y - offy
-}
-
-pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
-	com.rx = com.x + off_x
-	com.ry = com.y + off_y
-
-	com.x = com.x + off_x
-	com.y = com.y + off_y
-	com.draw(ctx)
-	com.x = com.x - off_x
-	com.y = com.y - off_y
-}
-
-pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
-	com.rx = com.x + off_x
-	com.ry = com.y + off_y
-
-	com.x = com.x + off_x
-	com.y = com.y + off_y
-	com.draw(ctx)
-	com.x = com.x - off_x
-	com.y = com.y - off_y
 }
 
 pub fn (mut com Component_A) set_bounds(x int, y int, width int, height int) {
@@ -167,8 +73,10 @@ pub fn set_size(mut com Component, width int, height int) {
 }
 
 pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
-	set_pos(mut com, x, y)
-	set_size(mut com, width, height)
+	com.x = x
+	com.y = y
+	com.width = width
+	com.height = height
 }
 
 // Window
@@ -195,6 +103,33 @@ pub mut:
 	id_map           map[string]voidptr
 	debug_draw       bool
 	graphics_context &GraphicsContext
+	fonts            FontSet
+}
+
+// fonts
+struct FontSet {
+mut:
+	hash map[string]int
+}
+
+pub fn (mut win Window) add_font(font_name string, font_path string) int {
+	bytes := os.read_bytes(font_path) or { []u8{} }
+
+	if bytes.len > 0 {
+		font := win.gg.ft.fons.add_font_mem('sans', bytes, false)
+		if font >= 0 {
+			win.fonts.hash[font_name] = font
+			win.gg.ft.fons.set_font(font)
+			return font
+		} else {
+			// Error
+			panic('error')
+		}
+	} else {
+		panic('unreadable')
+		// Unreadable
+	}
+	return 0
 }
 
 // Struct for Graphics context
@@ -203,6 +138,20 @@ pub struct GraphicsContext {
 pub:
 	gg    &gg.Context
 	theme &Theme
+pub mut:
+	font int
+}
+
+pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
+	ctx.gg.set_cfg(cfg)
+	ctx.gg.ft.fons.set_font(ctx.font)
+}
+
+pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font int, cfg gx.TextCfg) {
+	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
+	ctx.gg.set_cfg(cfg)
+	ctx.gg.ft.fons.set_font(font)
+	ctx.gg.ft.fons.draw_text(x * scale, y * scale, text_) // TODO: check offsets/alignment
 }
 
 fn new_graphics_context(win &Window) &GraphicsContext {
@@ -210,11 +159,6 @@ fn new_graphics_context(win &Window) &GraphicsContext {
 		gg: win.gg
 		theme: &win.theme
 	}
-}
-
-pub fn (mut com Component_A) set_id(mut win Window, id string) {
-	com.id = id
-	win.id_map[id] = com
 }
 
 pub fn (win Window) get_from_id(id string) voidptr {
@@ -227,7 +171,7 @@ pub fn (mut win Window) add_child(com Component) {
 
 pub fn window(theme Theme, title string, width int, height int) &Window {
 	return window_with_config(theme, title, width, height, &WindowConfig{
-		font_path: font.default()
+		font_path: default_font()
 		ui_mode: true
 		user_data: 0
 	})
@@ -235,7 +179,7 @@ pub fn window(theme Theme, title string, width int, height int) &Window {
 
 [heap]
 pub struct WindowConfig {
-	font_path string = font.default()
+	font_path string = default_font()
 	font_size int    = 16
 	ui_mode   bool
 	user_data voidptr
@@ -370,7 +314,6 @@ pub fn text_height(win Window, text string) int {
 	return win.gg.text_height(text)
 }
 
-//
 [inline]
 pub fn abs<T>(a T) T {
 	return if a > 0 { a } else { -a }
