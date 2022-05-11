@@ -1,13 +1,15 @@
 module main
 
 import gg
-import iui as ui { debug }
+import iui as ui
+import iui.extra
 import os
+import os.font
 
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window_with_config(ui.get_system_theme(), 'Notepad', 464, 500, &ui.WindowConfig{
+	mut window := ui.window_with_config(ui.get_system_theme(), 'Notepad', 520, 550, &ui.WindowConfig{
 		font_path: os.resource_abs_path('JetBrainsMono-Regular.ttf')
 		ui_mode: true
 	})
@@ -17,7 +19,7 @@ fn main() {
 
 	mut theme_menu := ui.menuitem('Theme')
 
-	mut themes := ui.get_all_themes()
+	themes := ui.get_all_themes()
 	for theme2 in themes {
 		item := ui.menu_item(
 			text: theme2.name
@@ -53,42 +55,22 @@ fn main() {
 	font_menu := ui.menu_item(
 		text: 'Font'
 		children: [
-			ui.menu_item(
-				text: 'OS Default'
-			),
-			ui.menu_item(
-				text: 'scientifica.ttf'
-			),
-			ui.menu_item(
-				text: 'VeraMono.ttf'
-			),
-			ui.menu_item(
-				text: 'JetBrainsMono-Regular.ttf'
-			),
-			ui.menu_item(
-				text: 'AnomalyMono-Regular.otf'
-			),
+			font_type_item('OS Default'),
+			font_type_item('scientifica.ttf'),
+			font_type_item('VeraMono.ttf'),
+			font_type_item('JetBrainsMono-Regular.ttf'),
+			font_type_item('AnomalyMono-Regular.otf'),
 		]
 	)
 
 	size_menu := ui.menu_item(
 		text: 'Size'
 		children: [
-			ui.menu_item(
-				text: '8'
-			),
-			ui.menu_item(
-				text: '12'
-			),
-			ui.menu_item(
-				text: '14'
-			),
-			ui.menu_item(
-				text: '16'
-			),
-			ui.menu_item(
-				text: '18'
-			),
+			font_size_item('12'),
+			font_size_item('14'),
+			font_size_item('16'),
+			font_size_item('18'),
+			font_size_item('24'),
 		]
 	)
 
@@ -99,7 +81,7 @@ fn main() {
 	window.bar.add_child(size_menu)
 
 	mut res_box := ui.textarea(window, [''])
-	res_box.set_id(mut window, 'edit')
+	res_box.set_id(mut window, 'notepad')
 	res_box.set_bounds(4, 28, 0, 0)
 	res_box.padding_x = 16
 	res_box.padding_y = 16
@@ -107,6 +89,29 @@ fn main() {
 	window.add_child(res_box)
 
 	window.gg.run()
+}
+
+fn font_size_item(size string) &ui.MenuItem {
+	return ui.menu_item(text: size, click_event_fn: on_size_click)
+}
+
+fn font_type_item(size string) &ui.MenuItem {
+	return ui.menu_item(text: size, click_event_fn: font_click)
+}
+
+fn font_click(mut win ui.Window, com ui.MenuItem) {
+	mut path := os.resource_abs_path(com.text.replace(' ', '-'))
+	txt := com.text
+
+	if txt == 'OS Default' {
+		path = font.default()
+	}
+	if txt.starts_with('System ') {
+		path = 'C:/windows/fonts/' + com.text.split('System ')[1].to_lower()
+	}
+
+	font := win.add_font(txt, path)
+	win.graphics_context.font = font
 }
 
 fn vbtn_draw(mut win ui.Window, com &ui.Component) {
@@ -118,8 +123,8 @@ fn vbtn_draw(mut win ui.Window, com &ui.Component) {
 	this.height = size.height - 31
 }
 
-fn on_click(mut win ui.Window, com ui.Button) {
-	debug('on_click')
+fn on_size_click(mut win ui.Window, com ui.MenuItem) {
+	win.font_size = com.text.int()
 }
 
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
@@ -134,7 +139,6 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	modal.in_width = 250
 
 	mut title := ui.label(win, 'Notepad')
-	title.set_pos(20, 14)
 	title.set_config(28, true, true)
 	title.pack()
 
@@ -142,18 +146,16 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 		'Small Notepad made in\nthe V Programming Language.\n\nVersion: 0.1' + '\nUI Version: ' +
 		ui.version)
 
-	label.set_pos(22, 0)
 	label.pack()
 
 	mut can := ui.button(win, 'OK')
-	can.set_bounds(10, 170, 70, 25)
-	can.set_click(fn (mut win ui.Window, btn ui.Button) {
-		win.components = win.components.filter(mut it !is ui.Modal)
-	})
+	can.set_bounds(145, 170, 90, 25)
+	can.set_click(ui.default_modal_close_fn)
 	modal.needs_init = false
 	modal.add_child(can)
 
 	mut vbox := ui.vbox(win)
+	vbox.set_pos(20, 14)
 	vbox.add_child(title)
 	vbox.add_child(label)
 
@@ -163,47 +165,33 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 }
 
 fn save_as_click(mut win ui.Window, com ui.MenuItem) {
-	mut modal := ui.modal(win, 'Save As')
-	modal.in_width -= 40
-
-	mut l1 := ui.label(win, 'File path:')
-	l1.pack()
-	l1.set_pos(30, 70)
-	modal.add_child(l1)
-
-	mut path := ui.textfield(win, '')
-	path.set_bounds(140, 70, 300, 25)
-
-	if 'save_path' in win.extra_map {
-		path.text = win.extra_map['save_path']
+	dir := if 'save_path' in win.extra_map {
+		win.extra_map['save_path']
+	} else {
+		os.real_path(os.home_dir())
 	}
-	modal.add_child(path)
 
-	mut l2 := ui.label(win, 'Save as type: ')
-	l2.pack()
-	l2.set_pos(30, 100)
-	modal.add_child(l2)
+	path_change_fn := file_picker_path_change
 
-	mut typeb := ui.selector(win, 'Text (*.txt)')
-	typeb.items << 'Text (*.txt)'
-	typeb.set_bounds(140, 100, 200, 25)
-	modal.add_child(typeb)
+	picker_conf := extra.FilePickerConfig{
+		in_modal: true
+		path: dir
+		path_change_fn: path_change_fn
+	}
 
-	modal.needs_init = false
+	mut modal := extra.open_file_picker(mut win, picker_conf, win)
+	modal.z_index = 500
+}
 
-	mut save := ui.button(win, 'Save')
-	save.set_bounds(150, 250, 100, 25)
-	save.set_click_fn(fn (win_ptr voidptr, btn_ptr voidptr, extra_ptr voidptr) {
-		mut win := &ui.Window(win_ptr)
-		mut path := &ui.TextField(extra_ptr)
-		mut text_box := &ui.TextArea(win.get_from_id('edit'))
+fn file_picker_path_change(a voidptr, b voidptr) {
+	println('FILE PICKED')
 
-		win.extra_map['save_path'] = path.text
-		os.write_file(path.text, text_box.lines.join('\n')) or {}
-
-		win.components = win.components.filter(mut it !is ui.Modal)
-	}, path)
-	modal.add_child(save)
-
-	win.add_child(modal)
+	picker := &extra.FilePicker(a)
+	dump(typeof(b))
+	mut win := &ui.Window(b)
+	mut text_box := &ui.TextArea(win.get_from_id('notepad'))
+	path := picker.get_full_path()
+	dump(text_box.lines)
+	win.extra_map['save_path'] = path
+	os.write_file(path, text_box.lines.join('\n')) or {}
 }

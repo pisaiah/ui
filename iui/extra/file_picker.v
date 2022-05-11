@@ -53,13 +53,13 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 
 	padding := if conf.in_modal { 10 } else { 30 }
 
-	dir_input.set_bounds(4, padding, 491, 25)
+	dir_input.set_bounds(11, padding, 480, 25)
 	dir_input.set_id(mut window, 'dir-input')
 	dir_input.before_txtc_event_fn = before_txt_change
 
 	mut res_box := ui.vbox(window)
 	res_box.set_id(mut window, 'edit')
-	res_box.set_bounds(4, 28 + padding, 0, 0)
+	res_box.set_bounds(4, 34 + padding, 0, 0)
 	res_box.draw_event_fn = vbtn_draw
 	res_box.overflow = false
 
@@ -209,6 +209,8 @@ fn hbox_draw_ev(mut win ui.Window, com &ui.Component) {
 			input.text = file_name
 			input.carrot_left = file_name.len
 		}
+		mut this := *com
+		this.is_mouse_rele = false
 	}
 }
 
@@ -261,7 +263,7 @@ struct FilePickerModalData {
 	user_data voidptr
 }
 
-pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data voidptr) {
+pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data voidptr) &ui.Modal {
 	mut modal := ui.modal(win, 'Choose Folder & File')
 	modal.top_off = 16
 	modal.in_width = 500
@@ -286,4 +288,5 @@ pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data void
 
 	load_directory(os.dir(conf.path), picker.file_list)
 	win.add_child(modal)
+	return modal
 }

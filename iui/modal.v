@@ -12,7 +12,7 @@ pub mut:
 	click_event_fn fn (mut Window, Modal)
 	in_modal       bool
 	needs_init     bool
-	close          Button
+	close          &Button
 	shown          bool
 
 	in_width  int
@@ -38,12 +38,13 @@ pub fn modal(app &Window, title string) &Modal {
 		}
 		in_width: 500
 		in_height: 300
+		close: 0
 	}
 }
 
 pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	mut app := this.window
-	mut ws := gg.window_size()
+	ws := gg.window_size()
 
 	this.width = ws.width
 	this.height = ws.height
@@ -55,12 +56,15 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 
 	wid := this.in_width
 	hei := this.in_height
+	bord_wid := 5
+	wid_2 := wid - (bord_wid * 2)
+	bg := ctx.theme.textbox_border
 
 	xs := (ws.width / 2) - (wid / 2) - this.left_off
 	this.xs = xs
-	app.gg.draw_rounded_rect_filled(xs, this.top_off, wid, 26, 2, app.theme.button_bg_hover)
+	app.gg.draw_rounded_rect_filled(xs, this.top_off, wid, 40, 8, bg)
 
-	mut title := this.text
+	title := this.text
 	tw := text_width(app, title)
 	th := text_height(app, title)
 	app.gg.draw_text((ws.width / 2) - (tw / 2), this.top_off + (th / 2) - 1, title, gx.TextCfg{
@@ -68,10 +72,10 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 		color: app.theme.text_color
 	})
 
-	for i := 0; i < 4; i++ {
-		app.draw_bordered_rect((ws.width / 2) - (wid / 2) + i - this.left_off, this.top_off + 24 + i,
-			wid - (i * 2), hei - (i * 2), 2, app.theme.background, app.theme.button_bg_hover)
-	}
+	top := 28
+	app.gg.draw_rect_filled(xs, this.top_off + top, wid, hei + bord_wid, bg)
+	app.gg.draw_rect_filled(xs + bord_wid, this.top_off + top, wid_2, hei, app.theme.background)
+	app.gg.draw_rect_empty(xs + bord_wid, this.top_off + top, wid_2, hei, app.theme.button_bg_click)
 
 	// Do component draw event again to fix z-index
 	this.draw_event_fn(mut app, &Component(this))
@@ -81,13 +85,14 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 		this.needs_init = false
 	}
 
+	y_off := this.y + this.top_off + top
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
-		app.draw_with_offset(mut com, xs, this.y + this.top_off + 26)
+		app.draw_with_offset(mut com, xs, y_off + 2)
 	}
 }
 
-pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) Button {
+pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 	mut close := button(app, 'OK')
 	close.x = (300 / 2) + (100 / 2)
 	close.y = (this.in_height) - 35
@@ -98,9 +103,10 @@ pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) Button {
 		close.set_click(default_modal_close_fn)
 	}
 
-	this.children << close
-	this.close = close
-	return close
+	ref := &close
+	this.children << ref
+	this.close = ref
+	return ref
 }
 
 pub fn default_modal_close_fn(mut win Window, btn Button) {

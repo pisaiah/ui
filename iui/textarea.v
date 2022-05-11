@@ -72,6 +72,11 @@ fn (mut this TextArea) draw_background() {
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)
 
+	if this.win.bar != voidptr(0) && this.win.bar.tik < 90 {
+		this.is_mouse_down = false
+		this.is_mouse_rele = false
+	}
+
 	// Detect Click
 	if this.is_mouse_rele {
 		if !this.is_selected {
@@ -101,6 +106,10 @@ fn (mut this TextArea) draw_background() {
 fn (mut this TextArea) clamp_values(lines_drawn int) {
 	if this.caret_left < 0 {
 		this.caret_left = 0
+	}
+
+	if this.caret_top > this.lines.len - 1 {
+		this.caret_top = this.lines.len - 1
 	}
 
 	max_scroll := this.lines.len - lines_drawn
@@ -183,6 +192,10 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 			cfg, is_cur_line, i)
 	}
 	this.draw_scrollbar(lines_drawn, this.lines.len)
+	lh := get_line_height(win)
+	sel_y := this.y + (lh * this.caret_top) + this.padding_y
+	this.win.gg.draw_rect_filled(this.x + this.down_pos.x, sel_y, (this.down_pos.end_x - this.down_pos.x),
+		lh, gx.rgba(0, 100, 200, 50))
 }
 
 fn (this &TextArea) draw_line_number_background() int {
@@ -199,13 +212,6 @@ fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, ll
 	in_min := this.caret_left >= current_len
 	in_max := this.caret_left <= current_len + llen
 	caret_zero := this.caret_left == 0 && current_len == 0
-
-	end_pos := this.down_pos.end_left
-
-	if end_pos >= current_len && end_pos <= current_len + llen {
-		this.win.gg.draw_rect_filled(this.x + this.down_pos.x, this.y + (17 * this.caret_top),
-			(this.down_pos.end_x - this.down_pos.x), 17, gx.rgba(0, 100, 200, 100))
-	}
 
 	if caret_zero || (in_min && in_max) {
 		caret_pos := this.caret_left - current_len
@@ -342,7 +348,7 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 }
 
 fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, str_fix_tab string, wid int, line int) {
-	mx := this.win.mouse_x - this.x //- this.padding_x
+	mx := this.win.mouse_x - this.x
 	my := this.win.mouse_y - this.y - this.padding_y
 	line_height := get_line_height(this.win)
 	my_lh := my / line_height

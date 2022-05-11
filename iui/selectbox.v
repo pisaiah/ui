@@ -56,13 +56,13 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 	mut bg := app.theme.button_bg_normal
 	mut border := app.theme.button_border_normal
 
-	mut midx := (x + (width / 2))
-	mut midy := (y + (height / 2))
+	midx := (x + (width / 2))
+	midy := (y + (height / 2))
 
 	// Detect Hover
 	if (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
-		bg = app.theme.button_bg_hover
-		border = app.theme.button_border_hover
+		bg = ctx.theme.button_bg_hover
+		border = ctx.theme.button_border_hover
 	}
 
 	// Detect Click
@@ -70,16 +70,16 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 		&& (abs(midy - app.click_y) < (height / 2)))
 
 	if clicked && !item.show_items {
-		bg = app.theme.button_bg_click
-		border = app.theme.button_border_click
+		bg = ctx.theme.button_bg_click
+		border = ctx.theme.button_border_click
 		item.show_items = true
 
 		item.click_event_fn(app, *item)
 	}
 
 	if item.show_items && item.items.len > 0 {
-		bg = app.theme.button_bg_click
-		border = app.theme.button_border_normal
+		bg = ctx.theme.button_bg_click
+		border = ctx.theme.button_border_normal
 		mut wid := 100
 
 		for mut sub in item.items {
@@ -103,7 +103,7 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 		for mut subb in item.children {
 			if mut subb is Button {
 				app.draw_button_2(x + 1, y + height + mult, wid - 3, 25, mut subb, mut
-					item)
+					item, ctx)
 			}
 
 			mult += 26
@@ -126,13 +126,13 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 	})
 
 	// Draw down arrow
-	char_height := app.gg.text_height('.') / 2
+	char_height := app.gg.text_height('-') / 2
 	app.gg.draw_triangle_filled(x + width - 20, y + (height / 2) - char_height, x + width - 15,
 		y + (height / 2) + 5 - char_height, x + width - 10, y + (height / 2) - char_height,
 		app.theme.text_color)
 }
 
-fn (mut app Window) draw_button_2(x int, y int, width int, height int, mut btn Button, mut sel Select) {
+fn (mut app Window) draw_button_2(x int, y int, width int, height int, mut btn Button, mut sel Select, ctx &GraphicsContext) {
 	app.bar.tik = 1
 
 	text := btn.text
@@ -163,12 +163,13 @@ fn (mut app Window) draw_button_2(x int, y int, width int, height int, mut btn B
 
 	// Draw Button Text
 	if sel.center {
-		app.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, gx.TextCfg{
+		ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, ctx.font,
+			gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})
 	} else {
-		app.gg.draw_text(x + 8, y + (height / 2) - sizh, text, gx.TextCfg{
+		ctx.draw_text(x + 8, y + (height / 2) - sizh, text, ctx.font, gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})

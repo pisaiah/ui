@@ -179,7 +179,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 			}
 		}
 
-		app.draw_bordered_rect(x, y + height, wid, (item.items.len * 30) + 2, 2, app.theme.dropdown_background,
+		app.draw_filled_rect(x, y + height, wid, (item.items.len * 30) + 2, 2, app.theme.dropdown_background,
 			app.theme.dropdown_border)
 
 		mut mult := 0
@@ -200,8 +200,9 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 
 	// Draw Button Background & Border
 	if !item.no_paint_bg {
-		ctx.gg.draw_rounded_rect_filled(x, y, width, height, 2, bg)
-		ctx.gg.draw_rounded_rect_empty(x, y, width - 1, height, 2, border)
+		y_ := y + 1
+		ctx.gg.draw_rect_filled(x + 1, y_, width, height - 1, bg)
+		ctx.gg.draw_rect_empty(x + 1, y_, width - 1, height - 1, border)
 	}
 
 	// Draw Button Text
@@ -209,8 +210,8 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 		item.icon.set_pos(x + (width / 2) - (item.icon.width / 2), y)
 		item.icon.draw(ctx)
 	} else {
-		ctx.gg.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height,
-			item.text, gx.TextCfg{
+		ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height, item.text,
+			ctx.font, gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})

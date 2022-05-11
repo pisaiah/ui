@@ -132,17 +132,19 @@ fn on_mouse_up_event(e &gg.Event, mut app Window) {
 
 fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 	is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
-	if is_point_in {
-		com.scroll_y_by(e)
-	}
 
 	if mut com is Tabbox {
 		mut val := com.kids[com.active_tab]
 		for mut comm in val {
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.on_scroll_component(app, e)
+				return
 			}
 		}
+	}
+
+	if is_point_in {
+		com.scroll_y_by(e)
 	}
 
 	for mut child in com.children {
