@@ -5,15 +5,10 @@ import gg
 
 [console]
 fn main() {
-	// Create Window
 	mut window := ui.window_with_config(ui.get_system_theme(), 'My Window', 520, 500,
 		ui.WindowConfig{
 		// font_size: 18
 	})
-
-	// Setup Menubar and items
-	window.bar = ui.menubar(window, window.theme)
-	window.bar.add_child(ui.menuitem(' '))
 
 	mut lbl := ui.label(window, 'Label test')
 	lbl.set_bounds(16, 27, 500, 300)
@@ -24,11 +19,11 @@ fn main() {
 	lbl.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {
 		mut this := *com
 
-		current_gg := get_text(win, false)
+		curr := get_text(win, false)
 		ours := get_text(win, true)
 
 		if mut this is ui.Label {
-			this.text = 'Current gg text_width:\n\t' + current_gg + '\n\nNew text_width:\n\t' + ours
+			this.text = 'Current gg text_width:\n\t' + curr + '\n\nNew text_width:\n\t' + ours
 			this.pack()
 		}
 	}
@@ -59,10 +54,8 @@ fn txt_width(ctx &gg.Context, s string) int {
 	ctx.ft.fons.text_bounds(0, 0, s, &buf[0])
 
 	/*
-	bounds[0] is the x coordinate of the top-left point.
-	bounds[1] is the y coordinate of the top-left point.
-	bounds[2] is the x coordinate of the bottom-right point.
-	bounds[3] is the y coordinate of the bottom-right point.
+	buf[0] buf[1] is x y of top-left
+	buf[2] buf[3] is x y of bottom-right
 	*/
 	dump(buf)
 	return int((buf[2]) / ctx.scale)
@@ -70,11 +63,6 @@ fn txt_width(ctx &gg.Context, s string) int {
 
 // text_width returns the width of the `string` `s` in pixels.
 pub fn text_width(ctx &gg.Context, s string) int {
-	$if macos {
-		if ctx.native_rendering {
-			return C.darwin_text_width(s)
-		}
-	}
 	// ctx.set_cfg(cfg) TODO
 	if !ctx.font_inited {
 		return 0
@@ -82,17 +70,10 @@ pub fn text_width(ctx &gg.Context, s string) int {
 	mut buf := [4]f32{}
 	ctx.ft.fons.text_bounds(0, 0, s, &buf[0])
 	if s.ends_with(' ') {
-		return int((buf[2] - buf[0]) / ctx.scale) +
-			ctx.text_width('i') // TODO fix this in fontstash?
+		return int((buf[2] - buf[0]) / ctx.scale) + ctx.text_width('i')
 	}
 	res := int((buf[2] + buf[0]) / ctx.scale)
 	dump(s)
 	dump(buf)
-	// println('TW "$s" = $res')
-	$if macos {
-		if ctx.native_rendering {
-			return res * 2
-		}
-	}
 	return int((buf[2] + buf[0]) / ctx.scale)
 }

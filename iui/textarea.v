@@ -112,7 +112,7 @@ fn (mut this TextArea) clamp_values(lines_drawn int) {
 		this.caret_top = this.lines.len - 1
 	}
 
-	max_scroll := this.lines.len - lines_drawn
+	max_scroll := (this.lines.len - lines_drawn) + 1
 
 	if this.scroll_i > max_scroll {
 		this.scroll_i = max_scroll

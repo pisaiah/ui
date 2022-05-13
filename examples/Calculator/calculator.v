@@ -1,16 +1,16 @@
 module main
 
 import gg
-import iui as ui { debug }
+import iui as ui
 import gx
 
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window_with_config(ui.get_system_theme(), 'Calculator', 280, 340,
+	mut window := ui.window_with_config(ui.get_system_theme(), 'Calculator', 280, 342,
 		&ui.WindowConfig{
-		ui_mode: false
-		font_size: 18
+		ui_mode: true
+		font_size: 16
 	})
 
 	// Setup Menubar and items
@@ -18,7 +18,7 @@ fn main() {
 
 	mut theme_menu := ui.menuitem('Theme')
 
-	mut themes := [ui.get_system_theme(), theme_dark(), ui.theme_black_red()]
+	themes := ui.get_all_themes()
 	for theme2 in themes {
 		mut item := ui.menuitem(theme2.name)
 		item.set_click(theme_click)
@@ -44,7 +44,6 @@ fn main() {
 	mut vbox := ui.vbox(window)
 
 	mut res_box := ui.textfield(window, '')
-	// res_box.padding_y = 10
 	res_box.set_bounds(0, 0, 64 * 4, 35)
 	vbox.add_child(res_box)
 
@@ -67,9 +66,8 @@ fn main() {
 		hbox_br.draw_event_fn = vbtn_draw
 		for el in row {
 			mut num_btn := ui.button(window, el)
-			num_btn.set_bounds(0, 0, el_width, el_height)
+			num_btn.set_bounds(1, 1, el_width, el_height)
 			num_btn.user_data = res_box
-			// num_btn.set_click_fn(on_click_fn, res_box)
 			num_btn.draw_event_fn = btn_draw
 			hbox_br.add_child(num_btn)
 		}
@@ -126,10 +124,7 @@ fn btn_draw(mut win ui.Window, com &ui.Component) {
 }
 
 fn on_click_fn(ptr_win voidptr, mut btn ui.Button, extra voidptr) {
-	// mut btn := &ui.Button(ptr_btn)
-
 	mut txt := btn.text
-	println(txt)
 	mut res_box := &ui.TextField(btn.user_data)
 
 	if txt == ' C ' || txt == ' CE ' {
@@ -198,18 +193,8 @@ fn compute_value(input string) f32 {
 	return res
 }
 
-fn on_click(mut win ui.Window, com ui.Button) {
-	debug('on_click')
-}
-
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
-	text := com.text
-
-	mut theme := ui.theme_by_name(text)
-	if text == 'Dark' {
-		theme = theme_dark()
-	}
-
+	mut theme := ui.theme_by_name(com.text)
 	win.set_theme(theme)
 }
 
@@ -244,33 +229,4 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	modal.add_child(label)
 
 	win.add_child(modal)
-}
-
-//
-//    Slightly better colors
-//  for a Calculator.
-//
-pub fn theme_dark() ui.Theme {
-	return ui.Theme{
-		name: 'Dark'
-		text_color: gx.rgb(245, 245, 245)
-		background: gx.rgb(0, 0, 0)
-		button_bg_normal: gx.rgb(10, 10, 10)
-		button_bg_hover: gx.rgb(70, 70, 70)
-		button_bg_click: gx.rgb(50, 50, 50)
-		button_border_normal: gx.rgb(72, 72, 72)
-		button_border_hover: gx.rgb(0, 120, 215)
-		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.rgb(30, 30, 30)
-		menubar_border: gx.rgb(30, 30, 30)
-		dropdown_background: gx.rgb(10, 10, 10)
-		dropdown_border: gx.rgb(0, 0, 0)
-		textbox_background: gx.rgb(10, 10, 10)
-		textbox_border: gx.rgb(130, 130, 130)
-		checkbox_selected: gx.rgb(130, 130, 130)
-		checkbox_bg: gx.rgb(5, 5, 5)
-		progressbar_fill: gx.rgb(130, 130, 130)
-		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(180, 180, 180)
-	}
 }

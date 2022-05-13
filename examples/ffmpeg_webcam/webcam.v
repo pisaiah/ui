@@ -184,13 +184,11 @@ fn run_exec_win(mut win ui.Window, args []string) []string {
 		mut out := pro.stdout_read()
 		mut eout := pro.stderr_read()
 		if out.len > 0 {
-			println(out)
 			for line in out.split_into_lines() {
 				content << line.trim_space()
 			}
 		}
 		if eout.len > 0 {
-			println(eout)
 			for line in eout.split_into_lines() {
 				content << line.trim_space()
 			}

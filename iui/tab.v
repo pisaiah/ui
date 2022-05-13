@@ -37,7 +37,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	key := os.base(key_)
 	is_active := tb.active_tab == key_
 
-	theig := if is_active { 30 } else { 26 }
+	theig := if is_active { 30 } else { 25 }
 	my := if is_active { 0 } else { 4 }
 
 	size := text_width(tb.win, key) + 4

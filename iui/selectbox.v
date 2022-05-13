@@ -17,13 +17,24 @@ pub mut:
 	center          bool
 }
 
-pub fn selector(app &Window, text string) &Select {
+[params]
+pub struct SelectConfig {
+	bounds Bounds
+	items  []string
+}
+
+pub fn selector(app &Window, text string, cfg SelectConfig) &Select {
 	return &Select{
 		text: text
 		app: app
 		click_event_fn: fn (mut win Window, a Select) {}
 		change_event_fn: fn (mut win Window, a Select, old string, neww string) {}
 		z_index: 1
+		x: cfg.bounds.x
+		y: cfg.bounds.y
+		width: cfg.bounds.width
+		height: cfg.bounds.height
+		items: cfg.items
 	}
 }
 
