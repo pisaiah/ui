@@ -1,6 +1,7 @@
 module iui
 
 import gg
+import gx
 
 // HBox - implements Component interface
 struct HBox {
@@ -56,7 +57,7 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 			yyy = child.height
 		}
 		child.draw_event_fn(this.win, child)
-		if o_x + child.width > box_width {
+		if (o_x + child.width > box_width) && !this.needs_pack {
 			if o_x > width {
 				width = o_x
 			}
@@ -104,10 +105,9 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 		this.x = (size.width / 2) - (wid / 2)
 	}
 
-	/*
 	if this.win.debug_draw {
 		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.red)
-		this.win.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y +
-			this.height, gx.red)
-	}*/
+		this.win.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height,
+			gx.red)
+	}
 }

@@ -138,9 +138,10 @@ fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 		for mut comm in val {
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.on_scroll_component(app, e)
-				return
+				// return
 			}
 		}
+		return
 	}
 
 	if is_point_in {

@@ -51,7 +51,7 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 
 	if this.z_index <= 501 {
 		// Only draw background for one modal.
-		app.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 150))
+		app.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 170))
 	}
 
 	wid := this.in_width

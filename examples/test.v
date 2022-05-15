@@ -25,9 +25,10 @@ fn main() {
 
 	window.add_child(btn)
 
-	btn2 := ui.button(window, 'This is a Button', ui.ButtonConfig{
+	btn2 := ui.button(window, 'Open Page', ui.ButtonConfig{
 		bounds: ui.Bounds{18, 70, 0, 0}
 		should_pack: true
+		click_event_fn: test_page
 	})
 
 	window.add_child(btn2)
@@ -189,6 +190,15 @@ fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) 
 			kid.text = a
 		}
 	}
+}
+
+fn test_page(win_ptr voidptr, btn voidptr, data voidptr) {
+	mut win := &ui.Window(win_ptr)
+
+	mut page := ui.page(win, 'Page 1')
+	win.add_child(page)
+
+	debug('btn click')
 }
 
 fn btn_click(win voidptr, btn voidptr, data voidptr) {
