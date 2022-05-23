@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import time
 import math
 
 // Slider - implements Component interface
@@ -18,6 +17,7 @@ pub mut:
 	last_s int
 	hide   bool
 	scroll bool
+	tick   int
 }
 
 pub enum Direction {
@@ -40,23 +40,6 @@ pub fn slider(win &Window, min f32, max f32, dir Direction) &Slider {
 	return slid
 }
 
-fn test(mut this Slider) {
-	for true {
-		if this.flip {
-			this.cur -= 1
-		} else {
-			this.cur += 1
-		}
-		if this.cur >= this.max {
-			this.flip = true
-		}
-		if this.cur <= this.min {
-			this.flip = false
-		}
-		time.sleep(10 * time.millisecond)
-	}
-}
-
 // Draw this component
 pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 	if this.hide {
@@ -75,6 +58,7 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 			perr = perr * this.max
 			this.cur = f32(perr)
 		}
+		this.scroll_i = int(this.cur)
 	}
 
 	if this.is_mouse_rele {
@@ -83,18 +67,11 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 	}
 
 	// TODO: Scroll for .hor
-	if this.last_s != this.scroll_i && this.dir == .vert && this.scroll {
-		mut pos := this.scroll_i > this.last_s
-		mut diff := abs(this.scroll_i - this.last_s) + 1
+	if this.dir == .vert && this.scroll {
+		diff := abs(this.scroll_i) + 1
 
-		if pos {
-			this.cur += diff
-		} else {
-			this.cur -= diff
-		}
+		this.cur = diff
 		this.cur = f32(math.clamp(this.cur, this.min, this.max))
-
-		this.last_s = this.scroll_i
 	}
 
 	mut per := this.cur / this.max
@@ -107,7 +84,6 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 		this.win.draw_bordered_rect(this.x, this.y, this.width, this.height, 8, ctx.theme.scroll_track_color,
 			ctx.theme.button_border_normal)
 		ctx.gg.draw_rounded_rect_filled(this.x + wid, this.y, 20, this.height, 16, ctx.theme.scroll_bar_color)
-		// ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
 	} else {
 		mut wid := (this.height * per)
 		wid -= per * 20
@@ -115,7 +91,8 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 		// Vertical
 		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, ctx.theme.scroll_track_color,
 			ctx.theme.button_border_normal)
-		ctx.gg.draw_rect_filled(this.x, this.y + wid, this.width, 20, ctx.theme.scroll_bar_color)
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y + wid, this.width, 20, 8, ctx.theme.scroll_bar_color)
 		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
 	}
+	this.tick += 1
 }

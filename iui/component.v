@@ -17,6 +17,7 @@ mut:
 	carrot_index int
 	z_index int
 	scroll_i int
+	scroll_change_event fn (&Component, int, int)
 	is_mouse_down bool
 	is_mouse_rele bool
 	parent &Component_A
@@ -47,6 +48,7 @@ pub mut:
 	is_mouse_rele       bool
 	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
+	scroll_change_event fn (&Component, int, int)   = fn (_ &Component, delta int, dir int) {}
 	parent              &Component_A = 0
 	children            []Component
 	id                  string

@@ -55,6 +55,12 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 				app.check_box(key, e, mut child)
 			}
 		}
+		if mut a is Page {
+			for mut child in a.children {
+				app.check_box(key, e, mut child)
+			}
+			return
+		}
 	}
 	app.key_down_event(app, key, e)
 }

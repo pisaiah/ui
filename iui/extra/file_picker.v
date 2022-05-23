@@ -107,6 +107,13 @@ fn load_directory(dir string, com voidptr) {
 	input.carrot_left = real_dir.len
 	mut files := os.ls(dir) or { [] }
 
+	if 'file_picker_accept' in vbox.win.extra_map {
+		accept := vbox.win.extra_map['file_picker_accept']
+		if accept.len > 1 {
+			files = files.filter(it.contains(accept))
+		}
+	}
+
 	vbox.children = []
 
 	files.insert(0, '..')
@@ -131,14 +138,14 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	mut img1 := ui.image(win, img)
 	img1.pack()
 
-	mut lbl := ui.label(win, file)
-	lbl.set_bounds(50, 0, 300, 28)
+	mut lbl := ui.button(win, file)
+	lbl.set_bounds(50, 0, 295, 32)
 	lbl.draw_event_fn = lbl_draw_ev
 
 	file_size := os.file_size(full_path)
 	mut size := ui.label(win, format_size(file_size))
 	size.draw_event_fn = lbl_draw_ev
-	size.set_bounds(0, 0, 130, 32)
+	size.set_bounds(5, 0, 130, 32)
 
 	if 'img_folder' in win.id_map {
 		hbox.add_child(img1)
@@ -152,7 +159,7 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	hbox.draw_event_fn = hbox_draw_ev
 	hbox.text = os.real_path(full_path)
 
-	hbox.set_bounds(1, 0, 490, 40)
+	hbox.set_bounds(1, 2, 490, 42)
 	hbox.z_index = 18
 	// hbox.set_min_height(32)
 	return hbox
@@ -190,15 +197,7 @@ pub fn round(str string) string {
 
 fn lbl_draw_ev(mut win ui.Window, com &ui.Component) {
 	mut this := *com
-	if mut this is ui.Label {
-		this.height = ui.text_height(win, 'A{}') + 5
 
-		this.app.gg.draw_rect_filled(this.rx - 10, this.ry, this.width - 4, this.height - 2,
-			win.theme.button_bg_normal)
-	}
-}
-
-fn hbox_draw_ev(mut win ui.Window, com &ui.Component) {
 	if com.is_mouse_rele {
 		mut vbox := win.get_from_id('edit')
 		if os.is_dir(com.text) {
@@ -209,9 +208,25 @@ fn hbox_draw_ev(mut win ui.Window, com &ui.Component) {
 			input.text = file_name
 			input.carrot_left = file_name.len
 		}
-		mut this := *com
 		this.is_mouse_rele = false
 	}
+}
+
+fn hbox_draw_ev(mut win ui.Window, com &ui.Component) {
+	/*
+	if com.is_mouse_rele {
+		mut vbox := win.get_from_id('edit')
+		if os.is_dir(com.text) {
+			load_directory(com.text, vbox)
+		} else {
+			mut input := &ui.TextField(win.get_from_id('file-input'))
+			file_name := os.base(com.text)
+			input.text = file_name
+			input.carrot_left = file_name.len
+		}
+		//mut this := *com
+		//this.is_mouse_rele = false
+	}*/
 }
 
 fn vbtn_draw(mut win ui.Window, com &ui.Component) {
@@ -263,11 +278,8 @@ struct FilePickerModalData {
 	user_data voidptr
 }
 
-pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data voidptr) &ui.Modal {
-	mut modal := ui.modal(win, 'Choose Folder & File')
-	modal.top_off = 16
-	modal.in_width = 500
-	modal.in_height = 460
+pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data voidptr) &ui.Page {
+	mut modal := ui.page(win, 'Choose Folder & File')
 	modal.set_id(mut win, 'file_picker_modal')
 
 	mut picker := create_file_picker(mut win, conf)

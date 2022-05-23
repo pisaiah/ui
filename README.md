@@ -6,9 +6,6 @@ My UI Widget Toolkit for V. Example: *([examples/test.v](examples/test.v))*
 
 ## Example 
 
-s
-
-
 ```v
 fn main() {
 	mut window := ui.window(ui.theme_default(), 'My App')

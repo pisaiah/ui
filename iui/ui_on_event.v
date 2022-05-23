@@ -91,9 +91,18 @@ fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 		val.sort(a.z_index < b.z_index)
 	}
 
-	for mut child in com.children {
-		if child.on_mouse_rele_component(app) {
-			return true
+	if mut com is VBox {
+		for i in com.scroll_i .. com.children.len {
+			mut child := com.children[i]
+			if child.on_mouse_rele_component(app) {
+				return true
+			}
+		}
+	} else {
+		for mut child in com.children {
+			if child.on_mouse_rele_component(app) {
+				return true
+			}
 		}
 	}
 
@@ -115,6 +124,9 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 		if com.on_mouse_down_component(app) {
 			return
 		}
+		if mut com is Modal || mut com is Page {
+			return
+		}
 	}
 }
 
@@ -125,6 +137,9 @@ fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	app.components.sort(a.z_index > b.z_index)
 	for mut com in app.components {
 		if com.on_mouse_rele_component(app) {
+			return
+		}
+		if mut com is Modal || mut com is Page {
 			return
 		}
 	}
@@ -162,6 +177,9 @@ fn (mut comm Component) scroll_y_by(e &gg.Event) {
 	} else if comm.scroll_i > 0 {
 		comm.scroll_i -= scroll_y
 	}
+
+	comm.scroll_change_event(comm, -scroll_y, 0)
+
 	if comm.scroll_i < 0 {
 		comm.scroll_i = 0
 	}
@@ -172,6 +190,9 @@ fn on_scroll_event(e &gg.Event, mut app Window) {
 	for mut a in app.components {
 		a.on_scroll_component(app, e)
 		if mut a is Modal {
+			break
+		}
+		if mut a is Page {
 			break
 		}
 	}

@@ -95,7 +95,7 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 		return this.override_bg_color
 	}
 
-	should := this.app.bar == 0 || this.app.bar.tik > 90
+	should := this.app.bar == voidptr(0) || this.app.bar.tik > 90
 
 	if this.is_mouse_down && should {
 		return this.app.theme.button_bg_click
@@ -117,7 +117,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 
 	// Handle click
 	if btn.is_mouse_rele {
-		if app.bar == 0 || app.bar.tik > 90 {
+		if app.bar == voidptr(0) || app.bar.tik > 90 {
 			btn.click_event_fn(app, *btn)
 			btn.new_click_event_fn(app, btn, btn.user_data)
 		}

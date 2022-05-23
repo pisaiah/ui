@@ -10,7 +10,7 @@ import os.font
 fn main() {
 	// Create Window
 	mut window := ui.window_with_config(ui.get_system_theme(), 'Notepad', 520, 550, &ui.WindowConfig{
-		font_path: os.resource_abs_path('JetBrainsMono-Regular.ttf')
+		font_path: os.resource_abs_path('VeraMono.ttf')
 		ui_mode: true
 	})
 
@@ -60,6 +60,10 @@ fn main() {
 			font_type_item('VeraMono.ttf'),
 			font_type_item('JetBrainsMono-Regular.ttf'),
 			font_type_item('AnomalyMono-Regular.otf'),
+			ui.menu_item(
+				text: 'More...'
+				click_event_fn: font_picker
+			),
 		]
 	)
 
@@ -134,9 +138,7 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 }
 
 fn about_click(mut win ui.Window, com ui.MenuItem) {
-	mut modal := ui.modal(win, 'About Notepad')
-	modal.in_height = 210
-	modal.in_width = 250
+	mut modal := ui.page(win, 'About Notepad')
 
 	mut title := ui.label(win, 'Notepad')
 	title.set_config(28, true, true)
@@ -148,20 +150,34 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 
 	label.pack()
 
-	mut can := ui.button(win, 'OK')
-	can.set_bounds(145, 170, 90, 25)
-	can.set_click(ui.default_modal_close_fn)
-	modal.needs_init = false
-	modal.add_child(can)
-
 	mut vbox := ui.vbox(win)
-	vbox.set_pos(20, 14)
+	vbox.set_pos(24, 18)
 	vbox.add_child(title)
 	vbox.add_child(label)
 
 	modal.add_child(vbox)
 
 	win.add_child(modal)
+}
+
+fn font_picker(mut win ui.Window, com ui.MenuItem) {
+	dir := 'C:/windows/fonts/'
+
+	path_change_fn := font_picker_path_change
+
+	picker_conf := extra.FilePickerConfig{
+		in_modal: true
+		path: dir
+		path_change_fn: path_change_fn
+	}
+
+	// TODO: put this in FilePickerConfig
+	win.extra_map['file_picker_accept'] = '.ttf'
+
+	mut modal := extra.open_file_picker(mut win, picker_conf, win)
+	modal.z_index = 500
+
+	win.extra_map['file_picker_accept'] = ''
 }
 
 fn save_as_click(mut win ui.Window, com ui.MenuItem) {
@@ -187,11 +203,19 @@ fn file_picker_path_change(a voidptr, b voidptr) {
 	println('FILE PICKED')
 
 	picker := &extra.FilePicker(a)
-	dump(typeof(b))
 	mut win := &ui.Window(b)
 	mut text_box := &ui.TextArea(win.get_from_id('notepad'))
 	path := picker.get_full_path()
 	dump(text_box.lines)
 	win.extra_map['save_path'] = path
 	os.write_file(path, text_box.lines.join('\n')) or {}
+}
+
+fn font_picker_path_change(a voidptr, b voidptr) {
+	picker := &extra.FilePicker(a)
+	mut win := &ui.Window(b)
+	path := picker.get_full_path()
+
+	font := win.add_font(picker.get_file_name(), path)
+	win.graphics_context.font = font
 }

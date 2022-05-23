@@ -4,6 +4,7 @@ import gg
 import gx
 
 // HBox - implements Component interface
+[heap]
 struct HBox {
 	Component_A
 pub mut:
@@ -14,6 +15,7 @@ pub mut:
 	is_width_per   bool
 	center_screen  bool
 	min_height     int
+	yyy            int
 }
 
 pub fn hbox(win &Window) &HBox {
@@ -83,6 +85,7 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 	if yyy != this.height {
 		this.height = yyy
 	}
+	this.yyy = o_y
 
 	if this.needs_pack {
 		this.width = o_x

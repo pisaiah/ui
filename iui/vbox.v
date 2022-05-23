@@ -36,6 +36,14 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 		this.scroll_i = max_scroll
 	}
 
+	mut hidden_height := 0
+
+	for i in 0 .. this.scroll_i {
+		mut child := this.children[i]
+		child.ry = -999
+		hidden_height += child.height + child.y
+	}
+
 	for i in this.scroll_i .. this.children.len {
 		if i < 0 {
 			continue
@@ -46,6 +54,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 		ypos := this.y + o_y //- (this.scroll_i*8)
 		if ypos < this.y {
 			o_y += child.height
+			child.ry = -999
 			continue
 		}
 
@@ -55,35 +64,12 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 
 		this.win.draw_with_offset(mut child, this.x + o_x, ypos)
 
-		if this.win.bar != 0 {
+		if this.win.bar != voidptr(0) {
 			if this.win.bar.tik < 99 {
 				this.is_mouse_down = false
 				this.is_mouse_rele = false
 			}
 		}
-
-		/*
-		if this.is_mouse_down {
-			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
-				child.is_mouse_down = true
-			} else {
-				child.is_mouse_down = false
-			}
-		} else {
-			child.is_mouse_down = false
-		}
-		if this.is_mouse_rele {
-			if point_in_raw(mut child, this.win.mouse_x, this.win.mouse_y) {
-				this.is_mouse_rele = false
-				child.is_mouse_rele = true
-				// this.is_mouse_rele = false
-			} else {
-				child.is_mouse_down = false
-				child.is_mouse_rele = false
-			}
-		} else {
-			child.is_mouse_rele = false
-		}*/
 
 		o_y += child.height + child.y
 
@@ -98,7 +84,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 	}
 
 	if o_y != this.height && this.overflow {
-		this.height = o_y + (this.children.len)
+		this.height = o_y + hidden_height + this.children.len
 	}
 	if width >= this.width && this.update_width {
 		this.width = width

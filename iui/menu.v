@@ -100,7 +100,7 @@ pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
 		wid = bar.width
 	}
 
-	ctx.gg.draw_rect_filled(bar.x, bar.y, wid, 25, bar.theme.menubar_background)
+	ctx.gg.draw_rect_filled(bar.x, bar.y, wid - 1, 25, bar.theme.menubar_background)
 	ctx.gg.draw_rect_empty(bar.x, bar.y, wid, 25, bar.theme.menubar_border)
 
 	mut mult := 0
@@ -206,7 +206,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 	}
 
 	// Draw Button Text
-	if item.icon != 0 {
+	if item.icon != voidptr(0) {
 		item.icon.set_pos(x + (width / 2) - (item.icon.width / 2), y)
 		item.icon.draw(ctx)
 	} else {

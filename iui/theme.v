@@ -14,7 +14,7 @@ pub fn get_system_theme() Theme {
 
 pub fn get_all_themes() []Theme {
 	return [theme_default(), theme_dark(), theme_dark_hc(), theme_black_red(),
-		theme_minty()]
+		theme_minty(), theme_black_green()]
 }
 
 pub fn theme_by_name(name string) Theme {
@@ -179,5 +179,30 @@ pub fn theme_minty() Theme {
 		checkbox_bg: gx.rgb(247, 247, 247)
 		scroll_track_color: gx.rgb(238, 238, 238)
 		scroll_bar_color: gx.rgb(181, 203, 158)
+	}
+}
+
+// Black Green
+pub fn theme_black_green() Theme {
+	return Theme{
+		name: 'Green Mono'
+		text_color: gx.rgb(200, 255, 200)
+		background: gx.rgb(0, 0, 0)
+		button_bg_normal: gx.rgb(0, 0, 0)
+		button_bg_hover: gx.rgb(0, 70, 0)
+		button_bg_click: gx.rgb(0, 40, 0)
+		button_border_normal: gx.rgb(0, 255, 0)
+		button_border_hover: gx.rgb(10, 230, 15)
+		button_border_click: gx.rgb(0, 150, 0)
+		menubar_background: gx.rgb(10, 10, 10)
+		menubar_border: gx.rgb(0, 160, 0)
+		dropdown_background: gx.rgb(0, 160, 0)
+		dropdown_border: gx.rgb(0, 0, 0)
+		textbox_background: gx.rgb(0, 0, 0)
+		textbox_border: gx.rgb(0, 200, 0)
+		checkbox_selected: gx.rgb(0, 255, 0)
+		checkbox_bg: gx.rgb(0, 0, 0)
+		scroll_track_color: gx.rgb(0, 0, 0)
+		scroll_bar_color: gx.rgb(0, 220, 0)
 	}
 }

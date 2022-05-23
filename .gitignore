@@ -4,8 +4,9 @@ examples/*.exe
 !aupx.exe
 iui/tree.v
 
-#
 #  See: https://github.com/isaiahpatton/vide
-#
 examples/ide/
+#  See: https://github.com/isaiahpatton/vpaint
 examples/vpaint/
+#  See: https://github.com/isaiahpatton/File-Explorer
+examples/explore
