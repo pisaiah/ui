@@ -32,12 +32,20 @@ pub fn (mut tb Tabbox) change_title(old_title string, new_title string) {
 	tb.kids.delete(old_title)
 }
 
+fn (tb &Tabbox) get_tab_color(ctx &GraphicsContext, active bool) gx.Color {
+	if active {
+		return ctx.theme.button_bg_normal
+	}
+	bg := ctx.theme.button_bg_normal
+	return gx.rgba(bg.r, bg.g, bg.b, 10)
+}
+
 // Draw tab
 fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Component, mx int) int {
 	key := os.base(key_)
 	is_active := tb.active_tab == key_
 
-	theig := if is_active { 30 } else { 25 }
+	theig := if is_active { 29 } else { 25 }
 	my := if is_active { 0 } else { 4 }
 
 	size := text_width(tb.win, key) + 4
@@ -45,11 +53,11 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 
 	tsize := if tb.closable { size + 30 } else { size + 14 }
 
-	tb.win.draw_filled_rect(tb.x + mx, tb.y + my, tsize, theig, 2, tb.win.theme.button_bg_normal,
-		tb.win.theme.button_border_normal)
+	tab_color := tb.get_tab_color(ctx, is_active)
+	tb.win.draw_filled_rect(tb.x + mx, tb.y + my, tsize, theig, 2, tab_color, tb.win.theme.button_border_normal)
 
 	if tb.active_tab == key_ {
-		ctx.gg.draw_line(tb.x + mx + 1, tb.y + my + theig, tb.x + mx + tsize, tb.y + my + theig,
+		ctx.gg.draw_line(tb.x + mx, tb.y + my + theig, tb.x + mx + tsize, tb.y + my + theig,
 			ctx.theme.button_bg_normal)
 	}
 
@@ -84,7 +92,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 
 pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsize int, theig int, sizh int, key_ string) {
 	ctx.set_cfg(gx.TextCfg{
-		size: tb.win.font_size - 3
+		size: tb.win.font_size - 4
 		color: ctx.theme.text_color
 	})
 
@@ -108,18 +116,27 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 	}
 
 	if hover {
-		ctx.gg.draw_rounded_rect_filled(c_x - 3, c_y, c_s + 4, csy + 2, 16, ctx.theme.button_border_hover)
+		ctx.gg.draw_rounded_rect_filled(c_x - 1, c_y, c_s, csy + 1, 32, ctx.theme.button_border_hover)
 	}
 
+	color := get_close_btn_color(ctx, hover)
 	ctx.draw_text(c_x, c_y, 'x', ctx.font, gx.TextCfg{
-		size: tb.win.font_size - 3
-		color: ctx.theme.text_color
+		size: tb.win.font_size - 4
+		color: color
 	})
 
 	ctx.set_cfg(gx.TextCfg{
 		size: tb.win.font_size
 		color: ctx.theme.text_color
 	})
+}
+
+fn get_close_btn_color(ctx &GraphicsContext, hover bool) gx.Color {
+	/*
+	if hover {
+		return ctx.theme.button_border_hover
+	}*/
+	return ctx.theme.text_color
 }
 
 // Draw this component

@@ -92,6 +92,9 @@ fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	}
 
 	if mut com is VBox {
+		if com.children.len < 0 || com.scroll_i < 0 {
+			return false
+		}
 		for i in com.scroll_i .. com.children.len {
 			mut child := com.children[i]
 			if child.on_mouse_rele_component(app) {

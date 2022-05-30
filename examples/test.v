@@ -59,7 +59,7 @@ fn main() {
 	sel.set_change(sel_change)
 	window.add_child(sel)
 
-	mut pb := ui.progressbar(window, 30)
+	mut pb := ui.progressbar(30)
 	pb.set_bounds(122, 145, 160, 24)
 	window.add_child(pb)
 

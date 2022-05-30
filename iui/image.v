@@ -64,7 +64,7 @@ pub fn (mut this Image) draw(ctx &GraphicsContext) {
 		this.pack_do()
 	}*/
 
-	this.app.gg.draw_image_with_config(gg.DrawImageConfig{
+	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
 		img: this.img
 		img_rect: gg.Rect{
 			x: this.x
@@ -80,10 +80,10 @@ pub fn (mut this Image) pack() {
 	this.need_pack = true
 }
 
-pub fn (mut btn Image) pack_do() {
-	width := text_width(btn.app, btn.text + 'ab')
+pub fn (mut btn Image) pack_do(ctx &GraphicsContext) {
+	width := ctx.gg.text_width(btn.text + 'ab')
 	btn.width = width
-	btn.height = text_height(btn.app, btn.text) + 4
+	btn.height = ctx.gg.text_height(btn.text) + 4
 	btn.need_pack = false
 }
 

@@ -184,7 +184,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 
 		mut mult := 0
 		for mut sub in item.items {
-			app.draw_menu_button(ctx, x + 1, y + height + mult + 1, wid - 2, 29, mut sub)
+			app.draw_menu_button(ctx, x + 1, y + height + mult + 1, wid - 3, 29, mut sub)
 			mult += 30
 		}
 	}

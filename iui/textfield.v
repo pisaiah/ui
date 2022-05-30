@@ -15,6 +15,7 @@ pub mut:
 	before_txtc_event_fn fn (mut Window, TextField) bool
 	text_change_event_fn fn (voidptr, voidptr)
 	padding_x            int
+	center               bool
 }
 
 pub fn (mut box TextField) set_text_change(b fn (a voidptr, b voidptr)) {
@@ -61,7 +62,7 @@ fn (mut this TextField) draw_background() {
 fn (mut this TextField) draw(ctx &GraphicsContext) {
 	this.draw_background()
 
-	xp := this.x + 4
+	xp := this.x + 4 + this.padding_x
 	yp := this.y + 4
 
 	color := ctx.theme.text_color
@@ -81,12 +82,19 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 		size: this.win.font_size
 	}
 
-	ctx.draw_text(xp, this.y + 4, this.text, ctx.font, cfg)
-
 	pipe_width := text_width(this.win, '|') / 2
 	wid := text_width(this.win, this.text[0..this.carrot_left])
 
-	ctx.draw_text(xp + wid - pipe_width, yp, '|', ctx.font, cfg)
+	if this.center {
+		// Y-center text
+		th := ctx.gg.text_height(this.text)
+		ctx.draw_text(xp, this.y + (this.height - th) / 2, this.text, ctx.font, cfg)
+		n_y := this.y + (this.height - th) / 2
+		ctx.draw_text(xp + wid - pipe_width, n_y, '|', ctx.font, cfg)
+	} else {
+		ctx.draw_text(xp, this.y + 4, this.text, ctx.font, cfg)
+		ctx.draw_text(xp + wid - pipe_width, yp, '|', ctx.font, cfg)
+	}
 
 	this.mouse_down_caret()
 }
@@ -94,6 +102,13 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 fn (mut this TextField) mouse_down_caret() {
 	if !this.is_mouse_down {
 		return
+	}
+
+	if this.win.bar != voidptr(0) {
+		if this.win.bar.tik < 90 {
+			this.is_mouse_down = false
+			return
+		}
 	}
 
 	x := if this.rx != 0 { this.rx } else { this.x }

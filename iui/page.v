@@ -40,6 +40,14 @@ pub fn page(app &Window, title string) &Page {
 	}
 }
 
+fn (this &Page) draw_bg(ctx &GraphicsContext) {
+	bg := gx.rgb(51, 114, 153)
+	ctx.gg.draw_rect_filled(0, 0, this.width, this.height, ctx.theme.background)
+	ctx.gg.draw_rect_filled(0, 0, this.width, this.height, gx.rgba(bg.r, bg.g, bg.b, 20))
+	ctx.gg.draw_rect_filled(0, 0, this.width, 78, bg)
+	ctx.gg.draw_rect_filled(0, 0, this.width, 24, gx.rgba(0, 0, 0, 90))
+}
+
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	mut app := this.window
 	ws := gg.window_size()
@@ -47,14 +55,10 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	this.width = ws.width
 	this.height = ws.height
 
-	bg := gx.rgb(51, 114, 153)
-	app.gg.draw_rect_filled(0, 0, this.width, this.height, ctx.theme.background)
-	app.gg.draw_rect_filled(0, 0, this.width, this.height, gx.rgba(bg.r, bg.g, bg.b, 20))
-	app.gg.draw_rect_filled(0, 0, this.width, 78, bg)
-	app.gg.draw_rect_filled(0, 0, this.width, 24, gx.rgba(0, 0, 0, 90))
+	this.draw_bg(ctx)
 
 	title := this.text
-	app.gg.draw_text(56, 39, title, gx.TextCfg{
+	ctx.gg.draw_text(56, 39, title, gx.TextCfg{
 		size: 24
 		color: gx.white
 	})
@@ -76,10 +80,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
 	mut close := button(app, '<')
-	close.x = 8
-	close.y = (-78) + 28
-	close.width = 40
-	close.height = 42
+	close.set_bounds(8, -50, 40, 42)
 
 	if ce {
 		close.set_click(default_page_close_fn)

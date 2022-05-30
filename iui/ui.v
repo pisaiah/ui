@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.9'
+	version = '0.0.10'
 )
 
 pub fn default_font() string {
@@ -139,7 +139,8 @@ pub:
 	gg    &gg.Context
 	theme &Theme
 pub mut:
-	font int
+	font      int
+	font_size int = 16
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
@@ -158,6 +159,7 @@ fn new_graphics_context(win &Window) &GraphicsContext {
 	return &GraphicsContext{
 		gg: win.gg
 		theme: &win.theme
+		font_size: win.font_size
 	}
 }
 
@@ -242,21 +244,25 @@ pub fn (app &Window) draw_filled_rect(x int, y int, width int, height int, a int
 	app.gg.draw_rect_empty(x, y, width, height, bord)
 }
 
+fn (app &Window) do_sleep() {
+	if app.config.ui_mode {
+		return
+	}
+	sleep := (50 - app.frame_time)
+	mut sleep_ := 0
+	if !app.has_event {
+		for sleep_ < sleep {
+			time.sleep(10 * time.millisecond)
+			sleep_ += 10
+		}
+	} else {
+		time.sleep(5 * time.millisecond) // Reduce CPU Usage
+	}
+}
+
 fn (mut app Window) draw() {
 	// Custom 'UI Mode' - Refresh text caret
-	if !app.config.ui_mode {
-		sleep := (50 - app.frame_time)
-		mut sleep_ := 0
-		if !app.has_event {
-			for sleep_ < sleep {
-				time.sleep(10 * time.millisecond)
-				sleep_ += 10
-			}
-		} else {
-			time.sleep(5 * time.millisecond) // Reduce CPU Usage
-		}
-	}
-
+	app.do_sleep()
 	now := time.now().unix_time_milli()
 
 	// Sort by Z-index; Lower draw first
@@ -285,6 +291,10 @@ fn (mut app Window) draw() {
 		if bar != voidptr(0) {
 			bar.draw(app.graphics_context)
 		}
+	}
+
+	if app.font_size != app.graphics_context.font_size {
+		app.graphics_context.font_size = app.font_size
 	}
 
 	end := time.now().unix_time_milli()

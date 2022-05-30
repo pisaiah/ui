@@ -117,11 +117,16 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 	}
 	app.gg.draw_line(x, y + height - 2, x + width, y + height - 2, gx.rgb(0, 100, 200))
 
-	if app.debug_draw {
-		app.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
-		app.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
-		app.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
+	this.debug_draw(app)
+}
+
+fn (this &Hyperlink) debug_draw(app &Window) {
+	if !app.debug_draw {
+		return
 	}
+	app.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
+	app.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
+	app.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
 }
 
 pub fn (mut this Hyperlink) set_config(fs int, abs bool, bold bool) {

@@ -131,13 +131,16 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 		my += line_height
 	}
 
-	if this.app.debug_draw {
-		this.app.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
-		this.app.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height,
-			gx.blue)
-		this.app.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y,
-			gx.blue)
+	this.debug_draw()
+}
+
+fn (this &Label) debug_draw() {
+	if !this.app.debug_draw {
+		return
 	}
+	this.app.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
+	this.app.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
+	this.app.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
 }
 
 pub fn (mut this Label) set_config(fs int, abs bool, bold bool) {
