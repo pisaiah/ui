@@ -7,17 +7,18 @@ import math
 struct Slider {
 	Component_A
 pub mut:
-	win    &Window
-	text   string
-	min    f32
-	cur    f32
-	max    f32
-	flip   bool
-	dir    Direction
-	last_s int
-	hide   bool
-	scroll bool
-	tick   int
+	win       &Window
+	text      string
+	min       f32
+	cur       f32
+	max       f32
+	flip      bool
+	dir       Direction
+	last_s    int
+	hide      bool
+	scroll    bool
+	tick      int
+	thumb_wid int
 }
 
 pub enum Direction {
@@ -34,6 +35,7 @@ pub fn slider(win &Window, min f32, max f32, dir Direction) &Slider {
 		max: max
 		dir: dir
 		scroll: true
+		thumb_wid: 20
 	}
 
 	// go test(mut slid)
@@ -78,20 +80,22 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 
 	if this.dir == .hor {
 		mut wid := (this.width * per)
-		wid -= per * 20
+		wid -= per * this.thumb_wid
 
 		// Horizontal
 		this.win.draw_bordered_rect(this.x, this.y, this.width, this.height, 8, ctx.theme.scroll_track_color,
 			ctx.theme.button_border_normal)
-		ctx.gg.draw_rounded_rect_filled(this.x + wid, this.y, 20, this.height, 16, ctx.theme.scroll_bar_color)
+		ctx.gg.draw_rounded_rect_filled(this.x + wid, this.y, this.thumb_wid, this.height,
+			16, ctx.theme.scroll_bar_color)
 	} else {
 		mut wid := (this.height * per)
-		wid -= per * 20
+		wid -= per * this.thumb_wid
 
 		// Vertical
 		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, ctx.theme.scroll_track_color,
 			ctx.theme.button_border_normal)
-		ctx.gg.draw_rounded_rect_filled(this.x, this.y + wid, this.width, 20, 8, ctx.theme.scroll_bar_color)
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y + wid, this.width, this.thumb_wid,
+			8, ctx.theme.scroll_bar_color)
 		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
 	}
 	this.tick += 1

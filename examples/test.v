@@ -7,7 +7,7 @@ fn main() {
 	// Create Window
 	mut window := ui.window_with_config(ui.get_system_theme(), 'My Window', 520, 500,
 		ui.WindowConfig{
-		ui_mode: true
+		ui_mode: false
 	})
 
 	// Setup Menubar and items
@@ -143,29 +143,47 @@ fn create_help_menu() &ui.MenuItem {
 }
 
 // Create the tree demo
-fn create_tree(window &ui.Window) ui.Tree {
-	mut tree := ui.tree(window, 'Beverages')
-	tree.set_bounds(355, 220, 150, 200)
+fn create_tree(window &ui.Window) &ui.Tree2 {
+	mut tree := ui.tree2('My Tree')
+	tree.set_bounds(330, 220, 180, 210)
 
-	mut subtree := ui.tree(window, 'Water')
-	subtree.set_bounds(4, 4, 100, 25)
-	tree.childs << subtree
-
-	mut subtree2 := ui.tree(window, 'Coke')
-	subtree2.set_bounds(4, 4, 100, 25)
-	tree.childs << subtree2
-
-	mut subtree3 := ui.tree(window, 'Tea')
-	subtree3.set_bounds(4, 4, 100, 25)
-	tree.childs << subtree3
-
-	mut subtree4 := ui.tree(window, 'Black Tea')
-	subtree4.set_bounds(4, 4, 100, 25)
-	subtree3.childs << subtree4
-
-	mut subtree5 := ui.tree(window, 'Green Tea')
-	subtree5.set_bounds(4, 4, 100, 25)
-	subtree3.childs << subtree5
+	tree.add_child(&ui.TreeNode{
+		text: 'Veggies'
+		nodes: [
+			&ui.TreeNode{
+				text: 'Carrot'
+			},
+			&ui.TreeNode{
+				text: 'Tomato'
+			},
+			&ui.TreeNode{
+				text: 'Green Bean'
+			},
+			&ui.TreeNode{
+				text: 'Onion'
+			},
+			&ui.TreeNode{
+				text: 'Corn'
+			},
+			&ui.TreeNode{
+				text: 'Mixed'
+			},
+		]
+	})
+	tree.add_child(&ui.TreeNode{
+		text: 'Fruits'
+		nodes: [
+			&ui.TreeNode{
+				text: 'Apple'
+			},
+			&ui.TreeNode{
+				text: 'Pear'
+			},
+			&ui.TreeNode{
+				text: 'Strawberry'
+			},
+		]
+	})
 	return tree
 }
 

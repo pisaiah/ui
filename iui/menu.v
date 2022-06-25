@@ -140,7 +140,7 @@ fn (item &MenuItem) get_bg(app &Window, hover bool, click bool) gx.Color {
 
 fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ int, height int, mut item MenuItem) {
 	size := text_width(app, item.text) / 2
-	half_line_height := text_height(app, 'A!{') / 2
+	half_line_height := ctx.line_height / 2
 
 	width := if item.width > 0 { item.width + 4 } else { width_ }
 

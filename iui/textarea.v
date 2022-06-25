@@ -124,7 +124,8 @@ fn (mut this TextArea) clamp_values(lines_drawn int) {
 }
 
 fn get_line_height(win &Window) int {
-	return text_height(win, 'A!{}!') + 2
+	return win.graphics_context.line_height + 2
+	// return text_height(win, 'A!{}!') + 2
 }
 
 fn (mut this TextArea) draw(ctx &GraphicsContext) {
@@ -134,6 +135,7 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 		this.keys << iui.numbers
 		this.keys << iui.keys
 		this.keys << iui.red_keys
+		this.keys << iui.colors
 	}
 
 	win := this.win
@@ -275,6 +277,8 @@ const purp_keys = ' int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64, bool, byte,
 
 const red_keys = '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
 
+const colors = 'blue,red,green,yellow,orange,purple,black,gray,pink,white'.split(',')
+
 fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []string, cfg gx.TextCfg, is_cur_line bool, line int) {
 	mut x_off := 0
 
@@ -293,6 +297,10 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 		}
 
 		color = cfg.color
+
+		if str in iui.colors {
+			color = gx.color_from_string(str)
+		}
 
 		if str == "'" {
 			is_str = !is_str

@@ -87,7 +87,7 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	if this.center {
 		// Y-center text
-		th := ctx.gg.text_height(this.text)
+		th := ctx.line_height // ctx.gg.text_height(this.text)
 		ctx.draw_text(xp, this.y + (this.height - th) / 2, this.text, ctx.font, cfg)
 		n_y := this.y + (this.height - th) / 2
 		ctx.draw_text(xp + wid - pipe_width, n_y, '|', ctx.font, cfg)

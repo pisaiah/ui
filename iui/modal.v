@@ -66,7 +66,8 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 
 	title := this.text
 	tw := text_width(app, title)
-	th := text_height(app, title)
+	th := ctx.line_height
+
 	app.gg.draw_text((ws.width / 2) - (tw / 2), this.top_off + (th / 2) - 1, title, gx.TextCfg{
 		size: app.font_size
 		color: app.theme.text_color
@@ -94,10 +95,9 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 
 pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 	mut close := button(app, 'OK')
-	close.x = (300 / 2) + (100 / 2)
-	close.y = (this.in_height) - 35
-	close.width = 100
-	close.height = 25
+
+	y := this.in_height - 35
+	close.set_bounds(200, y, 100, 25)
 
 	if ce {
 		close.set_click(default_modal_close_fn)

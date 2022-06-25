@@ -34,6 +34,26 @@ pub fn debug(o string) {
 	}
 }
 
+pub fn is_in_bounds(px int, py int, bounds Bounds) bool {
+	x := bounds.x
+	y := bounds.y
+
+	midx := x + (bounds.width / 2)
+	midy := y + (bounds.height / 2)
+
+	return (abs(midx - px) < (bounds.width / 2)) && (abs(midy - py) < (bounds.height / 2))
+}
+
+pub fn is_in(com &Component, px int, py int) bool {
+	x := if com.rx == 0 { com.x } else { com.rx }
+	y := if com.ry == 0 { com.y } else { com.ry }
+
+	midx := x + (com.width / 2)
+	midy := y + (com.height / 2)
+
+	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
+}
+
 pub fn point_in_raw(mut com Component, px int, py int) bool {
 	if com.rx == 0 && com.ry == 0 {
 		// Not drawn with offset
@@ -135,12 +155,23 @@ pub fn (mut win Window) add_font(font_name string, font_path string) int {
 // Struct for Graphics context
 // (Removes the need to pass Window everywhere for drawing)
 pub struct GraphicsContext {
-pub:
-	gg    &gg.Context
-	theme &Theme
 pub mut:
-	font      int
-	font_size int = 16
+	gg          &gg.Context
+	theme       &Theme
+	font        int
+	font_size   int = 16
+	line_height int
+	win         &Window
+	icon_cache  map[string]int
+}
+
+pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
+	mut tfile := $embed_file('assets/tree_file.png')
+
+	mut tree_file := win.gg.create_image_from_memory(tfile.data(), tfile.len)
+
+	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
+	dump(ctx.icon_cache)
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
@@ -160,6 +191,7 @@ fn new_graphics_context(win &Window) &GraphicsContext {
 		gg: win.gg
 		theme: &win.theme
 		font_size: win.font_size
+		win: win
 	}
 }
 
@@ -214,6 +246,9 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 		ui_mode: config.ui_mode
 	)
 	app.graphics_context = new_graphics_context(app)
+	if app.graphics_context.icon_cache.len == 0 {
+		app.graphics_context.fill_icon_cache(mut app)
+	}
 	return app
 }
 
@@ -222,6 +257,7 @@ pub fn (mut win Window) set_theme(theme Theme) {
 	if win.bar != voidptr(0) {
 		win.bar.theme = theme
 	}
+	win.graphics_context.theme = &theme
 	win.gg.set_bg_color(theme.background)
 }
 
@@ -262,11 +298,15 @@ fn (app &Window) do_sleep() {
 
 fn (mut app Window) draw() {
 	// Custom 'UI Mode' - Refresh text caret
-	app.do_sleep()
+	// app.do_sleep()
 	now := time.now().unix_time_milli()
 
 	// Sort by Z-index; Lower draw first
 	app.components.sort(a.z_index < b.z_index)
+
+	if app.graphics_context.line_height == 0 {
+		app.graphics_context.calculate_line_height()
+	}
 
 	// Draw components
 	mut bar_drawn := false
@@ -295,6 +335,7 @@ fn (mut app Window) draw() {
 
 	if app.font_size != app.graphics_context.font_size {
 		app.graphics_context.font_size = app.font_size
+		app.graphics_context.calculate_line_height()
 	}
 
 	end := time.now().unix_time_milli()
@@ -305,14 +346,20 @@ fn (mut app Window) draw() {
 }
 
 fn rune_box_scroll(e &gg.Event, mut a TextField) {
-	if a.is_selected {
-		scroll_y := (int(e.scroll_y) / 2)
-		if abs(e.scroll_y) != e.scroll_y {
-			a.scroll_i += -scroll_y
-		} else if a.scroll_i > 0 {
-			a.scroll_i -= scroll_y
-		}
+	if !a.is_selected {
+		return
 	}
+
+	scroll_y := (int(e.scroll_y) / 2)
+	if abs(e.scroll_y) != e.scroll_y {
+		a.scroll_i += -scroll_y
+	} else if a.scroll_i > 0 {
+		a.scroll_i -= scroll_y
+	}
+}
+
+pub fn (mut ctx GraphicsContext) calculate_line_height() {
+	ctx.line_height = ctx.gg.text_height('A1!|{}') + 1
 }
 
 // Functions for GG
