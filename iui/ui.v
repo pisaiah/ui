@@ -167,11 +167,9 @@ pub mut:
 
 pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 	mut tfile := $embed_file('assets/tree_file.png')
-
 	mut tree_file := win.gg.create_image_from_memory(tfile.data(), tfile.len)
 
 	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
-	dump(ctx.icon_cache)
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {

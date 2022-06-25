@@ -58,7 +58,6 @@ fn (mut this Tree2) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
 	// Draw Scroll
 	if requires_scrollbar {
 		wid := 15
-		min := wid + 1
 
 		ctx.win.draw_bordered_rect(x, this.y, wid, this.height, 2, ctx.theme.scroll_track_color,
 			ctx.win.theme.button_bg_hover)
