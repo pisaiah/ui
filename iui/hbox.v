@@ -5,7 +5,7 @@ import gx
 
 // HBox - implements Component interface
 [heap]
-struct HBox {
+pub struct HBox {
 	Component_A
 pub mut:
 	win            &Window

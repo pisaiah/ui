@@ -5,7 +5,7 @@ import gx
 import os
 
 // Treeview
-struct Tree {
+pub struct Tree {
 	Component_A
 pub mut:
 	app            &Window

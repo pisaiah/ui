@@ -4,7 +4,7 @@ import gg
 import gx
 
 // Progress bar - implements Component interface
-struct Progressbar {
+pub struct Progressbar {
 	Component_A
 pub mut:
 	text           string

@@ -10,7 +10,7 @@ import gx
 //  https://w3schools.com/w3css/w3css_color_schemes.asp
 //  Colorhex: #337299
 //
-struct Page {
+pub struct Page {
 	Component_A
 pub:
 	text_cfg gx.TextCfg

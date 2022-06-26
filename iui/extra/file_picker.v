@@ -5,7 +5,7 @@ import iui as ui
 import os
 
 // File Picker
-struct FilePicker {
+pub struct FilePicker {
 pub mut:
 	dir_input      &ui.TextField
 	file_list      &ui.VBox
@@ -273,7 +273,7 @@ pub fn draw_scrollbar(mut com ui.VBox, cl int, spl_len int) {
 	}
 }
 
-struct FilePickerModalData {
+pub struct FilePickerModalData {
 	picker    &FilePicker
 	user_data voidptr
 }

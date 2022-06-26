@@ -5,7 +5,7 @@ import gx
 // Deprecated: TextEdit replaced by TextArea, just need to move a few things over.
 
 // Syntax Highlight
-struct SyntaxHighlighter {
+pub struct SyntaxHighlighter {
 pub mut:
 	colors   map[string]gx.Color
 	keywords map[string][]string

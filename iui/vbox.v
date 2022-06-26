@@ -4,7 +4,7 @@ import gg
 import gx
 
 // VBox - implements Component interface
-struct VBox {
+pub struct VBox {
 	Component_A
 pub mut:
 	win            &Window

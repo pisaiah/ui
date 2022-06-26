@@ -5,7 +5,7 @@ import gx
 
 //
 // Button - implements Component interface
-struct Button {
+pub struct Button {
 	Component_A
 pub mut:
 	app                &Window

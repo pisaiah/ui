@@ -4,7 +4,7 @@ import gg
 import gx
 
 // Modal - implements Component interface
-struct Modal {
+pub struct Modal {
 	Component_A
 pub mut:
 	window         &Window

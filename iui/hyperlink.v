@@ -4,7 +4,7 @@ import gg
 import gx
 
 // Hyperlink - implements Component interface
-struct Hyperlink {
+pub struct Hyperlink {
 	Component_A
 pub mut:
 	app            &Window

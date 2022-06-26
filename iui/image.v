@@ -3,7 +3,7 @@ module iui
 import gg
 
 // Image - implements Component interface
-struct Image {
+pub struct Image {
 	Component_A
 pub mut:
 	app            &Window

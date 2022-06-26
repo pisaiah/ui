@@ -7,7 +7,7 @@ import gx
 // TextArea Component.
 //
 [minify]
-struct TextArea {
+pub struct TextArea {
 	Component_A
 pub mut:
 	win                  &Window
@@ -31,7 +31,7 @@ pub mut:
 }
 
 [minify]
-struct CaretPos {
+pub struct CaretPos {
 pub mut:
 	left     int = -1
 	top      int = -1
@@ -260,7 +260,7 @@ fn (mut this TextArea) move_caret(win &Window, x int, y int, current_len int, ll
 	}
 }
 
-struct SyntaxRules {
+pub struct SyntaxRules {
 	in_comment    bool
 	in_str        bool
 	current_color gx.Color

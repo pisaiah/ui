@@ -4,7 +4,7 @@ module iui
 //     Box is a combination of VBox & HBox
 //     This is similar to HTML's <br> rule
 //
-struct Box {
+pub struct Box {
 	Component_A
 pub mut:
 	win  &Window

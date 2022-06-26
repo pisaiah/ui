@@ -3,7 +3,7 @@ module iui
 import gx
 
 // TextField Component - Single line text input
-struct TextField {
+pub struct TextField {
 	Component_A
 pub mut:
 	win                  &Window

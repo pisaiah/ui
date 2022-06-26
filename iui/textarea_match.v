@@ -6,7 +6,7 @@
 //  	Output: ['mut', ' str', ':=', ' test']
 module iui
 
-struct Group {
+pub struct Group {
 pub:
 	start int = -1
 	end   int = -1

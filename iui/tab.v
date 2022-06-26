@@ -5,7 +5,7 @@ import gx
 import os
 
 // Tabbox - implements Component interface
-struct Tabbox {
+pub struct Tabbox {
 	Component_A
 pub mut:
 	win            &Window

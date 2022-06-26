@@ -4,7 +4,7 @@ import gg
 import gx
 
 // Checkbox - implements Component interface
-struct Checkbox {
+pub struct Checkbox {
 	Component_A
 pub mut:
 	app            &Window

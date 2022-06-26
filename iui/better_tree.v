@@ -11,7 +11,7 @@ import os
 // Tree:
 //     Implementation Note: https://www.codejava.net/java-se/swing/jtree-basic-tutorial-and-examples
 //
-struct Tree2 {
+pub struct Tree2 {
 	Component_A
 pub mut:
 	click_event_fn fn (voidptr, voidptr, voidptr)

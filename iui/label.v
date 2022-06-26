@@ -4,7 +4,7 @@ import gg
 import gx
 
 // Label - implements Component interface
-struct Label {
+pub struct Label {
 	Component_A
 pub mut:
 	app            &Window

@@ -101,7 +101,7 @@ pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
 
 // Window
 [heap]
-struct Window {
+pub struct Window {
 pub mut:
 	gg               &gg.Context
 	font_size        int = 16
@@ -127,7 +127,7 @@ pub mut:
 }
 
 // fonts
-struct FontSet {
+pub struct FontSet {
 mut:
 	hash map[string]int
 }

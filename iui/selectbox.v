@@ -4,7 +4,7 @@ import gg
 import gx
 
 // Select - implements Component interface
-struct Select {
+pub struct Select {
 	Component_A
 pub mut:
 	app             &Window

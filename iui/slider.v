@@ -4,7 +4,7 @@ import gg
 import math
 
 // Slider - implements Component interface
-struct Slider {
+pub struct Slider {
 	Component_A
 pub mut:
 	win       &Window

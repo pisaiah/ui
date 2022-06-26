@@ -5,7 +5,7 @@ import gx
 import v.util.version { full_v_version }
 
 [heap]
-struct Menubar {
+pub struct Menubar {
 	Component_A
 pub mut:
 	app   &Window
@@ -29,7 +29,7 @@ pub fn (mut bar Menubar) is_hovering() bool {
 }
 
 [heap]
-struct MenuItem {
+pub struct MenuItem {
 	Component_A
 pub mut:
 	items          []MenuItem
@@ -83,7 +83,7 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 }
 
 [params]
-struct MenubarConfig {
+pub struct MenubarConfig {
 	// children
 }
 
