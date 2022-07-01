@@ -9,7 +9,7 @@ import os
 
 //
 // Tree:
-//     Implementation Note: https://www.codejava.net/java-se/swing/jtree-basic-tutorial-and-examples
+//     Implementation Note: https://codejava.net/java-se/swing/jtree-basic-tutorial-and-examples
 //
 pub struct Tree2 {
 	Component_A
@@ -62,7 +62,8 @@ fn (mut this Tree2) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
 		ctx.win.draw_bordered_rect(x, this.y, wid, this.height, 2, ctx.theme.scroll_track_color,
 			ctx.win.theme.button_bg_hover)
 
-		ctx.win.gg.draw_rect_filled(x, this.y + 15 + sth, 14, enh - 6, ctx.win.theme.scroll_bar_color)
+		ctx.win.gg.draw_rounded_rect_filled(x + 2, this.y + 15 + sth, 10, enh - 6, 4,
+			ctx.win.theme.scroll_bar_color)
 	} else {
 		return
 	}

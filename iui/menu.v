@@ -44,7 +44,7 @@ pub mut:
 [parms]
 pub struct MenuItemConfig {
 	text           string
-	icon           &Image = 0
+	icon           &Image = voidptr(0)
 	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
 	children       []&MenuItem
 }

@@ -5,10 +5,14 @@ import iui as ui
 import iui.extra
 import os
 import os.font
+import gx
 
 [console]
 fn main() {
 	// Create Window
+
+	mut tastas := 1
+
 	mut window := ui.window_with_config(ui.get_system_theme(), 'Notepad', 520, 550, &ui.WindowConfig{
 		font_path: os.resource_abs_path('VeraMono.ttf')
 		ui_mode: true

@@ -123,9 +123,8 @@ fn (mut this TextArea) clamp_values(lines_drawn int) {
 	}
 }
 
-fn get_line_height(win &Window) int {
-	return win.graphics_context.line_height + 2
-	// return text_height(win, 'A!{}!') + 2
+fn get_line_height(ctx &GraphicsContext) int {
+	return ctx.line_height + 2
 }
 
 fn (mut this TextArea) draw(ctx &GraphicsContext) {
@@ -138,26 +137,32 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 		this.keys << iui.colors
 	}
 
-	win := this.win
+	lh := get_line_height(ctx)
+	line_height := get_line_height(ctx)
+
 	this.draw_background()
 
-	line_height := get_line_height(win)
+	sel_y := this.y + (lh * (this.caret_top - this.scroll_i)) + this.padding_y
+	if sel_y > this.y {
+		ctx.gg.draw_rect_filled(this.x, sel_y - 1, this.width, lh + 2, ctx.theme.button_bg_hover)
+	}
 
 	cfg := gx.TextCfg{
-		size: this.win.font_size
+		size: ctx.font_size
 		color: ctx.theme.text_color
 	}
 
 	num_color := (ctx.theme.button_bg_hover.r + ctx.theme.text_color.r) / 2
 	cfg_num := gx.TextCfg{
-		size: this.win.font_size
+		size: ctx.font_size
 		color: gx.rgb(num_color, num_color, num_color)
 	}
 
 	lines_drawn := this.height / line_height
 	this.clamp_values(lines_drawn)
 
-	padding_x := this.padding_x + this.draw_line_number_background()
+	line_bg_width := this.draw_line_number_background(ctx)
+	padding_x := this.padding_x + line_bg_width
 
 	for i in this.scroll_i .. this.lines.len {
 		if i < 0 {
@@ -194,17 +199,16 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 			cfg, is_cur_line, i)
 	}
 	this.draw_scrollbar(lines_drawn, this.lines.len)
-	lh := get_line_height(win)
-	sel_y := this.y + (lh * this.caret_top) + this.padding_y
-	this.win.gg.draw_rect_filled(this.x + this.down_pos.x, sel_y, (this.down_pos.end_x - this.down_pos.x),
+
+	ctx.gg.draw_rect_filled(this.x + this.down_pos.x, sel_y, (this.down_pos.end_x - this.down_pos.x),
 		lh, gx.rgba(0, 100, 200, 50))
 }
 
-fn (this &TextArea) draw_line_number_background() int {
+fn (this &TextArea) draw_line_number_background(ctx &GraphicsContext) int {
 	if this.code_syntax_on {
 		padding_x := text_width(this.win, (this.lines.len * 1000).str())
 		this.win.draw_bordered_rect(this.x + 1, this.y + 1, padding_x, this.height - 2,
-			2, this.win.theme.button_bg_normal, this.win.theme.button_bg_normal)
+			2, ctx.theme.button_bg_normal, ctx.theme.button_bg_normal)
 		return padding_x
 	}
 	return 4
@@ -358,7 +362,7 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, str_fix_tab string, wid int, line int) {
 	mx := this.win.mouse_x - this.x
 	my := this.win.mouse_y - this.y - this.padding_y
-	line_height := get_line_height(this.win)
+	line_height := get_line_height(this.win.graphics_context)
 	my_lh := my / line_height
 
 	if this.down_pos.top == -1 {

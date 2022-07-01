@@ -5,6 +5,7 @@ import gx
 import os
 
 // Treeview
+[deprecated]
 pub struct Tree {
 	Component_A
 pub mut:

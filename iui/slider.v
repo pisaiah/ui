@@ -30,9 +30,9 @@ pub enum Direction {
 // Slider Config
 [params]
 pub struct SliderConfig {
-	min int
-	max int
-	dir Direction
+	min         int
+	max         int
+	dir         Direction
 	thumb_color gg.Color = gg.Color{0, 0, 0, 0}
 }
 
