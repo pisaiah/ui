@@ -33,8 +33,9 @@ fn cstr(the_string string) &char {
 }
 
 pub fn open_dialog(title string) string {
-	temp := unsafe { C.tinyfd_openFileDialog(cstr(title), cstr(''), 0, cstr(''), cstr(''),
-		cstr('')) }
+	temp := unsafe {
+		C.tinyfd_openFileDialog(cstr(title), cstr(''), 0, cstr(''), cstr(''), cstr(''))
+	}
 	if temp != &char(0) {
 		return unsafe { temp.vstring() }
 	} else {

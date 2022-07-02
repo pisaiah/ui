@@ -8,8 +8,8 @@ import v.util.version { full_v_version }
 pub struct Menubar {
 	Component_A
 pub mut:
-	app   &Window
-	theme Theme
+	// app   &Window
+	theme &Theme
 	items []MenuItem
 	tik   int
 }
@@ -84,28 +84,37 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 
 [params]
 pub struct MenubarConfig {
-	// children
+	theme &Theme = voidptr(0)
+}
+
+pub fn menu_bar(cfg MenubarConfig) &Menubar {
+	return &Menubar{
+		theme: cfg.theme
+	}
 }
 
 pub fn menubar(app &Window, theme Theme) &Menubar {
 	return &Menubar{
-		app: app
-		theme: theme
+		// app: app
+		theme: &theme
 	}
 }
 
 pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
-	mut wid := gg.window_size().width
-	if bar.width > 0 {
-		wid = bar.width
+	wid := if bar.width > 0 { bar.width } else { gg.window_size().width }
+
+	if bar.theme == voidptr(0) {
+		bar.theme = ctx.theme
 	}
 
 	ctx.gg.draw_rect_filled(bar.x, bar.y, wid - 1, 25, bar.theme.menubar_background)
 	ctx.gg.draw_rect_empty(bar.x, bar.y, wid, 25, bar.theme.menubar_border)
 
 	mut mult := 0
+	mut win := ctx.win
+
 	for mut item in bar.items {
-		bar.app.draw_menu_button(ctx, mult, bar.y, 56, 25, mut item)
+		win.draw_menu_button(ctx, mult, bar.y, 56, 25, mut item)
 		if item.width > 0 {
 			mult += item.width + 4
 		} else {
@@ -151,7 +160,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 	clicked := ((abs(midx - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)))
 
 	bg := item.get_bg(app, hover, clicked)
-	mut border := if hover { app.theme.button_border_hover } else { app.theme.menubar_border }
+	mut border := if hover { ctx.theme.button_border_hover } else { app.theme.menubar_border }
 
 	// Detect Click
 	if clicked && !item.show_items {

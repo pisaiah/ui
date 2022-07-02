@@ -252,10 +252,11 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 
 pub fn (mut win Window) set_theme(theme Theme) {
 	win.theme = theme
+	ref := &theme
 	if win.bar != voidptr(0) {
-		win.bar.theme = theme
+		win.bar.theme = ref
 	}
-	win.graphics_context.theme = &theme
+	win.graphics_context.theme = ref
 	win.gg.set_bg_color(theme.background)
 }
 
