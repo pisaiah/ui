@@ -85,6 +85,10 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	menubar_has_tab_color := menu_bar_status_theme(win.theme)
 
 	mut bar := ui.menubar(win, menubar_has_tab_color)
+	//bar.set_bounds(0, 25, 100, 60)
+	bar.draw_event_fn = fn (win &ui.Window, mut com ui.Component) {
+		com.height = 60
+	}
 
 	// Back Button
 	mut back := ui.menuitem('<')
@@ -180,7 +184,7 @@ fn width_draw_fn(mut win ui.Window, com &ui.Component) {
 fn status_bar_draw(mut win ui.Window, com &ui.Component) {
 	size := win.gg.window_size()
 	mut this := *com
-	this.y = (size.height - 25) - 30 - 22
+	this.y = (size.height - 25) - 30 - 25
 }
 
 fn add_child(mut box ui.Component, child &ui.Component) {

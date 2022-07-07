@@ -233,7 +233,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 fn open_about_modal(app &Window) &Modal {
 	mut about := modal(app, 'About iUI')
 	about.in_height = 250
-	about.in_width = 320
+	about.in_width = 370
 
 	mut title := label(app, 'iUI ')
 	title.set_pos(40, 16)
@@ -246,9 +246,12 @@ fn open_about_modal(app &Window) &Modal {
 	lbl.set_pos(40, 70)
 	about.add_child(lbl)
 
-	mut gh := hyperlink(app, 'Github', 'https://github.com/isaiahpatton/ui')
-	gh.set_pos(40, 135)
-	gh.pack()
+	gh := link(
+		text: 'Github'
+		url: 'https://github.com/isaiahpatton/ui'
+		bounds: Bounds{x: 40, y: 135}
+		pack: true
+	)
 	about.add_child(gh)
 
 	mut copy := label(app, 'Copyright © 2021-2022 Isaiah.')

@@ -224,13 +224,10 @@ fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, ll
 		pretext := str_fix_tab[0..caret_pos]
 		ctx := win.graphics_context
 
-		pipe_wid := text_width(win, '|')
-		wid := text_width(win, pretext) - pipe_wid
+		wid := text_width(win, pretext) - 1
+		height := get_line_height(ctx) + 1
 
-		ctx.draw_text(x + wid, y, '|', ctx.font, gx.TextCfg{
-			color: ctx.theme.text_color
-			size: win.font_size
-		})
+		ctx.gg.draw_rect_filled(x + wid, y - 1, 2, height, ctx.theme.text_color)
 	}
 }
 
@@ -283,6 +280,22 @@ const red_keys = '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
 
 const colors = 'blue,red,green,yellow,orange,purple,black,gray,pink,white'.split(',')
 
+fn (this &TextArea) draw_tab_dots(ctx &GraphicsContext, current_len int, x int, y int) {
+	if current_len <= 0 {
+		// Ignore first tab
+		return
+	}
+
+	height := get_line_height(ctx)
+	xpos := x + 1
+
+	ctx.gg.draw_line_with_config(xpos, y, xpos, y + height, gg.PenConfig{
+		color: ctx.theme.text_color
+		line_type: .dotted
+		thickness: 1
+	})
+}
+
 fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []string, cfg gx.TextCfg, is_cur_line bool, line int) {
 	mut x_off := 0
 
@@ -297,28 +310,26 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 		llen := if str == '\t' { 0 } else { str.len }
 
 		if is_cur_line {
-			this.draw_caret(win, x + x_off, y, current_len, llen, str_fix_tab)
+			this.draw_caret(win, x + x_off, y, current_len, llen, str)
 		}
 
 		color = cfg.color
 
-		if str in iui.colors {
-			color = gx.color_from_string(str)
+		if str == '\t' {
+			ctx := win.graphics_context
+			xpos := x + x_off + 1
+			this.draw_tab_dots(ctx, current_len, xpos, y)
 		}
 
-		if str == "'" {
-			is_str = !is_str
-			color = gx.rgb(220, 0, 220)
-		}
-		if is_str {
-			color = gx.rgb(220, 0, 220)
+		if str in iui.colors {
+			color = gx.color_from_string(str)
 		}
 
 		if str in iui.numbers {
 			color = gx.orange
 		}
 		if str in iui.blue_keys {
-			color = gx.rgb(0, 100, 200)
+			color = gx.rgb(51, 153, 255)
 		}
 		if str in iui.red_keys {
 			color = gx.red
@@ -326,6 +337,14 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 
 		if str in iui.purp_keys {
 			color = gx.rgb(190, 40, 250)
+		}
+
+		if str == "'" {
+			is_str = !is_str
+			color = gx.rgb(205, 145, 120)
+		}
+		if is_str {
+			color = gx.rgb(205, 145, 120)
 		}
 
 		if str == '/*' && !is_str {

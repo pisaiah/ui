@@ -72,12 +72,14 @@ pub fn load_url(mut win ui.Window, url string) {
 	start := time.now().unix_time_milli()
 
 	config := http.FetchConfig{
-		user_agent: 'V/' + version.v_version + ' Browser/0.1'
+		user_agent: 'V/' + version.v_version + ' Vrowser/0.1'
 	}
 
 	mut resp := http.Response{}
+	
+	is_file := os.exists(url)
 
-	if !url.starts_with('file://') {
+	if !url.starts_with('file://') && !is_file {
 		fixed_url := if url.contains('://') { url } else { 'http://' + url }
 
 		resp = http.fetch(http.FetchConfig{ ...config, url: fixed_url }) or {
@@ -85,7 +87,9 @@ pub fn load_url(mut win ui.Window, url string) {
 			return
 		}
 	} else {
-		lines := os.read_lines(os.real_path(url.split('file://')[1])) or { [] }
+		path := if is_file { url } else { url.split('file://')[1] }
+		
+		lines := os.read_lines(os.real_path(path)) or { [] }
 		resp.text = lines.join('\n')
 	}
 
@@ -113,11 +117,11 @@ pub fn load_url(mut win ui.Window, url string) {
 		}
 	}*/
 
-	tb.kids[ctab] = tb.kids[ctab].filter(it.y < 25 || it is ui.Menubar)
+	tb.kids[ctab] = tb.kids[ctab].filter(it.y < 25 || it is ui.Menubar || it is ui.HBox)
 
 	// Background
 	mut bg := bg_area(win)
-	bg.set_bounds(0, 25, 0, 45)
+	bg.set_bounds(0, 35, 0, 45)
 	bg.draw_event_fn = width_draw_fn
 	bg.set_id(mut win, 'body')
 	tb.add_child(tb.active_tab, bg)
@@ -148,7 +152,7 @@ pub fn load_url(mut win ui.Window, url string) {
 
 	vbox.z_index = -1
 	vbox.draw_event_fn = box_draw_fn
-	vbox.set_bounds(0, 25, 900, 500) // TODO; size
+	vbox.set_bounds(0, 42, 900, 500) // TODO; size
 	tb.add_child(tb.active_tab, vbox)
 
 	end := time.now().unix_time_milli()
@@ -384,9 +388,10 @@ fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hy
 
 	mut lbl := ui.hyperlink(win, content, href)
 
-	lbl.click_event_fn = fn (a voidptr) {
+	lbl.click_event_fn = fn [win] (a voidptr) {
 		mut this := &ui.Hyperlink(a)
-		load_url(mut this.app, this.url)
+		mut winn := win.graphics_context.win
+		load_url(mut winn, this.url)
 	}
 
 	lbl.set_config(conf.size, false, conf.bold)

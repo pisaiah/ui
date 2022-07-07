@@ -165,11 +165,22 @@ pub mut:
 	icon_cache  map[string]int
 }
 
+pub fn (ctx &GraphicsContext) get_icon_sheet_id() int {
+	if ctx.theme.name == 'Green Mono' {
+		return ctx.icon_cache['icons_green']
+	}
+	return ctx.icon_cache['tree_file']
+}
+
 pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 	mut tfile := $embed_file('assets/tree_file.png')
 	mut tree_file := win.gg.create_image_from_memory(tfile.data(), tfile.len)
 
+	mut green_file := $embed_file('assets/icons_green.png')
+	mut green_icons := win.gg.create_image_from_memory(green_file.data(), green_file.len)
+
 	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
+	ctx.icon_cache['icons_green'] = ctx.gg.cache_image(green_icons)
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
@@ -358,7 +369,7 @@ fn rune_box_scroll(e &gg.Event, mut a TextField) {
 }
 
 pub fn (mut ctx GraphicsContext) calculate_line_height() {
-	ctx.line_height = ctx.gg.text_height('A1!|{}') + 1
+	ctx.line_height = ctx.gg.text_height('A1!|{}j;') + 2
 }
 
 // Functions for GG

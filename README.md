@@ -1,6 +1,8 @@
 # Isaiah's UI Toolkit `0.0.7`
 
-My UI Widget Toolkit for V. Example: *([examples/test.v](examples/test.v))*
+My UI Widget Toolkit for V. Inspired by the syntax of Java's Swing UI.
+
+Example: *([examples/test.v](examples/test.v))*
 
 ![image](https://user-images.githubusercontent.com/16439221/158931211-94c5dc3d-887e-4906-8ea1-d4620a82257d.png)
 

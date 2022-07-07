@@ -112,15 +112,17 @@ fn (mut this TreeNode) draw(ctx &GraphicsContext) {
 
 fn (mut this TreeNode) draw_icon(ctx &GraphicsContext, x int, y int) {
 	if this.nodes.len > 0 {
+		h := y + (this.height / 2) - (13 / 2)
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: ctx.icon_cache['tree_file']
-			img_rect: gg.Rect{x, y, 16, 13}
+			img_id: ctx.get_icon_sheet_id()
+			img_rect: gg.Rect{x, h, 16, 13}
 			part_rect: gg.Rect{13, 3, 16, 13}
 		})
 	} else {
+		h := y + (this.height / 2) - (16 / 2)
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: ctx.icon_cache['tree_file']
-			img_rect: gg.Rect{x, y, 13, 16}
+			img_id: ctx.get_icon_sheet_id()
+			img_rect: gg.Rect{x, h, 13, 16}
 			part_rect: gg.Rect{0, 0, 13, 16}
 		})
 	}
@@ -203,9 +205,9 @@ fn (this &TreeNode) get_height() int {
 
 pub fn (this &Tree2) get_node_height(ctx &GraphicsContext) int {
 	if ctx.line_height > 21 {
-		return ctx.line_height
+		return ctx.line_height + 4
 	}
-	return 21
+	return 22
 }
 
 pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
@@ -218,9 +220,10 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 	scroll := ((this.scroll_i / 4) * node_height)
 
 	if scroll == 0 {
+		h := this.y + (node_height / 2) - (13 / 2)
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: ctx.icon_cache['tree_file']
-			img_rect: gg.Rect{this.x + 4, this.y - scroll + 4, 16, 13}
+			img_id: ctx.get_icon_sheet_id()
+			img_rect: gg.Rect{this.x + 4, h - scroll + 4, 16, 13}
 			part_rect: gg.Rect{13, 3, 16, 13}
 		})
 		ctx.draw_text(this.x + 24, this.y - scroll + 4, os.base(this.text), ctx.font,

@@ -7,25 +7,44 @@ import gx
 pub struct Hyperlink {
 	Component_A
 pub mut:
-	app            &Window
 	text           string
 	click_event_fn fn (voidptr)
 	in_modal       bool
 	need_pack      bool
 	size           int
+	abs_size       bool
 	bold           bool
 	url            string
 }
 
 [params]
 pub struct HyperlinkConfig {
+	text   string
+	url    string
 	bounds Bounds
+	pack   bool
 }
 
+pub fn link(cfg HyperlinkConfig) &Hyperlink {
+	return &Hyperlink{
+		text: cfg.text
+		x: cfg.bounds.x
+		y: cfg.bounds.y
+		width: cfg.bounds.width
+		height: cfg.bounds.height
+		click_event_fn: fn (a voidptr) {
+			this := &Hyperlink(a)
+			open_url(this.url)
+		}
+		url: cfg.url
+		need_pack: cfg.pack
+	}
+}
+
+[deprecated: 'Replaced by link(HyperlinkConfig)']
 pub fn hyperlink(app &Window, text string, url string, conf HyperlinkConfig) &Hyperlink {
 	return &Hyperlink{
 		text: text
-		app: app
 		x: conf.bounds.x
 		y: conf.bounds.y
 		width: conf.bounds.width
@@ -38,46 +57,9 @@ pub fn hyperlink(app &Window, text string, url string, conf HyperlinkConfig) &Hy
 	}
 }
 
-pub fn (mut btn Hyperlink) draw(ctx &GraphicsContext) {
-	btn.app.draw_hyperlink(btn.x, btn.y, btn.width, btn.height, mut btn)
-}
-
-pub fn (mut btn Hyperlink) pack() {
-	btn.need_pack = true
-}
-
-pub fn (mut btn Hyperlink) pack_do() {
-	// Set font size
-	btn.app.graphics_context.set_cfg(gx.TextCfg{
-		size: btn.app.font_size + btn.size
-		color: btn.app.theme.text_color
-		bold: btn.bold
-	})
-
-	width := text_width(btn.app, btn.text.replace('\t', ' '.repeat(8)))
-	btn.width = width + 1
-	th := text_height(btn.app, '{!A') + btn.size
-
-	lines := btn.text.split_into_lines()
-	hi := (th * lines.len)
-	btn.height = hi + 4 + btn.size
-
-	if btn.height < th {
-		btn.height = th
-	}
-	btn.need_pack = false
-
-	// Reset for text_height
-	btn.app.graphics_context.set_cfg(gx.TextCfg{
-		size: btn.app.font_size
-		color: btn.app.theme.text_color
-		bold: false
-	})
-}
-
-fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this Hyperlink) {
+pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	if this.need_pack {
-		this.pack_do()
+		this.pack_do(ctx)
 	}
 
 	if this.is_mouse_rele {
@@ -85,55 +67,104 @@ fn (mut app Window) draw_hyperlink(x int, y int, width int, height int, mut this
 		this.click_event_fn(this)
 	}
 
-	ctx := app.graphics_context
+	size := this.get_font_size(ctx)
+
 	ctx.set_cfg(gx.TextCfg{
-		size: app.font_size + this.size
-		color: app.theme.text_color
+		size: size
+		color: ctx.theme.text_color
 		bold: this.bold
 	})
 
 	// Draw Button Text
-	line_height := text_height(app, '1A{W') + 1
+	line_height := ctx.line_height + 5
 	if this.height < (line_height / 2) {
 		this.height = line_height
 	}
+
+	x := this.x
+	y := this.y
+	width := this.width
+	height := this.height
 
 	mut my := 0
 	for mut spl in this.text.split('\n') {
 		ctx.draw_text(x, y + height - line_height + my, spl.replace('\t', '  '.repeat(8)),
 			ctx.font, gx.TextCfg{
-			size: app.font_size + this.size
+			size: size
 			color: gx.rgb(0, 100, 200)
 			bold: this.bold
 		})
 
 		ctx.set_cfg(gx.TextCfg{
-			size: app.font_size
-			color: app.theme.text_color
+			size: ctx.font_size
+			color: ctx.theme.text_color
 			bold: false
 		})
 
 		my += line_height
 	}
-	app.gg.draw_line(x, y + height - 2, x + width, y + height - 2, gx.rgb(0, 100, 200))
+	ctx.gg.draw_line(x, y + height - 2, x + width, y + height - 2, gx.rgb(0, 100, 200))
 
-	this.debug_draw(app)
+	this.debug_draw(ctx)
 }
 
-fn (this &Hyperlink) debug_draw(app &Window) {
-	if !app.debug_draw {
+pub fn (mut btn Hyperlink) pack() {
+	btn.need_pack = true
+}
+
+fn (this &Hyperlink) get_font_size(ctx &GraphicsContext) int {
+	if this.abs_size {
+		return this.size
+	}
+	return ctx.win.font_size + this.size
+}
+
+pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
+	// Set font size
+	size := btn.get_font_size(ctx)
+
+	ctx.set_cfg(gx.TextCfg{
+		size: size
+		color: ctx.theme.text_color
+		bold: btn.bold
+	})
+
+	width := ctx.gg.text_width(btn.text.replace('\t', ' '.repeat(8)))
+	btn.width = width + 1
+	th := ctx.gg.text_height(btn.text) + 5
+
+	lines := btn.text.split_into_lines()
+	hi := (th * lines.len)
+	btn.height = hi
+
+	if btn.height < th {
+		btn.height = th
+	}
+	btn.need_pack = false
+
+	// Reset for text_height
+	ctx.set_cfg(gx.TextCfg{
+		size: ctx.win.font_size
+		color: ctx.theme.text_color
+		bold: false
+	})
+}
+
+fn (this &Hyperlink) debug_draw(ctx &GraphicsContext) {
+	if !ctx.win.debug_draw {
 		return
 	}
-	app.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
-	app.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
-	app.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
+	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
+	ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
+	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
 }
 
 pub fn (mut this Hyperlink) set_config(fs int, abs bool, bold bool) {
 	this.size = fs
 	if abs {
 		// Absolute font size
-		this.size = fs - this.app.font_size
+		// this.size = fs - this.app.font_size
+		this.abs_size = true
 	}
 	this.bold = bold
 }

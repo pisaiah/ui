@@ -40,15 +40,35 @@ fn (tb &Tabbox) get_tab_color(ctx &GraphicsContext, active bool) gx.Color {
 	return gx.rgba(bg.r, bg.g, bg.b, 10)
 }
 
+pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
+	line_height := ctx.line_height + 5
+
+	val := 30
+	if line_height > val {
+		return line_height
+	}
+	return val
+}
+
+pub fn (this &Tabbox) get_inactive_tab_height(ctx &GraphicsContext) int {
+	line_height := ctx.line_height + 5
+
+	val := 25
+	if line_height > val {
+		return line_height - 5
+	}
+	return val
+}
+
 // Draw tab
 fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Component, mx int) int {
 	key := os.base(key_)
 	is_active := tb.active_tab == key_
 
-	theig := if is_active { 29 } else { 25 }
+	theig := if is_active { tb.get_active_tab_height(ctx) } else { tb.get_inactive_tab_height(ctx) }
 	my := if is_active { 0 } else { 4 }
 
-	size := text_width(tb.win, key) + 4
+	size := text_width(tb.win, key + ' x') + 5
 	sizh := text_height(tb.win, key) / 2
 
 	tsize := if tb.closable { size + 30 } else { size + 14 }
@@ -57,13 +77,16 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	tb.win.draw_filled_rect(tb.x + mx, tb.y + my, tsize, theig, 2, tab_color, tb.win.theme.button_border_normal)
 
 	if tb.active_tab == key_ {
-		ctx.gg.draw_line(tb.x + mx, tb.y + my + theig, tb.x + mx + tsize, tb.y + my + theig,
+		line_x := if mx == 0 { tb.x + mx } else { tb.x + mx - 1 }
+
+		ctx.gg.draw_line(line_x, tb.y + my + theig, tb.x + mx + tsize, tb.y + my + theig,
 			ctx.theme.button_bg_normal)
 	}
 
+	text_y := if is_active { theig - 4 } else { theig }
+
 	// Draw Button Text
-	ctx.draw_text((tb.x + mx) + 3, tb.y + my + (theig / 2) - sizh, ' ' + key, ctx.font,
-		gx.TextCfg{
+	ctx.draw_text((tb.x + mx) + 3, tb.y + (text_y / 2) - sizh, ' ' + key, ctx.font, gx.TextCfg{
 		size: tb.win.font_size
 		color: tb.win.theme.text_color
 	})
@@ -91,8 +114,10 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 }
 
 pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsize int, theig int, sizh int, key_ string) {
+	fs := if tb.win.font_size > 19 { 19 } else { tb.win.font_size }
+
 	ctx.set_cfg(gx.TextCfg{
-		size: tb.win.font_size - 4
+		size: fs - 4
 		color: ctx.theme.text_color
 	})
 
@@ -141,7 +166,7 @@ fn get_close_btn_color(ctx &GraphicsContext, hover bool) gx.Color {
 
 // Draw this component
 pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
-	t_heig := 30
+	t_heig := tb.get_active_tab_height(ctx)
 	ctx.gg.draw_rect_empty(tb.x, tb.y + t_heig - 1, tb.width, tb.height - (t_heig - 1),
 		ctx.theme.button_border_normal)
 	mut mx := 0
