@@ -76,7 +76,7 @@ pub fn load_url(mut win ui.Window, url string) {
 	}
 
 	mut resp := http.Response{}
-	
+
 	is_file := os.exists(url)
 
 	if !url.starts_with('file://') && !is_file {
@@ -88,7 +88,7 @@ pub fn load_url(mut win ui.Window, url string) {
 		}
 	} else {
 		path := if is_file { url } else { url.split('file://')[1] }
-		
+
 		lines := os.read_lines(os.real_path(path)) or { [] }
 		resp.text = lines.join('\n')
 	}

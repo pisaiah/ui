@@ -63,7 +63,13 @@ fn main() {
 	pb.set_bounds(122, 145, 160, 24)
 	window.add_child(pb)
 
-	window.add_child(create_tree(window))
+	mut tree := create_tree(window)
+	mut tree_view := ui.scroll_view(
+		bounds: ui.Bounds{330, 220, 180, 210}
+		view: tree
+	)
+
+	window.add_child(tree_view)
 
 	mut tb := ui.tabbox(window)
 	tb.set_bounds(310, 38, 200, 172)
@@ -145,7 +151,9 @@ fn create_help_menu() &ui.MenuItem {
 // Create the tree demo
 fn create_tree(window &ui.Window) &ui.Tree2 {
 	mut tree := ui.tree2('My Tree')
-	tree.set_bounds(330, 220, 180, 210)
+	tree.set_bounds(0, 0, 180, 210)
+	// tree.pack()
+	tree.needs_pack = true
 
 	tree.add_child(&ui.TreeNode{
 		text: 'Veggies'

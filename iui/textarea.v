@@ -28,6 +28,7 @@ pub mut:
 	ctrl_down            bool
 	hide_border          bool
 	keys                 []string
+	needs_pack           bool
 }
 
 [minify]
@@ -39,6 +40,10 @@ pub mut:
 	y        int
 	end_left int = -1
 	end_x    int = -1
+}
+
+pub fn (mut this TextArea) pack() {
+	this.needs_pack = true
 }
 
 pub fn textarea(win &Window, lines []string) &TextArea {
@@ -123,7 +128,7 @@ fn (mut this TextArea) clamp_values(lines_drawn int) {
 	}
 }
 
-fn get_line_height(ctx &GraphicsContext) int {
+pub fn get_line_height(ctx &GraphicsContext) int {
 	return ctx.line_height + 2
 }
 
@@ -164,6 +169,14 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 	line_bg_width := this.draw_line_number_background(ctx)
 	padding_x := this.padding_x + line_bg_width
 
+	if this.needs_pack {
+		// Pack
+		y_off := (line_height * this.lines.len) + this.padding_y
+		this.height = y_off
+	}
+
+	ws := ctx.gg.window_size()
+
 	for i in this.scroll_i .. this.lines.len {
 		if i < 0 {
 			continue
@@ -173,6 +186,15 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 		y_off := line_height * (i - this.scroll_i) + this.padding_y
 
 		if (y_off + line_height) > this.height {
+			this.ml_comment = false
+			break
+		}
+
+		if (this.y + y_off) < 0 {
+			continue
+		}
+
+		if (this.y + y_off) > ws.height {
 			this.ml_comment = false
 			break
 		}

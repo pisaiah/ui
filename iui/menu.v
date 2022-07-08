@@ -249,7 +249,10 @@ fn open_about_modal(app &Window) &Modal {
 	gh := link(
 		text: 'Github'
 		url: 'https://github.com/isaiahpatton/ui'
-		bounds: Bounds{x: 40, y: 135}
+		bounds: Bounds{
+			x: 40
+			y: 135
+		}
 		pack: true
 	)
 	about.add_child(gh)

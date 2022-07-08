@@ -85,7 +85,7 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	menubar_has_tab_color := menu_bar_status_theme(win.theme)
 
 	mut bar := ui.menubar(win, menubar_has_tab_color)
-	//bar.set_bounds(0, 25, 100, 60)
+	// bar.set_bounds(0, 25, 100, 60)
 	bar.draw_event_fn = fn (win &ui.Window, mut com ui.Component) {
 		com.height = 60
 	}

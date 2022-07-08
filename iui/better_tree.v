@@ -22,6 +22,7 @@ pub mut:
 	is_hover      bool
 	padding_top   int
 	parent_height int
+	needs_pack    bool
 }
 
 // Children
@@ -229,6 +230,7 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 		ctx.draw_text(this.x + 24, this.y - scroll + 4, os.base(this.text), ctx.font,
 			cfg)
 	}
+
 	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
 
 	mut y := this.y + 5
@@ -236,6 +238,7 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 	mut drawn := 0
 	mut not_drawn := 0
 
+	mut hei := node_height + 5
 	for mut node in this.children {
 		if mut node is TreeNode {
 			wid := this.width - (this.x + node_height) - 15
@@ -253,9 +256,14 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 			}
 
 			y += node.get_height()
+			hei += node.get_height()
 		}
 	}
 	this.draw_scrollbar(ctx, drawn, drawn + not_drawn)
+
+	if this.needs_pack {
+		this.height = hei
+	}
 
 	max := (drawn + not_drawn) - (this.height / node_height) + 2
 
