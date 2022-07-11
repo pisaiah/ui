@@ -14,6 +14,10 @@ pub mut:
 	kids           map[string][]Component
 	active_tab     string
 	closable       bool = true
+	tab_height_active int
+	tab_height_inactive int
+	active_offset int
+	inactive_offset int = 4
 }
 
 // Return new Progressbar
@@ -41,6 +45,10 @@ fn (tb &Tabbox) get_tab_color(ctx &GraphicsContext, active bool) gx.Color {
 }
 
 pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
+	if this.tab_height_active != 0 {
+		return this.tab_height_active
+	}
+
 	line_height := ctx.line_height + 5
 
 	val := 30
@@ -51,6 +59,10 @@ pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
 }
 
 pub fn (this &Tabbox) get_inactive_tab_height(ctx &GraphicsContext) int {
+	if this.tab_height_inactive != 0 {
+		return this.tab_height_inactive
+	}
+
 	line_height := ctx.line_height + 5
 
 	val := 25
@@ -65,8 +77,11 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	key := os.base(key_)
 	is_active := tb.active_tab == key_
 
-	theig := if is_active { tb.get_active_tab_height(ctx) } else { tb.get_inactive_tab_height(ctx) }
-	my := if is_active { 0 } else { 4 }
+	active_h := tb.get_active_tab_height(ctx)
+	inactive_h := tb.get_inactive_tab_height(ctx)
+
+	theig := if is_active { active_h } else { inactive_h }
+	my := if is_active { tb.active_offset } else { tb.inactive_offset }
 
 	size := text_width(tb.win, key + ' x') + 5
 	sizh := text_height(tb.win, key) / 2

@@ -1,6 +1,5 @@
 module iui
 
-import gx
 import math
 
 // ScrollView Component
@@ -54,10 +53,8 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	// Set Scissor
 	ctx.gg.scissor_rect(x, y, this.width, this.height)
 
-	mut y_pos := y - (this.scroll_i * this.increment)
-	mut total_height := this.draw_children(ctx)
+	total_height := this.draw_children(ctx)
 
-	scroll := (this.scroll_i * this.increment)
 	this.clamp_scroll_index(total_height)
 
 	ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
@@ -115,7 +112,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 	x := xx + this.width - 15
 
 	// Scroll Bar
-	scroll := this.scroll_i * this.increment // (this.scroll_i / 4)
+	scroll := this.scroll_i * this.increment
 	bar_height := this.height - 35
 
 	sth := int((f32(scroll) / f32(spl_len)) * bar_height)
