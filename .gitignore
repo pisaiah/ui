@@ -6,6 +6,7 @@ iui/tree.v
 
 #  See: https://github.com/isaiahpatton/vide
 examples/ide/
+examples/vide
 #  See: https://github.com/isaiahpatton/vpaint
 examples/vpaint/
 #  See: https://github.com/isaiahpatton/File-Explorer
