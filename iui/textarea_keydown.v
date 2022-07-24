@@ -2,6 +2,10 @@ module iui
 
 import gg
 
+fn is_enter(key gg.KeyCode) bool {
+	return key == .enter || key == .kp_enter
+}
+
 fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com TextArea) {
 	if !com.is_selected {
 		return
@@ -65,7 +69,9 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 	if key == .space {
 		strr = ' '
 	}
-	if key == .enter {
+
+	enter := is_enter(key)
+	if enter {
 		strr = '\n'
 	}
 
@@ -110,7 +116,7 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 		return
 	}
 
-	if key != .enter && mod != 2 {
+	if !enter && mod != 2 {
 		if com.lines.len == 0 {
 			com.lines << ' '
 			com.caret_top = 0
@@ -136,7 +142,7 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 	com.last_letter = letter
 	com.text_change_event_fn(win, com)
 
-	if key == .enter {
+	if enter {
 		current_line := com.lines[com.caret_top]
 		if com.caret_left == current_line.len {
 			com.caret_top += 1
