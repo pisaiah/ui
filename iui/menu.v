@@ -200,8 +200,8 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 
 	if item.show_items && (item.items.len == 0 || (app.click_x != -1 && app.click_y != -1))
 		&& !clicked {
-		item.show_items = false
 		item.is_mouse_rele = true
+		item.show_items = false
 	}
 	if app.bar != voidptr(0) && !item.show_items && app.bar.tik < 99 {
 		app.bar.tik++

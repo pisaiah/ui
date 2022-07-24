@@ -33,6 +33,7 @@ fn new_btn(win &ui.Window, text string) &ui.Button {
 	mut btn := ui.button(win, text)
 	btn.set_bounds(4, 4, 250, 30)
 	btn.set_pos(4, 4)
+
 	// btn.pack()
 	return &btn
 }

@@ -92,7 +92,8 @@ fn parse_section(mut win ui.Window, section string, mut vbox ui.VBox) {
 
 struct Article {
 	title string
-	links string //[]&html.Tag
+	links string
+	//[]&html.Tag
 }
 
 fn get_tag(tag &html.Tag, tabs int) &Article {
@@ -215,6 +216,7 @@ fn on_click(mut win ui.Window, com ui.Button) {
 
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
 	text := com.text
+
 	// debug(text)
 	mut theme := ui.theme_by_name(text)
 	win.set_theme(theme)

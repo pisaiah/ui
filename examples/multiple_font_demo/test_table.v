@@ -37,6 +37,7 @@ fn main() {
 
 	for path in sys_font_paths {
 		low := path.to_lower()
+
 		// if sys_paths.len > 70 {
 		//	break
 		//}

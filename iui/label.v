@@ -73,7 +73,6 @@ pub fn (mut btn Label) pack_do() {
 	th := text_height(btn.app, '{!A')
 
 	// btn.height = (th * btn.text.split('\n').len) + 4 + (btn.size)
-
 	hi := th * lines.len
 
 	font_size := btn.size //+ btn.app.font_size

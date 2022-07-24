@@ -18,6 +18,7 @@ pub fn default_font() string {
 		return windows_def
 	} else {*/
 	return font.default()
+
 	//}
 }
 
@@ -147,6 +148,7 @@ pub fn (mut win Window) add_font(font_name string, font_path string) int {
 		}
 	} else {
 		panic('unreadable')
+
 		// Unreadable
 	}
 	return 0
@@ -249,7 +251,8 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 		window_title: title
 		frame_fn: frame
 		event_fn: on_event
-		user_data: app // TODO config.user_data
+		user_data: app
+		// TODO config.user_data
 		font_path: config.font_path
 		font_size: config.font_size
 		ui_mode: config.ui_mode

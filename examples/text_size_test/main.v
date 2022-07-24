@@ -12,8 +12,8 @@ fn main() {
 
 	mut lbl := ui.label(window, 'Label test')
 	lbl.set_bounds(16, 27, 500, 300)
-	// lbl.pack()
 
+	// lbl.pack()
 	window.add_child(lbl)
 
 	lbl.draw_event_fn = fn (mut win ui.Window, com &ui.Component) {

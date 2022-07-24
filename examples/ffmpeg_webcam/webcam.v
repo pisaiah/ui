@@ -59,7 +59,6 @@ fn main() {
 			', FPS: ' + webcam_fps.str()
 	}
 	btn.set_config(12, true, false) // set to 12px font
-
 	btn.set_pos(10, 35 + webcam_height + 4)
 	btn.pack()
 	window.add_child(btn)

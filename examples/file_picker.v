@@ -42,6 +42,7 @@ fn main() {
 
 	mut btn2 := ui.button(window, 'This is a Button')
 	btn2.set_pos(30, 70)
+
 	// window.id_map['btn2'] = &btn2
 	// btn2.set_id(mut window, 'btn2')
 	btn2.pack() // Auto set width & height
@@ -89,6 +90,7 @@ fn main() {
 
 		if mut this is ui.Modal {
 			size := gg.window_size()
+
 			// this.in_width = size.width - 20
 			// this.in_height = gg.window_size().height - 32
 			this.top_off = 5
@@ -184,7 +186,6 @@ fn main() {
 	// mut img := ui.image(window, v_img)
 	// img.set_bounds(200, 250, 50, 50)
 	// modal.add_child(img)
-
 	modal.add_child(tree)
 	modal.add_child(path_box)
 	modal.add_child(up_arrow)
@@ -234,6 +235,7 @@ fn make_tree(mut window ui.Window, fold string, tree ui.Tree, depth int) []ui.Co
 		if depth > 0 {
 			// sub.childs = make_tree(mut window, fold + '/' + fi, sub, 0)
 		}
+
 		// tree.childs << sub
 		arr << sub
 	}
@@ -258,7 +260,6 @@ fn tree_click(mut win ui.Window, tree ui.Tree) {
 	println(txt)
 
 	// mut modal := &ui.Modal(win.get_from_id('file_modal'))
-
 	mut pbox := &ui.TextField(win.get_from_id('pbox'))
 	pbox.text = os.real_path(tree.text)
 

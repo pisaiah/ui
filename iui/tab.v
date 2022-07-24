@@ -8,16 +8,16 @@ import os
 pub struct Tabbox {
 	Component_A
 pub mut:
-	win            &Window
-	text           string
-	click_event_fn fn (mut Window, Tabbox)
-	kids           map[string][]Component
-	active_tab     string
-	closable       bool = true
-	tab_height_active int
+	win                 &Window
+	text                string
+	click_event_fn      fn (mut Window, Tabbox)
+	kids                map[string][]Component
+	active_tab          string
+	closable            bool = true
+	tab_height_active   int
 	tab_height_inactive int
-	active_offset int
-	inactive_offset int = 4
+	active_offset       int
+	inactive_offset     int = 4
 }
 
 // Return new Progressbar

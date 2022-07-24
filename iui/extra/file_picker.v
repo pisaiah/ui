@@ -161,6 +161,7 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 
 	hbox.set_bounds(1, 2, 490, 42)
 	hbox.z_index = 18
+
 	// hbox.set_min_height(32)
 	return hbox
 }

@@ -99,7 +99,6 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 
 	// this.is_mouse_down = false
 	// this.is_mouse_rele = false
-
 	if this.win.debug_draw {
 		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.orange)
 	}

@@ -13,8 +13,8 @@ fn on_event(e &gg.Event, mut app Window) {
 		app.mouse_x = app.gg.mouse_pos_x
 		app.mouse_y = app.gg.mouse_pos_y
 	}
-	// else { dump(e.typ)}
 
+	// else { dump(e.typ)}
 	if e.typ == .mouse_down {
 		on_mouse_down_event(e, mut app)
 	}
@@ -41,6 +41,24 @@ fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	is_point_in := point_in_raw(mut com, app.click_x, app.click_y)
 	if !is_point_in {
 		return false
+	}
+
+	if app.bar.tik < 9 {
+		return true
+	}
+
+	if mut com is ScrollView {
+		com.is_mouse_down = true
+
+		bar_x := com.x + com.width - com.xbar_width
+		if app.click_x >= bar_x {
+			return true
+		}
+
+		bar_y := com.y + com.height - com.ybar_height
+		if app.click_y >= bar_y {
+			return true
+		}
 	}
 
 	for mut child in com.children {
@@ -156,6 +174,7 @@ fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 		for mut comm in val {
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.on_scroll_component(app, e)
+
 				// return
 			}
 		}

@@ -152,6 +152,7 @@ fn create_help_menu() &ui.MenuItem {
 fn create_tree(window &ui.Window) &ui.Tree2 {
 	mut tree := ui.tree2('My Tree')
 	tree.set_bounds(0, 0, 180, 210)
+
 	// tree.pack()
 	tree.needs_pack = true
 

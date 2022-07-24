@@ -268,6 +268,7 @@ fn (mut this TextArea) move_caret(win &Window, x int, y int, current_len int, ll
 			if abs(mx - nx) < cwidth {
 				if this.down_pos.left == -1 {
 					this.caret_left = current_len + i
+
 					// this.down_pos.left = this.caret_left
 					// this.down_pos.top = this.caret_top
 					// this.down_pos.x = nx

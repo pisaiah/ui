@@ -101,7 +101,6 @@ pub fn load_url(mut win ui.Window, url string) {
 		'<p></p>')
 
 	os.write_file('E:/outputs/' + time.now().unix_time_milli().str() + '.html', fixed_text) or {} // Debug output
-
 	mut tb := &ui.Tabbox(win.get_from_id('tabbar'))
 
 	ctab := tb.active_tab
@@ -409,7 +408,6 @@ fn format_url(ref string, page_url string) string {
 
 	if !(href.starts_with('http://') || href.starts_with('https://')) {
 		// Not-Absolute URL
-
 		if page_url.starts_with('file://') {
 			return os.dir(page_url.split('file://')[1]) + '/' + href
 		}
