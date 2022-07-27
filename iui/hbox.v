@@ -55,8 +55,8 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 	mut yyy := 0
 
 	for mut child in this.children {
-		if yyy < child.height {
-			yyy = child.height
+		if yyy < child.y + child.height {
+			yyy = child.y + child.height
 		}
 		child.draw_event_fn(this.win, child)
 		if (o_x + child.width > box_width) && !this.needs_pack {
@@ -74,10 +74,10 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 		index += 1
 
 		if index == this.children.len {
-			o_y += child.height
+			o_y += child.y + child.height
 		}
 		if yyy < child.height {
-			yyy = child.height
+			yyy = child.y + child.height
 		}
 	}
 	yyy += 1
@@ -85,6 +85,7 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 	if yyy != this.height {
 		this.height = yyy
 	}
+	this.height = o_y
 	this.yyy = o_y
 
 	if this.needs_pack {
@@ -97,7 +98,7 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 		this.needs_pack = false
 	}
 
-	if this.height < this.min_height {
+	if this.height < this.min_height && this.min_height > 0 {
 		this.height = this.min_height
 	}
 
