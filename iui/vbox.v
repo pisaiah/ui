@@ -64,7 +64,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 
 		this.win.draw_with_offset(mut child, this.x + o_x, ypos)
 
-		if this.win.bar != voidptr(0) {
+		if this.win.bar != unsafe { nil } {
 			if this.win.bar.tik < 99 {
 				this.is_mouse_down = false
 				this.is_mouse_rele = false

@@ -267,7 +267,7 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 pub fn (mut win Window) set_theme(theme Theme) {
 	win.theme = theme
 	ref := &theme
-	if win.bar != voidptr(0) {
+	if win.bar != unsafe { nil } {
 		win.bar.theme = ref
 	}
 	win.graphics_context.theme = ref
@@ -328,7 +328,7 @@ fn (mut app Window) draw() {
 
 		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()
-			if bar != voidptr(0) {
+			if bar != unsafe { nil } {
 				bar.draw(app.graphics_context)
 			}
 			bar_drawn = true
@@ -341,7 +341,7 @@ fn (mut app Window) draw() {
 	// Draw Menubar last
 	if app.show_menu_bar && !bar_drawn {
 		mut bar := app.get_bar()
-		if bar != voidptr(0) {
+		if bar != unsafe { nil } {
 			bar.draw(app.graphics_context)
 		}
 	}

@@ -44,7 +44,7 @@ pub mut:
 [parms]
 pub struct MenuItemConfig {
 	text           string
-	icon           &Image = voidptr(0)
+	icon           &Image = unsafe { nil }
 	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
 	children       []&MenuItem
 }
@@ -84,7 +84,7 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 
 [params]
 pub struct MenubarConfig {
-	theme &Theme = voidptr(0)
+	theme &Theme = unsafe { nil }
 }
 
 pub fn menu_bar(cfg MenubarConfig) &Menubar {
@@ -103,7 +103,7 @@ pub fn menubar(app &Window, theme Theme) &Menubar {
 pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
 	wid := if bar.width > 0 { bar.width } else { gg.window_size().width }
 
-	if bar.theme == voidptr(0) {
+	if bar.theme == unsafe { nil } {
 		bar.theme = ctx.theme
 	}
 
@@ -128,7 +128,7 @@ fn (mut app Window) get_bar() &Menubar {
 }
 
 fn (mut app Window) set_bar_tick(val int) {
-	if app.bar != voidptr(0) {
+	if app.bar != unsafe { nil } {
 		app.bar.tik = val
 	}
 }
@@ -203,7 +203,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 		item.is_mouse_rele = true
 		item.show_items = false
 	}
-	if app.bar != voidptr(0) && !item.show_items && app.bar.tik < 99 {
+	if app.bar != unsafe { nil } && !item.show_items && app.bar.tik < 99 {
 		app.bar.tik++
 	}
 
@@ -215,7 +215,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 	}
 
 	// Draw Button Text
-	if item.icon != voidptr(0) {
+	if item.icon != unsafe { nil } {
 		item.icon.set_pos(x + (width / 2) - (item.icon.width / 2), y)
 		item.icon.draw(ctx)
 	} else {

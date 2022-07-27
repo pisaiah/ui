@@ -100,5 +100,5 @@ fn modal_test(mut win ui.Window, com ui.MenuItem) {
 	extra.open_file_picker(mut win, extra.FilePickerConfig{true, 'D:/gc.dll', fn (a voidptr, b voidptr) {
 		picker := &extra.FilePicker(a)
 		println(picker.get_full_path())
-	}}, voidptr(0))
+	}}, unsafe { nil })
 }

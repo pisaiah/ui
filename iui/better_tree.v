@@ -37,7 +37,7 @@ pub mut:
 pub fn tree2(text string) &Tree2 {
 	return &Tree2{
 		text: text
-		click_event_fn: voidptr(0)
+		click_event_fn: unsafe { nil }
 	}
 }
 
@@ -162,7 +162,7 @@ fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut t
 
 	if is_in_bounds(ctx.win.click_x, ctx.win.click_y, bounds) {
 		if tree.is_mouse_rele {
-			if tree.click_event_fn != voidptr(0) {
+			if tree.click_event_fn != unsafe { nil } {
 				tree.click_event_fn(ctx, tree, this)
 			}
 			if this.nodes.len > 0 {

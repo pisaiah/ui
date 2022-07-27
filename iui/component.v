@@ -49,7 +49,7 @@ pub mut:
 	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
 	scroll_change_event fn (&Component, int, int)   = fn (_ &Component, delta int, dir int) {}
-	parent              &Component_A = voidptr(0)
+	parent              &Component_A = unsafe { nil }
 	children            []Component
 	id                  string
 	font                int

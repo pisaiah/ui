@@ -104,7 +104,7 @@ fn (mut this TextField) mouse_down_caret() {
 		return
 	}
 
-	if this.win.bar != voidptr(0) {
+	if this.win.bar != unsafe { nil } {
 		if this.win.bar.tik < 90 {
 			this.is_mouse_down = false
 			return

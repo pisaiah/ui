@@ -118,7 +118,7 @@ fn btn_draw(mut win ui.Window, com &ui.Component) {
 
 	if mut this is ui.Button {
 		if this.is_mouse_rele {
-			on_click_fn(voidptr(0), mut this, voidptr(0))
+			on_click_fn(unsafe { nil }, mut this, unsafe { nil })
 		}
 	}
 }

@@ -77,7 +77,7 @@ fn (mut this TextArea) draw_background() {
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)
 
-	if this.win.bar != voidptr(0) && this.win.bar.tik < 90 {
+	if this.win.bar != unsafe { nil } && this.win.bar.tik < 90 {
 		this.is_mouse_down = false
 		this.is_mouse_rele = false
 	}

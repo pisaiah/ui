@@ -9,6 +9,7 @@ pub struct Button {
 	Component_A
 pub mut:
 	app                &Window
+	icon               int
 	click_event_fn     fn (mut Window, Button)
 	new_click_event_fn fn (voidptr, voidptr, voidptr)
 	need_pack          bool
@@ -26,9 +27,26 @@ pub struct ButtonConfig {
 	user_data      voidptr
 }
 
+pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
+	return &Button{
+		text: ''
+		icon: icon
+		x: conf.bounds.x
+		y: conf.bounds.y
+		width: conf.bounds.width
+		height: conf.bounds.height
+		app: unsafe { nil }
+		click_event_fn: fn (mut win Window, a Button) {}
+		new_click_event_fn: conf.click_event_fn
+		user_data: conf.user_data
+		need_pack: conf.should_pack
+	}
+}
+
 pub fn button(app &Window, text string, conf ButtonConfig) Button {
 	return Button{
 		text: text
+		icon: -1
 		x: conf.bounds.x
 		y: conf.bounds.y
 		width: conf.bounds.width
@@ -47,6 +65,10 @@ pub fn (mut this Button) set_background(color gx.Color) {
 }
 
 pub fn (mut btn Button) draw(ctx &GraphicsContext) {
+	if btn.app == unsafe { nil } {
+		btn.app = ctx.win
+	}
+
 	btn.app.draw_button(btn.x, btn.y, btn.width, btn.height, mut btn)
 }
 
@@ -95,7 +117,7 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 		return this.override_bg_color
 	}
 
-	should := this.app.bar == voidptr(0) || this.app.bar.tik > 90
+	should := this.app.bar == unsafe { nil } || this.app.bar.tik > 90
 
 	if this.is_mouse_down && should {
 		return this.app.theme.button_bg_click
@@ -117,7 +139,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 
 	// Handle click
 	if btn.is_mouse_rele {
-		if app.bar == voidptr(0) || app.bar.tik > 90 {
+		if app.bar == unsafe { nil } || app.bar.tik > 90 {
 			btn.click_event_fn(app, *btn)
 			btn.new_click_event_fn(app, btn, btn.user_data)
 		}
@@ -127,8 +149,26 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	// Draw Button Background & Border
 	btn.draw_background()
 
+	if btn.width == 0 && btn.height == 0 {
+		btn.pack_do()
+	}
+
 	// Draw Button Text
 	ctx := app.graphics_context
+
+	if btn.icon != -1 {
+		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
+			img_id: btn.icon
+			img_rect: gg.Rect{
+				x: btn.x
+				y: btn.y
+				width: btn.width
+				height: btn.height
+			}
+		})
+		return
+	}
+
 	ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, ctx.font, gx.TextCfg{
 		size: app.font_size
 		color: ctx.theme.text_color
