@@ -72,7 +72,7 @@ pub fn (mut com Checkbox) draw(ctx &GraphicsContext) {
 	if com.is_mouse_rele {
 		com.is_mouse_rele = false
 		com.is_selected = !com.is_selected
-		com.click_event_fn(com.app, *com)
+		com.click_event_fn(mut com.app, *com)
 	}
 
 	// Draw checkmark

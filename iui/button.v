@@ -140,7 +140,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	// Handle click
 	if btn.is_mouse_rele {
 		if app.bar == unsafe { nil } || app.bar.tik > 90 {
-			btn.click_event_fn(app, *btn)
+			btn.click_event_fn(mut app, *btn)
 			btn.new_click_event_fn(app, btn, btn.user_data)
 		}
 		btn.is_mouse_rele = false

@@ -103,7 +103,7 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
-		this.click_event_fn(app, *this)
+		this.click_event_fn(mut app, *this)
 	}
 
 	// Draw Button Text

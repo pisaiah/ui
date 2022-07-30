@@ -49,7 +49,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 			continue
 		}
 		mut child := this.children[i]
-		child.draw_event_fn(this.win, &child)
+		child.draw_event_fn(mut this.win, &child)
 
 		ypos := this.y + o_y //- (this.scroll_i*8)
 		if ypos < this.y {

@@ -56,7 +56,7 @@ pub fn image_from_bytes(mut app Window, b []u8, width int, height int) &Image {
 pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
-		this.click_event_fn(this.app, *this)
+		this.click_event_fn(mut this.app, *this)
 	}
 
 	/*

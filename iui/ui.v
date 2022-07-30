@@ -324,7 +324,7 @@ fn (mut app Window) draw() {
 	// Draw components
 	mut bar_drawn := false
 	for mut com in app.components {
-		com.draw_event_fn(app, com)
+		com.draw_event_fn(mut app, com)
 
 		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()
@@ -335,7 +335,7 @@ fn (mut app Window) draw() {
 		}
 
 		com.draw(app.graphics_context)
-		com.after_draw_event_fn(app, com)
+		com.after_draw_event_fn(mut app, com)
 	}
 
 	// Draw Menubar last

@@ -53,7 +53,7 @@ fn (mut com Tree) draw_scrollbar(cl int, spl_len int) {
 
 pub fn (mut tr Tree) draw(ctx &GraphicsContext) {
 	mut mult := 20
-	app := tr.app
+	mut app := tr.app
 	bord := if tr.is_selected && tr.childs.len > 0 {
 		ctx.theme.button_bg_hover
 	} else {
@@ -90,7 +90,7 @@ pub fn (mut tr Tree) draw(ctx &GraphicsContext) {
 		tr.is_mouse_rele = false
 
 		tr.is_selected = !tr.is_selected
-		tr.click_event_fn(app, *tr)
+		tr.click_event_fn(mut app, *tr)
 
 		bg := app.theme.button_bg_click
 		tr.app.draw_bordered_rect(tr.x, y + 3, tr.width - 8, 20, 2, bg, bord)

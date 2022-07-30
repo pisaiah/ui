@@ -85,7 +85,7 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 		border = ctx.theme.button_border_click
 		item.show_items = true
 
-		item.click_event_fn(app, *item)
+		item.click_event_fn(mut app, *item)
 	}
 
 	if item.show_items && item.items.len > 0 {
@@ -158,12 +158,12 @@ fn (mut app Window) draw_button_2(x int, y int, width int, height int, mut btn B
 
 	// Detect Click
 	if click {
-		btn.click_event_fn(app, *btn)
+		btn.click_event_fn(mut app, *btn)
 		btn.is_selected = true
 
 		old_text := sel.text
 		sel.text = btn.text
-		sel.change_event_fn(sel.app, *sel, old_text, sel.text)
+		sel.change_event_fn(mut sel.app, *sel, old_text, sel.text)
 
 		click_bg := app.theme.button_bg_click
 		app.gg.draw_rect_filled(x, y, width, height, click_bg)

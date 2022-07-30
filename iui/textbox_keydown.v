@@ -62,7 +62,7 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 			return
 		}
 	}
-	app.key_down_event(app, key, e)
+	app.key_down_event(mut app, key, e)
 }
 
 fn get_shifted_letter(letter string) string {
@@ -158,7 +158,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 				strr = letter
 			}
 
-			bevnt := com.before_txtc_event_fn(app, *com)
+			bevnt := com.before_txtc_event_fn(mut app, *com)
 			if bevnt || key == .up || key == .down {
 				// 'true' indicates cancel event
 				return

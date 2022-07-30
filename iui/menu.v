@@ -168,7 +168,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 		item.show_items = true
 		app.set_bar_tick(0)
 
-		item.click_event_fn(app, *item)
+		item.click_event_fn(mut app, *item)
 
 		if item.text == 'About iUI' {
 			about := open_about_modal(app)
@@ -227,7 +227,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 	}
 
 	mut com := &Component(item)
-	com.draw_event_fn(app, com)
+	com.draw_event_fn(mut app, com)
 }
 
 fn open_about_modal(app &Window) &Modal {

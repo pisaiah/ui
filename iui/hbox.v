@@ -58,7 +58,7 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 		if yyy < child.y + child.height {
 			yyy = child.y + child.height
 		}
-		child.draw_event_fn(this.win, child)
+		child.draw_event_fn(mut this.win, child)
 		if (o_x + child.width > box_width) && !this.needs_pack {
 			if o_x > width {
 				width = o_x

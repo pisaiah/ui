@@ -36,7 +36,7 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 			line := com.lines[com.caret_top]
 
 			com.last_letter = 'backspace'
-			mut bevnt := com.before_txtc_event_fn(win, *com)
+			mut bevnt := com.before_txtc_event_fn(mut win, *com)
 			if bevnt {
 				// 'true' indicates cancel event
 				return
@@ -110,7 +110,7 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 		strr = letter
 	}
 
-	bevnt := com.before_txtc_event_fn(win, *com)
+	bevnt := com.before_txtc_event_fn(mut win, *com)
 	if bevnt {
 		// 'true' indicates cancel event
 		return

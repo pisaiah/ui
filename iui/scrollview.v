@@ -88,9 +88,10 @@ pub fn (mut this ScrollView) draw_children(ctx &GraphicsContext) (int, int) {
 		// that used scroll (ex TextArea) before ScrollView
 		child.scroll_i = 0
 
-		child.draw_event_fn(ctx.win, child)
+		mut win := ctx.win
+		child.draw_event_fn(mut win, child)
 		child.draw_with_offset(ctx, x_pos, y_pos)
-		child.after_draw_event_fn(ctx.win, child)
+		child.after_draw_event_fn(mut win, child)
 
 		y_pos += child.y + child.height
 		total_height += child.y + child.height

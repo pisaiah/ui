@@ -120,9 +120,9 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	if tb.active_tab == key_ {
 		val.sort(a.z_index < b.z_index)
 		for mut com in val {
-			com.draw_event_fn(tb.win, com)
+			com.draw_event_fn(mut tb.win, com)
 			com.draw_with_offset(ctx, tb.x, tb.y + theig)
-			com.after_draw_event_fn(tb.win, com)
+			com.after_draw_event_fn(mut tb.win, com)
 		}
 	}
 	return tsize
