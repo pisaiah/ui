@@ -17,6 +17,8 @@ pub mut:
 	user_data          voidptr
 	override_bg        bool
 	override_bg_color  gx.Color
+	icon_width         int
+	icon_height        int
 }
 
 [params]
@@ -157,13 +159,15 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	ctx := app.graphics_context
 
 	if btn.icon != -1 {
+		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }
+		hei := if btn.icon_height > 0 { btn.icon_height } else { btn.height }
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
 			img_id: btn.icon
 			img_rect: gg.Rect{
-				x: btn.x
-				y: btn.y
-				width: btn.width
-				height: btn.height
+				x: btn.x + (btn.width / 2) - (wid / 2)
+				y: btn.y + (btn.height / 2) - (hei / 2)
+				width: wid
+				height: hei
 			}
 		})
 		return
