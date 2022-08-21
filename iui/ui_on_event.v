@@ -43,7 +43,7 @@ fn (mut com Component) on_mouse_down_component(app &Window) bool {
 		return false
 	}
 
-	if app.bar.tik < 9 {
+	if app.bar != unsafe { nil } && app.bar.tik < 9 {
 		return true
 	}
 

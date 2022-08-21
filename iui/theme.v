@@ -3,21 +3,23 @@ module iui
 
 import gx
 
-pub fn get_system_theme() Theme {
+// Default Blue on Windows;
+// Minty (Linux Mint) on Linux/other
+pub fn get_system_theme() &Theme {
 	$if windows {
 		return theme_default()
 	} $else {
-		// Default to Linux
+		// Default to Linux Mint
 		return theme_minty()
 	}
 }
 
-pub fn get_all_themes() []Theme {
+pub fn get_all_themes() []&Theme {
 	return [theme_default(), theme_dark(), theme_dark_hc(), theme_black_red(),
 		theme_minty(), theme_black_green()]
 }
 
-pub fn theme_by_name(name string) Theme {
+pub fn theme_by_name(name string) &Theme {
 	themes := get_all_themes().filter(it.name == name)
 	if themes.len == 0 {
 		return get_system_theme()
@@ -56,8 +58,8 @@ pub:
 }
 
 //	Default Theme - Memics Windows 10
-pub fn theme_default() Theme {
-	return Theme{
+pub fn theme_default() &Theme {
+	return &Theme{
 		name: 'Default'
 		text_color: gx.black
 		background: gx.rgb(248, 248, 248)
@@ -82,8 +84,8 @@ pub fn theme_default() Theme {
 }
 
 //	Dark Theme
-pub fn theme_dark() Theme {
-	return Theme{
+pub fn theme_dark() &Theme {
+	return &Theme{
 		name: 'Dark'
 		text_color: gx.rgb(230, 230, 230)
 		background: gx.rgb(30, 30, 30)
@@ -108,8 +110,8 @@ pub fn theme_dark() Theme {
 }
 
 //	Dark Theme - High Contrast
-pub fn theme_dark_hc() Theme {
-	return Theme{
+pub fn theme_dark_hc() &Theme {
+	return &Theme{
 		name: 'Dark Black'
 		text_color: gx.rgb(255, 255, 255)
 		background: gx.rgb(0, 0, 0)
@@ -133,8 +135,8 @@ pub fn theme_dark_hc() Theme {
 }
 
 //	Black Red
-pub fn theme_black_red() Theme {
-	return Theme{
+pub fn theme_black_red() &Theme {
+	return &Theme{
 		name: 'Black Red'
 		text_color: gx.rgb(255, 255, 255)
 		background: gx.rgb(0, 0, 0)
@@ -158,8 +160,8 @@ pub fn theme_black_red() Theme {
 }
 
 //	MintY - Memics LinuxMint's Default Theme
-pub fn theme_minty() Theme {
-	return Theme{
+pub fn theme_minty() &Theme {
+	return &Theme{
 		name: 'Minty'
 		text_color: gx.black
 		background: gx.rgb(240, 240, 240)
@@ -183,8 +185,8 @@ pub fn theme_minty() Theme {
 }
 
 // Black Green
-pub fn theme_black_green() Theme {
-	return Theme{
+pub fn theme_black_green() &Theme {
+	return &Theme{
 		name: 'Green Mono'
 		text_color: gx.rgb(200, 255, 200)
 		background: gx.rgb(0, 0, 0)

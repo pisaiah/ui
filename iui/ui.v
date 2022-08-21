@@ -222,12 +222,53 @@ pub fn window(theme Theme, title string, width int, height int) &Window {
 	})
 }
 
-[heap]
+[heap; params]
 pub struct WindowConfig {
 	font_path string = default_font()
 	font_size int    = 16
 	ui_mode   bool
 	user_data voidptr
+	title     string
+	width     int
+	height    int
+	theme     &Theme = theme_default()
+}
+
+pub fn (win &Window) run() {
+	win.gg.run()
+}
+
+pub fn make_window(config &WindowConfig) &Window {
+	mut win := &Window{
+		gg: 0
+		theme: config.theme
+		bar: 0
+		config: config
+		font_size: config.font_size
+		graphics_context: 0
+	}
+
+	blank_draw_event_fn(mut win, &Component_A{})
+
+	win.gg = gg.new_context(
+		bg_color: win.theme.background
+		width: config.width
+		height: config.height
+		create_window: true
+		window_title: config.title
+		frame_fn: frame
+		event_fn: on_event
+		user_data: win
+		// TODO config.user_data
+		font_path: config.font_path
+		font_size: config.font_size
+		ui_mode: config.ui_mode
+	)
+	win.graphics_context = new_graphics_context(win)
+	if win.graphics_context.icon_cache.len == 0 {
+		win.graphics_context.fill_icon_cache(mut win)
+	}
+	return win
 }
 
 pub fn window_with_config(theme Theme, title string, width int, height int, config &WindowConfig) &Window {

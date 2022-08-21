@@ -55,7 +55,7 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	y := this.y
 
 	// Set Scissor
-	ctx.gg.scissor_rect(x, y, this.width + 2, this.height + 2)
+	ctx.gg.scissor_rect(x - 1, y - 1, this.width + 2, this.height + 2)
 
 	total_height, total_width := this.draw_children(ctx)
 

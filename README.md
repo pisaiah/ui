@@ -10,7 +10,12 @@ Example: *([examples/test.v](examples/test.v))*
 
 ```v
 fn main() {
-	mut window := ui.window(ui.theme_default(), 'My App')
+	mut window := ui.make_window(
+		title: 'My App'
+		width: 640
+		height: 480
+		theme: ui.theme_default()
+	)
 
 	// Create Button
 	mut btn := ui.button(window, 'A Button')

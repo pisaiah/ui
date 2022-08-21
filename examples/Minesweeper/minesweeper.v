@@ -11,11 +11,62 @@ struct ClickInfo {
 	vbox &ui.VBox
 }
 
+[heap]
+struct App {
+mut:
+	win   &ui.Window
+	icons []int
+}
+
+fn (mut app App) setup_icons() {
+	img_0_file := $embed_file('assets/empty.png')
+	app.icons << icon(app.win, img_0_file.to_bytes())
+
+	img_1_file := $embed_file('assets/1.png')
+	app.icons << icon(app.win, img_1_file.to_bytes())
+
+	img_2_file := $embed_file('assets/2.png')
+	app.icons << icon(app.win, img_2_file.to_bytes())
+
+	img_3_file := $embed_file('assets/3.png')
+	app.icons << icon(app.win, img_3_file.to_bytes())
+
+	img_4_file := $embed_file('assets/4.png')
+	app.icons << icon(app.win, img_4_file.to_bytes())
+
+	img_5_file := $embed_file('assets/5.png')
+	app.icons << icon(app.win, img_5_file.to_bytes())
+
+	img_6_file := $embed_file('assets/6.png')
+	app.icons << icon(app.win, img_6_file.to_bytes())
+
+	img_7_file := $embed_file('assets/7.png')
+	app.icons << icon(app.win, img_7_file.to_bytes())
+
+	img_8_file := $embed_file('assets/8.png')
+	app.icons << icon(app.win, img_8_file.to_bytes())
+
+	img_mine_file := $embed_file('assets/mine.png')
+	app.icons << icon(app.win, img_mine_file.to_bytes())
+}
+
+[console]
 fn main() {
-	mut win := ui.window(ui.theme_default(), 'Minesweeper', 264, 330)
+	btn_size := 28
+	width := btn_size * 9
+
+	win_width := width + 8
+
+	mut win := ui.window(ui.theme_default(), 'Minesweeper', win_width, 330)
 
 	win.bar = ui.menubar(win, win.theme)
 	win.bar.add_child(ui.menuitem('Game'))
+
+	mut app := &App{
+		win: win
+	}
+
+	app.setup_icons()
 
 	mut help := ui.menuitem('Help')
 
@@ -27,17 +78,20 @@ fn main() {
 	win.bar.add_child(help)
 
 	mut vbox := ui.vbox(win)
-	vbox.set_bounds(4, 32, 256, 343)
+	vbox.set_bounds(4, 32, width, 343)
 
 	for yy in 0 .. 9 {
 		mut hbox := ui.hbox(win)
-		hbox.set_bounds(0, 0, 256, 25)
-		for xx in 0 .. 8 {
-			mut btn := ui.button(win, ' ')
-			btn.set_bounds(0, 0, 32, 32)
+		hbox.set_bounds(0, 0, width, 25)
+		for xx in 0 .. 9 {
+			img_blank_file := $embed_file('assets/blank.png')
+			mut btn := icon_btn(win, img_blank_file.to_bytes())
+
+			// mut btn := ui.button(win, ' ')
+			btn.set_bounds(0, 0, btn_size, btn_size)
 			hbox.add_child(btn)
 
-			randi := rand.intn(5) or { -1 }
+			randi := rand.intn(16) or { -1 }
 
 			if randi == 0 {
 				btn.text = '   '
@@ -50,7 +104,7 @@ fn main() {
 				vbox: vbox
 			}
 
-			btn.set_click_fn(btn_click, info)
+			btn.set_click_fn(app.btn_click, info)
 		}
 		vbox.add_child(hbox)
 	}
@@ -59,7 +113,24 @@ fn main() {
 	win.gg.run()
 }
 
-fn btn_click(win_ptr voidptr, btn_ptr voidptr, info_ptr voidptr) {
+fn icon(win &ui.Window, data []u8) int {
+	mut gg := win.gg
+	gg_im := gg.create_image_from_byte_array(data)
+	cim := gg.cache_image(gg_im)
+
+	return cim
+}
+
+fn icon_btn(win &ui.Window, data []u8) &ui.Button {
+	mut gg := win.gg
+	gg_im := gg.create_image_from_byte_array(data)
+	cim := gg.cache_image(gg_im)
+	mut btn := ui.button_with_icon(cim)
+
+	return btn
+}
+
+fn (mut app App) btn_click(win_ptr voidptr, btn_ptr voidptr, info_ptr voidptr) {
 	mut win := &ui.Window(win_ptr)
 	info := &ClickInfo(info_ptr)
 	mut btn := info.hbox.children[info.x]
@@ -68,6 +139,8 @@ fn btn_click(win_ptr voidptr, btn_ptr voidptr, info_ptr voidptr) {
 
 	if btn.text == '   ' {
 		if mut btn is ui.Button {
+			ico := app.icons[9]
+			btn.icon = ico
 			btn.set_background(gx.red)
 			game_over(win)
 		}
@@ -137,8 +210,9 @@ fn btn_click(win_ptr voidptr, btn_ptr voidptr, info_ptr voidptr) {
 	if around == 0 {
 		for infoo in possibles {
 			mut pbtn := infoo.hbox.children[infoo.x]
-			if pbtn.text == ' ' {
-				btn_click(win, pbtn, infoo)
+			dump(pbtn.text.len)
+			if pbtn.text == ' ' || pbtn.text.len == 0 {
+				app.btn_click(win, pbtn, infoo)
 			}
 		}
 		btn.text = '  '
@@ -147,7 +221,7 @@ fn btn_click(win_ptr voidptr, btn_ptr voidptr, info_ptr voidptr) {
 	}
 
 	if mut btn is ui.Button {
-		btn.set_background(gx.yellow)
+		btn.icon = app.icons[around]
 	}
 }
 
@@ -158,28 +232,29 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	modal.top_off = 20
 
 	mut title := ui.label(win, 'Mines')
-	title.set_pos(20, 4)
 	title.set_config(28, true, true)
 	title.bold = true
 	title.pack()
 
-	mut label := ui.label(win,
-		'Minesweeper-clone made in\nthe V Programming Language.\n\nVersion: 0.1\nUI Version: ' +
-		ui.version)
+	mut label := ui.label(win, 'Minesweeper-clone made in\nthe V Programming Language.\n\nVersion: 0.1, UI: $ui.version,\n\nBy Isaiah.')
 
-	label.set_pos(22, 14)
+	label.set_pos(4, -2)
 	label.pack()
 
 	mut can := ui.button(win, 'OK')
-	can.set_bounds(10, 170, 70, 25)
+	can.set_bounds(16, 175, 216, 25)
 	can.set_click(fn (mut win ui.Window, btn ui.Button) {
 		win.components = win.components.filter(mut it !is ui.Modal)
 	})
 	modal.needs_init = false
 	modal.add_child(can)
 
-	modal.add_child(title)
-	modal.add_child(label)
+	mut vbox := ui.vbox(win)
+	vbox.set_pos(20, 8)
+
+	vbox.add_child(title)
+	vbox.add_child(label)
+	modal.add_child(vbox)
 
 	win.add_child(modal)
 }
