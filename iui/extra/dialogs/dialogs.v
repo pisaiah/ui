@@ -44,7 +44,7 @@ pub fn open_dialog(title string) string {
 }
 
 pub fn save_dialog(title string) string {
-	temp := unsafe { C.tinyfd_saveFileDialog(cstr(title), cstr(''), 0, cstr(''), cstr('')) }
+	temp := unsafe { C.tinyfd_saveFileDialog(cstr(title), cstr(''), 0, C.NULL, cstr('')) }
 	if temp != &char(0) {
 		return unsafe { temp.vstring() }
 	}

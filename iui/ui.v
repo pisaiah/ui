@@ -12,11 +12,16 @@ pub const (
 )
 
 pub fn default_font() string {
+	$if emscripten ? {
+		return 'myfont.ttf'
+	}
+
 	/*
 	windows_def := 'C:/windows/fonts/segoeui.ttf'
 	if os.exists(windows_def) {
 		return windows_def
 	} else {*/
+
 	return font.default()
 
 	//}
@@ -250,12 +255,18 @@ pub fn make_window(config &WindowConfig) &Window {
 
 	blank_draw_event_fn(mut win, &Component_A{})
 
+	the_title := $if emscripten ? {
+		'canvas'
+	} $else {
+		config.title
+	}
+
 	win.gg = gg.new_context(
 		bg_color: win.theme.background
 		width: config.width
 		height: config.height
 		create_window: true
-		window_title: config.title
+		window_title: the_title
 		frame_fn: frame
 		event_fn: on_event
 		user_data: win
@@ -284,12 +295,18 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 	// Call blank function so -skip-unused won't skip it
 	blank_draw_event_fn(mut app, &Component_A{})
 
+	the_title := $if emscripten ? {
+		'canvas'
+	} $else {
+		config.title
+	}
+
 	app.gg = gg.new_context(
 		bg_color: app.theme.background
 		width: width
 		height: height
 		create_window: true
-		window_title: title
+		window_title: the_title
 		frame_fn: frame
 		event_fn: on_event
 		user_data: app
@@ -414,6 +431,13 @@ fn rune_box_scroll(e &gg.Event, mut a TextField) {
 
 pub fn (mut ctx GraphicsContext) calculate_line_height() {
 	ctx.line_height = ctx.gg.text_height('A1!|{}j;') + 2
+
+	if ctx.line_height < ctx.font_size {
+		// Fix for wasm
+		ctx.line_height = ctx.font_size + 2
+	}
+
+	dump('$ctx.line_height & $ctx.font_size')
 }
 
 // Functions for GG

@@ -26,7 +26,7 @@ pub mut:
 
 fn draw_cfg() gx.TextCfg {
 	return gx.TextCfg{
-		size: 24
+		size: 36
 		color: gx.white
 	}
 }
@@ -55,7 +55,7 @@ fn (this &Page) draw_bg(ctx &GraphicsContext) {
 	ctx.gg.draw_rect_filled(0, 0, this.width, this.height, ctx.theme.background)
 	ctx.gg.draw_rect_filled(0, 0, this.width, this.height, gx.rgba(bg.r, bg.g, bg.b, 20))
 	ctx.gg.draw_rect_filled(0, 0, this.width, 78, bg)
-	ctx.gg.draw_rect_filled(0, 0, this.width, 24, gx.rgba(0, 0, 0, 90))
+	ctx.gg.draw_rect_filled(0, 0, this.width, 12, gx.rgba(0, 0, 0, 90))
 }
 
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
@@ -68,7 +68,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	this.draw_bg(ctx)
 
 	title := this.text
-	ctx.draw_text(56, 39, title, ctx.font, this.text_cfg)
+	ctx.draw_text(56, 28, title, ctx.font, this.text_cfg)
 
 	ctx.gg.set_cfg(gx.TextCfg{
 		size: ctx.font_size
@@ -92,7 +92,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
 	mut close := button(app, '<')
-	close.set_bounds(8, -50, 40, 42)
+	close.set_bounds(8, -56, 40, 42)
 
 	if ce {
 		close.set_click(default_page_close_fn)
