@@ -1,7 +1,7 @@
 Module {
 	name: 'iui'
-	description: 'Isaiah's UI Toolkit'
-	version: '0.0.1'
+	description: 'User-interface library for V, with syntax inspired by Java Swing'
+	version: '0.0.12'
 	license: 'MIT'
 	dependencies: []
 }
