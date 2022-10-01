@@ -19,6 +19,7 @@ pub mut:
 	override_bg_color  gx.Color
 	icon_width         int
 	icon_height        int
+	border_radius      int
 }
 
 [params]
@@ -100,8 +101,10 @@ fn (this &Button) draw_background() {
 	bg := this.get_bg(mouse_in)
 	border := this.get_border(mouse_in)
 
-	this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 1, bg)
-	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 1, border)
+	this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, this.border_radius,
+		bg)
+	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
+		border)
 }
 
 fn (this &Button) get_border(is_hover bool) gx.Color {
