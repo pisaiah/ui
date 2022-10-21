@@ -191,13 +191,13 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
-	ctx.gg.set_cfg(cfg)
+	ctx.gg.set_text_cfg(cfg)
 	ctx.gg.ft.fons.set_font(ctx.font)
 }
 
 pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font int, cfg gx.TextCfg) {
 	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
-	ctx.gg.set_cfg(cfg)
+	ctx.gg.set_text_cfg(cfg)
 	ctx.gg.ft.fons.set_font(font)
 	ctx.gg.ft.fons.draw_text(x * scale, y * scale, text_) // TODO: check offsets/alignment
 }

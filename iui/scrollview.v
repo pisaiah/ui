@@ -7,7 +7,6 @@ import math
 // Implementation Details:
 //	https://docs.oracle.com/javase/8/docs/api/javax/swing/JScrollPane.html
 //	https://docs.oracle.com/javase/tutorial/uiswing/components/scrollpane.html
-//	https://javatpoint.com/java-jscrollpane
 pub struct ScrollView {
 	Component_A
 pub mut:
@@ -17,14 +16,16 @@ pub mut:
 	xbar_width  int = 15
 	ybar_height int = 15
 	scroll_x    int
+	always_show bool
 }
 
 [params]
 pub struct ScrollViewConfig {
 pub mut:
-	bounds    Bounds
-	view      &Component
-	increment int = 4
+	bounds      Bounds
+	view        &Component
+	increment   int = 4
+	always_show bool
 }
 
 pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
@@ -35,6 +36,7 @@ pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
 		height: cfg.bounds.height
 		children: [cfg.view]
 		increment: cfg.increment
+		always_show: cfg.always_show
 	}
 	return scroll_view
 }
@@ -144,7 +146,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	sth := int((f32(scroll) / f32(spl_len)) * bar_height)
 	enh := int((f32(cl) / f32(spl_len)) * bar_height)
-	requires_scrollbar := (bar_height - enh) > 0
+	requires_scrollbar := this.always_show || (bar_height - enh) > 0
 
 	// Draw Scroll
 	if requires_scrollbar {

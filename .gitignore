@@ -3,6 +3,8 @@ examples/*.exe
 !upx.exe
 !aupx.exe
 iui/tree.v
+*.def
+*.log
 
 #  See: https://github.com/isaiahpatton/vide
 examples/ide/

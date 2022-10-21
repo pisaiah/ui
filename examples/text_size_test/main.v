@@ -63,7 +63,7 @@ fn txt_width(ctx &gg.Context, s string) int {
 
 // text_width returns the width of the `string` `s` in pixels.
 pub fn text_width(ctx &gg.Context, s string) int {
-	// ctx.set_cfg(cfg) TODO
+	// ctx.set_text_cfg(cfg) TODO
 	if !ctx.font_inited {
 		return 0
 	}

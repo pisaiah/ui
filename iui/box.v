@@ -22,16 +22,15 @@ pub fn (mut this Box) add_child(com &Component) {
 	if this.vbox.children.len == 0 {
 		this.add_break(1)
 	}
-	mut kids := this.vbox.children
-	mut cbox := kids[kids.len - 1]
+
+	mut cbox := this.vbox.children.last()
 	if mut cbox is HBox {
 		cbox.add_child(com)
 	}
 }
 
 pub fn (mut this Box) center_current_hbox() {
-	mut kids := this.vbox.children
-	mut cbox := kids[kids.len - 1]
+	mut cbox := this.vbox.children.last()
 
 	if mut cbox is HBox {
 		cbox.center_screen = true
@@ -39,8 +38,7 @@ pub fn (mut this Box) center_current_hbox() {
 }
 
 pub fn (mut this Box) set_current_height(val int) {
-	mut kids := this.vbox.children
-	mut cbox := kids[kids.len - 1]
+	mut cbox := this.vbox.children.last()
 
 	if mut cbox is HBox {
 		cbox.height = val
@@ -49,8 +47,7 @@ pub fn (mut this Box) set_current_height(val int) {
 
 pub fn (mut this Box) add_break(min_height int) {
 	if this.vbox.children.len > 0 {
-		mut kids := this.vbox.children
-		mut cbox := kids[kids.len - 1]
+		mut cbox := this.vbox.children.last()
 		if mut cbox is HBox {
 			if cbox.children.len <= 0 {
 				return

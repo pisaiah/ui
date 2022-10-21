@@ -70,7 +70,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	title := this.text
 	ctx.draw_text(56, 28, title, ctx.font, this.text_cfg)
 
-	ctx.gg.set_cfg(gx.TextCfg{
+	ctx.gg.set_text_cfg(gx.TextCfg{
 		size: ctx.font_size
 		color: ctx.theme.text_color
 	})

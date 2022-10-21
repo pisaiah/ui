@@ -10,25 +10,26 @@ import gx
 pub struct TextArea {
 	Component_A
 pub mut:
-	win                  &Window
-	lines                []string
-	caret_left           int
-	caret_top            int
-	padding_x            int
-	padding_y            int
-	ml_comment           bool
-	last_letter          string
-	click_event_fn       fn (voidptr, voidptr)
-	before_txtc_event_fn fn (mut Window, TextArea) bool
-	text_change_event_fn fn (voidptr, voidptr)
-	line_draw_event_fn   fn (voidptr, int, int, int)
-	down_pos             CaretPos
-	drawn_select         bool
-	code_syntax_on       bool
-	ctrl_down            bool
-	hide_border          bool
-	keys                 []string
-	needs_pack           bool
+	win                    &Window
+	lines                  []string
+	caret_left             int
+	caret_top              int
+	padding_x              int
+	padding_y              int
+	ml_comment             bool
+	last_letter            string
+	click_event_fn         fn (voidptr, voidptr)
+	before_txtc_event_fn   fn (mut Window, TextArea) bool
+	text_change_event_fn   fn (voidptr, voidptr)
+	line_draw_event_fn     fn (voidptr, int, int, int)
+	down_pos               CaretPos
+	drawn_select           bool
+	code_syntax_on         bool
+	ctrl_down              bool
+	hide_border            bool
+	keys                   []string
+	needs_pack             bool
+	active_line_draw_event fn (voidptr, int, int)
 }
 
 [minify]
@@ -149,7 +150,7 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 
 	sel_y := this.y + (lh * (this.caret_top - this.scroll_i)) + this.padding_y
 	if sel_y > this.y {
-		ctx.gg.draw_rect_filled(this.x, sel_y - 1, this.width, lh + 2, ctx.theme.button_bg_hover)
+		ctx.gg.draw_rect_filled(this.x, sel_y, this.width - 1, lh, ctx.theme.button_bg_hover)
 	}
 
 	cfg := gx.TextCfg{
@@ -228,9 +229,9 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 
 fn (this &TextArea) draw_line_number_background(ctx &GraphicsContext) int {
 	if this.code_syntax_on {
-		padding_x := text_width(this.win, (this.lines.len * 1000).str())
+		padding_x := text_width(this.win, '10000')
 		this.win.draw_bordered_rect(this.x + 1, this.y + 1, padding_x, this.height - 2,
-			2, ctx.theme.button_bg_normal, ctx.theme.button_bg_normal)
+			0, ctx.theme.button_bg_normal, ctx.theme.button_bg_normal)
 		return padding_x
 	}
 	return 4
@@ -326,6 +327,14 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 	mut comment := false
 	mut is_str := false
 	mut current_len := 0
+
+	// dump('DRAW TXT')
+
+	if is_cur_line {
+		if this.active_line_draw_event != unsafe { nil } {
+			this.active_line_draw_event(this, x, y)
+		}
+	}
 
 	for str in text {
 		tab_size := ' '.repeat(8)
