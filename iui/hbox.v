@@ -44,9 +44,15 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 
 	mut box_width := this.width
 	if this.is_width_per {
-		size := gg.window_size()
-		box_width = int((size.width) * (f32(this.raw_width) / 100))
-		this.width = box_width
+		if this.parent == unsafe { nil } {
+			size := gg.window_size()
+			box_width = int((size.width) * (f32(this.raw_width) / 100))
+			this.width = box_width
+		} else {
+			size := this.parent
+			box_width = int((size.width) * (f32(this.raw_width) / 100))
+			this.width = box_width
+		}
 	}
 
 	mut width := 0
