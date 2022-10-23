@@ -90,6 +90,7 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
 		app.draw_with_offset(mut com, xs, y_off + 2)
+		com.after_draw_event_fn(mut app, com)
 	}
 }
 
