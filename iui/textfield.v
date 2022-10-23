@@ -16,10 +16,25 @@ pub mut:
 	text_change_event_fn fn (voidptr, voidptr)
 	padding_x            int
 	center               bool
+	numeric              bool
 }
 
 pub fn (mut box TextField) set_text_change(b fn (a voidptr, b voidptr)) {
 	box.text_change_event_fn = b
+}
+
+pub fn numeric_field(val int) &TextField {
+	return &TextField{
+		win: unsafe { nil }
+		text: val.str()
+		numeric: true
+		center: true
+		click_event_fn: fn (a voidptr, b voidptr) {}
+		before_txtc_event_fn: fn (mut a Window, b TextField) bool {
+			return false
+		}
+		text_change_event_fn: fn (a voidptr, b voidptr) {}
+	}
 }
 
 pub fn textfield(win &Window, text string) &TextField {
@@ -60,6 +75,10 @@ fn (mut this TextField) draw_background() {
 }
 
 fn (mut this TextField) draw(ctx &GraphicsContext) {
+	if this.win == unsafe { nil } {
+		// TODO: Update textfield
+		this.win = ctx.win
+	}
 	this.draw_background()
 
 	xp := this.x + 4 + this.padding_x

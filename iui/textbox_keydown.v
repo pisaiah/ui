@@ -2,6 +2,10 @@ module iui
 
 import gg
 
+const (
+	numbers_val = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
+)
+
 fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool {
 	if mut a is TextField {
 		app.runebox_key(key, e, mut a)
@@ -165,6 +169,14 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 			}
 
 			if mod != 2 && key != .enter {
+				if com.numeric {
+					if strr !in iui.numbers_val {
+						com.last_letter = letter
+						com.text_change_event_fn(app, com)
+						return
+					}
+				}
+
 				com.text = com.text.substr_ni(0, com.carrot_left) + strr +
 					com.text.substr_ni(com.carrot_left, com.text.len)
 
