@@ -14,12 +14,18 @@ fn on_event(e &gg.Event, mut app Window) {
 		app.mouse_y = app.gg.mouse_pos_y
 	}
 
-	// else { dump(e.typ)}
-	if e.typ == .mouse_down {
+	if e.typ == .touches_moved {
+		app.mouse_x = int(e.touches[0].pos_x / app.gg.scale)
+		app.mouse_y = int(e.touches[0].pos_y / app.gg.scale)
+	}
+
+	// debug: app.id_map['cggevent'] = e
+
+	if e.typ == .mouse_down || e.typ == .touches_began {
 		on_mouse_down_event(e, mut app)
 	}
 
-	if e.typ == .mouse_up {
+	if e.typ == .mouse_up || e.typ == .touches_ended {
 		on_mouse_up_event(e, mut app)
 	}
 	if e.typ == .key_down {
@@ -135,8 +141,15 @@ fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 }
 
 fn on_mouse_down_event(e &gg.Event, mut app Window) {
-	app.click_x = app.gg.mouse_pos_x
-	app.click_y = app.gg.mouse_pos_y
+	if e.typ == .mouse_down {
+		// Desktop
+		app.click_x = app.gg.mouse_pos_x
+		app.click_y = app.gg.mouse_pos_y
+	} else {
+		// Mobile
+		app.click_x = int(e.touches[0].pos_x / app.gg.scale)
+		app.click_y = int(e.touches[0].pos_y / app.gg.scale)
+	}
 
 	// Sort by Z-index
 	app.components.sort(a.z_index > b.z_index)

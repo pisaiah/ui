@@ -93,7 +93,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 	if !com.is_selected {
 		return
 	}
-
+	dump(key)
 	if key == .right {
 		com.carrot_left += 1
 	} else if key == .left {
@@ -116,7 +116,8 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 			if key == .space {
 				strr = ' '
 			}
-			if key == .enter {
+			enter := is_enter(key)
+			if enter {
 				strr = '\n'
 			}
 
@@ -168,7 +169,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 				return
 			}
 
-			if mod != 2 && key != .enter {
+			if mod != 2 && !enter {
 				if com.numeric {
 					if strr !in iui.numbers_val {
 						com.last_letter = letter
@@ -183,7 +184,11 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 				com.carrot_left += 1
 			}
 
-			com.last_letter = letter
+			if enter {
+				com.last_letter = 'enter'
+			} else {
+				com.last_letter = letter
+			}
 			com.text_change_event_fn(app, com)
 
 			return
