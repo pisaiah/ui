@@ -18,7 +18,7 @@ pub mut:
 	tab_height_inactive int
 	active_offset       int
 	inactive_offset     int = 4
-	compact				bool
+	compact             bool
 }
 
 // Return new Progressbar

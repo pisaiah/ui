@@ -63,13 +63,13 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 
 	for mut child in this.children {
 		child.draw_event_fn(mut this.win, child)
-		
+
 		gw := if this.overflow_full {
 			o_x + child.width > box_width
 		} else {
 			o_x + (child.width / 2) > box_width
 		}
-		
+
 		if gw && !this.needs_pack {
 			if o_x > width {
 				width = o_x
@@ -78,7 +78,7 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 
 			o_y += yyy + 2
 		}
-		
+
 		if yyy < child.y + child.height {
 			yyy = child.y + child.height
 		}

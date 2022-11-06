@@ -35,19 +35,18 @@ fn main() {
 	app.make_checkbox_section()
 	app.make_selectbox_section()
 	app.make_progress_section()
-	
-	
+
 	mut v_img := window.gg.create_image(os.resource_abs_path('v.png'))
 	mut img := ui.image(window, v_img)
 	img.set_bounds(5, 5, 50, 50)
 	mut title_box := ui.title_box('Image', [img])
 	title_box.set_bounds(8, 8, 100, 150)
 	pane.add_child(title_box)
-	
+
 	app.make_tree_section()
 	app.make_tab_section()
 
-	//app.make_hbox_section()
+	// app.make_hbox_section()
 	app.make_edits_section()
 
 	pane.set_pos(4, 10)
@@ -134,10 +133,10 @@ fn (mut app App) make_edits_section() {
 fn (mut app App) make_progress_section() {
 	mut pb := ui.progressbar(30)
 	pb.set_bounds(0, 0, 110, 24)
-	
+
 	mut pb2 := ui.progressbar(50)
 	pb2.set_bounds(0, 30, 110, 24)
-	
+
 	mut pb3 := ui.progressbar(70)
 	pb3.set_bounds(0, 60, 110, 24)
 
@@ -198,7 +197,7 @@ fn (mut app App) make_button_section() {
 		should_pack: false
 		click_event_fn: test_page
 	})
-	
+
 	img_file := $embed_file('v.png')
 	mut btn3 := app.icon_btn(img_file.to_bytes())
 	btn3.set_bounds(0, 70, 120, 32)
