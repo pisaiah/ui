@@ -12,9 +12,9 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.make_window(
-		title: 'My Window'
+		title: 'UI Demo'
 		width: 700
-		height: 500
+		height: 480
 		theme: ui.get_system_theme()
 	)
 
@@ -126,7 +126,7 @@ fn (mut app App) make_edits_section() {
 	code_box.set_bounds(2, 48, 200, 100)
 
 	mut edits_title_box := ui.title_box('TextField / TextArea', [tbox, code_box])
-	edits_title_box.set_bounds(8, 8, 200, 225)
+	edits_title_box.set_bounds(18, 8, 200, 210)
 	app.pane.add_child(edits_title_box)
 }
 
@@ -153,7 +153,7 @@ fn (mut app App) make_tree_section() {
 	)
 
 	mut title_box := ui.title_box('Treeview', [tree_view])
-	title_box.set_bounds(8, 8, 180, 200)
+	title_box.set_bounds(8, 8, 180, 210)
 	app.pane.add_child(title_box)
 }
 
@@ -211,7 +211,7 @@ fn (mut app App) make_button_section() {
 
 fn (mut app App) make_tab_section() {
 	mut tb := ui.tabbox(app.win)
-	tb.set_bounds(5, 5, 160, 130)
+	tb.set_bounds(5, 5, 170, 140)
 	tb.compact = true
 
 	mut tbtn := ui.button(app.win, 'In Tab A')
@@ -225,7 +225,7 @@ fn (mut app App) make_tab_section() {
 	tb.add_child('Tab B', tbtn1)
 
 	mut title_box := ui.title_box('Tabbox', [tb])
-	title_box.set_bounds(8, 8, 200, 200)
+	title_box.set_bounds(18, 8, 200, 210)
 	app.pane.add_child(title_box)
 }
 
