@@ -31,6 +31,17 @@ fn on_click_event(win &ui.Window, btn &ui.Button, user_data voidptr) {
 }
 ```
 
+## Install
+Install via VPM:
+
+```
+v install https://github.com/isaiahpatton/ui
+```
+then 
+```v
+import iui as ui
+```
+
 ## Components
 | Name | Picture (Default Theme) | | Name | Picture (Default Theme) |
 |----------|----|--|-|-|
