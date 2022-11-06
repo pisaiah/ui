@@ -1,3 +1,3 @@
 *.v linguist-language=V
 *.mod linguist-language=V
-iui/extra/dialogs/*.c -linguist-detectable
+src/extra/dialogs/*.c -linguist-detectable
