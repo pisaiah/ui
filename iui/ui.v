@@ -130,6 +130,9 @@ pub mut:
 	debug_draw       bool
 	graphics_context &GraphicsContext
 	fonts            FontSet
+	frame_evnt_count int
+	sleep_if_no_evnt bool = true
+	second_pass      u8
 }
 
 // fonts
@@ -351,25 +354,34 @@ pub fn (app &Window) draw_filled_rect(x int, y int, width int, height int, a int
 	app.gg.draw_rect_empty(x, y, width, height, bord)
 }
 
-fn (app &Window) do_sleep() {
+// Implement our own 'ui_mode', locking to 60fps.
+// This fixes high cpu usage
+// Related?: https://github.com/floooh/sokol/issues/550
+fn (mut app Window) do_sleep() {
 	if app.config.ui_mode {
 		return
 	}
-	sleep := (50 - app.frame_time)
-	mut sleep_ := 0
-	if !app.has_event {
-		for sleep_ < sleep {
-			time.sleep(10 * time.millisecond)
-			sleep_ += 10
+
+	if !app.sleep_if_no_evnt {
+		return
+	}
+
+	if app.has_event {
+		app.frame_evnt_count += 1
+		if app.frame_evnt_count > 30 {
+			app.has_event = false
+			app.frame_evnt_count = 0
 		}
-	} else {
-		time.sleep(5 * time.millisecond) // Reduce CPU Usage
+	}
+
+	if !app.has_event {
+		time.sleep(20 * time.millisecond) // Reduce CPU Usage
 	}
 }
 
 fn (mut app Window) draw() {
 	// Custom 'UI Mode' - Refresh text caret
-	// app.do_sleep()
+	app.do_sleep()
 	now := time.now().unix_time_milli()
 
 	// Sort by Z-index; Lower draw first
@@ -410,8 +422,11 @@ fn (mut app Window) draw() {
 	}
 
 	end := time.now().unix_time_milli()
-	if end - app.last_update > 1000 {
+	if end - app.last_update > 500 {
 		app.last_update = end
+		app.second_pass += 1
+	} else {
+		app.second_pass = 0
 	}
 	app.frame_time = int(end - now)
 }

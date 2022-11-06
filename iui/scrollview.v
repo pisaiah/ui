@@ -138,7 +138,8 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 	xx := if this.rx != 0 { this.rx } else { this.x }
 	y := if this.rx != 0 { this.ry } else { this.y }
 
-	x := xx + this.width - 15
+	wid := 16
+	x := xx + this.width - wid
 
 	// Scroll Bar
 	scroll := this.scroll_i * this.increment
@@ -150,28 +151,24 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	// Draw Scroll
 	if requires_scrollbar {
-		wid := 15
-
-		ctx.win.draw_bordered_rect(x, y, wid, this.height, 2, ctx.theme.scroll_track_color,
-			ctx.win.theme.button_bg_hover)
-
-		ctx.win.gg.draw_rounded_rect_filled(x + 2, y + 15 + sth, 10, enh, 4, ctx.win.theme.scroll_bar_color)
+		ctx.win.gg.draw_rect_filled(x, y, wid, this.height, ctx.theme.scroll_track_color)
+		ctx.win.gg.draw_rect_filled(x + 2, y + 17 + sth, wid - 5, enh - 3, ctx.win.theme.scroll_bar_color)
 	} else {
 		return
 	}
 
-	ctx.gg.draw_rect_empty(x, y, 15, this.height, ctx.theme.textbox_border)
-	ctx.gg.draw_rect_empty(x, y + 15, 15, this.height - 30, ctx.theme.textbox_border)
+	ctx.gg.draw_rect_empty(x, y, wid, this.height, ctx.theme.textbox_border)
+	ctx.gg.draw_rect_empty(x, y + 15, wid, this.height - 30, ctx.theme.textbox_border)
 
 	// Scroll Buttons
 	if this.is_mouse_rele {
-		bounds := Bounds{x, y + this.height - 15, 15, 15}
+		bounds := Bounds{x, y + this.height - 15, wid, 15}
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds) {
 			this.scroll_i += 4
 			this.is_mouse_rele = false
 		}
 
-		bounds1 := Bounds{x, y, 15, 15}
+		bounds1 := Bounds{x, y, wid, 15}
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) {
 			this.scroll_i -= 4
 			if this.scroll_i < 0 {
@@ -183,7 +180,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	if this.is_mouse_down {
 		sub := enh / 2
-		bounds1 := Bounds{x, y + 15, 30, this.height - 30 - sub}
+		bounds1 := Bounds{x, y + 15, wid, this.height - 30 - sub}
 
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll {
 			this.in_scroll = true
@@ -212,9 +209,7 @@ fn (mut this ScrollView) draw_scrollbar_hor(ctx &GraphicsContext, cl int, spl_le
 
 	// Draw Scroll
 	if requires_scrollbar {
-		ctx.win.draw_bordered_rect(x, y, this.width - (this.xbar_width), wid, 2, ctx.theme.scroll_track_color,
-			ctx.win.theme.button_bg_hover)
-
+		ctx.win.gg.draw_rect_filled(x, y, this.width - (this.xbar_width), wid, ctx.theme.scroll_track_color)
 		ctx.win.gg.draw_rounded_rect_filled(x + wid + sth, y + 2, enh, wid - 5, 4, ctx.win.theme.scroll_bar_color)
 	} else {
 		return

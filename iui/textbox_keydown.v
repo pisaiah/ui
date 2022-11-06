@@ -21,7 +21,7 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			app.check_box(key, e, mut comm)
 		}
 	}
-	if mut a is VBox || mut a is HBox {
+	if mut a is VBox || mut a is HBox || mut a is Titlebox {
 		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
 				return true
@@ -93,7 +93,6 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 	if !com.is_selected {
 		return
 	}
-	dump(key)
 	if key == .right {
 		com.carrot_left += 1
 	} else if key == .left {

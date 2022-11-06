@@ -12,6 +12,7 @@ pub mut:
 	needs_pack     bool
 	overflow       bool = true
 	update_width   bool = true
+	legacy_scroll  bool
 }
 
 pub fn vbox(win &Window) &VBox {
@@ -37,6 +38,10 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 	}
 
 	mut hidden_height := 0
+
+	if !this.legacy_scroll {
+		this.scroll_i = 0
+	}
 
 	for i in 0 .. this.scroll_i {
 		mut child := this.children[i]

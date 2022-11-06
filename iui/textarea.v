@@ -30,6 +30,7 @@ pub mut:
 	keys                   []string
 	needs_pack             bool
 	active_line_draw_event fn (voidptr, int, int)
+	blinked                bool
 }
 
 [minify]
@@ -143,6 +144,10 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 		this.keys << iui.colors
 	}
 
+	// if ctx.win.second_pass == 1 {
+	//	this.blinked = !this.blinked
+	//}
+
 	lh := get_line_height(ctx)
 	line_height := get_line_height(ctx)
 
@@ -250,7 +255,13 @@ fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, ll
 		wid := text_width(win, pretext) - 1
 		height := get_line_height(ctx) + 1
 
-		ctx.gg.draw_rect_filled(x + wid, y - 1, 2, height, ctx.theme.text_color)
+		pipe_color := if this.blinked && this.is_selected {
+			ctx.theme.button_bg_hover
+		} else {
+			ctx.theme.text_color
+		}
+
+		ctx.gg.draw_rect_filled(x + wid, y - 1, 1, height, pipe_color)
 	}
 }
 

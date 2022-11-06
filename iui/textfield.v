@@ -17,6 +17,7 @@ pub mut:
 	padding_x            int
 	center               bool
 	numeric              bool
+	blinked              bool
 }
 
 pub fn (mut box TextField) set_text_change(b fn (a voidptr, b voidptr)) {
@@ -34,6 +35,7 @@ pub fn numeric_field(val int) &TextField {
 			return false
 		}
 		text_change_event_fn: fn (a voidptr, b voidptr) {}
+		carrot_left: val.str().len
 	}
 }
 
@@ -46,6 +48,7 @@ pub fn textfield(win &Window, text string) &TextField {
 			return false
 		}
 		text_change_event_fn: fn (a voidptr, b voidptr) {}
+		carrot_left: text.len
 	}
 }
 
@@ -79,6 +82,10 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 		// TODO: Update textfield
 		this.win = ctx.win
 	}
+	// if ctx.win.second_pass == 1 {
+	//	this.blinked = !this.blinked
+	//}
+
 	this.draw_background()
 
 	xp := this.x + 4 + this.padding_x
@@ -101,19 +108,23 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 		size: this.win.font_size
 	}
 
-	pipe_width := text_width(this.win, '|') / 2
+	// pipe_width := text_width(this.win, '|') / 2
 	wid := text_width(this.win, this.text[0..this.carrot_left])
+
+	pipe_color := if this.blinked && this.is_selected {
+		ctx.theme.button_bg_hover
+	} else {
+		color
+	}
 
 	if this.center {
 		// Y-center text
 		th := ctx.line_height // ctx.gg.text_height(this.text)
 		ctx.draw_text(xp, this.y + (this.height - th) / 2, this.text, ctx.font, cfg)
-		n_y := this.y + (this.height - th) / 2
-		ctx.draw_text(xp + wid - pipe_width, n_y, '|', ctx.font, cfg)
 	} else {
 		ctx.draw_text(xp, this.y + 4, this.text, ctx.font, cfg)
-		ctx.draw_text(xp + wid - pipe_width, yp, '|', ctx.font, cfg)
 	}
+	ctx.gg.draw_line(xp + wid, this.y + 2, xp + wid, this.y + this.height - 4, pipe_color)
 
 	this.mouse_down_caret()
 }

@@ -16,6 +16,7 @@ pub mut:
 	center_screen  bool
 	min_height     int
 	yyy            int
+	overflow_full  bool = true
 }
 
 pub fn hbox(win &Window) &HBox {
@@ -61,17 +62,25 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 	mut yyy := 0
 
 	for mut child in this.children {
-		if yyy < child.y + child.height {
-			yyy = child.y + child.height
-		}
 		child.draw_event_fn(mut this.win, child)
-		if (o_x + child.width > box_width) && !this.needs_pack {
+		
+		gw := if this.overflow_full {
+			o_x + child.width > box_width
+		} else {
+			o_x + (child.width / 2) > box_width
+		}
+		
+		if gw && !this.needs_pack {
 			if o_x > width {
 				width = o_x
 			}
 			o_x = 0
 
 			o_y += yyy + 2
+		}
+		
+		if yyy < child.y + child.height {
+			yyy = child.y + child.height
 		}
 
 		child.draw_with_offset(ctx, this.x + o_x, this.y + o_y)

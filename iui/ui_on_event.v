@@ -3,11 +3,14 @@ module iui
 import gg
 
 fn on_event(e &gg.Event, mut app Window) {
+	/*
 	if e.typ == .mouse_leave {
 		app.has_event = false
 	} else {
 		app.has_event = true
-	}
+	}*/
+
+	app.has_event = true
 
 	if e.typ == .mouse_move {
 		app.mouse_x = app.gg.mouse_pos_x

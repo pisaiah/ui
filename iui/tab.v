@@ -18,6 +18,7 @@ pub mut:
 	tab_height_inactive int
 	active_offset       int
 	inactive_offset     int = 4
+	compact				bool
 }
 
 // Return new Progressbar
@@ -64,6 +65,9 @@ pub fn (this &Tabbox) get_inactive_tab_height(ctx &GraphicsContext) int {
 }
 
 pub fn (tb &Tabbox) get_tab_width(ctx &GraphicsContext, key string) int {
+	if tb.compact {
+		return text_width(tb.win, key)
+	}
 	return text_width(tb.win, key) + 45
 }
 

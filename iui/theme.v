@@ -27,6 +27,11 @@ pub fn theme_by_name(name string) &Theme {
 	return themes[0]
 }
 
+struct Gradient {
+}
+
+type ColorVal = Gradient | gx.Color
+
 pub struct Theme {
 pub:
 	name       string
@@ -78,8 +83,8 @@ pub fn theme_default() &Theme {
 		checkbox_selected: gx.rgb(37, 161, 218)
 		checkbox_bg: gx.rgb(254, 254, 254)
 		progressbar_fill: gx.rgb(37, 161, 218)
-		scroll_track_color: gx.rgb(230, 230, 230)
-		scroll_bar_color: gx.rgb(180, 180, 180)
+		scroll_track_color: gx.rgb(238, 238, 238)
+		scroll_bar_color: gx.rgb(190, 190, 190)
 	}
 }
 
@@ -101,11 +106,11 @@ pub fn theme_dark() &Theme {
 		dropdown_border: gx.rgb(0, 0, 0)
 		textbox_background: gx.rgb(34, 39, 46)
 		textbox_border: gx.rgb(130, 130, 130)
-		checkbox_selected: gx.rgb(130, 130, 130)
+		checkbox_selected: gx.rgb(240, 99, 40)
 		checkbox_bg: gx.rgb(5, 5, 5)
 		progressbar_fill: gx.rgb(130, 130, 130)
 		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(180, 180, 180)
+		scroll_bar_color: gx.rgb(170, 170, 170)
 	}
 }
 
