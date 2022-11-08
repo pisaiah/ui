@@ -4,7 +4,7 @@ import gg
 import gx
 
 const (
-	tr_90 = gx.rgba(0, 0, 0, 90)
+	trans_color = gx.rgba(0, 0, 0, 90)
 )
 
 // Page
@@ -52,7 +52,7 @@ fn (this &Page) draw_bg(ctx &GraphicsContext) {
 	bg := gx.rgb(51, 114, 153)
 	ctx.gg.draw_rect_filled(0, 0, this.width, this.height, ctx.theme.background)
 	ctx.gg.draw_rect_filled(0, 0, this.width, 77, bg)
-	ctx.gg.draw_rect_filled(0, 74, this.width, 3, .tr_90)
+	// ctx.gg.draw_rect_filled(0, 74, this.width, 3, .trans_color)
 }
 
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
