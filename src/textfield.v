@@ -119,12 +119,14 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	if this.center {
 		// Y-center text
-		th := ctx.line_height // ctx.gg.text_height(this.text)
-		ctx.draw_text(xp, this.y + (this.height - th) / 2, this.text, ctx.font, cfg)
+		th := ctx.gg.text_height(this.text)
+		ycp := this.y + (this.height - th) / 2
+		ctx.draw_text(xp, ycp, this.text, ctx.font, cfg)
+		ctx.gg.draw_line(xp + wid, ycp, xp + wid, ycp + th, pipe_color)
 	} else {
 		ctx.draw_text(xp, this.y + 4, this.text, ctx.font, cfg)
+		ctx.gg.draw_line(xp + wid, this.y + 2, xp + wid, this.y + ctx.line_height, pipe_color)
 	}
-	ctx.gg.draw_line(xp + wid, this.y + 2, xp + wid, this.y + this.height - 4, pipe_color)
 
 	this.mouse_down_caret()
 }
