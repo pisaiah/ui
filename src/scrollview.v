@@ -134,7 +134,7 @@ fn (mut this ScrollView) clamp_scroll_x(total_width int) {
 	}
 }
 
-fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
+fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f32) {
 	xx := if this.rx != 0 { this.rx } else { this.x }
 	y := if this.rx != 0 { this.ry } else { this.y }
 
@@ -145,8 +145,8 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 	scroll := this.scroll_i * this.increment
 	bar_height := this.height - 35
 
-	sth := int((f32(scroll) / f32(spl_len)) * bar_height)
-	enh := int((f32(cl) / f32(spl_len)) * bar_height)
+	sth := (scroll / spl_len) * bar_height
+	enh := (cl / spl_len) * bar_height
 	requires_scrollbar := this.always_show || (bar_height - enh) > 0
 
 	// Draw Scroll
@@ -186,7 +186,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	if this.is_mouse_down {
 		sub := enh / 2
-		bounds1 := Bounds{x, y + 15, wid, this.height - 30 - sub}
+		bounds1 := Bounds{x, y + 15, wid, this.height - 30 - int(sub)}
 
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll {
 			this.in_scroll = true
@@ -199,7 +199,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 	}
 }
 
-fn (mut this ScrollView) draw_scrollbar_hor(ctx &GraphicsContext, cl int, spl_len int) {
+fn (mut this ScrollView) draw_scrollbar_hor(ctx &GraphicsContext, cl int, spl_len f32) {
 	x := if this.rx != 0 { this.rx } else { this.x }
 	yy := if this.rx != 0 { this.ry } else { this.y }
 
@@ -209,8 +209,8 @@ fn (mut this ScrollView) draw_scrollbar_hor(ctx &GraphicsContext, cl int, spl_le
 	// Scroll Bar
 	scroll := this.scroll_x * this.increment
 
-	sth := int((f32(scroll) / f32(spl_len)) * this.width)
-	enh := int((f32(cl) / f32(spl_len)) * this.width)
+	sth := int(scroll / spl_len) * this.width
+	enh := int(cl / spl_len) * this.width
 	requires_scrollbar := (this.width - enh) > 0
 
 	// Draw Scroll
