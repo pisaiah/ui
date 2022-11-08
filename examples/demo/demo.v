@@ -118,10 +118,11 @@ fn (mut app App) make_hbox_section() {
 }
 
 fn (mut app App) make_edits_section() {
-	mut tbox := ui.textfield(app.win, 'This is a TextField')
+	tbox := ui.text_field(
+		text: 'This is a TextField'
+		bounds: ui.Bounds{2, 8, 200, 30}
+	)
 
-	tbox.set_bounds(2, 8, 200, 30)
-	tbox.center = true
 	mut code_box := ui.textarea(app.win, ['module main', '', 'fn main() {', '}'])
 	code_box.set_bounds(2, 48, 200, 100)
 
@@ -158,14 +159,16 @@ fn (mut app App) make_tree_section() {
 }
 
 fn (mut app App) make_checkbox_section() {
-	cbox := ui.checkbox(app.win, 'Check me!', ui.CheckboxConfig{
+	cbox := ui.check_box(
+		text: 'Check me!'
 		bounds: ui.Bounds{0, 0, 50, 25}
-	})
+	)
 
-	cbox2 := ui.checkbox(app.win, 'Check me!', ui.CheckboxConfig{
+	cbox2 := ui.check_box(
+		text: 'Check me!'
 		bounds: ui.Bounds{0, 30, 50, 25}
 		selected: true
-	})
+	)
 
 	mut title_box := ui.title_box('Checkbox', [cbox, cbox2])
 	title_box.set_bounds(8, 8, 130, 150)

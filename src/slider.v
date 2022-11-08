@@ -52,6 +52,7 @@ pub fn new_slider(cfg SliderConfig) &Slider {
 
 // Return new Slider
 // TODO: Remove unused window argument
+[deprecated: 'use new_slider']
 pub fn slider(win &Window, min f32, max f32, dir Direction) &Slider {
 	mut slid := &Slider{
 		text: 'TEST'
