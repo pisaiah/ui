@@ -20,6 +20,7 @@ pub mut:
 	icon_width         int
 	icon_height        int
 	border_radius      int
+	area_filled        bool = true
 }
 
 [params]
@@ -28,6 +29,7 @@ pub struct ButtonConfig {
 	click_event_fn fn (voidptr, voidptr, voidptr) = fn (a voidptr, b voidptr, c voidptr) {}
 	should_pack    bool
 	user_data      voidptr
+	area_filled    bool = true
 }
 
 pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
@@ -43,6 +45,7 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 		new_click_event_fn: conf.click_event_fn
 		user_data: conf.user_data
 		need_pack: conf.should_pack
+		area_filled: conf.area_filled
 	}
 }
 
@@ -59,7 +62,14 @@ pub fn button(app &Window, text string, conf ButtonConfig) Button {
 		new_click_event_fn: conf.click_event_fn
 		user_data: conf.user_data
 		need_pack: conf.should_pack
+		area_filled: conf.area_filled
 	}
+}
+
+// Sets the contentAreaFilled property, weather to paint
+// See https://docs.oracle.com/javase/7/docs/api/javax/swing/AbstractButton.html#setContentAreaFilled(boolean)
+pub fn (mut this Button) set_area_filled(val bool) {
+	this.area_filled = val
 }
 
 pub fn (mut this Button) set_background(color gx.Color) {
@@ -101,8 +111,10 @@ fn (this &Button) draw_background() {
 	bg := this.get_bg(mouse_in)
 	border := this.get_border(mouse_in)
 
-	this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, this.border_radius,
-		bg)
+	if this.area_filled {
+		this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, this.border_radius,
+			bg)
+	}
 	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
 		border)
 }
