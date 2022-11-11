@@ -3,10 +3,6 @@ module iui
 import gg
 import gx
 
-const (
-	trans_color = gx.rgba(0, 0, 0, 90)
-)
-
 // Page
 pub struct Page {
 	Component_A
@@ -18,8 +14,9 @@ pub mut:
 	needs_init bool
 	close      &Button
 	in_height  int
-	top_off    int = 78
+	top_off    int = 75
 	xs         int
+	line_color gx.Color = gx.rgba(0, 0, 0, 90)
 }
 
 fn draw_cfg() gx.TextCfg {
@@ -51,8 +48,8 @@ pub fn page(app &Window, title string) &Page {
 fn (this &Page) draw_bg(ctx &GraphicsContext) {
 	bg := gx.rgb(51, 114, 153)
 	ctx.gg.draw_rect_filled(0, 0, this.width, this.height, ctx.theme.background)
-	ctx.gg.draw_rect_filled(0, 0, this.width, 77, bg)
-	// ctx.gg.draw_rect_filled(0, 74, this.width, 3, .trans_color)
+	ctx.gg.draw_rect_filled(0, 0, this.width, this.top_off, bg)
+	ctx.gg.draw_rect_filled(0, this.top_off - 5, this.width, 3, this.line_color)
 }
 
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
@@ -65,7 +62,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	this.draw_bg(ctx)
 
 	title := this.text
-	ctx.draw_text(56, 20, title, ctx.font, this.text_cfg)
+	ctx.draw_text(56, 18, title, ctx.font, this.text_cfg)
 
 	ctx.gg.set_text_cfg(gx.TextCfg{
 		size: ctx.font_size
@@ -89,9 +86,12 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
 	mut close := button(app, '<')
-	close.set_bounds(8, -64, 40, 42)
+	y := 10
+	wid := this.top_off - (y * 2)
+	close.set_bounds(8, -this.top_off + y, 40, wid)
 
 	if ce {
+		close.set_background(gx.rgba(230, 230, 230, 50))
 		close.set_click(default_page_close_fn)
 	}
 

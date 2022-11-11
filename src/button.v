@@ -112,8 +112,8 @@ fn (this &Button) draw_background() {
 	border := this.get_border(mouse_in)
 
 	if this.area_filled {
-		this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, this.border_radius,
-			bg)
+		this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height,
+			this.border_radius, bg)
 	}
 	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
 		border)
