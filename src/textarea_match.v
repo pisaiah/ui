@@ -12,7 +12,7 @@ pub:
 	end   int = -1
 }
 
-fn make_match(in_col string, keys []string) []string {
+pub fn make_match(in_col string, keys []string) []string {
 	mut groups := []Group{}
 	mut indx := 0
 
@@ -34,7 +34,7 @@ fn make_match(in_col string, keys []string) []string {
 	return make_group(in_col, groups)
 }
 
-fn get_nearest_match(keys []string, input string, start int) (int, string) {
+pub fn get_nearest_match(keys []string, input string, start int) (int, string) {
 	mut low_indx := input.len
 	mut low_key := ''
 
@@ -54,7 +54,7 @@ fn get_nearest_match(keys []string, input string, start int) (int, string) {
 	return low_indx, low_key
 }
 
-fn make_group(input string, groups []Group) []string {
+pub fn make_group(input string, groups []Group) []string {
 	mut res := []string{}
 
 	for i in 0 .. groups.len {

@@ -2,7 +2,7 @@ module iui
 
 import gg
 
-fn on_event(e &gg.Event, mut app Window) {
+pub fn on_event(e &gg.Event, mut app Window) {
 	/*
 	if e.typ == .mouse_leave {
 		app.has_event = false
@@ -46,7 +46,7 @@ fn on_event(e &gg.Event, mut app Window) {
 	}
 }
 
-fn (mut com Component) on_mouse_down_component(app &Window) bool {
+pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	is_point_in := point_in_raw(mut com, app.click_x, app.click_y)
 	if !is_point_in {
 		return false
@@ -97,7 +97,7 @@ fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	return true
 }
 
-fn (mut com Component) on_mouse_rele_component(app &Window) bool {
+pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
 	com.is_mouse_rele = is_point_in
 	com.is_mouse_down = false
@@ -143,7 +143,7 @@ fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	return is_point_in
 }
 
-fn on_mouse_down_event(e &gg.Event, mut app Window) {
+pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 	if e.typ == .mouse_down {
 		// Desktop
 		app.click_x = app.gg.mouse_pos_x
@@ -167,7 +167,7 @@ fn on_mouse_down_event(e &gg.Event, mut app Window) {
 	}
 }
 
-fn on_mouse_up_event(e &gg.Event, mut app Window) {
+pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	app.click_x = -1
 	app.click_y = -1
 
@@ -182,7 +182,7 @@ fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	}
 }
 
-fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
+pub fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 	is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
 
 	if mut com is Tabbox {
@@ -208,7 +208,7 @@ fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 	}
 }
 
-fn (mut comm Component) scroll_y_by(e &gg.Event) {
+pub fn (mut comm Component) scroll_y_by(e &gg.Event) {
 	scroll_y := int(e.scroll_y)
 	if abs(e.scroll_y) != e.scroll_y {
 		comm.scroll_i += -scroll_y
@@ -223,7 +223,7 @@ fn (mut comm Component) scroll_y_by(e &gg.Event) {
 	}
 }
 
-fn on_scroll_event(e &gg.Event, mut app Window) {
+pub fn on_scroll_event(e &gg.Event, mut app Window) {
 	app.components.sort(a.z_index > b.z_index)
 	for mut a in app.components {
 		a.on_scroll_component(app, e)
