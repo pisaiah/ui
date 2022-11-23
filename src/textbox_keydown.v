@@ -69,129 +69,93 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	app.key_down_event(mut app, key, e)
 }
 
-fn get_shifted_letter(letter string) string {
-	shift_keys := {
-		'minus':         '_'
-		'left_bracket':  '{'
-		'right_bracket': '}'
-		'equal':         '+'
-		'apostrophe':    '"'
-		'comma':         '<'
-		'period':        '>'
-		'slash':         '?'
-		'semicolon':     ':'
-		'backslash':     '|'
-		'grave_accent':  '~'
-	}
-	if letter in shift_keys {
-		return shift_keys[letter]
-	}
-	return letter.to_upper()
-}
-
 fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 	if !com.is_selected {
 		return
 	}
+
 	if key == .right {
 		com.carrot_left += 1
+		return
 	} else if key == .left {
 		com.carrot_left -= 1
-	} else {
-		mod := ev.modifiers
-		if mod == 8 {
-			// Windows Key
-			return
-		}
-		if mod == 2 {
-			com.ctrl_down = true
-		}
-		if key == .backspace {
-			com.text = com.text.substr_ni(0, com.carrot_left - 1) +
-				com.text.substr_ni(com.carrot_left, com.text.len)
-			com.carrot_left -= 1
-		} else {
-			mut strr := key.str()
-			if key == .space {
-				strr = ' '
-			}
-			enter := is_enter(key)
-			if enter {
-				strr = '\n'
-			}
-
-			kc := u32(gg.KeyCode(ev.key_code))
-			mut letter := ev.key_code.str()
-			res := utf32_to_str(kc)
-
-			if letter == 'left_shift' || letter == 'right_shift' {
-				letter = ''
-				app.shift_pressed = true
-				return
-			}
-
-			if letter.starts_with('_') {
-				letter = letter.replace('_', '')
-				nums := [')', '!', '@', '#', '$', '%', '^', '&', '*', '(']
-				if app.shift_pressed && letter.len > 0 {
-					letter = nums[letter.u32()]
-				}
-			}
-			if letter == 'minus' {
-				if app.shift_pressed {
-					letter = '_'
-				} else {
-					letter = '-'
-				}
-			}
-
-			if app.shift_pressed {
-				letter = get_shifted_letter(letter)
-			}
-
-			com.last_letter = letter
-
-			if letter.len > 1 {
-				if letter == 'tab' {
-					letter = '\t'
-				} else {
-					letter = res
-				}
-			}
-			if strr != '\n' {
-				strr = letter
-			}
-
-			bevnt := com.before_txtc_event_fn(mut app, *com)
-			if bevnt || key == .up || key == .down {
-				// 'true' indicates cancel event
-				return
-			}
-
-			if mod != 2 && !enter {
-				if com.numeric {
-					if strr !in iui.numbers_val {
-						com.last_letter = letter
-						com.text_change_event_fn(app, com)
-						return
-					}
-				}
-
-				com.text = com.text.substr_ni(0, com.carrot_left) + strr +
-					com.text.substr_ni(com.carrot_left, com.text.len)
-
-				com.carrot_left += 1
-			}
-
-			if enter {
-				com.last_letter = 'enter'
-			} else {
-				com.last_letter = letter
-			}
-			com.text_change_event_fn(app, com)
-
-			return
-		}
+		return
+	}
+	mod := ev.modifiers
+	if mod == 8 {
+		// Windows Key
+		return
+	}
+	if mod == 2 {
 		com.ctrl_down = true
 	}
+	if key == .backspace {
+		com.text = com.text.substr_ni(0, com.carrot_left - 1) +
+			com.text.substr_ni(com.carrot_left, com.text.len)
+		com.carrot_left -= 1
+		com.ctrl_down = false
+		return
+	}
+
+	if key == .left_shift || key == .right_shift {
+		app.shift_pressed = true
+		return
+	}
+
+	enter := is_enter(key)
+
+	if enter {
+		com.last_letter = 'enter'
+		bevnt := com.before_txtc_event_fn(mut app, *com)
+		if bevnt || key == .up || key == .down {
+			return
+		}
+		com.text_change_event_fn(app, com)
+		com.ctrl_down = false
+		return
+	}
+
+	if ev.typ == .key_down {
+		return
+	}
+
+	mut letter := ''
+
+	if ev.typ == .char {
+		resu := utf32_to_str(ev.char_code)
+		letter = resu
+		com.last_letter = letter
+	}
+
+	dump(letter)
+	com.last_letter = letter
+
+	bevnt := com.before_txtc_event_fn(mut app, *com)
+	if bevnt || key == .up || key == .down {
+		// 'true' indicates cancel event
+		return
+	}
+
+	if mod != 2 && !enter {
+		if com.numeric {
+			if letter !in iui.numbers_val {
+				com.last_letter = letter
+				com.text_change_event_fn(app, com)
+				return
+			}
+		}
+
+		com.text = com.text.substr_ni(0, com.carrot_left) + letter +
+			com.text.substr_ni(com.carrot_left, com.text.len)
+
+		com.carrot_left += 1
+	}
+
+	if enter {
+		com.last_letter = 'enter'
+	} else {
+		com.last_letter = letter
+	}
+	com.text_change_event_fn(app, com)
+	com.ctrl_down = false
 }

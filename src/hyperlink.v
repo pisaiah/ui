@@ -69,7 +69,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	y := this.y
 
 	mut my := 0
-	for mut spl in this.text.split('\n') {
+	for spl in this.text.split('\n') {
 		ctx.draw_text(x, y + this.height - line_height + my, fix_tab(spl), ctx.font, gx.TextCfg{
 			size: size
 			color: gx.rgb(0, 100, 200)

@@ -65,49 +65,24 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 
 fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com TextArea) {
 	mod := ev.modifiers
-	mut strr := key.str()
-	if key == .space {
-		strr = ' '
-	}
 
 	enter := is_enter(key)
-	if enter {
-		strr = '\n'
-	}
 
-	kc := u32(gg.KeyCode(ev.key_code))
-	mut letter := ev.key_code.str()
-	res := utf32_to_str(kc)
-
-	if letter == 'left_shift' || letter == 'right_shift' {
-		letter = ''
+	if key == .left_shift || key == .right_shift {
 		win.shift_pressed = true
 		return
 	}
 
-	if letter.starts_with('_') || letter.starts_with('kp_') {
-		letter = letter.replace('_', '').replace('kp', '')
-		nums := [')', '!', '@', '#', '$', '%', '^', '&', '*', '(']
-		if win.shift_pressed && letter.len > 0 {
-			letter = nums[letter.u32()]
-		}
+	mut letter := ''
+
+	if ev.typ == .char {
+		resu := utf32_to_str(ev.char_code)
+		letter = resu
+		com.last_letter = letter
 	}
 
-	if win.shift_pressed {
-		letter = get_shifted_letter(letter)
-	}
-
-	com.last_letter = letter
-
-	if letter.len > 1 {
-		if letter == 'tab' {
-			letter = '\t'
-		} else {
-			letter = res
-		}
-	}
-	if strr != '\n' {
-		strr = letter
+	if enter {
+		com.last_letter = 'enter'
 	}
 
 	bevnt := com.before_txtc_event_fn(mut win, *com)
@@ -124,16 +99,16 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 
 		line := com.lines[com.caret_top]
 
-		if strr.len > 1 {
+		if letter.len > 1 {
 			// For extended unicode
 			mut myrunes := line.runes()
-			myrunes.insert(com.caret_left, strr.runes()[0])
+			myrunes.insert(com.caret_left, letter.runes()[0])
 			com.lines[com.caret_top] = myrunes.string()
 			unsafe {
 				myrunes.free()
 			}
 		} else {
-			new_line := line.substr_ni(0, com.caret_left) + strr +
+			new_line := line.substr_ni(0, com.caret_left) + letter +
 				line.substr_ni(com.caret_left, line.len)
 			com.lines[com.caret_top] = new_line
 		}
@@ -162,6 +137,8 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 			com.caret_left = 0
 		}
 	} else if mod != 2 {
-		com.caret_left += 1
+		if letter.len > 0 {
+			com.caret_left += 1
+		}
 	}
 }

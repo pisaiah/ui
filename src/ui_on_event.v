@@ -33,6 +33,11 @@ pub fn on_event(e &gg.Event, mut app Window) {
 	if e.typ == .key_down {
 		app.key_down(e.key_code, e)
 	}
+
+	if e.typ == .char {
+		app.key_down(e.key_code, e)
+	}
+
 	if e.typ == .key_up {
 		letter := e.key_code.str()
 		if letter == 'left_shift' || letter == 'right_shift' {

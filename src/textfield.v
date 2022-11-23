@@ -6,8 +6,6 @@ import gx
 pub struct TextField {
 	Component_A
 pub mut:
-	// win                  &Window
-	carrot_top           int
 	carrot_left          int
 	ctrl_down            bool
 	last_letter          string
@@ -68,8 +66,9 @@ pub fn textfield(win &Window, text string) &TextField {
 }
 
 fn (mut this TextField) draw_background(ctx &GraphicsContext) {
-	mut bg := ctx.theme.textbox_background
-	mut border := ctx.theme.textbox_border
+	click := this.is_mouse_rele
+	bg := if click { ctx.theme.button_bg_click } else { ctx.theme.textbox_background }
+	border := if click { ctx.theme.button_border_click } else { ctx.theme.textbox_border }
 
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)
@@ -78,10 +77,6 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	if this.is_mouse_rele {
 		this.is_selected = true
 		this.click_event_fn(ctx.win, this)
-
-		bg = ctx.theme.button_bg_click
-		border = ctx.theme.button_border_click
-
 		this.is_mouse_rele = false
 	} else {
 		if ctx.win.click_x > -1 && !(abs(mid - ctx.win.mouse_x) < this.width / 2

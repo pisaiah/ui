@@ -223,11 +223,15 @@ pub fn (mut win Window) add_child(com Component) {
 }
 
 pub fn window(theme Theme, title string, width int, height int) &Window {
-	return window_with_config(theme, title, width, height, &WindowConfig{
+	return make_window(
+		theme: &theme
+		title: title
+		width: width
+		height: height
 		font_path: default_font()
 		ui_mode: true
 		user_data: 0
-	})
+	)
 }
 
 [heap; params]
@@ -285,44 +289,9 @@ pub fn make_window(config &WindowConfig) &Window {
 	return win
 }
 
+[deprecated: 'Use make_window']
 pub fn window_with_config(theme Theme, title string, width int, height int, config &WindowConfig) &Window {
-	mut app := &Window{
-		gg: 0
-		theme: theme
-		bar: 0
-		config: config
-		font_size: config.font_size
-		graphics_context: 0
-	}
-
-	// Call blank function so -skip-unused won't skip it
-	blank_draw_event_fn(mut app, &Component_A{})
-
-	the_title := $if emscripten ? {
-		'canvas'
-	} $else {
-		config.title
-	}
-
-	app.gg = gg.new_context(
-		bg_color: app.theme.background
-		width: width
-		height: height
-		create_window: true
-		window_title: the_title
-		frame_fn: frame
-		event_fn: on_event
-		user_data: app
-		// TODO config.user_data
-		font_path: config.font_path
-		font_size: config.font_size
-		ui_mode: config.ui_mode
-	)
-	app.graphics_context = new_graphics_context(app)
-	if app.graphics_context.icon_cache.len == 0 {
-		app.graphics_context.fill_icon_cache(mut app)
-	}
-	return app
+	return make_window(config)
 }
 
 pub fn (mut win Window) set_theme(theme Theme) {
@@ -438,8 +407,6 @@ pub fn (mut ctx GraphicsContext) calculate_line_height() {
 		// Fix for wasm
 		ctx.line_height = ctx.font_size + 2
 	}
-
-	dump('$ctx.line_height & $ctx.font_size')
 }
 
 // Functions for GG
