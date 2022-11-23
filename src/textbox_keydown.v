@@ -127,7 +127,6 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 		com.last_letter = letter
 	}
 
-	dump(letter)
 	com.last_letter = letter
 
 	bevnt := com.before_txtc_event_fn(mut app, *com)
