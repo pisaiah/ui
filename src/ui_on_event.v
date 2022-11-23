@@ -23,7 +23,6 @@ pub fn on_event(e &gg.Event, mut app Window) {
 	}
 
 	// debug: app.id_map['cggevent'] = e
-
 	if e.typ == .mouse_down || e.typ == .touches_began {
 		on_mouse_down_event(e, mut app)
 	}

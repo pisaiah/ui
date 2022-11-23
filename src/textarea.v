@@ -147,7 +147,6 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 	// if ctx.win.second_pass == 1 {
 	//	this.blinked = !this.blinked
 	//}
-
 	lh := get_line_height(ctx)
 	line_height := get_line_height(ctx)
 
@@ -340,7 +339,6 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 	mut current_len := 0
 
 	// dump('DRAW TXT')
-
 	if is_cur_line {
 		if this.active_line_draw_event != unsafe { nil } {
 			this.active_line_draw_event(this, x, y)

@@ -38,7 +38,7 @@ pub struct SliderConfig {
 
 pub fn new_slider(cfg SliderConfig) &Slider {
 	mut slid := &Slider{
-		text: 'TEST'
+		text: ''
 		min: cfg.min
 		max: cfg.max
 		dir: cfg.dir
@@ -55,7 +55,7 @@ pub fn new_slider(cfg SliderConfig) &Slider {
 [deprecated: 'use new_slider']
 pub fn slider(win &Window, min f32, max f32, dir Direction) &Slider {
 	mut slid := &Slider{
-		text: 'TEST'
+		text: ''
 		min: min
 		max: max
 		dir: dir

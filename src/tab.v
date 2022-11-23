@@ -52,7 +52,7 @@ pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
 
 	line_height := ctx.line_height + 5
 
-	val := 40
+	val := 38
 	if line_height > val {
 		return line_height
 	}
@@ -130,11 +130,10 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 	c_x := (tb.x + mx + tsize) - c_s - 4
 	c_y := tb.y + my + (theig / 2) - (sizh / 2)
 
-	c_yy := c_y + 4
 	x_size := 6
 
 	mid := c_x + (c_s / 2)
-	midy := c_yy + (csy / 2)
+	midy := c_y + (csy / 2)
 
 	if (abs(mid - tb.win.click_x) < c_s) && (abs(midy - tb.win.click_y) < csy) {
 		if tb.is_mouse_rele {
@@ -148,26 +147,16 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 	hover := (abs(mid - tb.win.mouse_x) < c_s) && (abs(midy - tb.win.mouse_y) < csy)
 
 	if hover {
-		offset := 4
+		offset := 3
 		widhei := x_size + (offset * 2)
-		ctx.gg.draw_rounded_rect_filled(c_x - offset, c_yy - offset, widhei, widhei, 32,
-			ctx.theme.button_border_hover)
-		ctx.gg.draw_rounded_rect_empty(c_x - offset, c_yy - offset, widhei, widhei, 32,
-			gx.red)
+		ctx.gg.draw_rect_filled(c_x - offset, c_y - offset, widhei, widhei, ctx.theme.button_border_hover)
+		ctx.gg.draw_rect_empty(c_x - offset, c_y - offset, widhei, widhei, gx.red)
 	}
 
-	color := get_close_btn_color(ctx, hover)
+	color := ctx.theme.text_color
 
-	ctx.gg.draw_line(c_x, c_yy, c_x + x_size, c_yy + x_size, color)
-	ctx.gg.draw_line(c_x, c_yy + x_size, c_x + x_size, c_yy, color)
-}
-
-fn get_close_btn_color(ctx &GraphicsContext, hover bool) gx.Color {
-	/*
-	if hover {
-		return ctx.theme.button_border_hover
-	}*/
-	return ctx.theme.text_color
+	ctx.gg.draw_line(c_x, c_y, c_x + x_size, c_y + x_size, color)
+	ctx.gg.draw_line(c_x, c_y + x_size, c_x + x_size, c_y, color)
 }
 
 // Draw this component

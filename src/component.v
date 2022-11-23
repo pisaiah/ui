@@ -12,9 +12,7 @@ mut:
 	ry int
 	width int
 	height int
-	last_click f64
 	is_selected bool
-	carrot_index int
 	z_index int
 	scroll_i int
 	scroll_change_event fn (&Component, int, int)
@@ -39,9 +37,7 @@ pub mut:
 	ry                  int
 	width               int
 	height              int
-	last_click          f64
 	is_selected         bool
-	carrot_index        int
 	z_index             int
 	scroll_i            int
 	is_mouse_down       bool

@@ -9,7 +9,6 @@ pub mut:
 	app            &Window
 	text           string
 	click_event_fn fn (mut Window, Image)
-	in_modal       bool
 	need_pack      bool
 	img            &gg.Image
 	rotate         int
@@ -58,11 +57,6 @@ pub fn (mut this Image) draw(ctx &GraphicsContext) {
 		this.is_mouse_rele = false
 		this.click_event_fn(mut this.app, *this)
 	}
-
-	/*
-	if this.need_pack {
-		this.pack_do()
-	}*/
 
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
 		img: this.img

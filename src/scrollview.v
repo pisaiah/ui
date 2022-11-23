@@ -158,7 +158,6 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 	}
 
 	ctx.gg.draw_rect_empty(x, y, wid, this.height, ctx.theme.textbox_border)
-	ctx.gg.draw_rect_empty(x, y + 15, wid, this.height - 30, ctx.theme.textbox_border)
 
 	tx := x + (wid / 2) - 5
 	ctx.gg.draw_triangle_filled(tx, y + 10, tx + 5, y + 5, tx + 10, y + 10, ctx.theme.scroll_bar_color)
@@ -207,15 +206,16 @@ fn (mut this ScrollView) draw_scrollbar_hor(ctx &GraphicsContext, cl int, spl_le
 	y := yy + this.height - wid
 
 	// Scroll Bar
+	width := this.width - 1
 	scroll := this.scroll_x * this.increment
 
-	sth := int(scroll / spl_len) * this.width
-	enh := int(cl / spl_len) * this.width
-	requires_scrollbar := (this.width - enh) > 0
+	sth := f32(scroll / spl_len) * width
+	enh := int(f32(cl / spl_len) * width)
+	requires_scrollbar := (width - enh) > 0
 
 	// Draw Scroll
 	if requires_scrollbar {
-		ctx.win.gg.draw_rect_filled(x, y, this.width - (this.xbar_width), wid, ctx.theme.scroll_track_color)
+		ctx.win.gg.draw_rect_filled(x, y, width - (this.xbar_width), wid, ctx.theme.scroll_track_color)
 		ctx.win.gg.draw_rect_filled(x + wid + sth, y + 2, enh, wid - 5, ctx.win.theme.scroll_bar_color)
 	} else {
 		return
@@ -226,12 +226,12 @@ fn (mut this ScrollView) draw_scrollbar_hor(ctx &GraphicsContext, cl int, spl_le
 
 	if this.is_mouse_down {
 		sub := enh / 2
-		bounds1 := Bounds{x, y, this.width - (wid * 2) - sub, wid}
+		bounds1 := Bounds{x, y, width - (wid * 2) - sub, wid}
 
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll_x {
 			this.in_scroll_x = true
-			cx := math.clamp(ctx.win.mouse_x - x - sub, 0, this.width)
-			perr := (cx / this.width) * spl_len
+			cx := math.clamp(ctx.win.mouse_x - x - sub, 0, width)
+			perr := (cx / width) * spl_len
 			this.scroll_x = int(perr) / this.increment
 		}
 	} else {

@@ -16,6 +16,7 @@ fn main() {
 		width: 700
 		height: 480
 		theme: ui.get_system_theme()
+		ui_mode: false
 	)
 
 	mut pane := ui.hbox(window)

@@ -7,7 +7,6 @@ import gx
 pub struct Checkbox {
 	Component_A
 pub mut:
-	app            &Window
 	text           string
 	click_event_fn fn (mut Window, Checkbox)
 }
@@ -23,7 +22,6 @@ pub struct CheckboxConfig {
 pub fn check_box(conf CheckboxConfig) &Checkbox {
 	return &Checkbox{
 		text: conf.text
-		app: unsafe { nil }
 		x: conf.bounds.x
 		y: conf.bounds.y
 		width: conf.bounds.width
@@ -37,7 +35,6 @@ pub fn check_box(conf CheckboxConfig) &Checkbox {
 pub fn checkbox(app &Window, text string, conf CheckboxConfig) Checkbox {
 	return Checkbox{
 		text: text
-		app: app
 		x: conf.bounds.x
 		y: conf.bounds.y
 		width: conf.bounds.width

@@ -10,13 +10,11 @@ pub mut:
 	app            &Window
 	text           string
 	click_event_fn fn (mut Window, Label)
-	in_modal       bool
 	need_pack      bool
 	size           int
 	bold           bool
 	abs_fsize      bool
 	center_text_y  bool
-	// font           int
 }
 
 [params]
@@ -73,7 +71,7 @@ pub fn (mut btn Label) pack_do() {
 	th := text_height(btn.app, '{!A')
 	hi := th * lines.len
 
-	font_size := btn.size //+ btn.app.font_size
+	font_size := btn.size
 	btn.height = hi + 4 + (font_size * lines.len)
 
 	if btn.height < th {
@@ -105,9 +103,8 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 	}
 
 	// Draw Button Text
-	mut line_height := text_height(app, '1A{')
 	mut my := 0
-	for mut spl in text.split('\n') {
+	for spl in text.split('\n') {
 		yp := if this.center_text_y { y + (height / 2) - sizh + my } else { y + my }
 
 		// dump(this.font)
@@ -125,7 +122,7 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 			})
 		}
 
-		my += line_height
+		my += ctx.line_height
 	}
 
 	this.debug_draw()

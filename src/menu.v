@@ -160,11 +160,9 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 	clicked := ((abs(midx - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)))
 
 	bg := item.get_bg(app, hover, clicked)
-	mut border := if hover { ctx.theme.button_border_hover } else { app.theme.menubar_border }
 
 	// Detect Click
 	if clicked && !item.show_items {
-		border = app.theme.button_border_click
 		item.show_items = true
 		app.set_bar_tick(0)
 
@@ -177,7 +175,6 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 	}
 
 	if item.show_items && item.items.len > 0 {
-		border = app.theme.button_border_click
 		app.set_bar_tick(0)
 		mut wid := 120
 
@@ -209,9 +206,15 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 
 	// Draw Button Background & Border
 	if !item.no_paint_bg {
-		y_ := y + 1
-		ctx.gg.draw_rect_filled(x + 1, y_, width, height - 1, bg)
-		ctx.gg.draw_rect_empty(x + 1, y_, width - 1, height - 1, border)
+		ctx.gg.draw_rect_filled(x + 1, y, width - 1, height - 1, bg)
+		if hover {
+			border := if clicked {
+				ctx.theme.button_border_click
+			} else {
+				app.theme.button_border_hover
+			}
+			ctx.gg.draw_rect_empty(x + 1, y + 1, width - 2, height - 1, border)
+		}
 	}
 
 	// Draw Button Text
@@ -241,7 +244,7 @@ fn open_about_modal(app &Window) &Modal {
 	title.pack()
 	about.add_child(title)
 
-	mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: " + version + '\nCompiled with ' +
+	mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: $version\nCompiled with " +
 		full_v_version(false))
 	lbl.set_pos(40, 70)
 	about.add_child(lbl)

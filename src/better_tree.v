@@ -34,6 +34,13 @@ pub mut:
 	open  bool
 }
 
+pub fn tree(text string) &Tree2 {
+	return &Tree2{
+		text: text
+		click_event_fn: unsafe { nil }
+	}
+}
+
 pub fn tree2(text string) &Tree2 {
 	return &Tree2{
 		text: text

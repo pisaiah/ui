@@ -431,19 +431,6 @@ fn (mut app Window) draw() {
 	app.frame_time = int(end - now)
 }
 
-fn rune_box_scroll(e &gg.Event, mut a TextField) {
-	if !a.is_selected {
-		return
-	}
-
-	scroll_y := (int(e.scroll_y) / 2)
-	if abs(e.scroll_y) != e.scroll_y {
-		a.scroll_i += -scroll_y
-	} else if a.scroll_i > 0 {
-		a.scroll_i -= scroll_y
-	}
-}
-
 pub fn (mut ctx GraphicsContext) calculate_line_height() {
 	ctx.line_height = ctx.gg.text_height('A1!|{}j;') + 2
 

@@ -10,7 +10,6 @@ pub mut:
 	window         &Window
 	text           string
 	click_event_fn fn (mut Window, Modal)
-	in_modal       bool
 	needs_init     bool
 	close          &Button
 	shown          bool

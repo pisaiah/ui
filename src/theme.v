@@ -84,7 +84,7 @@ pub fn theme_default() &Theme {
 		checkbox_bg: gx.rgb(254, 254, 254)
 		progressbar_fill: gx.rgb(37, 161, 218)
 		scroll_track_color: gx.rgb(238, 238, 238)
-		scroll_bar_color: gx.rgb(200, 200, 200)
+		scroll_bar_color: gx.rgb(170, 170, 170)
 	}
 }
 

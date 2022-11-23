@@ -41,22 +41,6 @@ pub fn link(cfg HyperlinkConfig) &Hyperlink {
 	}
 }
 
-[deprecated: 'Replaced by link(HyperlinkConfig)']
-pub fn hyperlink(app &Window, text string, url string, conf HyperlinkConfig) &Hyperlink {
-	return &Hyperlink{
-		text: text
-		x: conf.bounds.x
-		y: conf.bounds.y
-		width: conf.bounds.width
-		height: conf.bounds.height
-		click_event_fn: fn (a voidptr) {
-			this := &Hyperlink(a)
-			open_url(this.url)
-		}
-		url: url
-	}
-}
-
 pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	if this.need_pack {
 		this.pack_do(ctx)
@@ -76,20 +60,17 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	})
 
 	// Draw Button Text
-	line_height := ctx.line_height + 5
+	line_height := ctx.line_height + 1
 	if this.height < (line_height / 2) {
 		this.height = line_height
 	}
 
 	x := this.x
 	y := this.y
-	width := this.width
-	height := this.height
 
 	mut my := 0
 	for mut spl in this.text.split('\n') {
-		ctx.draw_text(x, y + height - line_height + my, spl.replace('\t', '  '.repeat(8)),
-			ctx.font, gx.TextCfg{
+		ctx.draw_text(x, y + this.height - line_height + my, fix_tab(spl), ctx.font, gx.TextCfg{
 			size: size
 			color: gx.rgb(0, 100, 200)
 			bold: this.bold
@@ -103,9 +84,14 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 
 		my += line_height
 	}
-	ctx.gg.draw_line(x, y + height - 2, x + width, y + height - 2, gx.rgb(0, 100, 200))
+	yp := y + this.height - 2
+	ctx.gg.draw_line(x, yp, x + this.width, yp, gx.rgb(0, 100, 200))
 
 	this.debug_draw(ctx)
+}
+
+pub fn fix_tab(val string) string {
+	return val.replace('\t', ' '.repeat(8))
 }
 
 pub fn (mut btn Hyperlink) pack() {
@@ -129,13 +115,12 @@ pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
 		bold: btn.bold
 	})
 
-	width := ctx.gg.text_width(btn.text.replace('\t', ' '.repeat(8)))
+	width := ctx.gg.text_width(fix_tab(btn.text))
 	btn.width = width + 1
-	th := ctx.gg.text_height(btn.text) + 5
+	th := ctx.gg.text_height(btn.text) + 4
 
 	lines := btn.text.split_into_lines()
-	hi := (th * lines.len)
-	btn.height = hi
+	btn.height = th * lines.len
 
 	if btn.height < th {
 		btn.height = th
@@ -159,11 +144,11 @@ fn (this &Hyperlink) debug_draw(ctx &GraphicsContext) {
 	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
 }
 
+[deprecated]
 pub fn (mut this Hyperlink) set_config(fs int, abs bool, bold bool) {
 	this.size = fs
 	if abs {
 		// Absolute font size
-		// this.size = fs - this.app.font_size
 		this.abs_size = true
 	}
 	this.bold = bold
