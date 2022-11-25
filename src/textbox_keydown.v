@@ -119,13 +119,8 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 		return
 	}
 
-	mut letter := ''
-
-	if ev.typ == .char {
-		resu := utf32_to_str(ev.char_code)
-		letter = resu
-		com.last_letter = letter
-	}
+	resu := utf32_to_str(ev.char_code)
+	letter := resu
 
 	com.last_letter = letter
 
