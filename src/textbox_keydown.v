@@ -152,4 +152,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 	}
 	com.text_change_event_fn(app, com)
 	com.ctrl_down = false
+	unsafe {
+		resu.free()
+	}
 }

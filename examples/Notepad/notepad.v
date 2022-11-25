@@ -2,17 +2,21 @@ module main
 
 import gg
 import iui as ui
-import iui.extra
+// import iui.extra
 import os
 import os.font
 
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window_with_config(ui.get_system_theme(), 'Notepad', 520, 550, &ui.WindowConfig{
+	mut window := ui.make_window(
+		title: 'Notepad'
+		theme: ui.get_system_theme()
+		width: 520
+		height: 550
 		font_path: os.resource_abs_path('VeraMono.ttf')
 		ui_mode: true
-	})
+	)
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)
@@ -34,7 +38,7 @@ fn main() {
 		children: [
 			ui.menu_item(
 				text: 'Save'
-				click_event_fn: save_as_click
+				// click_event_fn: save_as_click
 			),
 		]
 	)
@@ -62,7 +66,7 @@ fn main() {
 			font_type_item('AnomalyMono-Regular.otf'),
 			ui.menu_item(
 				text: 'More...'
-				click_event_fn: font_picker
+				// click_event_fn: font_picker
 			),
 		]
 	)
@@ -86,13 +90,22 @@ fn main() {
 
 	mut res_box := ui.textarea(window, [''])
 	res_box.set_id(mut window, 'notepad')
-	res_box.set_bounds(4, 28, 0, 0)
+	res_box.set_bounds(1, 28, 0, 0)
 	res_box.padding_x = 16
 	res_box.padding_y = 16
 	res_box.draw_event_fn = vbtn_draw
 	window.add_child(res_box)
 
 	window.gg.run()
+}
+
+fn vbtn_draw(mut win ui.Window, com &ui.Component) {
+	size := gg.window_size()
+
+	mut this := *com
+
+	this.width = size.width - 2
+	this.height = size.height - 31
 }
 
 fn font_size_item(size string) &ui.MenuItem {
@@ -118,15 +131,6 @@ fn font_click(mut win ui.Window, com ui.MenuItem) {
 	win.graphics_context.font = font
 }
 
-fn vbtn_draw(mut win ui.Window, com &ui.Component) {
-	size := gg.window_size()
-
-	mut this := *com
-
-	this.width = size.width - 8
-	this.height = size.height - 31
-}
-
 fn on_size_click(mut win ui.Window, com ui.MenuItem) {
 	win.font_size = com.text.int()
 }
@@ -145,8 +149,8 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	title.pack()
 
 	mut label := ui.label(win,
-		'Small Notepad made in\nthe V Programming Language.\n\nVersion: 0.1' + '\nUI Version: ' +
-		ui.version)
+		'Small Notepad made in the V Programming Language.\n\nVersion: 0.1' +
+		'\nUI Version: $ui.version')
 
 	label.pack()
 
@@ -160,26 +164,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	win.add_child(modal)
 }
 
-fn font_picker(mut win ui.Window, com ui.MenuItem) {
-	dir := 'C:/windows/fonts/'
-
-	path_change_fn := font_picker_path_change
-
-	picker_conf := extra.FilePickerConfig{
-		in_modal: true
-		path: dir
-		path_change_fn: path_change_fn
-	}
-
-	// TODO: put this in FilePickerConfig
-	win.extra_map['file_picker_accept'] = '.ttf'
-
-	mut modal := extra.open_file_picker(mut win, picker_conf, win)
-	modal.z_index = 500
-
-	win.extra_map['file_picker_accept'] = ''
-}
-
+/*
 fn save_as_click(mut win ui.Window, com ui.MenuItem) {
 	dir := if 'save_path' in win.extra_map {
 		win.extra_map['save_path']
@@ -219,3 +204,4 @@ fn font_picker_path_change(a voidptr, b voidptr) {
 	font := win.add_font(picker.get_file_name(), path)
 	win.graphics_context.font = font
 }
+*/

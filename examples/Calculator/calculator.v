@@ -7,11 +7,14 @@ import gx
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window_with_config(ui.get_system_theme(), 'Calculator', 280, 342,
-		&ui.WindowConfig{
+	mut window := ui.make_window(
+		theme: ui.get_system_theme()
+		title: 'Calculator'
+		width: 280
+		height: 342
 		ui_mode: true
 		font_size: 16
-	})
+	)
 
 	// Setup Menubar and items
 	window.bar = ui.menubar(window, window.theme)

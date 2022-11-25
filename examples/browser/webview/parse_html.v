@@ -357,7 +357,7 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 	}
 
 	if tag.name == 'form' {
-		conf.action == ''
+		conf.action = ''
 	}
 
 	if tag.name == 'small' {
@@ -385,7 +385,10 @@ fn btn_href_click(a voidptr, b voidptr, c voidptr) {
 fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hyperlink {
 	mut href := format_url(conf.href, conf.page_url)
 
-	mut lbl := ui.hyperlink(win, content, href)
+	mut lbl := ui.link(
+		text: content
+		url: href
+	)
 
 	lbl.click_event_fn = fn [win] (a voidptr) {
 		mut this := &ui.Hyperlink(a)

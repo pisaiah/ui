@@ -57,7 +57,12 @@ fn main() {
 
 	win_width := width + 8
 
-	mut win := ui.window(ui.theme_default(), 'Minesweeper', win_width, 330)
+	mut win := ui.make_window(
+		theme: ui.theme_default()
+		title: 'Minesweeper'
+		width: win_width
+		height: 330
+	)
 
 	win.bar = ui.menubar(win, win.theme)
 	win.bar.add_child(ui.menuitem('Game'))
