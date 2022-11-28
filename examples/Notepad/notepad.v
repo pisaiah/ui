@@ -150,7 +150,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 
 	mut label := ui.label(win,
 		'Small Notepad made in the V Programming Language.\n\nVersion: 0.1' +
-		'\nUI Version: $ui.version')
+		'\nUI Version: ${ui.version}')
 
 	label.pack()
 

@@ -52,7 +52,7 @@ fn main() {
 
 	pane.set_pos(4, 10)
 
-	pane.draw_event_fn = fn (win &ui.Window, mut com ui.Component) {
+	pane.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
 		ws := win.gg.window_size()
 		com.width = 700 // ws.width - 100
 		if mut com is ui.HBox {
@@ -62,7 +62,7 @@ fn main() {
 
 	mut tb := ui.tabbox(window)
 	tb.set_pos(4, 25)
-	tb.draw_event_fn = fn (win &ui.Window, mut com ui.Component) {
+	tb.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
 		ws := win.gg.window_size()
 		com.width = ws.width
 		com.height = ws.height - 30

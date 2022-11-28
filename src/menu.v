@@ -244,7 +244,7 @@ fn open_about_modal(app &Window) &Modal {
 	title.pack()
 	about.add_child(title)
 
-	mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: $version\nCompiled with " +
+	mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: ${version}\nCompiled with " +
 		full_v_version(false))
 	lbl.set_pos(40, 70)
 	about.add_child(lbl)

@@ -189,8 +189,12 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 	mut green_file := $embed_file('assets/icons_green.png')
 	mut green_icons := win.gg.create_image_from_memory(green_file.data(), green_file.len)
 
+	mut cb_file := $embed_file('assets/check.png')
+	mut cb_icons := win.gg.create_image_from_memory(cb_file.data(), cb_file.len)
+
 	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
 	ctx.icon_cache['icons_green'] = ctx.gg.cache_image(green_icons)
+	ctx.icon_cache['check_box'] = ctx.gg.cache_image(cb_icons)
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
@@ -419,7 +423,7 @@ pub fn text_height(win Window, text string) int {
 }
 
 [inline]
-pub fn abs<T>(a T) T {
+pub fn abs[T](a T) T {
 	return if a > 0 { a } else { -a }
 }
 
@@ -429,10 +433,10 @@ pub fn open_url(url string) {
 		url_ = 'https://' + url
 	}
 	$if windows {
-		os.execute('cmd.exe /c "start $url_"')
+		os.execute('cmd.exe /c "start ${url_}"')
 	} $else $if macos {
-		os.execute('open "$url_"')
+		os.execute('open "${url_}"')
 	} $else $if linux {
-		os.execute('xdg-open "$url_"')
+		os.execute('xdg-open "${url_}"')
 	}
 }

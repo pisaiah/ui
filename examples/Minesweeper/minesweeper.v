@@ -241,7 +241,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	title.bold = true
 	title.pack()
 
-	mut label := ui.label(win, 'Minesweeper-clone made in\nthe V Programming Language.\n\nVersion: 0.1, UI: $ui.version,\n\nBy Isaiah.')
+	mut label := ui.label(win, 'Minesweeper-clone made in\nthe V Programming Language.\n\nVersion: 0.1, UI: ${ui.version},\n\nBy Isaiah.')
 
 	label.set_pos(4, -2)
 	label.pack()
