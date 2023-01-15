@@ -114,7 +114,7 @@ pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
 	mut win := ctx.win
 
 	for mut item in bar.items {
-		win.draw_menu_button(ctx, mult, bar.y, 56, 25, mut item)
+		win.draw_menu_button(ctx, mult, bar.y + 1, 56, 21, mut item)
 		if item.width > 0 {
 			mult += item.width + 4
 		} else {
@@ -206,15 +206,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 
 	// Draw Button Background & Border
 	if !item.no_paint_bg {
-		ctx.gg.draw_rect_filled(x + 1, y, width - 1, height - 1, bg)
-		if hover {
-			border := if clicked {
-				ctx.theme.button_border_click
-			} else {
-				app.theme.button_border_hover
-			}
-			ctx.gg.draw_rect_empty(x + 1, y + 1, width - 2, height - 1, border)
-		}
+		ctx.gg.draw_rounded_rect_filled(x + 1, y, width - 1, height - 1, 4, bg)
 	}
 
 	// Draw Button Text
@@ -222,8 +214,8 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 		item.icon.set_pos(x + (width / 2) - (item.icon.width / 2), y)
 		item.icon.draw(ctx)
 	} else {
-		ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height, item.text,
-			ctx.font, gx.TextCfg{
+		ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height + 2,
+			item.text, ctx.font, gx.TextCfg{
 			size: app.font_size
 			color: app.theme.text_color
 		})

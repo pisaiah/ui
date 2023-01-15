@@ -233,9 +233,8 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 
 fn (this &TextArea) draw_line_number_background(ctx &GraphicsContext) int {
 	if this.code_syntax_on {
-		padding_x := text_width(this.win, '10000')
-		this.win.draw_bordered_rect(this.x + 1, this.y + 1, padding_x, this.height - 2,
-			0, ctx.theme.button_bg_normal, ctx.theme.button_bg_normal)
+		padding_x := text_width(this.win, '1000')
+		ctx.gg.draw_rect_filled(this.x + 1, this.y + 1, padding_x, this.height - 2, ctx.theme.button_bg_normal)
 		return padding_x
 	}
 	return 4
@@ -338,7 +337,6 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 	mut is_str := false
 	mut current_len := 0
 
-	// dump('DRAW TXT')
 	if is_cur_line {
 		if this.active_line_draw_event != unsafe { nil } {
 			this.active_line_draw_event(this, x, y)

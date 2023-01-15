@@ -10,13 +10,14 @@ import math
 pub struct ScrollView {
 	Component_A
 pub mut:
-	increment   int = 4
-	in_scroll   bool
-	in_scroll_x bool
-	xbar_width  int = 15
-	ybar_height int = 15
-	scroll_x    int
-	always_show bool
+	increment    int = 4
+	in_scroll    bool
+	in_scroll_x  bool
+	xbar_width   int = 16
+	ybar_height  int = 16
+	scroll_x     int
+	always_show  bool
+	total_height int
 }
 
 [params]
@@ -60,9 +61,10 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	ctx.gg.scissor_rect(x - 1, y - 1, this.width + 2, this.height + 2)
 
 	total_height, total_width := this.draw_children(ctx)
+	this.total_height = total_height
 
-	this.clamp_scroll_index(total_height)
-	this.clamp_scroll_x(total_width)
+	this.clamp_scroll_index(total_height + 20)
+	this.clamp_scroll_x(total_width + 20)
 
 	ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
 	this.draw_scrollbar(ctx, this.height, total_height)
@@ -138,7 +140,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 	xx := if this.rx != 0 { this.rx } else { this.x }
 	y := if this.rx != 0 { this.ry } else { this.y }
 
-	wid := 16
+	wid := this.xbar_width
 	x := xx + this.width - wid
 
 	// Scroll Bar

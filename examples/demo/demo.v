@@ -61,10 +61,10 @@ fn main() {
 	}
 
 	mut tb := ui.tabbox(window)
-	tb.set_pos(4, 25)
+	tb.set_pos(2, 25)
 	tb.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
 		ws := win.gg.window_size()
-		com.width = ws.width
+		com.width = ws.width - 4
 		com.height = ws.height - 30
 	}
 	tb.add_child('Overview', pane)
