@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.12'
+	version = '0.0.14'
 )
 
 pub fn default_font() string {
