@@ -68,3 +68,6 @@ Included Themes:
 - [vPaint](https://github.com/isaiahpatton/vpaint) - Demo: [https://vpaint.app](https://vpaint.app)
 
 ![image](https://user-images.githubusercontent.com/16439221/200155263-493d09e2-46d7-4319-b230-679dc1386326.png)
+
+## License
+This project is licensed under MIT OR Boost.

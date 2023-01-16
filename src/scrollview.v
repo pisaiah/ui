@@ -10,14 +10,14 @@ import math
 pub struct ScrollView {
 	Component_A
 pub mut:
-	increment    int = 4
-	in_scroll    bool
-	in_scroll_x  bool
-	xbar_width   int = 16
-	ybar_height  int = 16
-	scroll_x     int
-	always_show  bool
-	total_height int
+	increment   int = 4
+	in_scroll   bool
+	in_scroll_x bool
+	xbar_width  int = 16
+	ybar_height int = 16
+	scroll_x    int
+	always_show bool
+	padding     int = 20
 }
 
 [params]
@@ -27,6 +27,7 @@ pub mut:
 	view        &Component
 	increment   int = 4
 	always_show bool
+	padding     int = 20
 }
 
 pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
@@ -38,6 +39,7 @@ pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
 		children: [cfg.view]
 		increment: cfg.increment
 		always_show: cfg.always_show
+		padding: cfg.padding
 	}
 	return scroll_view
 }
@@ -61,10 +63,10 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	ctx.gg.scissor_rect(x - 1, y - 1, this.width + 2, this.height + 2)
 
 	total_height, total_width := this.draw_children(ctx)
-	this.total_height = total_height
+	// this.total_height = total_height
 
-	this.clamp_scroll_index(total_height + 20)
-	this.clamp_scroll_x(total_width + 20)
+	this.clamp_scroll_index(total_height + this.padding)
+	this.clamp_scroll_x(total_width + this.padding)
 
 	ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
 	this.draw_scrollbar(ctx, this.height, total_height)
