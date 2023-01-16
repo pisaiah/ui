@@ -96,7 +96,7 @@ pub fn (mut btn Button) pack_do() {
 	btn.need_pack = false
 }
 
-fn (this &Button) draw_background() {
+fn (this &Button) draw_background(ctx &GraphicsContext) {
 	mid_x := this.x + (this.width / 2)
 	mid_y := this.y + (this.height / 2)
 
@@ -112,8 +112,10 @@ fn (this &Button) draw_background() {
 	border := this.get_border(mouse_in)
 
 	if this.area_filled {
-		this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height,
-			this.border_radius, bg)
+		// this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height,
+		//	this.border_radius, bg)
+		ctx.theme.button_fill_fn(this.x, this.y, this.width, this.height, this.border_radius,
+			bg, ctx)
 	}
 	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
 		border)
@@ -163,15 +165,15 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 		btn.is_mouse_rele = false
 	}
 
+	// Draw Button Text
+	ctx := app.graphics_context
+
 	// Draw Button Background & Border
-	btn.draw_background()
+	btn.draw_background(ctx)
 
 	if btn.width == 0 && btn.height == 0 {
 		btn.pack_do()
 	}
-
-	// Draw Button Text
-	ctx := app.graphics_context
 
 	if btn.icon != -1 {
 		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }

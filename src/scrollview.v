@@ -70,7 +70,8 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 
 	ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
 	this.draw_scrollbar(ctx, this.height, total_height)
-	this.draw_scrollbar_hor(ctx, this.width, total_width)
+	// this.draw_scrollbar_hor(ctx, this.width, total_width)
+	this.draw_scrollbar2(ctx, this.width, total_width)
 
 	// Reset Scissor
 	ws := ctx.gg.window_size()
@@ -143,11 +144,12 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 	y := if this.rx != 0 { this.ry } else { this.y }
 
 	wid := this.xbar_width
+	height := this.height // - wid
 	x := xx + this.width - wid
 
 	// Scroll Bar
 	scroll := this.scroll_i * this.increment
-	bar_height := this.height - 35
+	bar_height := height - 35
 
 	sth := (scroll / spl_len) * bar_height
 	enh := (cl / spl_len) * bar_height
@@ -155,23 +157,23 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 
 	// Draw Scroll
 	if requires_scrollbar {
-		ctx.win.gg.draw_rect_filled(x, y, wid, this.height, ctx.theme.scroll_track_color)
-		ctx.win.gg.draw_rect_filled(x + 2, y + 17 + sth, wid - 5, enh - 3, ctx.win.theme.scroll_bar_color)
+		ctx.win.gg.draw_rect_filled(x, y, wid, height, ctx.theme.scroll_track_color)
+		ctx.theme.bar_fill_fn(x + 2, y + 17 + sth, wid - 5, enh - 3, false, ctx)
 	} else {
 		return
 	}
 
-	ctx.gg.draw_rect_empty(x, y, wid, this.height, ctx.theme.textbox_border)
+	ctx.gg.draw_rect_empty(x, y, wid, height, ctx.theme.textbox_border)
 
 	tx := x + (wid / 2) - 5
 	ctx.gg.draw_triangle_filled(tx, y + 10, tx + 5, y + 5, tx + 10, y + 10, ctx.theme.scroll_bar_color)
 
-	ty := y + this.height - 10
+	ty := y + height - 10
 	ctx.gg.draw_triangle_filled(tx, ty, tx + 5, ty + 5, tx + 10, ty, ctx.theme.scroll_bar_color)
 
 	// Scroll Buttons
 	if this.is_mouse_rele {
-		bounds := Bounds{x, y + this.height - 15, wid, 15}
+		bounds := Bounds{x, y + height - 15, wid, 15}
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds) {
 			this.scroll_i += 4
 			this.is_mouse_rele = false
@@ -189,12 +191,12 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 
 	if this.is_mouse_down {
 		sub := enh / 2
-		bounds1 := Bounds{x, y + 15, wid, this.height - 30 - int(sub)}
+		bounds1 := Bounds{x, y + 15, wid, height - 30}
 
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll {
 			this.in_scroll = true
-			cx := math.clamp(ctx.win.mouse_y - y - sub, 0, this.height)
-			perr := (cx / this.height) * spl_len
+			cx := math.clamp(ctx.win.mouse_y - y - sub, 0, height)
+			perr := (cx / height) * spl_len
 			this.scroll_i = int(perr) / this.increment
 		}
 	} else {
@@ -202,35 +204,61 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 	}
 }
 
-fn (mut this ScrollView) draw_scrollbar_hor(ctx &GraphicsContext, cl int, spl_len f32) {
+fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len f32) {
 	x := if this.rx != 0 { this.rx } else { this.x }
-	yy := if this.rx != 0 { this.ry } else { this.y }
+	yy := if this.ry != 0 { this.ry } else { this.y }
 
-	wid := this.ybar_height
-	y := yy + this.height - wid
+	wid := this.xbar_width
+	width := this.width - wid - 1
+
+	y := yy + this.height - wid - 1
 
 	// Scroll Bar
-	width := this.width - 1
 	scroll := this.scroll_x * this.increment
+	bar_height := width - 35
 
-	sth := f32(scroll / spl_len) * width
-	enh := int(f32(cl / spl_len) * width)
-	requires_scrollbar := (width - enh) > 0
+	sth := (scroll / spl_len) * bar_height
+	enh := (cl / spl_len) * bar_height
+	requires_scrollbar := this.always_show || (bar_height - enh) > 0
 
 	// Draw Scroll
 	if requires_scrollbar {
-		ctx.win.gg.draw_rect_filled(x, y, width - (this.xbar_width), wid, ctx.theme.scroll_track_color)
-		ctx.win.gg.draw_rect_filled(x + wid + sth, y + 2, enh, wid - 5, ctx.win.theme.scroll_bar_color)
+		ctx.win.gg.draw_rect_filled(x, y, width, wid, ctx.theme.scroll_track_color)
+		ctx.theme.bar_fill_fn(int(x + 17 + sth), y + 2, int(enh - 3), wid - 5, true, ctx)
 	} else {
 		return
 	}
 
-	ctx.gg.draw_rect_empty(x, y, wid, this.height, ctx.theme.textbox_border)
-	ctx.gg.draw_rect_empty(x, y + wid, wid, this.height - (wid * 2), ctx.theme.textbox_border)
+	ctx.gg.draw_rect_empty(x, y, width, this.height, ctx.theme.textbox_border)
+
+	ty := y + (wid / 2) - 5
+
+	ctx.gg.draw_triangle_filled(x + 5, ty + 5, x + 10, ty + 10, x + 10, ty, ctx.theme.scroll_bar_color)
+
+	tx := x + width - 10
+	ctx.gg.draw_triangle_filled(tx + 5, ty + 5, tx + 0, ty + 10, tx + 0, ty - 1, ctx.theme.scroll_bar_color)
+
+	// Scroll Buttons
+	if this.is_mouse_rele {
+		bounds := Bounds{x + width - 15, y, wid, 15}
+		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds) {
+			this.scroll_x += 4
+			this.is_mouse_rele = false
+		}
+
+		bounds1 := Bounds{x, y, wid, 15}
+		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) {
+			this.scroll_x -= 4
+			if this.scroll_x < 0 {
+				this.scroll_x = 0
+			}
+			this.is_mouse_rele = false
+		}
+	}
 
 	if this.is_mouse_down {
 		sub := enh / 2
-		bounds1 := Bounds{x, y, width - (wid * 2) - sub, wid}
+		bounds1 := Bounds{x + 15, y, width - 30, wid}
 
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll_x {
 			this.in_scroll_x = true

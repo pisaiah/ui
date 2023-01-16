@@ -50,9 +50,9 @@ pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
 		return this.tab_height_active
 	}
 
-	line_height := ctx.line_height + 5
+	line_height := ctx.line_height + 12
 
-	val := 38
+	val := 34
 	if line_height > val {
 		return line_height
 	}

@@ -290,6 +290,8 @@ pub fn make_window(config &WindowConfig) &Window {
 	if win.graphics_context.icon_cache.len == 0 {
 		win.graphics_context.fill_icon_cache(mut win)
 	}
+	// win.theme.setup_fn(mut win)
+
 	return win
 }
 
@@ -299,13 +301,23 @@ pub fn window_with_config(theme Theme, title string, width int, height int, conf
 }
 
 pub fn (mut win Window) set_theme(theme Theme) {
+	theme.setup_fn(mut win)
 	win.theme = theme
 	ref := &theme
-	if win.bar != unsafe { nil } {
-		win.bar.theme = ref
-	}
+
 	win.graphics_context.theme = ref
+	theme.setup_fn(mut win)
+
 	win.gg.set_bg_color(theme.background)
+}
+
+// GG does not init_sokol_image for images loaded after gg_init_sokol_window
+pub fn (mut win Window) create_gg_image(buf &u8, bufsize int) gg.Image {
+	mut img := win.gg.create_image_from_memory(buf, bufsize)
+	if img.simg.id == 0 && win.graphics_context.line_height > 0 {
+		img.init_sokol_image()
+	}
+	return img
 }
 
 fn frame(mut app Window) {
@@ -414,8 +426,19 @@ pub fn (mut ctx GraphicsContext) calculate_line_height() {
 }
 
 // Functions for GG
+pub fn (graphics &GraphicsContext) text_width(text string) int {
+	// return win.gg.text_width(text)
+	ctx := graphics.gg
+	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
+	return int(adv / ctx.scale)
+}
+
+// Functions for GG
 pub fn text_width(win Window, text string) int {
-	return win.gg.text_width(text)
+	// return win.gg.text_width(text)
+	ctx := win.gg
+	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
+	return int(adv / ctx.scale)
 }
 
 pub fn text_height(win Window, text string) int {

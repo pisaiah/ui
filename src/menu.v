@@ -107,8 +107,8 @@ pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
 		bar.theme = ctx.theme
 	}
 
-	ctx.gg.draw_rect_filled(bar.x, bar.y, wid - 1, 25, bar.theme.menubar_background)
-	ctx.gg.draw_rect_empty(bar.x, bar.y, wid, 25, bar.theme.menubar_border)
+	ctx.theme.menu_bar_fill_fn(bar.x, bar.y, wid - 1, 26, ctx)
+	ctx.gg.draw_rect_empty(bar.x, bar.y, wid, 26, ctx.theme.menubar_border)
 
 	mut mult := 0
 	mut win := ctx.win
@@ -205,7 +205,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 	}
 
 	// Draw Button Background & Border
-	if !item.no_paint_bg {
+	if !item.no_paint_bg && bg != app.theme.menubar_background {
 		ctx.gg.draw_rounded_rect_filled(x + 1, y, width - 1, height - 1, 4, bg)
 	}
 

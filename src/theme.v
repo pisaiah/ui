@@ -6,17 +6,17 @@ import gx
 // Default Blue on Windows;
 // Minty (Linux Mint) on Linux/other
 pub fn get_system_theme() &Theme {
-	$if windows {
-		return theme_default()
-	} $else {
-		// Default to Linux Mint
-		return theme_minty()
-	}
+	//$if windows {
+	return theme_default()
+	//} $else {
+	// Default to Linux Mint
+	//	return theme_minty()
+	//}
 }
 
 pub fn get_all_themes() []&Theme {
 	return [theme_default(), theme_dark(), theme_dark_hc(), theme_black_red(),
-		theme_minty(), theme_black_green()]
+		theme_minty(), theme_black_green(), theme_ocean()]
 }
 
 pub fn theme_by_name(name string) &Theme {
@@ -26,11 +26,6 @@ pub fn theme_by_name(name string) &Theme {
 	}
 	return themes[0]
 }
-
-struct Gradient {
-}
-
-type ColorVal = Gradient | gx.Color
 
 pub struct Theme {
 pub:
@@ -60,6 +55,26 @@ pub:
 
 	scroll_track_color gx.Color
 	scroll_bar_color   gx.Color
+
+	button_fill_fn   fn (int, int, int, int, int, gx.Color, &GraphicsContext) = default_button_fill_fn
+	bar_fill_fn      fn (int, f32, int, f32, bool, &GraphicsContext) = default_bar_fill_fn
+	menu_bar_fill_fn fn (int, int, int, int, &GraphicsContext)       = default_menubar_fill_fn
+	setup_fn         fn (mut Window) = blank_setup
+}
+
+pub fn blank_setup(mut win Window) {
+}
+
+pub fn default_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, ctx &GraphicsContext) {
+	ctx.gg.draw_rounded_rect_filled(x, y, w, h, r, bg)
+}
+
+pub fn default_bar_fill_fn(x int, y f32, w int, h f32, hor bool, ctx &GraphicsContext) {
+	ctx.win.gg.draw_rect_filled(x, y, w, h, ctx.theme.scroll_bar_color)
+}
+
+pub fn default_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext) {
+	ctx.gg.draw_rect_filled(x, y, w, h, ctx.theme.menubar_background)
 }
 
 //	Default Theme - Memics Windows 10
