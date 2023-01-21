@@ -66,7 +66,7 @@ fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com Text
 fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com TextArea) {
 	mod := ev.modifiers
 
-	enter := is_enter(key)
+	mut enter := is_enter(key)
 
 	if key == .left_shift || key == .right_shift {
 		win.shift_pressed = true
@@ -79,6 +79,12 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 		resu := utf32_to_str(ev.char_code)
 		letter = resu
 		com.last_letter = letter
+	}
+	
+	$if emscripten ? {
+		if ev.typ == .char && ev.char_code == 13 {
+			enter = true
+		}
 	}
 
 	if enter {
