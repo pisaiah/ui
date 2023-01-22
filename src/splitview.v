@@ -128,9 +128,6 @@ fn (mut this SplitView) do_size(y_pos int, diff int) {
 		return
 	}
 
-	mut fir := this.children[0]
-	mut sec := this.children[1]
-
 	min := this.min_percent
 
 	res := (f32(diff) / this.height) * 100
