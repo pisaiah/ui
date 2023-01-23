@@ -246,7 +246,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	label.set_pos(4, -2)
 	label.pack()
 
-	mut can := ui.button(win, 'OK')
+	mut can := ui.button(text: 'OK')
 	can.set_bounds(16, 175, 216, 25)
 	can.set_click(fn (mut win ui.Window, btn ui.Button) {
 		win.components = win.components.filter(mut it !is ui.Modal)
@@ -277,7 +277,7 @@ fn game_over(win_ptr voidptr) &ui.Modal {
 	title.bold = true
 	title.pack()
 
-	mut can := ui.button(win, 'OK')
+	mut can := ui.button(text: 'OK')
 	can.set_bounds(10, 170, 230, 25)
 	can.set_click(fn (mut win ui.Window, btn ui.Button) {
 		win.components = win.components.filter(mut it !is ui.Modal)

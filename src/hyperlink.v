@@ -32,8 +32,7 @@ pub fn link(cfg HyperlinkConfig) &Hyperlink {
 		y: cfg.bounds.y
 		width: cfg.bounds.width
 		height: cfg.bounds.height
-		click_event_fn: fn (a voidptr) {
-			this := &Hyperlink(a)
+		click_event_fn: fn (this &Hyperlink) {
 			open_url(this.url)
 		}
 		url: cfg.url

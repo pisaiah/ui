@@ -68,7 +68,7 @@ fn main() {
 		hbox_br.set_bounds(0, 0, el_width * row.len, el_height)
 		hbox_br.draw_event_fn = vbtn_draw
 		for el in row {
-			mut num_btn := ui.button(window, el)
+			mut num_btn := ui.button(text: el)
 			num_btn.set_bounds(1, 1, el_width, el_height)
 			num_btn.user_data = res_box
 			num_btn.draw_event_fn = btn_draw
@@ -220,8 +220,10 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	label.set_pos(22, 64)
 	label.pack()
 
-	mut can := ui.button(win, 'OK')
-	can.set_bounds(10, 170, 70, 25)
+	mut can := ui.button(
+		text: 'OK'
+		bounds: ui.Bounds{10, 170, 70, 25}
+	)
 	can.set_click(fn (mut win ui.Window, btn ui.Button) {
 		win.components = win.components.filter(mut it !is ui.Modal)
 	})

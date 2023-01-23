@@ -280,7 +280,7 @@ fn render_tag_and_children(mut win ui.Window, mut box ui.Box, tag &html.Tag, mut
 		}
 
 		if nam == 'BUTTON' {
-			mut btn := ui.button(win, sub.content)
+			mut btn := ui.button(text: sub.content)
 
 			if conf.href.len > 0 {
 				href := format_url(conf.href, conf.page_url)

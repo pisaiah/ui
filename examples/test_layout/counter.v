@@ -16,11 +16,12 @@ fn main() {
 	lbl.pack()
 
 	// Create Count Button
-	btn := ui.button(window, 'Count', ui.ButtonConfig{
+	btn := ui.button(
+		text: 'Count'
 		click_event_fn: on_click
 		should_pack: true
 		user_data: &lbl
-	})
+	)
 
 	// Add to HBox
 	hbox.add_child(lbl)

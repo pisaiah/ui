@@ -51,7 +51,7 @@ pub fn (mut com Select) set_change(b fn (mut Window, Select, string, string)) {
 pub fn (mut this Select) make_items(app &Window) {
 	this.children.clear()
 	for item in this.items {
-		subb := button(app, item)
+		subb := button(text: item)
 		this.add_child(subb)
 	}
 }

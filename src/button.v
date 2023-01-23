@@ -25,6 +25,7 @@ pub mut:
 
 [params]
 pub struct ButtonConfig {
+	text           string
 	bounds         Bounds
 	click_event_fn fn (voidptr, voidptr, voidptr) = fn (a voidptr, b voidptr, c voidptr) {}
 	should_pack    bool
@@ -49,7 +50,25 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 	}
 }
 
-pub fn button(app &Window, text string, conf ButtonConfig) Button {
+pub fn button(conf ButtonConfig) &Button {
+	return &Button{
+		app: unsafe { nil }
+		text: conf.text
+		icon: -1
+		x: conf.bounds.x
+		y: conf.bounds.y
+		width: conf.bounds.width
+		height: conf.bounds.height
+		click_event_fn: fn (mut win Window, a Button) {}
+		new_click_event_fn: conf.click_event_fn
+		user_data: conf.user_data
+		need_pack: conf.should_pack
+		area_filled: conf.area_filled
+	}
+}
+
+[deprecated: 'use button(ButtonConfig)']
+pub fn button_old(app &Window, text string, conf ButtonConfig) Button {
 	return Button{
 		text: text
 		icon: -1
@@ -90,7 +109,7 @@ pub fn (mut btn Button) pack() {
 }
 
 pub fn (mut btn Button) pack_do() {
-	width := text_width(btn.app, btn.text + 'ab')
+	width := text_width(btn.app, btn.text)
 	btn.width = width
 	btn.height = text_height(btn.app, btn.text + 'a') + 13
 	btn.need_pack = false
@@ -112,8 +131,6 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 	border := this.get_border(mouse_in)
 
 	if this.area_filled {
-		// this.app.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height,
-		//	this.border_radius, bg)
 		ctx.theme.button_fill_fn(this.x, this.y, this.width, this.height, this.border_radius,
 			bg, ctx)
 	}

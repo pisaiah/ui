@@ -80,7 +80,7 @@ fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut co
 		letter = resu
 		com.last_letter = letter
 	}
-	
+
 	$if emscripten ? {
 		if ev.typ == .char && ev.char_code == 13 {
 			enter = true

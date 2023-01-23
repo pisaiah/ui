@@ -15,15 +15,17 @@ fn main() {
 	}
 
 	// Button A
-	btn_a := ui.button(window, 'Button A', ui.ButtonConfig{
+	btn_a := ui.button(
+		text: 'Button A'
 		click_event_fn: on_click
 		bounds: btn_bounds
-	})
+	)
 
-	btn_b := ui.button(window, 'Button B', ui.ButtonConfig{
+	btn_b := ui.button(
+		text: 'Button B'
 		click_event_fn: on_click
 		bounds: btn_bounds
-	})
+	)
 
 	split := ui.split_view(
 		bounds: ui.Bounds{

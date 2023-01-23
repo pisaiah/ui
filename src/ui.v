@@ -22,7 +22,9 @@ pub fn default_font() string {
 		return windows_def
 	} else {*/
 
-	return font.default()
+	def := font.default()
+	dump(def)
+	return def
 
 	//}
 }
@@ -218,12 +220,17 @@ fn new_graphics_context(win &Window) &GraphicsContext {
 	}
 }
 
-pub fn (win Window) get_from_id(id string) voidptr {
+pub fn (win &Window) get_from_id(id string) voidptr {
 	return win.id_map[id]
 }
 
+/*
 pub fn (mut win Window) add_child(com Component) {
 	win.components << com
+}*/
+
+pub fn (win &Window) add_child(com Component) {
+	unsafe { win.components << com }
 }
 
 pub fn window(theme Theme, title string, width int, height int) &Window {

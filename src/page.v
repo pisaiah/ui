@@ -85,7 +85,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 }
 
 pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
-	mut close := button(app, '<')
+	mut close := button(text: '<')
 	y := 10
 	wid := this.top_off - (y * 2)
 	close.set_bounds(8, -this.top_off + y, 40, wid)
@@ -95,10 +95,9 @@ pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
 		close.set_click(default_page_close_fn)
 	}
 
-	ref := &close
-	this.children << ref
-	this.close = ref
-	return ref
+	this.children << close
+	this.close = close
+	return close
 }
 
 pub fn default_page_close_fn(mut win Window, btn Button) {

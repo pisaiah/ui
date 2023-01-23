@@ -79,7 +79,7 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	hbox.set_bounds(0, padding + fi_y, 491, 25)
 	hbox.add_child(file_input)
 
-	mut btn := ui.button(window, 'OK')
+	mut btn := ui.button(text: 'OK')
 	btn.set_bounds(8, 0, 64, 25)
 	hbox.add_child(btn)
 
@@ -138,7 +138,7 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	mut img1 := ui.image(win, img)
 	img1.pack()
 
-	mut lbl := ui.button(win, file)
+	mut lbl := ui.button(text: file)
 	lbl.set_bounds(50, 0, 295, 32)
 	lbl.draw_event_fn = lbl_draw_ev
 

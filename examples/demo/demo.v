@@ -101,10 +101,10 @@ fn create_theme_menu() &ui.MenuItem {
 fn (mut app App) make_hbox_section() {
 	mut hbox := ui.hbox(app.win)
 
-	mut btn_ := ui.button(app.win, 'Button in HBox')
+	mut btn_ := ui.button(text: 'Button in HBox')
 	btn_.pack()
 
-	mut btn3 := ui.button(app.win, 'Button 2')
+	mut btn3 := ui.button(text: 'Button 2')
 	btn3.set_pos(4, 0)
 	btn3.pack()
 
@@ -191,16 +191,18 @@ fn (mut app App) make_selectbox_section() {
 }
 
 fn (mut app App) make_button_section() {
-	btn := ui.button(app.win, 'A Button', ui.ButtonConfig{
+	btn := ui.button(
+		text: 'A Button'
 		bounds: ui.Bounds{0, 0, 120, 30}
 		click_event_fn: btn_click
-	})
+	)
 
-	btn2 := ui.button(app.win, 'Open Page', ui.ButtonConfig{
+	btn2 := ui.button(
+		text: 'Open Page'
 		bounds: ui.Bounds{0, 35, 120, 30}
 		should_pack: false
 		click_event_fn: test_page
-	})
+	)
 
 	img_file := $embed_file('v.png')
 	mut btn3 := app.icon_btn(img_file.to_bytes())
@@ -218,7 +220,7 @@ fn (mut app App) make_tab_section() {
 	tb.set_bounds(5, 5, 170, 140)
 	tb.compact = true
 
-	mut tbtn := ui.button(app.win, 'In Tab A')
+	mut tbtn := ui.button(text: 'In Tab A')
 	tbtn.set_pos(10, 10)
 	tbtn.pack()
 	tb.add_child('Tab A', tbtn)
@@ -326,8 +328,8 @@ fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) 
 	}
 }
 
-fn test_page(win_ptr voidptr, btn voidptr, data voidptr) {
-	mut win := &ui.Window(win_ptr)
+fn test_page(win &ui.Window, btn voidptr, data voidptr) {
+	// mut win := &ui.Window(win_ptr)
 
 	mut page := ui.page(win, 'Page 1')
 	win.add_child(page)

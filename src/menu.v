@@ -114,7 +114,7 @@ pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
 	mut win := ctx.win
 
 	for mut item in bar.items {
-		win.draw_menu_button(ctx, mult, bar.y + 1, 56, 21, mut item)
+		win.draw_menu_button(ctx, mult, bar.y + 1, 56, 25, mut item)
 		if item.width > 0 {
 			mult += item.width + 4
 		} else {

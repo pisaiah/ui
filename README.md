@@ -18,7 +18,9 @@ fn main() {
 	)
 
 	// Create Button
-	mut btn := ui.button(window, 'A Button')
+	mut btn := ui.button(
+		text: 'A Button'
+	)
 	btn.set_click_fn(on_click, 0)
 
 	// Add Button to Window & Run

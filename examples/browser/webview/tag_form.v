@@ -33,7 +33,7 @@ fn handle_form_tags(mut win ui.Window, mut box ui.Box, sub &html.Tag, mut conf D
 		}
 
 		if typ == 'submit' {
-			mut btn := ui.button(win, attr['value'])
+			mut btn := ui.button(text: attr['value'])
 			btn.set_click_fn(form_submit, conf)
 			btn.pack()
 			box.add_child(btn)
