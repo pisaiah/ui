@@ -24,7 +24,10 @@ mut:
 	children []Component
 	id string
 	font int
+	events EventManager
 	draw(&GraphicsContext)
+	invoke_draw_event()
+	invoke_after_draw_event()
 }
 
 [heap]
@@ -49,6 +52,16 @@ pub mut:
 	children            []Component
 	id                  string
 	font                int
+	events              EventManager = EventManager{}
+}
+
+pub struct EventManager {
+mut:
+	event_map map[string][]fn (voidptr)
+}
+
+pub fn (mut com Component_A) subscribe_event(val string, f fn (voidptr)) {
+	com.events.event_map[val] << f
 }
 
 pub fn (this &Component_A) get_font() int {
@@ -110,6 +123,7 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 	com.x = com.x + off_x
 	com.y = com.y + off_y
 	com.draw(ctx)
+	com.invoke_draw_event()
 	com.x = com.x - off_x
 	com.y = com.y - off_y
 }
@@ -121,6 +135,25 @@ pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, o
 	com.x = com.x + off_x
 	com.y = com.y + off_y
 	com.draw(ctx)
+	com.invoke_draw_event()
 	com.x = com.x - off_x
 	com.y = com.y - off_y
+}
+
+pub fn (com &Component_A) invoke_draw_event() {
+	ev := DrawEvent{
+		com: com
+	}
+	for f in com.events.event_map['draw'] {
+		f(ev)
+	}
+}
+
+pub fn (com &Component_A) invoke_after_draw_event() {
+	ev := DrawEvent{
+		com: com
+	}
+	for f in com.events.event_map['after_draw'] {
+		f(ev)
+	}
 }

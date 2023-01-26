@@ -32,6 +32,7 @@ pub fn modal(app &Window, title string) &Modal {
 			if mut com is Modal {
 				for mut kid in com.children {
 					kid.draw_event_fn(mut win, kid)
+					kid.invoke_draw_event()
 				}
 			}
 		}
@@ -88,8 +89,10 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	y_off := this.y + this.top_off + top
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
+		com.invoke_draw_event()
 		app.draw_with_offset(mut com, xs, y_off + 2)
 		com.after_draw_event_fn(mut app, com)
+		com.invoke_after_draw_event()
 	}
 }
 

@@ -28,8 +28,10 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	for mut com in this.children {
 		com.draw_event_fn(mut win, com)
 		y := this.y + this.padding + text_height + 5
+		com.invoke_draw_event()
 		win.draw_with_offset(mut com, this.x + this.padding, y)
 		com.after_draw_event_fn(mut win, com)
+		com.invoke_after_draw_event()
 
 		wid := com.x + com.width + (this.padding * 2)
 		if wid > this.width {

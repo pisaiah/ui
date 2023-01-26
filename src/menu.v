@@ -223,6 +223,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 
 	mut com := &Component(item)
 	com.draw_event_fn(mut app, com)
+	com.invoke_draw_event()
 }
 
 fn open_about_modal(app &Window) &Modal {
@@ -252,7 +253,7 @@ fn open_about_modal(app &Window) &Modal {
 	)
 	about.add_child(gh)
 
-	mut copy := label(app, 'Copyright © 2021-2022 Isaiah.')
+	mut copy := label(app, 'Copyright © 2021-2023 Isaiah.')
 	copy.set_pos(40, 185)
 	copy.set_config(12, true, false)
 	about.add_child(copy)
