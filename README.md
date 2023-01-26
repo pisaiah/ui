@@ -21,14 +21,14 @@ fn main() {
 	mut btn := ui.button(
 		text: 'A Button'
 	)
-	btn.set_click_fn(on_click, 0)
+	btn.subscribe_event('mouse_up', on_click_event)
 
 	// Add Button to Window & Run
 	window.add_child(btn)
 	window.gg.run() 
 }
 
-fn on_click_event(win &ui.Window, btn &ui.Button, user_data voidptr) {
+fn on_click_event(mut e ui.MouseEvent) {
 	println('Button clicked!')
 }
 ```
