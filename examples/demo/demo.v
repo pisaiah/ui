@@ -191,18 +191,19 @@ fn (mut app App) make_selectbox_section() {
 }
 
 fn (mut app App) make_button_section() {
-	btn := ui.button(
+	mut btn := ui.button(
 		text: 'A Button'
 		bounds: ui.Bounds{0, 0, 120, 30}
 		click_event_fn: btn_click
 	)
 
-	btn2 := ui.button(
+	mut btn2 := ui.button(
 		text: 'Open Page'
 		bounds: ui.Bounds{0, 35, 120, 30}
 		should_pack: false
-		click_event_fn: test_page
+		// click_event_fn: test_page
 	)
+	btn2.subscribe_event('mouse_up', test_page)
 
 	img_file := $embed_file('v.png')
 	mut btn3 := app.icon_btn(img_file.to_bytes())
@@ -328,11 +329,9 @@ fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) 
 	}
 }
 
-fn test_page(win &ui.Window, btn voidptr, data voidptr) {
-	// mut win := &ui.Window(win_ptr)
-
-	mut page := ui.page(win, 'Page 1')
-	win.add_child(page)
+fn test_page(mut e ui.MouseEvent) {
+	mut page := ui.page(e.ctx.win, 'Page 1')
+	e.ctx.win.add_child(page)
 
 	debug('btn click')
 }

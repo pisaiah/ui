@@ -81,6 +81,9 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	}
 
 	com.is_mouse_down = is_point_in
+	if is_point_in {
+		invoke_mouse_down(com, app.graphics_context)
+	}
 
 	if mut com is Tabbox {
 		mut val := com.kids[com.active_tab]
@@ -105,6 +108,10 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
 	com.is_mouse_rele = is_point_in
 	com.is_mouse_down = false
+
+	if is_point_in {
+		invoke_mouse_up(com, app.graphics_context)
+	}
 
 	if mut com is Tabbox {
 		mut val := com.kids[com.active_tab]

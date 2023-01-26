@@ -13,8 +13,8 @@ pub struct Event {
 pub struct ComponentEvent {
 	Event
 pub mut:
-	ctx &GraphicsContext
-	com &Component
+	ctx    &GraphicsContext
+	target &Component
 }
 
 // During on component draw
@@ -24,7 +24,7 @@ pub struct DrawEvent {
 
 // Mouse move, pressed, released, dragged, etc.
 pub struct MouseEvent {
-	ComponentEvent
+	ComponentEvent // TODO button type, down up, etc.
 }
 
 // When user clicks a button, presses Enter in a text field, etc.

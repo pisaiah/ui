@@ -146,7 +146,7 @@ pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, o
 
 pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
 	ev := DrawEvent{
-		com: com
+		target: com
 		ctx: ctx
 	}
 	for f in com.events.event_map['draw'] {
@@ -156,10 +156,30 @@ pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
 
 pub fn (com &Component_A) invoke_after_draw_event(ctx &GraphicsContext) {
 	ev := DrawEvent{
-		com: com
+		target: com
 		ctx: ctx
 	}
 	for f in com.events.event_map['after_draw'] {
+		f(ev)
+	}
+}
+
+pub fn invoke_mouse_down(com &Component, ctx &GraphicsContext) {
+	ev := MouseEvent{
+		target: unsafe { com }
+		ctx: ctx
+	}
+	for f in com.events.event_map['mouse_down'] {
+		f(ev)
+	}
+}
+
+pub fn invoke_mouse_up(com &Component, ctx &GraphicsContext) {
+	ev := MouseEvent{
+		target: unsafe { com }
+		ctx: ctx
+	}
+	for f in com.events.event_map['mouse_up'] {
 		f(ev)
 	}
 }
