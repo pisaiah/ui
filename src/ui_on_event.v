@@ -17,7 +17,7 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		app.mouse_y = app.gg.mouse_pos_y
 	}
 
-	if e.typ == .touches_moved {
+	if e.typ == .touches_moved || e.typ == .touches_began {
 		app.mouse_x = int(e.touches[0].pos_x / app.gg.scale)
 		app.mouse_y = int(e.touches[0].pos_y / app.gg.scale)
 	}
