@@ -36,7 +36,6 @@ pub fn page(app &Window, title string) &Page {
 			if mut com is Page {
 				for mut kid in com.children {
 					kid.draw_event_fn(mut win, kid)
-					kid.invoke_draw_event()
 				}
 			}
 		}
@@ -81,7 +80,6 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	y_off := this.y + this.top_off
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
-		com.invoke_draw_event()
 		app.draw_with_offset(mut com, 0, y_off + 2)
 	}
 }

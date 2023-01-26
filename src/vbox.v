@@ -67,9 +67,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 			continue
 		}
 
-		child.invoke_draw_event()
 		this.win.draw_with_offset(mut child, this.x + o_x, ypos)
-		child.invoke_after_draw_event()
 
 		if this.win.bar != unsafe { nil } {
 			if this.win.bar.tik < 99 {

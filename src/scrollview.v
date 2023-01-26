@@ -97,10 +97,8 @@ pub fn (mut this ScrollView) draw_children(ctx &GraphicsContext) (int, int) {
 
 		mut win := ctx.win
 		child.draw_event_fn(mut win, child)
-		child.invoke_draw_event()
 		child.draw_with_offset(ctx, x_pos, y_pos)
 		child.after_draw_event_fn(mut win, child)
-		child.invoke_after_draw_event()
 
 		y_pos += child.y + child.height
 		total_height += child.y + child.height

@@ -13,6 +13,7 @@ pub struct Event {
 pub struct ComponentEvent {
 	Event
 pub mut:
+	ctx &GraphicsContext
 	com &Component
 }
 

@@ -164,7 +164,7 @@ pub fn (mut win Window) add_font(font_name string, font_path string) int {
 }
 
 // Struct for Graphics context
-// (Removes the need to pass Window everywhere for drawing)
+[heap]
 pub struct GraphicsContext {
 pub mut:
 	gg          &gg.Context
@@ -395,9 +395,9 @@ fn (mut app Window) draw() {
 			bar_drawn = true
 		}
 
-		com.invoke_draw_event()
+		com.invoke_draw_event(app.graphics_context)
 		com.draw(app.graphics_context)
-		com.invoke_after_draw_event()
+		com.invoke_after_draw_event(app.graphics_context)
 		com.after_draw_event_fn(mut app, com)
 	}
 

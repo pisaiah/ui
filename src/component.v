@@ -26,8 +26,8 @@ mut:
 	font int
 	events EventManager
 	draw(&GraphicsContext)
-	invoke_draw_event()
-	invoke_after_draw_event()
+	invoke_draw_event(&GraphicsContext)
+	invoke_after_draw_event(&GraphicsContext)
 }
 
 [heap]
@@ -111,7 +111,9 @@ pub fn (win &Window) draw_with_offset(mut com Component, offx int, offy int) {
 
 	com.x = com.x + offx
 	com.y = com.y + offy
+	com.invoke_draw_event(win.graphics_context)
 	com.draw(win.graphics_context)
+	com.invoke_after_draw_event(win.graphics_context)
 	com.x = com.x - offx
 	com.y = com.y - offy
 }
@@ -122,8 +124,9 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
+	com.invoke_draw_event(ctx)
 	com.draw(ctx)
-	com.invoke_draw_event()
+	com.invoke_after_draw_event(ctx)
 	com.x = com.x - off_x
 	com.y = com.y - off_y
 }
@@ -134,24 +137,27 @@ pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, o
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
+	com.invoke_draw_event(ctx)
 	com.draw(ctx)
-	com.invoke_draw_event()
+	com.invoke_after_draw_event(ctx)
 	com.x = com.x - off_x
 	com.y = com.y - off_y
 }
 
-pub fn (com &Component_A) invoke_draw_event() {
+pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
 	ev := DrawEvent{
 		com: com
+		ctx: ctx
 	}
 	for f in com.events.event_map['draw'] {
 		f(ev)
 	}
 }
 
-pub fn (com &Component_A) invoke_after_draw_event() {
+pub fn (com &Component_A) invoke_after_draw_event(ctx &GraphicsContext) {
 	ev := DrawEvent{
 		com: com
+		ctx: ctx
 	}
 	for f in com.events.event_map['after_draw'] {
 		f(ev)

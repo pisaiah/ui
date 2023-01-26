@@ -109,10 +109,8 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 		val.sort(a.z_index < b.z_index)
 		for mut com in val {
 			com.draw_event_fn(mut tb.win, com)
-			com.invoke_draw_event()
 			com.draw_with_offset(ctx, tb.x, tb.y + theig)
 			com.after_draw_event_fn(mut tb.win, com)
-			com.invoke_after_draw_event()
 		}
 
 		line_x := if mx == 0 { tb.x + mx } else { tb.x + mx - 1 }
