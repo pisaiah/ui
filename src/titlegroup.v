@@ -45,13 +45,12 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	x := this.x + 16
 	hei := this.height - text_height
 
-	if ctx.win.debug_draw {
-	}
-	wid := if ctx.win.debug_draw { ctx.gg.text_width(this.text) } else { ctx.text_width(this.text) }
+	wid := ctx.text_width(this.text)
 
 	ctx.gg.draw_rect_empty(this.x, y, this.width, hei, ctx.theme.button_border_normal)
 	ctx.gg.draw_rect_filled(x - 8, this.y, wid + 16, text_height, ctx.theme.background)
 	ctx.draw_text(x, this.y, this.text, ctx.font, gx.TextCfg{
 		color: ctx.theme.text_color
+		size: ctx.font_size
 	})
 }
