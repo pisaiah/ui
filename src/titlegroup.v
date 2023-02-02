@@ -8,7 +8,6 @@ import gx
 pub struct Titlebox {
 	Component_A
 pub mut:
-	text    string
 	padding int = 10
 }
 
