@@ -60,17 +60,15 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	y := this.y
 
 	// Set Scissor
-	ctx.gg.scissor_rect(x - 1, y - 1, this.width + 2, this.height + 2)
+	ctx.gg.scissor_rect(x - 1, y - 1, this.width + 2, this.height + 1)
 
 	total_height, total_width := this.draw_children(ctx)
-	// this.total_height = total_height
 
-	this.clamp_scroll_index(total_height + this.padding)
-	this.clamp_scroll_x(total_width + this.padding)
+	this.clamp_scroll_index(total_height)
+	this.clamp_scroll_x(total_width)
 
 	ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
 	this.draw_scrollbar(ctx, this.height, total_height)
-	// this.draw_scrollbar_hor(ctx, this.width, total_width)
 	this.draw_scrollbar2(ctx, this.width, total_width)
 
 	// Reset Scissor
@@ -82,8 +80,8 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 pub fn (mut this ScrollView) draw_children(ctx &GraphicsContext) (int, int) {
 	mut y_pos := this.y - (this.scroll_i * this.increment)
 	x_pos := this.x - (this.scroll_x * this.increment)
-	mut total_height := 0
-	mut total_width := 0
+	mut total_height := this.padding
+	mut total_width := this.padding
 
 	for mut child in this.children {
 		if child.parent == unsafe { nil } {
@@ -228,8 +226,6 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len f
 	} else {
 		return
 	}
-
-	ctx.gg.draw_rect_empty(x, y, width, this.height, ctx.theme.textbox_border)
 
 	ty := y + (wid / 2) - 5
 

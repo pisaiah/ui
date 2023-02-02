@@ -142,6 +142,9 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	} else {
 		for mut child in com.children {
 			if child.on_mouse_rele_component(app) {
+				if child.parent != unsafe { nil } {
+					return false
+				}
 				return true
 			}
 		}

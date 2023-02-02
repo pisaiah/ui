@@ -15,6 +15,10 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 		app.textarea_key_down(key, e, mut a)
 		return true
 	}
+	if mut a is Textbox {
+		app.textbox_key_down(key, e, mut a)
+		return true
+	}
 	if mut a is Tabbox {
 		mut kids := a.kids[a.active_tab]
 		for mut comm in kids {

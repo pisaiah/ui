@@ -21,7 +21,7 @@ pub fn theme_ocean() &Theme {
 		dropdown_background: gx.rgb(255, 255, 255)
 		dropdown_border: gx.rgb(224, 224, 224)
 		textbox_background: gx.rgb(255, 255, 255)
-		textbox_border: gx.rgb(215, 215, 215)
+		textbox_border: gx.rgb(200, 200, 200)
 		checkbox_selected: gx.rgb(143, 184, 218)
 		checkbox_bg: gx.rgb(254, 254, 254)
 		progressbar_fill: gx.rgb(143, 184, 210)

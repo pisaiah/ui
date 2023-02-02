@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.15'
+	version = '0.0.16'
 )
 
 pub fn default_font() string {
@@ -37,7 +37,7 @@ pub struct Bounds {
 
 pub fn debug(o string) {
 	$if debug ? {
-		println('(Debug) ' + o)
+		dump('(Debug) ' + o)
 	}
 }
 
@@ -223,6 +223,10 @@ pub fn (win &Window) get_from_id(id string) voidptr {
 	return win.id_map[id]
 }
 
+pub fn (win &Window) get[T](id string) T {
+	return win.id_map[id] or { panic(err) }
+}
+
 /*
 pub fn (mut win Window) add_child(com Component) {
 	win.components << com
@@ -256,7 +260,7 @@ pub struct WindowConfig {
 	theme     &Theme = theme_default()
 }
 
-pub fn (win &Window) run() {
+pub fn (mut win Window) run() {
 	win.gg.run()
 }
 

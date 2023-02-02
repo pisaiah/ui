@@ -2,6 +2,12 @@
 *Not released yet*
 - TODO
 
+## 0.0.17
+*Feb ??, 2023*
+- TODO
+- Completly redone TextArea
+- New Textarea now has text selection.
+
 ## 0.0.16
 *Jan 26, 2023*
 - New event system.
