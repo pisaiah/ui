@@ -224,7 +224,7 @@ pub fn (win &Window) get_from_id(id string) voidptr {
 }
 
 pub fn (win &Window) get[T](id string) T {
-	return win.id_map[id] // or { panic(err) }
+	return win.id_map[id] or { panic('Component with ID "${id}" not found.') }
 }
 
 /*
