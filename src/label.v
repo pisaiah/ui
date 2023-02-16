@@ -128,6 +128,7 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 		}
 	}
 
+	app.reset_text_config(ctx)
 	this.debug_draw()
 }
 
