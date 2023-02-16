@@ -151,7 +151,9 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 }
 
 fn (mut app Window) draw_button_2(x int, y int, width int, height int, mut btn Button, mut sel Select, ctx &GraphicsContext) {
-	app.bar.tik = 1
+	if app.bar != unsafe { nil } {
+		app.bar.tik = 1
+	}
 
 	text := btn.text
 	size := text_width(app, text) / 2

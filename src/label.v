@@ -115,17 +115,28 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 		})
 		if this.size != (app.font_size + this.size) {
 			// Reset for text_height
-			ctx.set_cfg(gx.TextCfg{
-				size: app.font_size
-				color: app.theme.text_color
-				bold: false
-			})
+			if this.size == 0 {
+				app.reset_text_config(ctx)
+			}
 		}
 
-		my += ctx.line_height
+		if this.size > 0 {
+			my += text_height(app, spl)
+			app.reset_text_config(ctx)
+		} else {
+			my += ctx.line_height
+		}
 	}
 
 	this.debug_draw()
+}
+
+fn (app &Window) reset_text_config(ctx &GraphicsContext) {
+	ctx.set_cfg(gx.TextCfg{
+		size: app.font_size
+		color: app.theme.text_color
+		bold: false
+	})
 }
 
 fn (this &Label) debug_draw() {
