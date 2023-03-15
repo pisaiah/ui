@@ -16,7 +16,8 @@ pub fn get_system_theme() &Theme {
 
 pub fn get_all_themes() []&Theme {
 	return [theme_default(), theme_dark(), theme_dark_hc(), theme_black_red(),
-		theme_minty(), theme_black_green(), theme_ocean()]
+		theme_minty(), theme_black_green(), theme_ocean(), theme_seven(),
+		theme_seven_dark()]
 }
 
 pub fn theme_by_name(name string) &Theme {

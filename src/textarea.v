@@ -427,27 +427,19 @@ fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, st
 		this.caret_top = my_lh + this.scroll_i
 	}
 	if line == this.caret_top {
+		/*
+		widw := this.win.graphics_context.text_width(this.lines[this.caret_top])
+		
+		if mx > widw {
+			this.caret_left = this.lines[this.caret_top].len
+			return
+		}*/
+
 		this.move_caret(this.win, x, y, current_len, llen, str_fix_tab, mx, wid)
 	}
 }
 
 // Draw Scrollbar
-// TODO: use Slider component.
+[deprecated: 'Use ScrollView']
 fn (mut com TextArea) draw_scrollbar(cl int, spl_len int) {
-	// Calculate postion for scroll
-	sth := int((f32((com.scroll_i)) / f32(spl_len)) * com.height)
-	enh := int((f32(cl) / f32(spl_len)) * com.height)
-	requires_scrollbar := (com.height - enh) > 0
-
-	// Draw Scroll
-	if requires_scrollbar {
-		wid := 15
-		min := wid + 1
-
-		com.win.draw_bordered_rect(com.x + com.width - min, com.y + 1, wid, com.height - 2,
-			2, com.win.theme.scroll_track_color, com.win.theme.button_bg_hover)
-
-		com.win.gg.draw_rounded_rect_filled(com.x + com.width - min, com.y + sth + 1,
-			wid, enh - 2, 16, com.win.theme.scroll_bar_color)
-	}
 }

@@ -48,7 +48,7 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	wid := ctx.text_width(this.text)
 
 	ctx.gg.draw_rect_empty(this.x, y, this.width, hei, ctx.theme.button_border_normal)
-	ctx.gg.draw_rect_filled(x - 8, this.y, wid + 16, text_height, ctx.theme.background)
+	ctx.gg.draw_rect_filled(x - 8, this.y, wid + 16, text_height + 1, ctx.theme.background)
 	ctx.draw_text(x, this.y, this.text, ctx.font, gx.TextCfg{
 		color: ctx.theme.text_color
 		size: ctx.font_size

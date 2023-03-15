@@ -74,9 +74,9 @@ fn main() {
 }
 
 fn (mut app App) icon_btn(data []u8) &ui.Button {
-	mut gg := app.win.gg
-	gg_im := gg.create_image_from_byte_array(data)
-	cim := gg.cache_image(gg_im)
+	mut gg_ := app.win.gg
+	gg_im := gg_.create_image_from_byte_array(data)
+	cim := gg_.cache_image(gg_im)
 	mut btn := ui.button_with_icon(cim)
 
 	btn.set_bounds(2, 4, 32, 32)
@@ -124,7 +124,7 @@ fn (mut app App) make_edits_section() {
 		bounds: ui.Bounds{2, 8, 200, 30}
 	)
 
-	mut code_box := ui.textarea(app.win, ['module main', '', 'fn main() {', '}'])
+	mut code_box := ui.text_box(['module main', '', 'fn main() {', '}'])
 	code_box.set_bounds(2, 48, 200, 100)
 
 	mut edits_title_box := ui.title_box('TextField / TextArea', [tbox, code_box])

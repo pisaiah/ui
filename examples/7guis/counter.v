@@ -6,11 +6,13 @@ import iui as ui
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'Counter', 230, 55)
+	mut window := ui.window(ui.get_system_theme(), 'Counter', 230, 200)
+
+	window.debug_draw = true
 
 	// Create an HBox
 	mut hbox := ui.hbox(window)
-	hbox.set_bounds(0, 0, 230, 50)
+	hbox.set_bounds(10, 10, 230, 80)
 
 	// Create the Label
 	mut lbl := ui.label(window, '0')
@@ -18,13 +20,17 @@ fn main() {
 	lbl.pack()
 
 	// Create Count Button
-	btn := ui.button(
+	mut btn := ui.button(
 		text: 'Count'
 		bounds: ui.Bounds{64, 13, 0, 0}
 		click_event_fn: on_click
 		should_pack: true
 		user_data: &lbl
 	)
+
+	btn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		dump('DRAW')
+	})
 
 	// Add to HBox
 	hbox.add_child(lbl)

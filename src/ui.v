@@ -146,11 +146,11 @@ pub fn (mut win Window) add_font(font_name string, font_path string) int {
 	bytes := os.read_bytes(font_path) or { []u8{} }
 
 	if bytes.len > 0 {
-		font := win.gg.ft.fons.add_font_mem('sans', bytes, false)
-		if font >= 0 {
-			win.fonts.hash[font_name] = font
-			win.gg.ft.fons.set_font(font)
-			return font
+		added_font := win.gg.ft.fons.add_font_mem('sans', bytes, false)
+		if added_font >= 0 {
+			win.fonts.hash[font_name] = added_font
+			win.gg.ft.fons.set_font(added_font)
+			return added_font
 		} else {
 			// Error
 			panic('error')
@@ -200,13 +200,24 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
 	ctx.gg.set_text_cfg(cfg)
+	$if windows {
+		if ctx.gg.native_rendering {
+			return
+		}
+	}
 	ctx.gg.ft.fons.set_font(ctx.font)
 }
 
-pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font int, cfg gx.TextCfg) {
+pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id int, cfg gx.TextCfg) {
+	$if windows {
+		if ctx.gg.native_rendering {
+			ctx.gg.draw_text(x, y, text_, cfg)
+			return
+		}
+	}
 	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
 	ctx.gg.set_text_cfg(cfg)
-	ctx.gg.ft.fons.set_font(font)
+	ctx.gg.ft.fons.set_font(font_id)
 	ctx.gg.ft.fons.draw_text(x * scale, y * scale, text_) // TODO: check offsets/alignment
 }
 
@@ -243,7 +254,7 @@ pub fn window(theme Theme, title string, width int, height int) &Window {
 		width: width
 		height: height
 		font_path: default_font()
-		ui_mode: true
+		// ui_mode: true
 		user_data: 0
 	)
 }
@@ -300,6 +311,13 @@ pub fn make_window(config &WindowConfig) &Window {
 	if win.graphics_context.icon_cache.len == 0 {
 		win.graphics_context.fill_icon_cache(mut win)
 	}
+
+	$if windows {
+		if win.gg.native_rendering {
+			win.gg.ui_mode = false
+		}
+	}
+
 	// win.theme.setup_fn(mut win)
 
 	return win
@@ -440,6 +458,11 @@ pub fn (mut ctx GraphicsContext) calculate_line_height() {
 // Functions for GG
 pub fn (graphics &GraphicsContext) text_width(text string) int {
 	// return win.gg.text_width(text)
+	$if windows {
+		if graphics.gg.native_rendering {
+			return graphics.gg.text_width(text)
+		}
+	}
 	ctx := graphics.gg
 	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
 	return int(adv / ctx.scale)
@@ -447,6 +470,11 @@ pub fn (graphics &GraphicsContext) text_width(text string) int {
 
 // Functions for GG
 pub fn text_width(win Window, text string) int {
+	$if windows {
+		if win.gg.native_rendering {
+			return win.gg.text_width(text)
+		}
+	}
 	// return win.gg.text_width(text)
 	ctx := win.gg
 	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))

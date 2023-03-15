@@ -1,6 +1,7 @@
 module iui
 
 import gg
+import os
 
 // Image - implements Component interface
 pub struct Image {
@@ -12,6 +13,18 @@ pub mut:
 	need_pack      bool
 	img            &gg.Image
 	rotate         int
+	need_init      bool
+	img_id         int
+}
+
+pub fn image_from_file(path string) &Image {
+	return &Image{
+		need_init: true
+		text: path
+		app: unsafe { nil }
+		img: unsafe { nil }
+		click_event_fn: blank_event_im
+	}
 }
 
 pub fn image(app &Window, img &gg.Image) &Image {
@@ -53,13 +66,30 @@ pub fn image_from_bytes(mut app Window, b []u8, width int, height int) &Image {
 }
 
 pub fn (mut this Image) draw(ctx &GraphicsContext) {
+	if this.need_init {
+		if os.exists(this.text) {
+			// img := ctx.gg.create_image(this.text)
+			// this.img = &img
+		} else {
+			abp := os.resource_abs_path(this.text)
+			if os.exists(abp) {
+				img := ctx.gg.create_image(abp)
+				mut ggg := ctx.gg
+				this.img_id = ggg.cache_image(img)
+			}
+		}
+		this.need_init = false
+	}
+
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
-		this.click_event_fn(mut this.app, *this)
+		mut win := ctx.win
+		this.click_event_fn(mut win, *this)
 	}
 
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
 		img: this.img
+		img_id: this.img_id
 		img_rect: gg.Rect{
 			x: this.x
 			y: this.y
@@ -81,6 +111,7 @@ pub fn (mut btn Image) pack_do(ctx &GraphicsContext) {
 	btn.need_pack = false
 }
 
+[deprecated]
 pub fn (mut com Image) set_click(b fn (mut Window, Image)) {
 	com.click_event_fn = b
 }

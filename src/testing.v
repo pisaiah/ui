@@ -336,6 +336,10 @@ fn (mut this Textbox) draw_selection(ctx &GraphicsContext, th int) {
 		return
 	}
 
+	if this.sel.y0 >= this.lines.len {
+		this.sel.y0 = this.lines.len - 1
+	}
+
 	color := gx.rgba(0, 120, 215, 100)
 
 	if this.sel.y1 > this.sel.y0 {

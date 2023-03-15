@@ -50,9 +50,9 @@ pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
 		return this.tab_height_active
 	}
 
-	line_height := ctx.line_height + 12
+	line_height := ctx.line_height + 10
 
-	val := 34
+	val := 30
 	if line_height > val {
 		return line_height
 	}
@@ -68,7 +68,7 @@ pub fn (tb &Tabbox) get_tab_width(ctx &GraphicsContext, key string) int {
 	if tb.compact {
 		return text_width(tb.win, key)
 	}
-	return text_width(tb.win, key) + 45
+	return text_width(tb.win, key) + 30
 }
 
 // Draw tab
@@ -85,7 +85,14 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	tsize := if tb.closable { size + 30 } else { size + 14 }
 
 	tab_color := tb.get_tab_color(ctx, is_active)
-	tb.win.draw_filled_rect(tb.x + mx, tb.y + my, tsize, theig, 2, tab_color, tb.win.theme.button_border_normal)
+
+	if tb.active_tab == key_ {
+		tb.win.gg.draw_rect_empty(tb.x + mx, tb.y + my, tsize, theig, tb.win.theme.button_border_normal)
+		tb.win.gg.draw_rect_filled(tb.x + mx + 1, tb.y + my + 1, tsize - 2, theig, tab_color)
+	} else {
+		tb.win.draw_filled_rect(tb.x + mx, tb.y + my + 1, tsize, theig, 2, tab_color,
+			tb.win.theme.button_border_normal)
+	}
 
 	// Draw Button Text
 	ctx.draw_text((tb.x + mx) + 3, tb.y + (theig / 2) - (sizh - 2), ' ' + key, ctx.font,
@@ -115,10 +122,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 
 		line_x := if mx == 0 { tb.x + mx } else { tb.x + mx - 1 }
 
-		ctx.gg.draw_line(line_x, tb.y + my + theig, tb.x + mx + tsize, tb.y + my + theig,
-			tb.win.theme.button_bg_normal)
-
-		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 4, tb.win.theme.checkbox_selected)
+		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 2, tb.win.theme.checkbox_selected)
 	}
 
 	return tsize
