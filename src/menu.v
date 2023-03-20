@@ -223,7 +223,7 @@ fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ 
 
 	mut com := &Component(item)
 	com.draw_event_fn(mut app, com)
-	com.invoke_draw_event(ctx)
+	invoke_draw_event(com, ctx)
 }
 
 fn open_about_modal(app &Window) &Modal {

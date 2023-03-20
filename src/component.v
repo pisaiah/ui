@@ -24,7 +24,7 @@ mut:
 	children []Component
 	id string
 	font int
-	events EventManager
+	events &EventManager
 	draw(&GraphicsContext)
 	invoke_draw_event(&GraphicsContext)
 	invoke_after_draw_event(&GraphicsContext)
@@ -52,7 +52,7 @@ pub mut:
 	children            []Component
 	id                  string
 	font                int
-	events              EventManager = EventManager{}
+	events              &EventManager = &EventManager{}
 }
 
 pub struct EventManager {
@@ -111,7 +111,7 @@ pub fn (win &Window) draw_with_offset(mut com Component, offx int, offy int) {
 
 	com.x = com.x + offx
 	com.y = com.y + offy
-	com.invoke_draw_event(win.graphics_context)
+	invoke_draw_event(com, win.graphics_context)
 	com.draw(win.graphics_context)
 	com.invoke_after_draw_event(win.graphics_context)
 	com.x = com.x - offx
@@ -124,7 +124,7 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
-	com.invoke_draw_event(ctx)
+	invoke_draw_event(com, ctx)
 	com.draw(ctx)
 	com.invoke_after_draw_event(ctx)
 	com.x = com.x - off_x
@@ -137,7 +137,7 @@ pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, o
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
-	com.invoke_draw_event(ctx)
+	invoke_draw_event(com, ctx)
 	com.draw(ctx)
 	com.invoke_after_draw_event(ctx)
 	com.x = com.x - off_x
@@ -147,6 +147,16 @@ pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, o
 pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
 	ev := DrawEvent{
 		target: com
+		ctx: ctx
+	}
+	for f in com.events.event_map['draw'] {
+		f(ev)
+	}
+}
+
+pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
+	ev := DrawEvent{
+		target: unsafe { com }
 		ctx: ctx
 	}
 	for f in com.events.event_map['draw'] {

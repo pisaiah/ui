@@ -32,7 +32,7 @@ pub fn modal(app &Window, title string) &Modal {
 			if mut com is Modal {
 				for mut kid in com.children {
 					kid.draw_event_fn(mut win, kid)
-					kid.invoke_draw_event(win.graphics_context)
+					invoke_draw_event(kid, win.graphics_context)
 				}
 			}
 		}

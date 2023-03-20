@@ -417,7 +417,7 @@ fn (mut app Window) draw() {
 			bar_drawn = true
 		}
 
-		com.invoke_draw_event(app.graphics_context)
+		invoke_draw_event(com, app.graphics_context)
 		com.draw(app.graphics_context)
 		com.invoke_after_draw_event(app.graphics_context)
 		com.after_draw_event_fn(mut app, com)

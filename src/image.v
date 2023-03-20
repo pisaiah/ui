@@ -68,8 +68,8 @@ pub fn image_from_bytes(mut app Window, b []u8, width int, height int) &Image {
 pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	if this.need_init {
 		if os.exists(this.text) {
-			// img := ctx.gg.create_image(this.text)
-			// this.img = &img
+			img := ctx.gg.create_image(this.text)
+			this.img = &img
 		} else {
 			abp := os.resource_abs_path(this.text)
 			if os.exists(abp) {
