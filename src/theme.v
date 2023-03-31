@@ -145,7 +145,7 @@ pub fn theme_dark_hc() &Theme {
 		menubar_background: gx.rgb(10, 10, 10)
 		menubar_border: gx.rgb(99, 99, 99)
 		dropdown_background: gx.rgb(10, 10, 10)
-		dropdown_border: gx.rgb(0, 0, 0)
+		dropdown_border: gx.rgb(190, 190, 190)
 		textbox_background: gx.rgb(0, 0, 0)
 		textbox_border: gx.rgb(200, 200, 200)
 		checkbox_selected: gx.rgb(220, 220, 220)

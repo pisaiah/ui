@@ -36,3 +36,10 @@ pub struct ActionEvent {
 pub struct KeyEvent {
 	ComponentEvent
 }
+
+// Draw line event
+pub struct DrawTextlineEvent {
+	DrawEvent
+pub:
+	line int
+}

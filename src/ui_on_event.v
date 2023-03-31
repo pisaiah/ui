@@ -168,6 +168,11 @@ pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 		app.click_y = int(e.touches[0].pos_y / app.gg.scale)
 	}
 
+	res := app.bar.check_mouse(app, app.click_x, app.click_y)
+	if res {
+		return
+	}
+
 	// Sort by Z-index
 	app.components.sort(a.z_index > b.z_index)
 
@@ -184,6 +189,16 @@ pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	app.click_x = -1
 	app.click_y = -1
+
+	mut bar := &Component(app.bar)
+	if bar.on_mouse_rele_component(app) {
+		// return
+	}
+
+	res := app.bar.check_mouse(app, app.mouse_x, app.mouse_y)
+	if res {
+		return
+	}
 
 	app.components.sort(a.z_index > b.z_index)
 	for mut com in app.components {

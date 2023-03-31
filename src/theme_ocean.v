@@ -142,7 +142,7 @@ pub fn seven_bar_fill_fn(x int, y f32, w int, h f32, hor bool, ctx &GraphicsCont
 		ctx.gg.draw_image_by_id(x, y - 2, w, h + 4, id)
 		ctx.gg.draw_rect_empty(x, y - 2, w, h + 4, gx.rgb(99, 130, 191))
 	} else {
-		ctx.gg.draw_image_by_id(x - 1, y, w + 4, h, id)
+		ctx.gg.draw_image_by_id(x - 2, y, w + 5, h, id)
 		ctx.gg.draw_rect_empty(x - 2, y, w + 4, h, gx.rgb(99, 130, 191))
 	}
 }
@@ -165,8 +165,8 @@ pub fn theme_seven_dark() &Theme {
 		button_border_click: gx.rgb(0, 84, 153)
 		menubar_background: gx.rgb(30, 30, 30)
 		menubar_border: gx.rgb(30, 30, 30)
-		dropdown_background: gx.rgb(10, 10, 10)
-		dropdown_border: gx.rgb(0, 0, 0)
+		dropdown_background: gx.rgb(20, 20, 20)
+		dropdown_border: gx.rgb(90, 90, 90)
 		textbox_background: gx.rgb(34, 39, 46)
 		textbox_border: gx.rgb(130, 130, 130)
 		checkbox_selected: gx.rgb(240, 99, 40)

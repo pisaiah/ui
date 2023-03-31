@@ -224,11 +224,24 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 
 		this.draw_matched_text(this.win, this.x + padding_x, this.y + y_off, matched,
 			cfg, is_cur_line, i)
+
+		invoke_line_draw_event(this, ctx, i)
 	}
 	this.draw_scrollbar(lines_drawn, this.lines.len)
 
 	ctx.gg.draw_rect_filled(this.x + this.down_pos.x, sel_y, (this.down_pos.end_x - this.down_pos.x),
 		lh, gx.rgba(0, 100, 200, 50))
+}
+
+pub fn invoke_line_draw_event(com &Component, ctx &GraphicsContext, line int) {
+	ev := DrawTextlineEvent{
+		target: unsafe { com }
+		ctx: ctx
+		line: line
+	}
+	for f in com.events.event_map['text_line_draw'] {
+		f(ev)
+	}
 }
 
 fn (this &TextArea) draw_line_number_background(ctx &GraphicsContext) int {

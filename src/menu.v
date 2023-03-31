@@ -4,82 +4,181 @@ import gg
 import gx
 import v.util.version { full_v_version }
 
-[heap]
 pub struct Menubar {
 	Component_A
 pub mut:
-	// app   &Window
-	theme &Theme
-	items []MenuItem
-	tik   int
+	tik int = 99
 }
 
-pub fn (mut bar Menubar) add_child(com MenuItem) {
-	bar.items << com
+pub struct MenuItem {
+	Component_A
+pub mut:
+	icon           &Image
+	open           bool
+	open_width     int
+	sub            u8
+	click_event_fn fn (mut Window, MenuItem)
 }
 
-[deprecated]
-pub fn (mut bar Menubar) is_hovering() bool {
-	for mut item in bar.items {
-		if item.show_items {
-			return true
+fn (mut this MenuItem) draw(ctx &GraphicsContext) {
+	this.height = 26
+
+	if this.sub == 0 {
+		if !isnil(this.icon) {
+			this.width = this.icon.width + 14
+		} else {
+			size := ctx.text_width(this.text)
+			this.width = size + 14
+		}
+	}
+
+	bg := ctx.theme.button_bg_hover
+
+	if this.is_mouse_down || this.open {
+		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
+	}
+
+	if this.is_mouse_rele {
+		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
+		this.is_mouse_rele = false
+		if this.children.len > 0 {
+			this.open = !this.open
+		} else {
+			// deprecated click_event_fn
+			mut win := ctx.win
+			this.click_event_fn(mut win, *this)
+			this.is_mouse_rele = false
+			if !isnil(this.parent) {
+				mut par := &MenuItem(this.parent)
+				par.open = false
+			}
+		}
+
+		if this.text == 'About iUI' {
+			about := open_about_modal(ctx.win)
+			ctx.win.add_child(about)
+			this.is_mouse_rele = false
+			this.open = false
+
+			if !isnil(this.parent) {
+				mut par := &MenuItem(this.parent)
+				par.open = false
+			}
+		}
+	}
+
+	if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
+		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, ctx.theme.button_bg_hover)
+	}
+
+	y := this.y + ((this.height / 2) - (ctx.line_height / 2))
+
+	// Draw Button Text
+	if !isnil(this.icon) {
+		image_y := this.y + ((this.height / 2) - (this.icon.height / 2))
+		this.icon.set_pos(this.x + (this.width / 2) - (this.icon.width / 2), image_y)
+		this.icon.draw(ctx)
+	} else {
+		ctx.draw_text(this.x + 7, y, this.text, ctx.font, gx.TextCfg{
+			size: ctx.win.font_size
+			color: ctx.theme.text_color
+		})
+	}
+
+	if this.open {
+		this.draw_open_contents(ctx)
+	}
+}
+
+fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
+	mut cy := this.y + this.height
+	mut cx := this.x + 1
+
+	if this.open && this.sub > 0 {
+		cy -= this.height
+	}
+
+	if this.sub > 0 {
+		mut par := &MenuItem(this.parent)
+		cx += par.open_width
+	}
+
+	by := if this.open && this.sub > 0 { this.y } else { this.y + this.height }
+	ctx.gg.draw_rect_filled(cx, by, this.open_width, this.children.len * 26, ctx.theme.dropdown_background)
+
+	mut hei := 0
+	mut wi := 100
+	for mut item in this.children {
+		item.parent = this
+		if mut item is MenuItem {
+			if item.sub != 1 {
+				item.sub = 1
+			}
+		}
+
+		item.draw_with_offset(ctx, cx, cy)
+		sizee := ctx.text_width(item.text) + 14
+
+		if wi < sizee {
+			wi = sizee
+		}
+		cy += item.height
+		hei += item.height
+	}
+	for mut item in this.children {
+		item.width = wi
+	}
+	this.open_width = wi
+	ctx.gg.draw_rect_empty(cx, by, wi, hei, ctx.theme.dropdown_border)
+}
+
+fn (mut this Menubar) draw(ctx &GraphicsContext) {
+	wid := if this.width > 0 { this.width } else { gg.window_size().width }
+
+	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26, ctx)
+	ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
+
+	mut x := this.x + 1
+	for mut item in this.children {
+		item.draw_with_offset(ctx, x, this.y)
+		x += item.width
+	}
+}
+
+fn (mut this Menubar) check_mouse(win &Window, mx int, my int) bool {
+	for mut item in this.children {
+		if mut item is MenuItem {
+			if !item.open {
+				continue
+			}
+			res := item.check_mouse(win, mx, my)
+			if res {
+				return true
+			}
 		}
 	}
 	return false
 }
 
-[heap]
-pub struct MenuItem {
-	Component_A
-pub mut:
-	items          []MenuItem
-	text           string
-	icon           &Image
-	shown          bool
-	show_items     bool
-	no_paint_bg    bool
-	click_event_fn fn (mut Window, MenuItem)
-}
-
-[parms]
-pub struct MenuItemConfig {
-	text           string
-	icon           &Image = unsafe { nil }
-	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
-	children       []&MenuItem
-}
-
-pub fn (mut item MenuItem) add_child(com MenuItem) {
-	item.items << com
-}
-
-// TODO: [deprecated: 'Replaced with menu_item(MenuItemConfig)']
-pub fn menuitem(text string) &MenuItem {
-	return &MenuItem{
-		text: text
-		shown: false
-		show_items: false
-		icon: 0
-		click_event_fn: fn (mut win Window, item MenuItem) {}
+fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
+	for mut item in this.children {
+		if is_in(item, mx, my) {
+			return true
+		} else {
+			if mut item is MenuItem {
+				if item.check_mouse(win, mx, my) {
+					return true
+				}
+			}
+		}
 	}
-}
 
-pub fn menu_item(confg MenuItemConfig) &MenuItem {
-	mut item := &MenuItem{
-		text: confg.text
-		shown: false
-		show_items: false
-		icon: confg.icon
-		click_event_fn: confg.click_event_fn
-	}
-	for kid in confg.children {
-		item.add_child(kid)
-	}
-	return item
-}
+	res := point_in_raw(mut this, mx, my)
 
-pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
-	com.click_event_fn = b
+	if !res {
+		this.open = false
+	}
+	return res
 }
 
 [params]
@@ -89,38 +188,13 @@ pub struct MenubarConfig {
 
 pub fn menu_bar(cfg MenubarConfig) &Menubar {
 	return &Menubar{
-		theme: cfg.theme
+		// theme: cfg.theme
 	}
 }
 
+[deprecated]
 pub fn menubar(app &Window, theme Theme) &Menubar {
-	return &Menubar{
-		// app: app
-		theme: &theme
-	}
-}
-
-pub fn (mut bar Menubar) draw(ctx &GraphicsContext) {
-	wid := if bar.width > 0 { bar.width } else { gg.window_size().width }
-
-	if bar.theme == unsafe { nil } {
-		bar.theme = ctx.theme
-	}
-
-	ctx.theme.menu_bar_fill_fn(bar.x, bar.y, wid - 1, 26, ctx)
-	ctx.gg.draw_rect_empty(bar.x, bar.y, wid, 26, ctx.theme.menubar_border)
-
-	mut mult := 0
-	mut win := ctx.win
-
-	for mut item in bar.items {
-		win.draw_menu_button(ctx, mult, bar.y + 1, 56, 25, mut item)
-		if item.width > 0 {
-			mult += item.width + 4
-		} else {
-			mult += 56
-		}
-	}
+	return &Menubar{}
 }
 
 fn (mut app Window) get_bar() &Menubar {
@@ -133,97 +207,37 @@ fn (mut app Window) set_bar_tick(val int) {
 	}
 }
 
-fn (item &MenuItem) get_bg(app &Window, hover bool, click bool) gx.Color {
-	shown_items := item.show_items && item.items.len > 0
-
-	if click || shown_items {
-		return app.theme.button_bg_click
-	}
-
-	if hover {
-		return app.theme.button_bg_hover
-	}
-
-	return app.theme.menubar_background
+[parms]
+pub struct MenuItemConfig {
+	text           string
+	icon           &Image = unsafe { nil }
+	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
+	children       []&MenuItem
 }
 
-fn (mut app Window) draw_menu_button(ctx &GraphicsContext, x int, y int, width_ int, height int, mut item MenuItem) {
-	size := text_width(app, item.text) / 2
-	half_line_height := ctx.line_height / 2
-
-	width := if item.width > 0 { item.width + 4 } else { width_ }
-
-	midx := x + (width / 2)
-	midy := y + (height / 2)
-
-	hover := (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2))
-	clicked := ((abs(midx - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)))
-
-	bg := item.get_bg(app, hover, clicked)
-
-	// Detect Click
-	if clicked && !item.show_items {
-		item.show_items = true
-		app.set_bar_tick(0)
-
-		item.click_event_fn(mut app, *item)
-
-		if item.text == 'About iUI' {
-			about := open_about_modal(app)
-			app.add_child(about)
-		}
+// [deprecated: 'Replaced with menu_item(MenuItemConfig)']
+pub fn menuitem(text string) &MenuItem {
+	return &MenuItem{
+		text: text
+		icon: 0
+		click_event_fn: fn (mut win Window, item MenuItem) {}
 	}
+}
 
-	if item.show_items && item.items.len > 0 {
-		app.set_bar_tick(0)
-		mut wid := 120
-
-		for mut sub in item.items {
-			sub_size := text_width(app, sub.text + '...')
-			if wid < sub_size {
-				wid = sub_size
-			}
-		}
-
-		app.draw_filled_rect(x, y + height, wid, (item.items.len * 30) + 2, 2, app.theme.dropdown_background,
-			app.theme.dropdown_border)
-
-		mut mult := 0
-		for mut sub in item.items {
-			app.draw_menu_button(ctx, x + 1, y + height + mult + 1, wid - 3, 29, mut sub)
-			mult += 30
-		}
+pub fn menu_item(confg MenuItemConfig) &MenuItem {
+	mut item := &MenuItem{
+		text: confg.text
+		icon: confg.icon
+		click_event_fn: confg.click_event_fn
 	}
-
-	if item.show_items && (item.items.len == 0 || (app.click_x != -1 && app.click_y != -1))
-		&& !clicked {
-		item.is_mouse_rele = true
-		item.show_items = false
+	for kid in confg.children {
+		item.add_child(kid)
 	}
-	if app.bar != unsafe { nil } && !item.show_items && app.bar.tik < 99 {
-		app.bar.tik++
-	}
+	return item
+}
 
-	// Draw Button Background & Border
-	if !item.no_paint_bg && bg != app.theme.menubar_background {
-		ctx.gg.draw_rounded_rect_filled(x + 1, y, width - 1, height - 1, 4, bg)
-	}
-
-	// Draw Button Text
-	if item.icon != unsafe { nil } {
-		item.icon.set_pos(x + (width / 2) - (item.icon.width / 2), y)
-		item.icon.draw(ctx)
-	} else {
-		ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - half_line_height + 2,
-			item.text, ctx.font, gx.TextCfg{
-			size: app.font_size
-			color: app.theme.text_color
-		})
-	}
-
-	mut com := &Component(item)
-	com.draw_event_fn(mut app, com)
-	invoke_draw_event(com, ctx)
+pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
+	com.click_event_fn = b
 }
 
 fn open_about_modal(app &Window) &Modal {

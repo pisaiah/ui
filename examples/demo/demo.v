@@ -31,6 +31,7 @@ fn main() {
 	window.bar.add_child(ui.menu_item(text: 'Edit'))
 	window.bar.add_child(create_help_menu())
 	window.bar.add_child(create_theme_menu())
+	window.add_child(window.bar)
 
 	app.make_button_section()
 	app.make_checkbox_section()
@@ -85,7 +86,9 @@ fn (mut app App) icon_btn(data []u8) &ui.Button {
 
 // Make a 'Theme' menu item to select themes
 fn create_theme_menu() &ui.MenuItem {
-	mut theme_menu := ui.menuitem('Themes')
+	mut theme_menu := ui.menu_item(
+		text: 'Themes'
+	)
 
 	themes := ui.get_all_themes()
 	for theme in themes {
