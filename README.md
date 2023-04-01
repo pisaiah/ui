@@ -1,4 +1,4 @@
-# Isaiah's UI ![0.0.15](https://img.shields.io/badge/version-0.0.15-white?style=for-the-badge) ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
+# Isaiah's UI ![0.0.17](https://img.shields.io/badge/version-0.0.17-white?style=for-the-badge) ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 
 Cross-platform GUI library for V. Inspired by the syntax of Java's Swing.
 

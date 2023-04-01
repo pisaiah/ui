@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022 Isaiah.
+// Copyright (c) 2021-2023 Isaiah.
 module iui
 
 import gg
@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.16'
+	version = '0.0.17'
 )
 
 pub fn default_font() string {
@@ -16,16 +16,8 @@ pub fn default_font() string {
 		return 'myfont.ttf'
 	}
 
-	/*
-	windows_def := 'C:/windows/fonts/segoeui.ttf'
-	if os.exists(windows_def) {
-		return windows_def
-	} else {*/
-
 	def := font.default()
 	return def
-
-	//}
 }
 
 pub struct Bounds {
@@ -457,7 +449,6 @@ pub fn (mut ctx GraphicsContext) calculate_line_height() {
 
 // Functions for GG
 pub fn (graphics &GraphicsContext) text_width(text string) int {
-	// return win.gg.text_width(text)
 	$if windows {
 		if graphics.gg.native_rendering {
 			return graphics.gg.text_width(text)
@@ -475,7 +466,6 @@ pub fn text_width(win Window, text string) int {
 			return win.gg.text_width(text)
 		}
 	}
-	// return win.gg.text_width(text)
 	ctx := win.gg
 	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
 	return int(adv / ctx.scale)

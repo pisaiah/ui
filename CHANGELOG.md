@@ -2,11 +2,15 @@
 *Not released yet*
 - TODO
 
-## 0.0.17
-*Feb ??, 2023*
+## 0.0.18
 - TODO
 - Completly redone TextArea
 - New Textarea now has text selection.
+
+## 0.0.17
+*Mar 30th, 2023*
+- Improved MenuBar / MenuItem
+- now supports sub-menuitems
 
 ## 0.0.16
 *Jan 26, 2023*
