@@ -56,7 +56,7 @@ pub fn image_from_byte_array_with_size(mut app Window, b []u8, width int, height
 		height: height
 		click_event_fn: blank_event_im
 	}
-	gg_im := app.gg.create_image_from_byte_array(b)
+	gg_im := app.gg.create_image_from_byte_array(b) or { panic(err) }
 	img.img = &gg_im
 	return img
 }
@@ -68,12 +68,12 @@ pub fn image_from_bytes(mut app Window, b []u8, width int, height int) &Image {
 pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	if this.need_init {
 		if os.exists(this.text) {
-			img := ctx.gg.create_image(this.text)
+			img := ctx.gg.create_image(this.text) or { panic(err) }
 			this.img = &img
 		} else {
 			abp := os.resource_abs_path(this.text)
 			if os.exists(abp) {
-				img := ctx.gg.create_image(abp)
+				img := ctx.gg.create_image(abp) or { panic(err) }
 				mut ggg := ctx.gg
 				this.img_id = ggg.cache_image(img)
 			}

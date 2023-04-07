@@ -20,6 +20,12 @@ pub fn default_font() string {
 	return def
 }
 
+struct Percent {
+	val int
+}
+
+type Size = Percent | int
+
 pub struct Bounds {
 	x      int
 	y      int
@@ -177,13 +183,15 @@ pub fn (ctx &GraphicsContext) get_icon_sheet_id() int {
 
 pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 	mut tfile := $embed_file('assets/tree_file.png')
-	mut tree_file := win.gg.create_image_from_memory(tfile.data(), tfile.len)
+	mut tree_file := win.gg.create_image_from_memory(tfile.data(), tfile.len) or { panic(err) }
 
 	mut green_file := $embed_file('assets/icons_green.png')
-	mut green_icons := win.gg.create_image_from_memory(green_file.data(), green_file.len)
+	mut green_icons := win.gg.create_image_from_memory(green_file.data(), green_file.len) or {
+		panic(err)
+	}
 
 	mut cb_file := $embed_file('assets/check.png')
-	mut cb_icons := win.gg.create_image_from_memory(cb_file.data(), cb_file.len)
+	mut cb_icons := win.gg.create_image_from_memory(cb_file.data(), cb_file.len) or { panic(err) }
 
 	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
 	ctx.icon_cache['icons_green'] = ctx.gg.cache_image(green_icons)
@@ -333,7 +341,7 @@ pub fn (mut win Window) set_theme(theme Theme) {
 
 // GG does not init_sokol_image for images loaded after gg_init_sokol_window
 pub fn (mut win Window) create_gg_image(buf &u8, bufsize int) gg.Image {
-	mut img := win.gg.create_image_from_memory(buf, bufsize)
+	mut img := win.gg.create_image_from_memory(buf, bufsize) or { panic(err) }
 	if img.simg.id == 0 && win.graphics_context.line_height > 0 {
 		img.init_sokol_image()
 	}

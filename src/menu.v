@@ -146,6 +146,10 @@ fn (mut this Menubar) draw(ctx &GraphicsContext) {
 }
 
 fn (mut this Menubar) check_mouse(win &Window, mx int, my int) bool {
+	if isnil(win.bar) {
+		return false
+	}
+
 	for mut item in this.children {
 		if mut item is MenuItem {
 			if !item.open {

@@ -67,11 +67,17 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	x := this.x
 	y := this.y
 
+	color := if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
+		gx.rgb(100, 100, 200)
+	} else {
+		gx.rgb(0, 100, 200)
+	}
+
 	mut my := 0
 	for spl in this.text.split('\n') {
 		ctx.draw_text(x, y + this.height - line_height + my, fix_tab(spl), ctx.font, gx.TextCfg{
 			size: size
-			color: gx.rgb(0, 100, 200)
+			color: color
 			bold: this.bold
 		})
 
@@ -84,7 +90,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 		my += line_height
 	}
 	yp := y + this.height - 2
-	ctx.gg.draw_line(x, yp, x + this.width, yp, gx.rgb(0, 100, 200))
+	ctx.gg.draw_line(x, yp, x + this.width, yp, color)
 
 	this.debug_draw(ctx)
 }

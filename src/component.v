@@ -111,6 +111,7 @@ pub fn (win &Window) draw_with_offset(mut com Component, offx int, offy int) {
 
 	com.x = com.x + offx
 	com.y = com.y + offy
+
 	invoke_draw_event(com, win.graphics_context)
 	com.draw(win.graphics_context)
 	com.invoke_after_draw_event(win.graphics_context)
@@ -124,6 +125,7 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
+
 	invoke_draw_event(com, ctx)
 	com.draw(ctx)
 	com.invoke_after_draw_event(ctx)
@@ -137,6 +139,7 @@ pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, o
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
+
 	invoke_draw_event(com, ctx)
 	com.draw(ctx)
 	com.invoke_after_draw_event(ctx)
@@ -159,6 +162,7 @@ pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
 		target: unsafe { com }
 		ctx: ctx
 	}
+
 	for f in com.events.event_map['draw'] {
 		f(ev)
 	}

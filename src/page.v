@@ -78,6 +78,8 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	}
 
 	y_off := this.y + this.top_off
+
+	// this.children.sort(a.z_index < b.z_index)
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
 		app.draw_with_offset(mut com, 0, y_off + 2)

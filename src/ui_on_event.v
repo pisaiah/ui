@@ -190,9 +190,9 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	app.click_x = -1
 	app.click_y = -1
 
-	mut bar := &Component(app.bar)
-	if bar.on_mouse_rele_component(app) {
-		// return
+	if !isnil(app.bar) {
+		mut bar := &Component(app.bar)
+		bar.on_mouse_rele_component(app)
 	}
 
 	res := app.bar.check_mouse(app, app.mouse_x, app.mouse_y)
