@@ -38,7 +38,7 @@ fn main() {
 	app.make_selectbox_section()
 	app.make_progress_section()
 
-	mut v_img := window.gg.create_image(os.resource_abs_path('v.png'))
+	mut v_img := window.gg.create_image(os.resource_abs_path('v.png')) or { panic(err) }
 	mut img := ui.image(window, v_img)
 	img.set_bounds(5, 5, 50, 50)
 	mut title_box := ui.title_box('Image', [img])
@@ -76,7 +76,7 @@ fn main() {
 
 fn (mut app App) icon_btn(data []u8) &ui.Button {
 	mut gg_ := app.win.gg
-	gg_im := gg_.create_image_from_byte_array(data)
+	gg_im := gg_.create_image_from_byte_array(data) or { panic(err) }
 	cim := gg_.cache_image(gg_im)
 	mut btn := ui.button_with_icon(cim)
 

@@ -42,4 +42,6 @@ pub struct DrawTextlineEvent {
 	DrawEvent
 pub:
 	line int
+	x    int
+	y    int
 }

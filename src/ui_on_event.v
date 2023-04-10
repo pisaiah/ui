@@ -63,12 +63,13 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	if mut com is ScrollView {
 		com.is_mouse_down = true
 
-		bar_x := com.x + com.width - com.xbar_width
+		bar_x := com.rx + com.width - com.xbar_width
 		if app.click_x >= bar_x {
 			return true
 		}
 
-		bar_y := com.y + com.height - com.ybar_height
+		bar_y := com.ry + com.height - com.ybar_height
+
 		if app.click_y >= bar_y {
 			return true
 		}

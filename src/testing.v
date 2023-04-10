@@ -1,8 +1,4 @@
 /**
- * GGTextbox - Version 1.0
- *
- * Copyright (C) 2023 Isaiah. All Rights Reserved.
- *
  * A Textbox component.
  * - Type in text
 */
@@ -15,21 +11,22 @@ import gx
 pub struct Textbox {
 	Component_A
 pub mut:
-	lines                []string
-	caret_x              int
-	caret_y              int
-	fs                   int
-	blink                bool
-	keys                 []string
-	sel                  Selection
-	reset_sel            bool
-	px                   int
-	last_letter          string
-	click_event_fn       fn (voidptr, voidptr)
-	before_txtc_event_fn fn (mut Window, Textbox) bool
-	text_change_event_fn fn (voidptr, voidptr)
-	line_draw_event_fn   fn (voidptr, int, int, int)
-	ctrl_down            bool
+	lines                  []string
+	caret_x                int
+	caret_y                int
+	fs                     int
+	blink                  bool
+	keys                   []string
+	sel                    Selection
+	reset_sel              bool
+	px                     int
+	last_letter            string
+	click_event_fn         fn (voidptr, voidptr)
+	before_txtc_event_fn   fn (mut Window, Textbox) bool
+	text_change_event_fn   fn (voidptr, voidptr)
+	line_draw_event_fn     fn (voidptr, int, int, int)
+	active_line_draw_event fn (voidptr, int, int)
+	ctrl_down              bool
 }
 
 // Text Selection
@@ -59,7 +56,7 @@ pub fn text_box(lines []string) &Textbox {
 fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 	wid := ctx.text_width('12345')
 	this.px = wid
-	ctx.gg.draw_rect_filled(this.x, this.y, this.px - 4, this.height, ctx.theme.button_bg_normal)
+	ctx.gg.draw_rect_filled(this.x, this.y, this.px - 4, this.height - 1, ctx.theme.button_bg_normal)
 	sy := this.y + 2
 
 	cfg := gx.TextCfg{
@@ -90,8 +87,21 @@ fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 	}
 }
 
+pub fn invoke_activeline_draw_event(com &Textbox, ctx &GraphicsContext, line int, x int, y int) {
+	ev := DrawTextlineEvent{
+		target: unsafe { com }
+		ctx: ctx
+		line: line
+		x: x
+		y: y
+	}
+	for f in com.events.event_map['current_line_draw'] {
+		f(ev)
+	}
+}
+
 fn (mut this Textbox) draw_bg(ctx &GraphicsContext) {
-	ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, ctx.theme.textbox_background)
+	ctx.gg.draw_rect_filled(this.x, this.ry, this.width, this.height, ctx.theme.textbox_background)
 	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
 }
 
@@ -105,7 +115,8 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		this.keys << iui.colors
 	}
 
-	this.draw_bg(ctx)
+	mid := this.x + (this.width / 2)
+	midy := this.y + (this.height / 2)
 
 	if ctx.win.second_pass == 1 {
 		this.blink = !this.blink
@@ -118,8 +129,6 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	ctx.gg.set_text_cfg(cfg)
 
 	th := ctx.gg.text_height('A1!|{}j;') + 4
-	this.draw_line_numbers(ctx, th)
-
 	ctx.gg.scissor_rect(this.x, this.y, this.width, this.height)
 
 	if this.caret_x < 0 {
@@ -130,10 +139,12 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	if this.parent != unsafe { nil } {
 		ctx.gg.scissor_rect(this.parent.x, this.parent.y, this.parent.width, this.parent.height)
 		nh := (this.lines.len + 1) * th
-		if nh != this.height {
+		if nh != this.height && nh > this.parent.height {
 			this.height = nh
 		}
 	}
+	this.draw_bg(ctx)
+	this.draw_line_numbers(ctx, th)
 
 	mut y := this.y
 	x := this.x + this.px
@@ -151,6 +162,12 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 				this.caret_y += 1
 				this.caret_x = 0
 			}
+
+			if this.active_line_draw_event != unsafe { nil } {
+				this.active_line_draw_event(this, x, y)
+			}
+
+			invoke_activeline_draw_event(this, ctx, i, x, y)
 
 			wb := ctx.text_width(line[0..this.caret_x].replace('\t', tabr()))
 
@@ -175,6 +192,14 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		}
 	}
 
+	for i, line in this.lines {
+		if i == this.caret_y {
+			ly := this.y + (th * i)
+			invoke_activeline_draw_event(this, ctx, i, x, ly)
+		}
+	}
+
+	dump(this.is_mouse_down)
 	if this.is_mouse_down && !this.is_mouse_rele {
 		if this.reset_sel {
 			this.sel = Selection{
@@ -183,6 +208,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 			this.reset_sel = false
 		}
 		this.do_mouse_down(ctx, th)
+		dump('MOUSE DOWN ')
 	}
 
 	if this.reset_sel {
@@ -206,11 +232,12 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		this.click_event_fn(ctx.win, this)
 		this.is_mouse_rele = false
 	} else {
-		/*
-		if this.win.click_x > -1 && !(abs(mid - this.win.mouse_x) < (this.width / 2)
-			&& abs(midy - this.win.mouse_y) < (this.height / 2)) {
+		h := if this.parent != unsafe { nil } { this.parent.height } else { this.height }
+
+		if ctx.win.click_x > -1 && !(abs(mid - ctx.win.mouse_x) < (this.width / 2)
+			&& abs(midy - ctx.win.mouse_y) < (h / 2)) {
 			this.is_selected = false
-		}*/
+		}
 	}
 
 	ws := ctx.gg.window_size()
@@ -358,7 +385,7 @@ fn (mut this Textbox) draw_selection(ctx &GraphicsContext, th int) {
 		minx := if this.sel.x0 > this.sel.x1 { this.sel.x1 } else { this.sel.x0 }
 		maxx := if this.sel.x0 > this.sel.x1 { this.sel.x0 } else { this.sel.x1 }
 
-		if maxx > this.lines[y].len {
+		if y < 0 || maxx > this.lines[y].len {
 			return
 		}
 
@@ -369,11 +396,27 @@ fn (mut this Textbox) draw_selection(ctx &GraphicsContext, th int) {
 	}
 }
 
+fn (mut this Textbox) clear_sel() {
+	this.sel = Selection{
+		x0: -1
+	}
+}
+
 fn (mut this Textbox) draw_high(ctx &GraphicsContext, th int, color gx.Color, ya int, yb int, x0 int, x1 int) {
+	if x0 < 0 {
+		return
+	}
+
 	y0 := if ya < 0 { 0 } else { ya }
 	ll := this.lines.len
 	y1 := if yb > ll { ll } else { yb }
 	x := this.x + this.px
+
+	line_y0 := this.lines[y0]
+	if x0 > line_y0.len {
+		// this.clear_sel()
+		return
+	}
 
 	wba0 := ctx.text_width(this.lines[y0][0..x0].replace('\t', tabr()))
 	wbb0 := ctx.text_width(this.lines[y0][x0..].replace('\t', tabr()))
@@ -384,11 +427,16 @@ fn (mut this Textbox) draw_high(ctx &GraphicsContext, th int, color gx.Color, ya
 		ctx.gg.draw_rect_filled(x, this.y + (th * y), wba, th, color)
 	}
 
-	if y1 >= this.lines.len {
+	if y1 < 0 || y1 >= this.lines.len {
 		return
 	}
 
-	wba1 := ctx.text_width(this.lines[y1][0..x1].replace('\t', tabr()))
+	line_y1 := this.lines[y1]
+	if x1 > line_y1.len {
+		return
+	}
+
+	wba1 := ctx.text_width(line_y1[0..x1].replace('\t', tabr()))
 	ctx.gg.draw_rect_filled(x, this.y + (th * y1), wba1, th, color)
 }
 
@@ -406,6 +454,12 @@ fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textb
 	if !com.is_selected {
 		return
 	}
+
+	// Clear selection
+	com.sel = Selection{
+		x0: -1
+	}
+
 	if key == .right {
 		com.caret_x += 1
 	} else if key == .left {
@@ -432,6 +486,9 @@ fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textb
 			line := com.lines[com.caret_y]
 
 			com.last_letter = 'backspace'
+			com.sel = Selection{
+				x0: -1
+			}
 			mut bevnt := com.before_txtc_event_fn(mut win, *com)
 			if bevnt {
 				// 'true' indicates cancel event
@@ -483,7 +540,6 @@ fn (mut win Window) textbox_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com
 	}
 
 	if key == .tab {
-		// resu = '\t'
 		letter = '\t'
 		com.last_letter = '\t'
 	}
@@ -526,11 +582,15 @@ fn (mut win Window) textbox_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com
 
 	if enter {
 		current_line := com.lines[com.caret_y]
-		if com.caret_x == current_line.len && current_line.len > 1 {
-			com.lines.insert(com.caret_y, '')
+		if com.caret_x == current_line.len && current_line.len > 0 {
 			com.caret_y += 1
+			com.caret_x = 0
+			com.lines.insert(com.caret_y, '')
 			if current_line.starts_with('\t') {
-				com.lines[com.caret_y] = '\t'
+				tabs := current_line.count('\t')
+
+				com.lines[com.caret_y] = '\t'.repeat(tabs)
+				com.caret_x = tabs
 			}
 		} else {
 			keep_line := current_line.substr(0, com.caret_x)
