@@ -3,34 +3,27 @@ module iui
 import gg
 import gx
 
-//
 // TextArea Component.
-//
 [minify]
 pub struct TextArea {
 	Component_A
 pub mut:
-	win                    &Window
-	lines                  []string
-	caret_left             int
-	caret_top              int
-	padding_x              int
-	padding_y              int
-	ml_comment             bool
-	last_letter            string
-	click_event_fn         fn (voidptr, voidptr)
-	before_txtc_event_fn   fn (mut Window, TextArea) bool
-	text_change_event_fn   fn (voidptr, voidptr)
-	line_draw_event_fn     fn (voidptr, int, int, int)
-	down_pos               CaretPos
-	drawn_select           bool
-	code_syntax_on         bool
-	ctrl_down              bool
-	hide_border            bool
-	keys                   []string
-	needs_pack             bool
-	active_line_draw_event fn (voidptr, int, int)
-	blinked                bool
+	win                  &Window
+	lines                []string
+	caret_left           int
+	caret_top            int
+	padding_x            int
+	padding_y            int
+	ml_comment           bool
+	last_letter          string
+	click_event_fn       fn (voidptr, voidptr)
+	before_txtc_event_fn fn (mut Window, TextArea) bool
+	text_change_event_fn fn (voidptr, voidptr)
+	down_pos             CaretPos
+	code_syntax_on       bool
+	ctrl_down            bool
+	keys                 []string
+	needs_pack           bool
 }
 
 [minify]
@@ -58,7 +51,6 @@ pub fn textarea(win &Window, lines []string) &TextArea {
 			return false
 		}
 		text_change_event_fn: fn (a voidptr, b voidptr) {}
-		line_draw_event_fn: fn (a voidptr, b int, c int, d int) {}
 		code_syntax_on: true
 	}
 }
@@ -102,12 +94,7 @@ fn (mut this TextArea) draw_background() {
 			this.is_selected = false
 		}
 	}
-	if this.hide_border {
-		border = bg
-		this.win.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
-	} else {
-		this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
-	}
+	this.win.draw_filled_rect(this.x, this.y, this.width, this.height, 2, bg, border)
 }
 
 fn (mut this TextArea) clamp_values(lines_drawn int) {
@@ -144,9 +131,6 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 		this.keys << iui.colors
 	}
 
-	// if ctx.win.second_pass == 1 {
-	//	this.blinked = !this.blinked
-	//}
 	lh := get_line_height(ctx)
 	line_height := get_line_height(ctx)
 
@@ -215,10 +199,8 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 			}
 		}
 
-		line_number := (i + 1).str()
-
 		if this.code_syntax_on {
-			ctx.draw_text(this.x + (padding_x / 4), this.y + y_off, line_number, ctx.font,
+			ctx.draw_text(this.x + (padding_x / 4), this.y + y_off, '${(i + 1)}', ctx.font,
 				cfg_num)
 		}
 
@@ -227,7 +209,6 @@ fn (mut this TextArea) draw(ctx &GraphicsContext) {
 
 		invoke_line_draw_event(this, ctx, i)
 	}
-	this.draw_scrollbar(lines_drawn, this.lines.len)
 
 	ctx.gg.draw_rect_filled(this.x + this.down_pos.x, sel_y, (this.down_pos.end_x - this.down_pos.x),
 		lh, gx.rgba(0, 100, 200, 50))
@@ -245,12 +226,12 @@ pub fn invoke_line_draw_event(com &Component, ctx &GraphicsContext, line int) {
 }
 
 fn (this &TextArea) draw_line_number_background(ctx &GraphicsContext) int {
-	if this.code_syntax_on {
-		padding_x := text_width(this.win, '1000')
-		ctx.gg.draw_rect_filled(this.x + 1, this.y + 1, padding_x, this.height - 2, ctx.theme.button_bg_normal)
-		return padding_x
+	if !this.code_syntax_on {
+		return 4
 	}
-	return 4
+	padding_x := text_width(this.win, '1000')
+	ctx.gg.draw_rect_filled(this.x + 1, this.y + 1, padding_x, this.height - 2, ctx.theme.button_bg_normal)
+	return padding_x
 }
 
 fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, llen int, str_fix_tab string) {
@@ -258,22 +239,18 @@ fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, ll
 	in_max := this.caret_left <= current_len + llen
 	caret_zero := this.caret_left == 0 && current_len == 0
 
-	if caret_zero || (in_min && in_max) {
-		caret_pos := this.caret_left - current_len
-		pretext := str_fix_tab[0..caret_pos]
-		ctx := win.graphics_context
-
-		wid := text_width(win, pretext) - 1
-		height := get_line_height(ctx) + 1
-
-		pipe_color := if this.blinked && this.is_selected {
-			ctx.theme.button_bg_hover
-		} else {
-			ctx.theme.text_color
-		}
-
-		ctx.gg.draw_rect_filled(x + wid, y - 1, 1, height, pipe_color)
+	if !(caret_zero || (in_min && in_max)) {
+		return
 	}
+	caret_pos := this.caret_left - current_len
+	pretext := str_fix_tab[0..caret_pos]
+	ctx := win.graphics_context
+
+	wid := text_width(win, pretext) - 1
+	height := get_line_height(ctx) + 1
+
+	pipe_color := ctx.theme.text_color
+	ctx.gg.draw_rect_filled(x + wid, y - 1, 1, height, pipe_color)
 }
 
 fn (mut this TextArea) move_caret(win &Window, x int, y int, current_len int, llen int, str_fix_tab string, mx int, lw int) {
@@ -291,26 +268,10 @@ fn (mut this TextArea) move_caret(win &Window, x int, y int, current_len int, ll
 			if abs(mx - nx) < cwidth {
 				if this.down_pos.left == -1 {
 					this.caret_left = current_len + i
-
-					// this.down_pos.left = this.caret_left
-					// this.down_pos.top = this.caret_top
-					// this.down_pos.x = nx
-					return
-				} else {
-					// line := this.lines[this.caret_top]
-					// this.down_pos.end_left = current_len + i
-					// this.down_pos.end_x = nx
-					// println(line.substr_ni(this.caret_left, current_len + i))
 				}
 			}
 		}
 	}
-}
-
-pub struct SyntaxRules {
-	in_comment    bool
-	in_str        bool
-	current_color gx.Color
 }
 
 pub const keys = ['fn', 'mut', '// ', '\t', "'", '(', ')', ' as ', '/*', '*/']
@@ -326,22 +287,6 @@ pub const red_keys = '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
 
 pub const colors = 'blue,red,green,yellow,orange,purple,black,gray,pink,white'.split(',')
 
-fn (this &TextArea) draw_tab_dots(ctx &GraphicsContext, current_len int, x int, y int) {
-	if current_len <= 0 {
-		// Ignore first tab
-		return
-	}
-
-	height := get_line_height(ctx)
-	xpos := x + 1
-
-	ctx.gg.draw_line_with_config(xpos, y, xpos, y + height, gg.PenConfig{
-		color: ctx.theme.text_color
-		line_type: .dotted
-		thickness: 1
-	})
-}
-
 fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []string, cfg gx.TextCfg, is_cur_line bool, line int) {
 	mut x_off := 0
 
@@ -349,12 +294,6 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 	mut comment := false
 	mut is_str := false
 	mut current_len := 0
-
-	if is_cur_line {
-		if this.active_line_draw_event != unsafe { nil } {
-			this.active_line_draw_event(this, x, y)
-		}
-	}
 
 	for str in text {
 		tab_size := ' '.repeat(8)
@@ -366,12 +305,6 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 		}
 
 		color = cfg.color
-
-		if str == '\t' {
-			ctx := win.graphics_context
-			xpos := x + x_off + 1
-			this.draw_tab_dots(ctx, current_len, xpos, y)
-		}
 
 		if str in iui.colors {
 			color = gx.color_from_string(str)
@@ -440,19 +373,153 @@ fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, st
 		this.caret_top = my_lh + this.scroll_i
 	}
 	if line == this.caret_top {
-		/*
-		widw := this.win.graphics_context.text_width(this.lines[this.caret_top])
-		
-		if mx > widw {
-			this.caret_left = this.lines[this.caret_top].len
-			return
-		}*/
-
 		this.move_caret(this.win, x, y, current_len, llen, str_fix_tab, mx, wid)
 	}
 }
 
-// Draw Scrollbar
-[deprecated: 'Use ScrollView']
-fn (mut com TextArea) draw_scrollbar(cl int, spl_len int) {
+fn is_enter(key gg.KeyCode) bool {
+	return key == .enter || key == .kp_enter
+}
+
+fn (mut win Window) textarea_key_down(key gg.KeyCode, ev &gg.Event, mut com TextArea) {
+	if !com.is_selected {
+		return
+	}
+	if key == .right {
+		com.caret_left += 1
+	} else if key == .left {
+		com.caret_left -= 1
+	} else if key == .up {
+		if com.caret_top > 0 {
+			com.caret_top -= 1
+		}
+	} else if key == .down {
+		if com.caret_top < com.lines.len - 1 {
+			com.caret_top += 1
+		}
+	} else {
+		mod := ev.modifiers
+		if mod == 8 {
+			// Windows Key
+			return
+		}
+		if mod == 2 {
+			com.ctrl_down = true
+		}
+
+		if key == .backspace {
+			line := com.lines[com.caret_top]
+
+			com.last_letter = 'backspace'
+			mut bevnt := com.before_txtc_event_fn(mut win, *com)
+			if bevnt {
+				// 'true' indicates cancel event
+				return
+			}
+
+			if com.caret_left == 0 && com.caret_top == 0 {
+				return
+			}
+
+			if com.caret_left - 1 >= 0 {
+				new_line := line.substr(0, com.caret_left - 1) +
+					line.substr(com.caret_left, line.len)
+				com.lines[com.caret_top] = new_line
+				com.caret_left -= 1
+			} else {
+				// EOL
+				line_text := line
+				com.delete_current_line()
+				com.lines[com.caret_top] = com.lines[com.caret_top] + line_text
+			}
+		} else {
+			win.textarea_key_down_typed(key, ev, mut com)
+		}
+	}
+}
+
+fn (mut win Window) textarea_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com TextArea) {
+	mod := ev.modifiers
+
+	mut enter := is_enter(key)
+
+	if key == .left_shift || key == .right_shift {
+		win.shift_pressed = true
+		return
+	}
+
+	mut letter := ''
+
+	if ev.typ == .char {
+		resu := utf32_to_str(ev.char_code)
+		letter = resu
+		com.last_letter = letter
+	}
+
+	$if emscripten ? {
+		if ev.typ == .char && ev.char_code == 13 {
+			enter = true
+		}
+	}
+
+	if enter {
+		com.last_letter = 'enter'
+	}
+
+	bevnt := com.before_txtc_event_fn(mut win, *com)
+	if bevnt {
+		// 'true' indicates cancel event
+		return
+	}
+
+	if !enter && mod != 2 {
+		if com.lines.len == 0 {
+			com.lines << ' '
+			com.caret_top = 0
+		}
+
+		line := com.lines[com.caret_top]
+
+		if letter.len > 1 {
+			// For extended unicode
+			mut myrunes := line.runes()
+			myrunes.insert(com.caret_left, letter.runes()[0])
+			com.lines[com.caret_top] = myrunes.string()
+			unsafe {
+				myrunes.free()
+			}
+		} else {
+			new_line := line.substr_ni(0, com.caret_left) + letter +
+				line.substr_ni(com.caret_left, line.len)
+			com.lines[com.caret_top] = new_line
+		}
+	}
+
+	com.last_letter = letter
+	com.text_change_event_fn(win, com)
+
+	if enter {
+		current_line := com.lines[com.caret_top]
+		if com.caret_left == current_line.len {
+			com.caret_top += 1
+			com.lines.insert(com.caret_top, '')
+			if current_line.starts_with('\t') {
+				com.lines[com.caret_top] = '\t'
+			}
+		} else {
+			keep_line := current_line.substr(0, com.caret_left)
+			new_line := current_line.substr_ni(com.caret_left, current_line.len)
+
+			com.lines[com.caret_top] = keep_line
+
+			com.caret_top += 1
+			com.lines.insert(com.caret_top, '')
+			com.lines[com.caret_top] = new_line
+			com.caret_left = 0
+		}
+	} else if mod != 2 {
+		if letter.len > 0 {
+			com.caret_left += 1
+		}
+	}
 }

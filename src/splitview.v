@@ -9,8 +9,8 @@ pub struct SplitView {
 pub mut:
 	is_scroll   bool
 	min_percent int = 30
-	h1          f32 = 50
-	h2          f32 = 50
+	h1          int = 50
+	h2          int = 50
 }
 
 [params]
@@ -54,8 +54,8 @@ pub fn (mut this SplitView) draw(ctx &GraphicsContext) {
 	h2 := (this.h2 * this.height) / 100
 
 	if h1 > 0 && h2 > 0 {
-		this.children[0].height = int(h1) - 8
-		this.children[1].height = int(h2) - 8
+		this.children[0].height = h1 - 8
+		this.children[1].height = h2 - 8
 	}
 
 	mut win := ctx.win
@@ -82,12 +82,6 @@ pub fn (mut this SplitView) draw(ctx &GraphicsContext) {
 fn (mut this SplitView) draw_splitbar(ctx &GraphicsContext, x_pos int, y_pos int) {
 	color := ctx.theme.scroll_bar_color
 	ctx.gg.draw_rect_filled(this.x, y_pos, this.width, 15, ctx.theme.button_bg_normal)
-
-	dl := gg.PenConfig{
-		color: color
-		line_type: .dotted
-		thickness: 2
-	}
 
 	in_start := ctx.win.mouse_x > x_pos && ctx.win.mouse_y > y_pos
 	in_enddd := ctx.win.mouse_x < x_pos + this.width && ctx.win.mouse_y < y_pos + 15
@@ -116,6 +110,12 @@ fn (mut this SplitView) draw_splitbar(ctx &GraphicsContext, x_pos int, y_pos int
 	if this.h2 <= min {
 		this.h2 = min + 1
 		this.h1 = 100 - this.h2
+	}
+
+	dl := gg.PenConfig{
+		color: color
+		line_type: .dotted
+		thickness: 1
 	}
 
 	ctx.gg.draw_line_with_config(x_pos, y_pos + 4, x_pos + this.width, y_pos + 4, dl)

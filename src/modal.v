@@ -95,10 +95,10 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 }
 
 pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
-	mut close := button(text: 'OK')
-
-	y := this.in_height - 35
-	close.set_bounds(200, y, 100, 25)
+	mut close := button(
+		text: 'OK'
+		bounds: Bounds{200, this.in_height - 35, 100, 25}
+	)
 
 	if ce {
 		close.set_click(default_modal_close_fn)

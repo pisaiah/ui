@@ -14,12 +14,11 @@ fn main() {
 		theme: ui.get_system_theme()
 		width: 520
 		height: 550
-		font_path: os.resource_abs_path('VeraMono.ttf')
 		ui_mode: true
 	)
 
 	// Setup Menubar and items
-	window.bar = ui.menubar(window, window.theme)
+	window.bar = ui.menu_bar()
 
 	mut theme_menu := ui.menuitem('Theme')
 
@@ -88,24 +87,38 @@ fn main() {
 	window.bar.add_child(font_menu)
 	window.bar.add_child(size_menu)
 
-	mut res_box := ui.textarea(window, [''])
+	mut res_box := ui.text_box(['hello'])
 	res_box.set_id(mut window, 'notepad')
-	res_box.set_bounds(1, 28, 0, 0)
-	res_box.padding_x = 16
-	res_box.padding_y = 16
-	res_box.draw_event_fn = vbtn_draw
-	window.add_child(res_box)
+	res_box.set_bounds(1, 0, 100, 100)
+	// res_box.draw_event_fn = vbtn_draw
+
+	mut sv := ui.scroll_view(
+		view: res_box
+		bounds: ui.Bounds{0, 28, 400, 500}
+		padding: 0
+	)
+
+	res_box.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		size := gg.window_size()
+
+		e.target.width = size.width - 3
+
+		hei := size.height - 31
+		if e.target.height < hei {
+			e.target.height = hei
+		}
+	})
+
+	sv.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		size := gg.window_size()
+
+		e.target.width = size.width - 2
+		e.target.height = size.height - 31
+	})
+
+	window.add_child(sv)
 
 	window.gg.run()
-}
-
-fn vbtn_draw(mut win ui.Window, com &ui.Component) {
-	size := gg.window_size()
-
-	mut this := *com
-
-	this.width = size.width - 2
-	this.height = size.height - 31
 }
 
 fn font_size_item(size string) &ui.MenuItem {

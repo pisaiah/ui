@@ -1,8 +1,4 @@
-/**
- * A Textbox component.
- * - Type in text
-*/
-
+// A Textbox component.
 module iui
 
 import gg
@@ -11,22 +7,20 @@ import gx
 pub struct Textbox {
 	Component_A
 pub mut:
-	lines                  []string
-	caret_x                int
-	caret_y                int
-	fs                     int
-	blink                  bool
-	keys                   []string
-	sel                    Selection
-	reset_sel              bool
-	px                     int
-	last_letter            string
-	click_event_fn         fn (voidptr, voidptr)
-	before_txtc_event_fn   fn (mut Window, Textbox) bool
-	text_change_event_fn   fn (voidptr, voidptr)
-	line_draw_event_fn     fn (voidptr, int, int, int)
-	active_line_draw_event fn (voidptr, int, int)
-	ctrl_down              bool
+	lines                []string
+	caret_x              int
+	caret_y              int
+	fs                   int
+	blink                bool
+	keys                 []string
+	sel                  Selection
+	reset_sel            bool
+	px                   int
+	last_letter          string
+	click_event_fn       fn (voidptr, voidptr)
+	before_txtc_event_fn fn (mut Window, Textbox) bool
+	text_change_event_fn fn (voidptr, voidptr)
+	ctrl_down            bool
 }
 
 // Text Selection
@@ -44,12 +38,10 @@ pub fn text_box(lines []string) &Textbox {
 		sel: Selection{
 			x0: -1
 		}
-		click_event_fn: fn (a voidptr, b voidptr) {}
 		before_txtc_event_fn: fn (mut a Window, b Textbox) bool {
 			return false
 		}
 		text_change_event_fn: fn (a voidptr, b voidptr) {}
-		line_draw_event_fn: fn (a voidptr, b int, c int, d int) {}
 	}
 }
 
@@ -163,22 +155,20 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 				this.caret_x = 0
 			}
 
-			if this.active_line_draw_event != unsafe { nil } {
-				this.active_line_draw_event(this, x, y)
-			}
-
 			invoke_activeline_draw_event(this, ctx, i, x, y)
 
 			wb := ctx.text_width(line[0..this.caret_x].replace('\t', tabr()))
 
 			tc := ctx.theme.text_color
-			color := if this.blink {
-				gx.rgba(tc.r, tc.g, tc.b, 70)
-			} else {
-				tc
-			}
+			if this.is_selected {
+				color := if this.blink {
+					gx.rgba(tc.r, tc.g, tc.b, 70)
+				} else {
+					tc
+				}
 
-			ctx.gg.draw_rect_empty(x + wb, y, 1, th, color)
+				ctx.gg.draw_rect_empty(x + wb, y, 1, th, color)
+			}
 		}
 		y += th
 		if y > this.y + this.height {
@@ -192,14 +182,13 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		}
 	}
 
-	for i, line in this.lines {
+	for i, _ in this.lines {
 		if i == this.caret_y {
 			ly := this.y + (th * i)
 			invoke_activeline_draw_event(this, ctx, i, x, ly)
 		}
 	}
 
-	dump(this.is_mouse_down)
 	if this.is_mouse_down && !this.is_mouse_rele {
 		if this.reset_sel {
 			this.sel = Selection{
@@ -208,28 +197,17 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 			this.reset_sel = false
 		}
 		this.do_mouse_down(ctx, th)
-		dump('MOUSE DOWN ')
 	}
 
 	if this.reset_sel {
 		this.draw_selection(ctx, th)
 	}
 
-	if this.is_mouse_rele {
-		// this.reset_sel = true
-		// this.is_mouse_rele = false
-	}
-
 	// Detect Click
 	if this.is_mouse_rele {
-		if !this.is_selected {
-			// bg = ctx.theme.button_bg_click
-			// border = ctx.theme.button_border_click
-		}
 		this.reset_sel = true
 		this.is_selected = true
 
-		this.click_event_fn(ctx.win, this)
 		this.is_mouse_rele = false
 	} else {
 		h := if this.parent != unsafe { nil } { this.parent.height } else { this.height }
@@ -414,7 +392,6 @@ fn (mut this Textbox) draw_high(ctx &GraphicsContext, th int, color gx.Color, ya
 
 	line_y0 := this.lines[y0]
 	if x0 > line_y0.len {
-		// this.clear_sel()
 		return
 	}
 
@@ -460,58 +437,68 @@ fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textb
 		x0: -1
 	}
 
-	if key == .right {
-		com.caret_x += 1
-	} else if key == .left {
+	match key {
+		.right {
+			com.caret_x += 1
+		}
+		.left {
+			com.caret_x -= 1
+		}
+		.up {
+			if com.caret_y > 0 {
+				com.caret_y -= 1
+			}
+		}
+		.down {
+			if com.caret_y < com.lines.len - 1 {
+				com.caret_y += 1
+			}
+		}
+		else {
+			win.textbox_key_down_2(key, ev, mut com)
+		}
+	}
+}
+
+fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Textbox) {
+	mod := ev.modifiers
+	if mod == 8 {
+		// Windows Key
+		return
+	}
+	if mod == 2 {
+		com.ctrl_down = true
+	}
+
+	if key != .backspace {
+		win.textbox_key_down_typed(key, ev, mut com)
+		return
+	}
+	line := com.lines[com.caret_y]
+
+	com.last_letter = 'backspace'
+	com.sel = Selection{
+		x0: -1
+	}
+	mut bevnt := com.before_txtc_event_fn(mut win, *com)
+	if bevnt {
+		// 'true' indicates cancel event
+		return
+	}
+
+	if com.caret_x == 0 && com.caret_y == 0 {
+		return
+	}
+
+	if com.caret_x - 1 >= 0 {
+		new_line := line.substr(0, com.caret_x - 1) + line.substr(com.caret_x, line.len)
+		com.lines[com.caret_y] = new_line
 		com.caret_x -= 1
-	} else if key == .up {
-		if com.caret_y > 0 {
-			com.caret_y -= 1
-		}
-	} else if key == .down {
-		if com.caret_y < com.lines.len - 1 {
-			com.caret_y += 1
-		}
 	} else {
-		mod := ev.modifiers
-		if mod == 8 {
-			// Windows Key
-			return
-		}
-		if mod == 2 {
-			com.ctrl_down = true
-		}
-
-		if key == .backspace {
-			line := com.lines[com.caret_y]
-
-			com.last_letter = 'backspace'
-			com.sel = Selection{
-				x0: -1
-			}
-			mut bevnt := com.before_txtc_event_fn(mut win, *com)
-			if bevnt {
-				// 'true' indicates cancel event
-				return
-			}
-
-			if com.caret_x == 0 && com.caret_y == 0 {
-				return
-			}
-
-			if com.caret_x - 1 >= 0 {
-				new_line := line.substr(0, com.caret_x - 1) + line.substr(com.caret_x, line.len)
-				com.lines[com.caret_y] = new_line
-				com.caret_x -= 1
-			} else {
-				// EOL
-				line_text := line
-				com.delete_current_line()
-				com.lines[com.caret_y] = com.lines[com.caret_y] + line_text
-			}
-		} else {
-			win.textbox_key_down_typed(key, ev, mut com)
-		}
+		// EOL
+		line_text := line
+		com.delete_current_line()
+		com.lines[com.caret_y] = com.lines[com.caret_y] + line_text
 	}
 }
 
@@ -580,32 +567,31 @@ fn (mut win Window) textbox_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com
 	com.last_letter = letter
 	com.text_change_event_fn(win, com)
 
-	if enter {
-		current_line := com.lines[com.caret_y]
-		if com.caret_x == current_line.len && current_line.len > 0 {
-			com.caret_y += 1
-			com.caret_x = 0
-			com.lines.insert(com.caret_y, '')
-			if current_line.starts_with('\t') {
-				tabs := current_line.count('\t')
-
-				com.lines[com.caret_y] = '\t'.repeat(tabs)
-				com.caret_x = tabs
-			}
-		} else {
-			keep_line := current_line.substr(0, com.caret_x)
-			new_line := current_line.substr_ni(com.caret_x, current_line.len)
-
-			com.lines[com.caret_y] = keep_line
-
-			com.caret_y += 1
-			com.lines.insert(com.caret_y, '')
-			com.lines[com.caret_y] = new_line
-			com.caret_x = 0
-		}
-	} else if mod != 2 {
-		if letter.len > 0 {
+	if !enter {
+		if mod != 2 && letter.len > 0 {
 			com.caret_x += 1
 		}
+		return
 	}
+
+	current_line := com.lines[com.caret_y]
+	if com.caret_x == current_line.len && current_line.len > 0 {
+		com.caret_y += 1
+		com.caret_x = 0
+		com.lines.insert(com.caret_y, '')
+		if current_line.starts_with('\t') {
+			tabs := current_line.count('\t')
+			com.lines[com.caret_y] = '\t'.repeat(tabs)
+			com.caret_x = tabs
+		}
+		return
+	}
+	keep_line := current_line.substr(0, com.caret_x)
+	new_line := current_line.substr_ni(com.caret_x, current_line.len)
+	com.lines[com.caret_y] = keep_line
+
+	com.caret_y += 1
+	com.lines.insert(com.caret_y, '')
+	com.lines[com.caret_y] = new_line
+	com.caret_x = 0
 }

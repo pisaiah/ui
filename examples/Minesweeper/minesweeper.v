@@ -120,7 +120,7 @@ fn main() {
 
 fn icon(win &ui.Window, data []u8) int {
 	mut gg := win.gg
-	gg_im := gg.create_image_from_byte_array(data)
+	gg_im := gg.create_image_from_byte_array(data) or { return -1 }
 	cim := gg.cache_image(gg_im)
 
 	return cim
@@ -128,7 +128,7 @@ fn icon(win &ui.Window, data []u8) int {
 
 fn icon_btn(win &ui.Window, data []u8) &ui.Button {
 	mut gg := win.gg
-	gg_im := gg.create_image_from_byte_array(data)
+	gg_im := gg.create_image_from_byte_array(data) or { return -1 }
 	cim := gg.cache_image(gg_im)
 	mut btn := ui.button_with_icon(cim)
 

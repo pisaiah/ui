@@ -106,7 +106,7 @@ fn create_tab(mut win ui.Window, mut tb ui.Tabbox) {
 	res_path := os.resource_abs_path('test.html')
 	default_page_url := 'file://' + res_path
 
-	mut urlbar := ui.textfield(win, default_page_url)
+	mut urlbar := ui.text_field(text: default_page_url)
 	urlbar.z_index = 5
 	urlbar.set_id(mut win, 'browser_url_bar')
 	urlbar.set_bounds(140, 0, 600, 25)

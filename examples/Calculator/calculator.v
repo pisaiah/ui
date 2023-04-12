@@ -46,7 +46,7 @@ fn main() {
 
 	mut vbox := ui.vbox(window)
 
-	mut res_box := ui.textfield(window, '')
+	mut res_box := ui.text_field(text: '')
 	res_box.set_bounds(0, 0, 64 * 4, 35)
 	vbox.add_child(res_box)
 

@@ -50,21 +50,8 @@ pub fn new_slider(cfg SliderConfig) &Slider {
 	return slid
 }
 
-// Return new Slider
-// TODO: Remove unused window argument
-[deprecated: 'use new_slider']
-pub fn slider(win &Window, min f32, max f32, dir Direction) &Slider {
-	mut slid := &Slider{
-		text: ''
-		min: min
-		max: max
-		dir: dir
-		scroll: true
-		thumb_wid: 30
-		thumb_color: gg.Color{0, 0, 0, 0}
-	}
-
-	return slid
+pub fn slider(cfg SliderConfig) &Slider {
+	return new_slider(cfg)
 }
 
 // Draw this component
@@ -109,10 +96,11 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 		wid := (this.width * per) - per * this.thumb_wid
 
 		// Horizontal
-		ctx.win.draw_bordered_rect(this.x, this.y, this.width, this.height, 8, ctx.theme.scroll_track_color,
+		hei := this.height
+		ctx.win.draw_bordered_rect(this.x, this.y, this.width, hei, 8, ctx.theme.scroll_track_color,
 			ctx.theme.button_border_normal)
-		ctx.gg.draw_rounded_rect_filled(this.x + wid, this.y, this.thumb_wid, this.height,
-			16, thumb_color)
+		ctx.gg.draw_rounded_rect_filled(this.x + wid, this.y, this.thumb_wid, hei, 16,
+			thumb_color)
 	} else {
 		wid := (this.height * per) - per * this.thumb_wid
 

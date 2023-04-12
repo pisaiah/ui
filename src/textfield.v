@@ -60,11 +60,6 @@ pub fn text_field(cfg FieldCfg) &TextField {
 	}
 }
 
-[deprecated]
-pub fn textfield(win &Window, text string) &TextField {
-	return text_field(text: text)
-}
-
 fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	click := this.is_mouse_rele
 	bg := if click { ctx.theme.button_bg_click } else { ctx.theme.textbox_background }
@@ -73,26 +68,24 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)
 
+	ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
+	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, border)
+
 	// Detect Click
 	if this.is_mouse_rele {
 		this.is_selected = true
 		this.click_event_fn(ctx.win, this)
 		this.is_mouse_rele = false
-	} else {
-		if ctx.win.click_x > -1 && !(abs(mid - ctx.win.mouse_x) < this.width / 2
-			&& abs(midy - ctx.win.mouse_y) < this.height / 2) {
-			this.is_selected = false
-		}
+		return
 	}
-	ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, border)
+
+	if ctx.win.click_x > -1 && !(abs(mid - ctx.win.mouse_x) < this.width / 2
+		&& abs(midy - ctx.win.mouse_y) < this.height / 2) {
+		this.is_selected = false
+	}
 }
 
 fn (mut this TextField) draw(ctx &GraphicsContext) {
-	// if ctx.win.second_pass == 1 {
-	//	this.blinked = !this.blinked
-	//}
-
 	this.draw_background(ctx)
 
 	xp := this.x + 4 + this.padding_x
