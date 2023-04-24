@@ -1,5 +1,3 @@
-// better_tree.v:
-//	Test of improved Treeview component
 module iui
 
 import gg
@@ -7,22 +5,18 @@ import gx
 import math
 import os
 
-//
-// Tree:
-//     Implementation Note: https://codejava.net/java-se/swing/jtree-basic-tutorial-and-examples
-//
+// Tree (https://codejava.net/java-se/swing/jtree-basic-tutorial-and-examples
 pub struct Tree2 {
 	Component_A
 pub mut:
 	click_event_fn fn (voidptr, voidptr, voidptr)
-	// nodes         []&TreeNode
-	open          int
-	min_y         int
-	in_scroll     bool
-	is_hover      bool
-	padding_top   int
-	parent_height int
-	needs_pack    bool
+	open           int
+	min_y          int
+	in_scroll      bool
+	is_hover       bool
+	padding_top    int
+	parent_height  int
+	needs_pack     bool
 }
 
 // Children
@@ -41,11 +35,9 @@ pub fn tree(text string) &Tree2 {
 	}
 }
 
+[deprecated]
 pub fn tree2(text string) &Tree2 {
-	return &Tree2{
-		text: text
-		click_event_fn: unsafe { nil }
-	}
+	return tree(text)
 }
 
 pub fn (mut this Tree2) add_child(node &TreeNode) {
@@ -53,6 +45,10 @@ pub fn (mut this Tree2) add_child(node &TreeNode) {
 }
 
 fn (mut this Tree2) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
+	if !isnil(this.parent) {
+		return
+	}
+
 	x := this.x + this.width - 15
 
 	// Scroll Bar
@@ -238,7 +234,9 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 			cfg)
 	}
 
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
+	if this.parent == unsafe { nil } {
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
+	}
 
 	mut y := this.y + 5
 

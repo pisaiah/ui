@@ -3,9 +3,14 @@
 - TODO
 
 ## 0.0.18
-- TODO
-- Completly redone TextArea
-- New Textarea now has text selection.
+*April, 23rd*
+- Completly redone Textbox
+- New Textbox now has text selection.
+- New Panel component
+	- BoxLayout - https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
+	- FlowLayout - https://docs.oracle.com/javase/tutorial/uiswing/layout/flow.html
+	- GridLayout - https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
+	- BorderLayout is coming soon.
 
 ## 0.0.17
 *Mar 30th, 2023*

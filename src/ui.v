@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.17'
+	version = '0.0.18'
 )
 
 pub fn default_font() string {
@@ -65,10 +65,18 @@ pub fn point_in_raw(mut com Component, px int, py int) bool {
 		return point_in(mut com, px, py)
 	}
 
-	midx := com.rx + (com.width / 2)
-	midy := com.ry + (com.height / 2)
+	mut hei := com.height / 2
+	if mut com is Selectbox {
+		if com.show_items {
+			list_height := (com.items.len * (com.sub_height + 1)) + 2
+			hei = list_height / 2
+		}
+	}
 
-	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
+	midx := com.rx + (com.width / 2)
+	midy := com.ry + hei
+
+	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < hei)
 }
 
 pub fn point_in(mut com Component, px int, py int) bool {
@@ -218,7 +226,7 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id int,
 	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
 	ctx.gg.set_text_cfg(cfg)
 	ctx.gg.ft.fons.set_font(font_id)
-	ctx.gg.ft.fons.draw_text(x * scale, y * scale, text_) // TODO: check offsets/alignment
+	ctx.gg.ft.fons.draw_text(x * scale, y * scale, text_)
 }
 
 fn new_graphics_context(win &Window) &GraphicsContext {
@@ -388,7 +396,7 @@ fn (mut app Window) do_sleep() {
 	}
 
 	if !app.has_event {
-		time.sleep(20 * time.millisecond) // Reduce CPU Usage
+		// time.sleep(20 * time.millisecond) // Reduce CPU Usage
 	}
 }
 
@@ -456,13 +464,13 @@ pub fn (mut ctx GraphicsContext) calculate_line_height() {
 }
 
 // Functions for GG
-pub fn (graphics &GraphicsContext) text_width(text string) int {
+pub fn (g &GraphicsContext) text_width(text string) int {
 	$if windows {
-		if graphics.gg.native_rendering {
-			return graphics.gg.text_width(text)
+		if g.gg.native_rendering {
+			return g.gg.text_width(text)
 		}
 	}
-	ctx := graphics.gg
+	ctx := g.gg
 	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
 	return int(adv / ctx.scale)
 }

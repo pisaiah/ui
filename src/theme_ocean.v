@@ -8,11 +8,11 @@ pub fn theme_ocean() &Theme {
 	return &Theme{
 		name: 'Ocean'
 		text_color: gx.black
-		background: gx.rgb(248, 248, 248)
+		background: gx.rgb(238, 238, 238)
 		button_bg_normal: gx.rgb(240, 240, 240)
 		button_bg_hover: gx.rgb(229, 241, 251)
 		button_bg_click: gx.rgb(204, 228, 247)
-		button_border_normal: gx.rgb(190, 190, 190)
+		button_border_normal: gx.rgb(135, 145, 155) // gx.rgb(190, 190, 190)
 		button_border_hover: gx.rgb(0, 120, 215)
 		button_border_click: gx.rgb(0, 84, 153)
 		menubar_background: gx.rgb(255, 255, 255)
@@ -34,7 +34,6 @@ pub fn theme_ocean() &Theme {
 }
 
 pub fn ocean_setup(mut win Window) {
-	dump(win.graphics_context.icon_cache.len)
 	mut ctx := win.graphics_context
 	mut o_file := $embed_file('assets/theme/ocean-btn.png')
 	mut o_icons := win.create_gg_image(o_file.data(), o_file.len)
@@ -108,7 +107,6 @@ pub fn theme_seven() &Theme {
 }
 
 pub fn seven_setup(mut win Window) {
-	dump(win.graphics_context.icon_cache.len)
 	mut ctx := win.graphics_context
 	mut o_file := $embed_file('assets/theme/7/btn.png')
 	mut o_icons := win.create_gg_image(o_file.data(), o_file.len)
@@ -182,7 +180,6 @@ pub fn theme_seven_dark() &Theme {
 }
 
 pub fn seven_dark_setup(mut win Window) {
-	dump(win.graphics_context.icon_cache.len)
 	mut ctx := win.graphics_context
 	mut o_file := $embed_file('assets/theme/7d/btn.png')
 	mut o_icons := win.create_gg_image(o_file.data(), o_file.len)

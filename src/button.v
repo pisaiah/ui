@@ -111,7 +111,7 @@ pub fn (mut btn Button) pack() {
 pub fn (mut btn Button) pack_do() {
 	width := text_width(btn.app, btn.text)
 	btn.width = width
-	btn.height = text_height(btn.app, btn.text + 'a') + 13
+	btn.height = 20 // text_height(btn.app, btn.text + 'a') + 13
 	btn.need_pack = false
 }
 
@@ -134,8 +134,10 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 		ctx.theme.button_fill_fn(this.x, this.y, this.width, this.height, this.border_radius,
 			bg, ctx)
 	}
-	this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
-		border)
+	if this.border_radius != -1 {
+		this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
+			border)
+	}
 }
 
 fn (this &Button) get_border(is_hover bool) gx.Color {
@@ -153,7 +155,7 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 		return this.override_bg_color
 	}
 
-	should := this.app.bar == unsafe { nil } || this.app.bar.tik > 90
+	should := true // this.app.bar == unsafe { nil } || this.app.bar.tik > 90
 
 	if this.is_mouse_down && should {
 		return this.app.theme.button_bg_click

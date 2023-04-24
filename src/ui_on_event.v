@@ -10,11 +10,12 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		app.has_event = true
 	}*/
 
-	app.has_event = true
+	// app.has_event = true
 
 	if e.typ == .mouse_move {
 		app.mouse_x = app.gg.mouse_pos_x
 		app.mouse_y = app.gg.mouse_pos_y
+		return
 	}
 
 	if e.typ == .touches_moved || e.typ == .touches_began {
@@ -48,6 +49,8 @@ pub fn on_event(e &gg.Event, mut app Window) {
 	if e.typ == .mouse_scroll {
 		on_scroll_event(e, mut app)
 	}
+
+	// app.has_event = false
 }
 
 pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
@@ -220,8 +223,6 @@ pub fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 		for mut comm in val {
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.on_scroll_component(app, e)
-
-				// return
 			}
 		}
 		return

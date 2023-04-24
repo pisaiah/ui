@@ -64,8 +64,8 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 
 	total_height, total_width := this.draw_children(ctx)
 
-	this.clamp_scroll_index(total_height)
-	this.clamp_scroll_x(total_width)
+	this.clamp_scroll_index(total_height + this.padding)
+	this.clamp_scroll_x(total_width + this.padding)
 
 	ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
 	this.draw_scrollbar(ctx, this.height, total_height)
@@ -80,8 +80,8 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 pub fn (mut this ScrollView) draw_children(ctx &GraphicsContext) (int, int) {
 	mut y_pos := this.y - (this.scroll_i * this.increment)
 	x_pos := this.x - (this.scroll_x * this.increment)
-	mut total_height := this.padding
-	mut total_width := this.padding
+	mut total_height := 0 // this.padding
+	mut total_width := 0 // this.padding
 
 	for mut child in this.children {
 		if child.parent == unsafe { nil } {

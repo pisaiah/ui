@@ -46,15 +46,17 @@ pub fn text_box(lines []string) &Textbox {
 }
 
 fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
-	wid := ctx.text_width('12345')
-	this.px = wid
-	ctx.gg.draw_rect_filled(this.x, this.y, this.px - 4, this.height - 1, ctx.theme.button_bg_normal)
-	sy := this.y + 2
-
 	cfg := gx.TextCfg{
 		size: ctx.font_size
 		color: ctx.theme.text_color
 	}
+
+	ctx.gg.set_text_cfg(cfg)
+
+	wid := ctx.text_width('12345')
+	this.px = wid
+	ctx.gg.draw_rect_filled(this.x, this.y, this.px - 4, this.height - 1, ctx.theme.button_bg_normal)
+	sy := this.y + 2
 
 	for i, _ in this.lines {
 		y := sy + (i * lh)
@@ -106,9 +108,6 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		this.keys << iui.red_keys
 		this.keys << iui.colors
 	}
-
-	mid := this.x + (this.width / 2)
-	midy := this.y + (this.height / 2)
 
 	if ctx.win.second_pass == 1 {
 		this.blink = !this.blink
@@ -211,6 +210,8 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		this.is_mouse_rele = false
 	} else {
 		h := if this.parent != unsafe { nil } { this.parent.height } else { this.height }
+		mid := this.x + (this.width / 2)
+		midy := this.y + (h / 2)
 
 		if ctx.win.click_x > -1 && !(abs(mid - ctx.win.mouse_x) < (this.width / 2)
 			&& abs(midy - ctx.win.mouse_y) < (h / 2)) {
@@ -466,6 +467,18 @@ fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Tex
 		// Windows Key
 		return
 	}
+
+	if key == .f5 {
+		total := win.font_size + com.fs
+		if total >= 28 {
+			com.fs = 0
+			return
+		}
+		com.fs += 2
+		dump(win.font_size)
+		return
+	}
+
 	if mod == 2 {
 		com.ctrl_down = true
 	}

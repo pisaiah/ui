@@ -90,8 +90,10 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 		tb.win.gg.draw_rect_empty(tb.x + mx, tb.y + my, tsize, theig, tb.win.theme.button_border_normal)
 		tb.win.gg.draw_rect_filled(tb.x + mx + 1, tb.y + my + 1, tsize - 2, theig, tab_color)
 	} else {
-		tb.win.draw_filled_rect(tb.x + mx, tb.y + my + 1, tsize, theig, 2, tab_color,
-			tb.win.theme.button_border_normal)
+		xx := tb.x + mx + tsize
+		yy := tb.y + my
+
+		tb.win.gg.draw_line(xx, yy, xx, yy + theig, tb.win.theme.button_border_normal)
 	}
 
 	// Draw Button Text

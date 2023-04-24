@@ -70,7 +70,11 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	color := if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
 		gx.rgb(100, 100, 200)
 	} else {
-		gx.rgb(0, 100, 200)
+		if ctx.theme.text_color.r > 150 {
+			gx.rgb(100, 180, 255)
+		} else {
+			gx.rgb(0, 128, 255)
+		}
 	}
 
 	mut my := 0

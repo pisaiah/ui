@@ -1,6 +1,7 @@
 import gg
 import iui as ui { debug }
 import os
+import gx
 
 struct App {
 mut:
@@ -26,7 +27,7 @@ fn main() {
 	}
 
 	// Setup Menubar and items
-	window.bar = ui.menubar(window, window.theme)
+	window.bar = ui.menu_bar()
 	window.bar.add_child(ui.menu_item(text: 'File'))
 	window.bar.add_child(ui.menu_item(text: 'Edit'))
 	window.bar.add_child(create_help_menu())
@@ -48,7 +49,6 @@ fn main() {
 	app.make_tree_section()
 	app.make_tab_section()
 
-	// app.make_hbox_section()
 	app.make_edits_section()
 
 	pane.set_pos(4, 10)
@@ -62,16 +62,97 @@ fn main() {
 	}
 
 	mut tb := ui.tabbox(window)
-	tb.set_pos(2, 25)
+	tb.set_pos(2, 30)
 	tb.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
 		ws := win.gg.window_size()
 		com.width = ws.width - 4
-		com.height = ws.height - 30
+		com.height = ws.height - 32
 	}
 	tb.add_child('Overview', pane)
+
+	mut button_tab := app.make_button_tab()
+	tb.add_child('Buttons', button_tab)
+
 	window.add_child(tb)
 
 	window.gg.run()
+}
+
+fn (mut app App) make_button_tab() &ui.HBox {
+	mut hbox := ui.hbox(app.win)
+	hbox.set_pos(12, 12)
+
+	bounds := ui.Bounds{5, 5, 99, 36}
+
+	mut btn := ui.button(
+		text: 'Button'
+		bounds: bounds
+		click_event_fn: btn_click
+	)
+
+	mut btn2 := ui.button(
+		text: 'Round Button'
+		bounds: bounds
+		should_pack: false
+	)
+	btn2.border_radius = 100
+
+	mut sq_btn := ui.button(
+		text: 'Square Button'
+		bounds: bounds
+		should_pack: false
+	)
+	sq_btn.border_radius = 0
+
+	mut tbtn := ui.button(
+		text: 'Button'
+		bounds: bounds
+	)
+	tbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
+	tbtn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		draw_custom_themed('ocean-btn', mut e)
+	})
+
+	mut sbtn := ui.button(
+		text: 'Button'
+		bounds: bounds
+	)
+	sbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
+	sbtn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		draw_custom_themed('seven-btn', mut e)
+	})
+
+	img_file := $embed_file('v.png')
+	mut btn3 := app.icon_btn(img_file.to_bytes())
+	btn3.set_bounds(5, 5, 45, 36)
+	btn3.icon_width = 28
+	btn3.icon_height = 28
+
+	hbox.add_child(btn)
+	hbox.add_child(btn2)
+	hbox.add_child(sq_btn)
+	hbox.add_child(btn3)
+	hbox.add_child(tbtn)
+	hbox.add_child(sbtn)
+
+	// hbox.pack()
+	hbox.set_bounds(12, 12, 400, 500)
+	return hbox
+}
+
+fn draw_custom_themed(name string, mut e ui.DrawEvent) {
+	if name !in e.ctx.icon_cache {
+		ui.ocean_setup(mut e.ctx.win)
+		ui.seven_setup(mut e.ctx.win)
+	}
+	is_hover := ui.is_in(e.target, e.ctx.win.mouse_x, e.ctx.win.mouse_y)
+	mut btn := e.target
+	if mut btn is ui.Button {
+		btn.override_bg = !is_hover
+	}
+	if !is_hover {
+		e.ctx.gg.draw_image_by_id(btn.x, btn.y, btn.width, btn.height, e.ctx.icon_cache[name])
+	}
 }
 
 fn (mut app App) icon_btn(data []u8) &ui.Button {
@@ -128,9 +209,15 @@ fn (mut app App) make_edits_section() {
 	)
 
 	mut code_box := ui.text_box(['module main', '', 'fn main() {', '}'])
-	code_box.set_bounds(2, 48, 200, 100)
+	code_box.set_bounds(0, 0, 200, 100)
 
-	mut edits_title_box := ui.title_box('TextField / TextArea', [tbox, code_box])
+	mut sv := ui.scroll_view(
+		view: code_box
+		bounds: ui.Bounds{2, 48, 200, 100}
+		padding: 0
+	)
+
+	mut edits_title_box := ui.title_box('TextField / TextArea', [tbox, sv])
 	edits_title_box.set_bounds(18, 8, 200, 210)
 	app.pane.add_child(edits_title_box)
 }
@@ -195,14 +282,14 @@ fn (mut app App) make_selectbox_section() {
 
 fn (mut app App) make_button_section() {
 	mut btn := ui.button(
-		text: 'A Button'
-		bounds: ui.Bounds{0, 0, 120, 30}
+		text: 'Button'
+		bounds: ui.Bounds{0, 0, 80, 32}
 		click_event_fn: btn_click
 	)
 
 	mut btn2 := ui.button(
 		text: 'Open Page'
-		bounds: ui.Bounds{0, 35, 120, 30}
+		bounds: ui.Bounds{0, 38, 130, 30}
 		should_pack: false
 		// click_event_fn: test_page
 	)
@@ -210,9 +297,9 @@ fn (mut app App) make_button_section() {
 
 	img_file := $embed_file('v.png')
 	mut btn3 := app.icon_btn(img_file.to_bytes())
-	btn3.set_bounds(0, 70, 120, 32)
-	btn3.icon_width = 30
-	btn3.icon_height = 30
+	btn3.set_bounds(85, 0, 45, 32)
+	btn3.icon_width = 28
+	btn3.icon_height = 28
 
 	mut title_box := ui.title_box('Button', [btn, btn2, btn3])
 	title_box.set_bounds(8, 8, 150, 150)

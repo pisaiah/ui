@@ -3,15 +3,9 @@ module iui
 
 import gx
 
-// Default Blue on Windows;
-// Minty (Linux Mint) on Linux/other
+// Default Theme
 pub fn get_system_theme() &Theme {
-	//$if windows {
 	return theme_default()
-	//} $else {
-	// Default to Linux Mint
-	//	return theme_minty()
-	//}
 }
 
 pub fn get_all_themes() []&Theme {
