@@ -21,6 +21,7 @@ pub mut:
 	before_txtc_event_fn fn (mut Window, Textbox) bool
 	text_change_event_fn fn (voidptr, voidptr)
 	ctrl_down            bool
+	no_line_numbers      bool
 }
 
 // Text Selection
@@ -46,6 +47,10 @@ pub fn text_box(lines []string) &Textbox {
 }
 
 fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
+	if this.no_line_numbers {
+		return
+	}
+
 	cfg := gx.TextCfg{
 		size: ctx.font_size
 		color: ctx.theme.text_color

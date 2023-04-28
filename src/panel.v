@@ -84,9 +84,8 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 			cols = this.zv
 		}
 	}
-	
-	dump(cols)
 
+	dump(cols)
 	for mut child in panel.children {
 		child.draw_with_offset(ctx, x, y)
 
