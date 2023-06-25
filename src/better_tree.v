@@ -199,10 +199,7 @@ fn (this &TreeNode) get_height() int {
 	mut height := this.height
 
 	for node in this.nodes {
-		if node.open {
-			height += node.get_height()
-		}
-		height += this.height
+		height += node.get_height()
 	}
 	return height
 }

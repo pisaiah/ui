@@ -106,13 +106,13 @@ pub fn (mut item Select) draw(ctx &GraphicsContext) {
 	midy := (y + (height / 2))
 
 	// Detect Hover
-	if (abs(midx - app.mouse_x) < (width / 2)) && (abs(midy - app.mouse_y) < (height / 2)) {
+	if abs(midx - app.mouse_x) < (width / 2) && abs(midy - app.mouse_y) < (height / 2) {
 		bg = ctx.theme.button_bg_hover
 		border = ctx.theme.button_border_hover
 	}
 
 	// Detect Click
-	clicked := ((abs(midx - app.click_x) < (width / 2)) && (abs(midy - app.click_y) < (height / 2)))
+	clicked := (abs(midx - app.click_x) < (width / 2) && abs(midy - app.click_y) < (height / 2))
 
 	if clicked && !item.show_items {
 		bg = ctx.theme.button_bg_click

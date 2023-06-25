@@ -130,6 +130,9 @@ fn (mut this Panel) draw(ctx &GraphicsContext) {
 				this.layout.zv = int(math.round(val))
 			}
 		}
+		if this.layout.zv == 0 {
+			this.layout.zv = 1
+		}
 	}
 	for mut kid in this.children {
 		if kid.parent == unsafe { nil } {

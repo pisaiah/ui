@@ -13,6 +13,7 @@ pub mut:
 	increment   int = 4
 	in_scroll   bool
 	in_scroll_x bool
+	noborder    bool
 	xbar_width  int = 16
 	ybar_height int = 16
 	scroll_x    int
@@ -54,6 +55,10 @@ pub fn (mut this ScrollView) set_increment(value int) {
 	this.increment = value
 }
 
+pub fn (mut this ScrollView) set_border_painted(val bool) {
+	this.noborder = !val
+}
+
 // Draw
 pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	x := this.x
@@ -67,7 +72,9 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	this.clamp_scroll_index(total_height + this.padding)
 	this.clamp_scroll_x(total_width + this.padding)
 
-	ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
+	if !this.noborder {
+		ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
+	}
 	this.draw_scrollbar(ctx, this.height, total_height)
 	this.draw_scrollbar2(ctx, this.width, total_width)
 

@@ -486,6 +486,9 @@ fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Tex
 
 	if mod == 2 {
 		com.ctrl_down = true
+		com.last_letter = key.str()
+	} else if com.ctrl_down {
+		com.ctrl_down = false
 	}
 
 	if key != .backspace {
@@ -582,8 +585,10 @@ fn (mut win Window) textbox_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com
 		}
 	}
 
-	com.last_letter = letter
-	com.text_change_event_fn(win, com)
+	if letter.len != 0 {
+		com.last_letter = letter
+		com.text_change_event_fn(win, com)
+	}
 
 	if !enter {
 		if mod != 2 && letter.len > 0 {

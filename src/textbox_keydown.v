@@ -32,7 +32,7 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			}
 		}
 	}
-	if mut a is ScrollView {
+	if mut a is ScrollView || mut a is Panel {
 		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
 				return true

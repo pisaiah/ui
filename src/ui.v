@@ -46,7 +46,7 @@ pub fn is_in_bounds(px int, py int, bounds Bounds) bool {
 	midx := x + (bounds.width / 2)
 	midy := y + (bounds.height / 2)
 
-	return (abs(midx - px) < (bounds.width / 2)) && (abs(midy - py) < (bounds.height / 2))
+	return abs(midx - px) < (bounds.width / 2) && abs(midy - py) < (bounds.height / 2)
 }
 
 pub fn is_in(com &Component, px int, py int) bool {
@@ -56,7 +56,7 @@ pub fn is_in(com &Component, px int, py int) bool {
 	midx := x + (com.width / 2)
 	midy := y + (com.height / 2)
 
-	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
+	return abs(midx - px) < (com.width / 2) && abs(midy - py) < (com.height / 2)
 }
 
 pub fn point_in_raw(mut com Component, px int, py int) bool {
@@ -76,14 +76,14 @@ pub fn point_in_raw(mut com Component, px int, py int) bool {
 	midx := com.rx + (com.width / 2)
 	midy := com.ry + hei
 
-	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < hei)
+	return abs(midx - px) < (com.width / 2) && abs(midy - py) < hei
 }
 
 pub fn point_in(mut com Component, px int, py int) bool {
 	midx := com.x + (com.width / 2)
 	midy := com.y + (com.height / 2)
 
-	return (abs(midx - px) < (com.width / 2)) && (abs(midy - py) < (com.height / 2))
+	return abs(midx - px) < (com.width / 2) && abs(midy - py) < (com.height / 2)
 }
 
 pub fn (mut com Component_A) set_bounds(x int, y int, width int, height int) {
