@@ -8,11 +8,11 @@ pub fn theme_ocean() &Theme {
 	return &Theme{
 		name: 'Ocean'
 		text_color: gx.black
-		background: gx.rgb(238, 238, 238)
+		background: gx.rgb(240, 240, 240)
 		button_bg_normal: gx.rgb(240, 240, 240)
 		button_bg_hover: gx.rgb(229, 241, 251)
 		button_bg_click: gx.rgb(204, 228, 247)
-		button_border_normal: gx.rgb(135, 145, 155) // gx.rgb(190, 190, 190)
+		button_border_normal: gx.rgb(135, 145, 155)
 		button_border_hover: gx.rgb(0, 120, 215)
 		button_border_click: gx.rgb(0, 84, 153)
 		menubar_background: gx.rgb(255, 255, 255)
@@ -33,23 +33,30 @@ pub fn theme_ocean() &Theme {
 	}
 }
 
+fn cache_image(id string, mut ctx GraphicsContext, buf &u8, bufsize int) int {
+	mut img := ctx.gg.create_image_from_memory(buf, bufsize) or { panic(err) }
+	if img.simg.id == 0 && ctx.line_height > 0 {
+		img.init_sokol_image()
+	}
+	val := ctx.gg.cache_image(img)
+	ctx.icon_cache[id] = val
+	return val
+}
+
 pub fn ocean_setup(mut win Window) {
 	mut ctx := win.graphics_context
-	mut o_file := $embed_file('assets/theme/ocean-btn.png')
-	mut o_icons := win.create_gg_image(o_file.data(), o_file.len)
-	ctx.icon_cache['ocean-btn'] = win.gg.cache_image(o_icons)
 
-	mut o_file1 := $embed_file('assets/theme/ocean-bar.png')
-	o_icons = win.create_gg_image(o_file1.data(), o_file1.len)
-	ctx.icon_cache['ocean-bar'] = ctx.gg.cache_image(o_icons)
+	mut img0 := $embed_file('assets/theme/ocean-btn.png')
+	cache_image('ocean-btn', mut ctx, img0.data(), img0.len)
 
-	mut o_file2 := $embed_file('assets/theme/ocean-menu.png')
-	o_icons = win.create_gg_image(o_file2.data(), o_file2.len)
-	ctx.icon_cache['ocean-menu'] = ctx.gg.cache_image(o_icons)
+	mut img1 := $embed_file('assets/theme/ocean-bar.png')
+	cache_image('ocean-bar', mut ctx, img1.data(), img1.len)
 
-	mut o_file3 := $embed_file('assets/theme/ocean-bar-w.png')
-	o_icons = win.create_gg_image(o_file3.data(), o_file3.len)
-	ctx.icon_cache['ocean-bar-w'] = ctx.gg.cache_image(o_icons)
+	mut img2 := $embed_file('assets/theme/ocean-menu.png')
+	cache_image('ocean-menu', mut ctx, img2.data(), img2.len)
+
+	mut img3 := $embed_file('assets/theme/ocean-bar-w.png')
+	cache_image('ocean-bar-w', mut ctx, img3.data(), img3.len)
 }
 
 pub fn ocean_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, ctx &GraphicsContext) {
@@ -108,21 +115,18 @@ pub fn theme_seven() &Theme {
 
 pub fn seven_setup(mut win Window) {
 	mut ctx := win.graphics_context
-	mut o_file := $embed_file('assets/theme/7/btn.png')
-	mut o_icons := win.create_gg_image(o_file.data(), o_file.len)
-	ctx.icon_cache['seven-btn'] = win.gg.cache_image(o_icons)
 
-	mut o_file1 := $embed_file('assets/theme/7/bar.png')
-	o_icons = win.create_gg_image(o_file1.data(), o_file1.len)
-	ctx.icon_cache['seven-bar'] = ctx.gg.cache_image(o_icons)
+	mut img0 := $embed_file('assets/theme/7/btn.png')
+	cache_image('seven-btn', mut ctx, img0.data(), img0.len)
 
-	mut o_file2 := $embed_file('assets/theme/7/menu.png')
-	o_icons = win.create_gg_image(o_file2.data(), o_file2.len)
-	ctx.icon_cache['seven-menu'] = ctx.gg.cache_image(o_icons)
+	mut img1 := $embed_file('assets/theme/7/bar.png')
+	cache_image('seven-bar', mut ctx, img1.data(), img1.len)
 
-	mut o_file3 := $embed_file('assets/theme/7/barw.png')
-	o_icons = win.create_gg_image(o_file3.data(), o_file3.len)
-	ctx.icon_cache['seven-bar-w'] = ctx.gg.cache_image(o_icons)
+	mut img2 := $embed_file('assets/theme/7/menu.png')
+	cache_image('seven-menu', mut ctx, img2.data(), img2.len)
+
+	mut img3 := $embed_file('assets/theme/7/barw.png')
+	cache_image('seven-bar-w', mut ctx, img3.data(), img3.len)
 }
 
 pub fn seven_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, ctx &GraphicsContext) {
@@ -181,21 +185,18 @@ pub fn theme_seven_dark() &Theme {
 
 pub fn seven_dark_setup(mut win Window) {
 	mut ctx := win.graphics_context
-	mut o_file := $embed_file('assets/theme/7d/btn.png')
-	mut o_icons := win.create_gg_image(o_file.data(), o_file.len)
-	ctx.icon_cache['seven_dark-btn'] = win.gg.cache_image(o_icons)
 
-	mut o_file1 := $embed_file('assets/theme/7d/bar.png')
-	o_icons = win.create_gg_image(o_file1.data(), o_file1.len)
-	ctx.icon_cache['seven_dark-bar'] = ctx.gg.cache_image(o_icons)
+	mut img0 := $embed_file('assets/theme/7d/btn.png')
+	cache_image('seven_dark-btn', mut ctx, img0.data(), img0.len)
 
-	mut o_file2 := $embed_file('assets/theme/7d/menu.png')
-	o_icons = win.create_gg_image(o_file2.data(), o_file2.len)
-	ctx.icon_cache['seven_dark-menu'] = ctx.gg.cache_image(o_icons)
+	mut img1 := $embed_file('assets/theme/7d/bar.png')
+	cache_image('seven_dark-bar', mut ctx, img1.data(), img1.len)
 
-	mut o_file3 := $embed_file('assets/theme/7d/barw.png')
-	o_icons = win.create_gg_image(o_file3.data(), o_file3.len)
-	ctx.icon_cache['seven_dark-bar-w'] = ctx.gg.cache_image(o_icons)
+	mut img2 := $embed_file('assets/theme/7d/menu.png')
+	cache_image('seven_dark-menu', mut ctx, img2.data(), img2.len)
+
+	mut img3 := $embed_file('assets/theme/7d/barw.png')
+	cache_image('seven_dark-bar-w', mut ctx, img3.data(), img3.len)
 }
 
 pub fn seven_dark_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, ctx &GraphicsContext) {

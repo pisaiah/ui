@@ -255,16 +255,8 @@ pub fn (win &Window) add_child(com Component) {
 	unsafe { win.components << com }
 }
 
-pub fn window(theme Theme, title string, width int, height int) &Window {
-	return make_window(
-		theme: &theme
-		title: title
-		width: width
-		height: height
-		font_path: default_font()
-		// ui_mode: true
-		user_data: 0
-	)
+pub fn window(cfg &WindowConfig) &Window {
+	return make_window(cfg)
 }
 
 [heap; params]
@@ -331,8 +323,7 @@ pub fn make_window(config &WindowConfig) &Window {
 	return win
 }
 
-[deprecated: 'Use make_window']
-pub fn window_with_config(theme Theme, title string, width int, height int, config &WindowConfig) &Window {
+pub fn Window.new(config &WindowConfig) &Window {
 	return make_window(config)
 }
 

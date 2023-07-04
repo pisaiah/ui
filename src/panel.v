@@ -114,6 +114,17 @@ mut:
 	rh     int
 }
 
+[params]
+pub struct PanelConfig {
+	layout Layout = FlowLayout{}
+}
+
+pub fn panel(cfg PanelConfig) &Panel {
+	return &Panel{
+		layout: cfg.layout
+	}
+}
+
 fn (mut this Panel) draw(ctx &GraphicsContext) {
 	if mut this.layout is GridLayout {
 		if this.layout.cols == 0 {

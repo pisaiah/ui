@@ -94,7 +94,10 @@ pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
 
 	if ce {
 		close.set_background(gx.rgba(230, 230, 230, 50))
-		close.set_click(default_page_close_fn)
+		// close.set_click(default_page_close_fn)
+		close.subscribe_event('mouse_up', fn (mut e MouseEvent) {
+			e.ctx.win.components = e.ctx.win.components.filter(mut it !is Page)
+		})
 	}
 
 	this.children << close

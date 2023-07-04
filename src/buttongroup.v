@@ -18,6 +18,13 @@ pub struct ButtonGroupConfig {
 	buttons []voidptr
 }
 
+pub fn ButtonGroup.new[T](cfg ButtonGroupConfig) &ButtonGroup[T] {
+	return &ButtonGroup[T]{
+		buttons: cfg.buttons
+		selected: unsafe { nil }
+	}
+}
+
 pub fn buttongroup[T](cfg ButtonGroupConfig) &ButtonGroup[T] {
 	return &ButtonGroup[T]{
 		buttons: cfg.buttons
@@ -36,7 +43,10 @@ pub fn (mut this ButtonGroup[T]) setup() {
 				btn.is_selected = false
 			}
 
-			// e.target.is_selected = true
+			mut tar := e.target
+			if mut tar is Button {
+				e.target.is_selected = true
+			}
 			this.selected = e.target
 			this.invoke_mouse_up(e.target, e.ctx)
 		})

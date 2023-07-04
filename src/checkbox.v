@@ -7,16 +7,18 @@ import gx
 pub struct Checkbox {
 	Component_A
 pub mut:
-	text           string
-	click_event_fn fn (mut Window, Checkbox)
+	text string
 }
 
 [params]
 pub struct CheckboxConfig {
-	bounds    Bounds
-	user_data voidptr
-	selected  bool
-	text      string
+	bounds   Bounds
+	selected bool
+	text     string
+}
+
+pub fn Checkbox.new(conf CheckboxConfig) &Checkbox {
+	return check_box(conf)
 }
 
 pub fn check_box(conf CheckboxConfig) &Checkbox {
@@ -27,28 +29,7 @@ pub fn check_box(conf CheckboxConfig) &Checkbox {
 		width: conf.bounds.width
 		height: conf.bounds.height
 		is_selected: conf.selected
-		click_event_fn: blank_event_cbox
 	}
-}
-
-[deprecated: 'Use check_box(CheckboxConfig)']
-pub fn checkbox(app &Window, text string, conf CheckboxConfig) Checkbox {
-	return Checkbox{
-		text: text
-		x: conf.bounds.x
-		y: conf.bounds.y
-		width: conf.bounds.width
-		height: conf.bounds.height
-		is_selected: conf.selected
-		click_event_fn: blank_event_cbox
-	}
-}
-
-pub fn (mut com Checkbox) set_click(b fn (mut Window, Checkbox)) {
-	com.click_event_fn = b
-}
-
-pub fn blank_event_cbox(mut win Window, a Checkbox) {
 }
 
 // Get border color
@@ -84,8 +65,6 @@ pub fn (mut com Checkbox) draw(ctx &GraphicsContext) {
 	if com.is_mouse_rele {
 		com.is_mouse_rele = false
 		com.is_selected = !com.is_selected
-		mut win := ctx.win
-		com.click_event_fn(mut win, *com)
 	}
 
 	// Draw checkmark

@@ -87,7 +87,6 @@ fn (mut app App) make_button_tab() &ui.HBox {
 	mut btn := ui.button(
 		text: 'Button'
 		bounds: bounds
-		click_event_fn: btn_click
 	)
 
 	mut btn2 := ui.button(
@@ -284,7 +283,6 @@ fn (mut app App) make_button_section() {
 	mut btn := ui.button(
 		text: 'Button'
 		bounds: ui.Bounds{0, 0, 80, 32}
-		click_event_fn: btn_click
 	)
 
 	mut btn2 := ui.button(
@@ -348,7 +346,7 @@ fn create_help_menu() &ui.MenuItem {
 
 // Create the tree demo
 fn create_tree(window &ui.Window) &ui.Tree2 {
-	mut tree := ui.tree2('My Tree')
+	mut tree := ui.tree('My Tree')
 	tree.set_bounds(0, 0, 180, 210)
 
 	// tree.pack()
@@ -426,6 +424,6 @@ fn test_page(mut e ui.MouseEvent) {
 	debug('btn click')
 }
 
-fn btn_click(win voidptr, btn voidptr, data voidptr) {
+fn btn_click(mut e ui.MouseEvent) {
 	debug('btn click')
 }

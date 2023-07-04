@@ -19,6 +19,28 @@ pub mut:
 	overflow_full  bool = true
 }
 
+[params]
+pub struct HBoxConfig {
+	pack          bool
+	overflow      bool = true
+	bounds        Bounds
+	center_screen bool
+}
+
+pub fn HBox.new(cfg HBoxConfig) &HBox {
+	return &HBox{
+		center_screen: cfg.center_screen
+		needs_pack: cfg.pack
+		overflow_full: cfg.overflow
+		win: unsafe { nil }
+		x: cfg.bounds.x
+		y: cfg.bounds.y
+		width: cfg.bounds.width
+		height: cfg.bounds.height
+	}
+}
+
+[deprecated: 'Use HBox.new()']
 pub fn hbox(win &Window) &HBox {
 	return &HBox{
 		win: win
@@ -62,7 +84,12 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 	mut yyy := 0
 
 	for mut child in this.children {
-		child.draw_event_fn(mut this.win, child)
+		if !isnil(child.draw_event_fn) {
+			if isnil(this.win) {
+				this.win = ctx.win
+			}
+			child.draw_event_fn(mut this.win, &child)
+		}
 
 		gw := if this.overflow_full {
 			o_x + child.width > box_width
@@ -124,9 +151,8 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 		this.x = (size.width / 2) - (wid / 2)
 	}
 
-	if this.win.debug_draw {
-		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.red)
-		this.win.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height,
-			gx.red)
+	if ctx.win.debug_draw {
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.red)
+		ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.red)
 	}
 }

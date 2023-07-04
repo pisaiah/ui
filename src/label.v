@@ -15,6 +15,7 @@ pub mut:
 	bold           bool
 	abs_fsize      bool
 	center_text_y  bool
+	color          gx.Color
 }
 
 [params]
@@ -24,36 +25,45 @@ pub struct LabelConfig {
 	y           int
 	height      int
 	width       int
+	text        string
 }
 
-pub fn label(app &Window, text string, conf LabelConfig) Label {
-	return Label{
-		text: text
-		app: app
+pub fn Label.new(conf LabelConfig) &Label {
+	return &Label{
+		app: unsafe { nil }
+		text: conf.text
 		x: conf.x
 		y: conf.y
+		color: gx.rgba(0, 0, 0, 0)
 		height: conf.height
 		width: conf.width
 		need_pack: conf.should_pack
-		click_event_fn: blank_event_l
 	}
 }
 
+[deprecated: 'Replaced by new static method: Label.new']
+pub fn label(app &Window, text string, conf LabelConfig) &Label {
+	mut lbl := Label.new(conf)
+	lbl.text = text
+	return lbl
+}
+
 pub fn (mut btn Label) draw(ctx &GraphicsContext) {
-	btn.app.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn, ctx)
+	if btn.app == unsafe { nil } {
+		btn.app = ctx.win
+	}
+	ctx.win.draw_label(btn.x, btn.y, btn.width, btn.height, mut btn, ctx)
 }
 
 pub fn (mut this Label) pack() {
 	this.need_pack = true
 }
 
-pub fn (mut btn Label) pack_do() {
-	ctx := btn.app.graphics_context
-
+pub fn (mut btn Label) pack_do(ctx &GraphicsContext) {
 	// Set font size
 	ctx.set_cfg(gx.TextCfg{
-		size: btn.app.font_size + btn.size
-		color: btn.app.theme.text_color
+		size: ctx.win.font_size + btn.size
+		color: ctx.win.theme.text_color
 		bold: btn.bold
 	})
 
@@ -61,14 +71,14 @@ pub fn (mut btn Label) pack_do() {
 
 	mut min_width := 0
 	for line in lines {
-		width := text_width(btn.app, line)
+		width := text_width(ctx.win, line)
 		if min_width < width {
 			min_width = width
 		}
 	}
 	btn.width = min_width
 
-	th := text_height(btn.app, '{!A')
+	th := text_height(ctx.win, '{!A')
 	hi := th * lines.len
 
 	font_size := btn.size
@@ -82,15 +92,23 @@ pub fn (mut btn Label) pack_do() {
 
 	// Reset for text_height
 	ctx.set_cfg(gx.TextCfg{
-		size: btn.app.font_size
-		color: btn.app.theme.text_color
+		size: ctx.win.font_size
+		color: ctx.win.theme.text_color
 		bold: false
 	})
 }
 
-fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Label, ctx &GraphicsContext) {
+fn (this &Label) get_color() gx.Color {
+	if this.color.a != 0 {
+		return this.color
+	} else {
+		return this.app.theme.text_color
+	}
+}
+
+fn (app Window) draw_label(x int, y int, width int, height int, mut this Label, ctx &GraphicsContext) {
 	if this.need_pack {
-		this.pack_do()
+		this.pack_do(ctx)
 		this.need_pack = false
 	}
 
@@ -99,7 +117,16 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
-		this.click_event_fn(mut app, *this)
+		if !isnil(this.click_event_fn) {
+			mut win := ctx.win
+			this.click_event_fn(mut win, *this)
+		}
+	}
+
+	size := if this.abs_fsize {
+		this.size
+	} else {
+		this.size + app.font_size
 	}
 
 	// Draw Button Text
@@ -107,10 +134,9 @@ fn (mut app Window) draw_label(x int, y int, width int, height int, mut this Lab
 	for spl in text.split('\n') {
 		yp := if this.center_text_y { y + (height / 2) - sizh + my } else { y + my }
 
-		// dump(this.font)
 		ctx.draw_text(x, yp, spl.replace('\t', '  '.repeat(8)), ctx.font, gx.TextCfg{
-			size: app.font_size + this.size
-			color: app.theme.text_color
+			size: size
+			color: this.get_color()
 			bold: this.bold
 		})
 		if this.size != (app.font_size + this.size) {
@@ -151,19 +177,11 @@ fn (this &Label) debug_draw() {
 
 pub fn (mut this Label) set_config(fs int, abs bool, bold bool) {
 	this.size = fs
-	if abs {
-		// Absolute font size
-		this.size = fs - this.app.font_size
-		this.abs_fsize = true
-	} else {
-		this.abs_fsize = false
-	}
+	this.abs_fsize = abs
 	this.bold = bold
 }
 
-pub fn (mut this Label) set_click(b fn (mut Window, Label)) {
+[deprecated: 'Use subscribe_event']
+pub fn (mut this Label) set_click_old(b fn (mut Window, Label)) {
 	this.click_event_fn = b
-}
-
-pub fn blank_event_l(mut win Window, a Label) {
 }

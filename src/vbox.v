@@ -7,18 +7,36 @@ import gx
 pub struct VBox {
 	Component_A
 pub mut:
-	win            &Window
-	click_event_fn fn (voidptr, voidptr)
-	needs_pack     bool
-	overflow       bool = true
-	update_width   bool = true
-	legacy_scroll  bool
+	win           &Window // Deprecated field
+	needs_pack    bool
+	overflow      bool = true
+	update_width  bool = true
+	legacy_scroll bool
 }
 
+[params]
+pub struct VBoxConfig {
+	pack     bool
+	overflow bool = true
+	bounds   Bounds
+}
+
+pub fn VBox.new(cfg VBoxConfig) &VBox {
+	return &VBox{
+		needs_pack: cfg.pack
+		overflow: cfg.overflow
+		win: unsafe { nil }
+		x: cfg.bounds.x
+		y: cfg.bounds.y
+		width: cfg.bounds.width
+		height: cfg.bounds.height
+	}
+}
+
+[deprecated: 'Use VBox.new()']
 pub fn vbox(win &Window) &VBox {
 	return &VBox{
 		win: win
-		click_event_fn: fn (a voidptr, b voidptr) {}
 	}
 }
 
@@ -54,9 +72,14 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 			continue
 		}
 		mut child := this.children[i]
-		child.draw_event_fn(mut this.win, &child)
+		if !isnil(child.draw_event_fn) {
+			if isnil(this.win) {
+				this.win = ctx.win
+			}
+			child.draw_event_fn(mut this.win, &child)
+		}
 
-		ypos := this.y + o_y //- (this.scroll_i*8)
+		ypos := this.y + o_y
 		if ypos < this.y {
 			o_y += child.height
 			child.ry = -999
@@ -67,10 +90,10 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 			continue
 		}
 
-		this.win.draw_with_offset(mut child, this.x + o_x, ypos)
+		ctx.win.draw_with_offset(mut child, this.x + o_x, ypos)
 
-		if this.win.bar != unsafe { nil } {
-			if this.win.bar.tik < 99 {
+		if ctx.win.bar != unsafe { nil } {
+			if ctx.win.bar.tik < 99 {
 				this.is_mouse_down = false
 				this.is_mouse_rele = false
 			}
@@ -104,7 +127,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 
 	// this.is_mouse_down = false
 	// this.is_mouse_rele = false
-	if this.win.debug_draw {
-		this.win.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.orange)
+	if ctx.win.debug_draw {
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.orange)
 	}
 }

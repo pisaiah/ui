@@ -2,14 +2,29 @@
 *Not released yet*
 - TODO
 
+Planned TODO Features:
+- System L&F themes
+- Use in `java2v` to support translating swing
+- port JavaFx's charts
+- add BorderLayout
+- Popup menu (https://docs.oracle.com/javase/8/docs/api/javax/swing/JPopupMenu.html)
+- List (https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html)
+- Spinner (https://docs.oracle.com/javase/8/docs/api/javax/swing/JSpinner.html)
+
+## 0.0.19
+*TODO*
+- (WIP) Now uses the new static methods introduced in V 0.3.5 (ex. `ui.Button.new`)
+- ProgressBar: new `bind_to` function (inspired by https://docs.oracle.com/javafx/2/binding/jfxpub-binding.htm)
+- ScrollView: new `set_border_painted` function
+
 ## 0.0.18
 *April, 23rd*
 - Completly redone Textbox
 - New Textbox now has text selection.
 - New Panel component
-	- BoxLayout - https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
-	- FlowLayout - https://docs.oracle.com/javase/tutorial/uiswing/layout/flow.html
-	- GridLayout - https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
+	- BoxLayout -  inspired by https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
+	- FlowLayout - inspired by https://docs.oracle.com/javase/tutorial/uiswing/layout/flow.html
+	- GridLayout - inspired by https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
 	- BorderLayout is coming soon.
 
 ## 0.0.17
@@ -43,7 +58,7 @@
 - Custom border radius for Button 
 - Add Numeric-only support to TextField
 - Process mobile touch as mouse click
-- Add TitleBox
+- Add TitleBox ( inspired by https://docs.oracle.com/javase/8/docs/api/javax/swing/border/TitledBorder.html )
 
 ## 0.0.12
 - Custom Icon size for Button
@@ -76,7 +91,7 @@
 - Add GraphicsContext
 
 ## 0.0.5
-- Add HBox
+- Add HBox (similar to https://docs.oracle.com/javase/8/javafx/api/javafx/scene/layout/HBox.html )
 - Add VBox
 
 ## 0.0.4
@@ -89,7 +104,7 @@
 - Add `get_by_id`
 
 ## 0.0.2
-- Add Tabbox
+- Add Tabbox (similar to https://docs.oracle.com/javase/8/docs/api/javax/swing/JTabbedPane.html ) 
 - Add TreeView
 
 ## 0.0.1

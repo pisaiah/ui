@@ -21,7 +21,7 @@ pub mut:
 	compact             bool
 }
 
-// Return new Progressbar
+// Return new Tabbox
 pub fn tabbox(win &Window) &Tabbox {
 	return &Tabbox{
 		win: win
@@ -87,20 +87,20 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	tab_color := tb.get_tab_color(ctx, is_active)
 
 	if tb.active_tab == key_ {
-		tb.win.gg.draw_rect_empty(tb.x + mx, tb.y + my, tsize, theig, tb.win.theme.button_border_normal)
-		tb.win.gg.draw_rect_filled(tb.x + mx + 1, tb.y + my + 1, tsize - 2, theig, tab_color)
+		ctx.gg.draw_rect_empty(tb.x + mx, tb.y + my, tsize, theig, ctx.theme.button_border_normal)
+		ctx.gg.draw_rect_filled(tb.x + mx + 1, tb.y + my + 1, tsize - 2, theig, tab_color)
 	} else {
 		xx := tb.x + mx + tsize
 		yy := tb.y + my
 
-		tb.win.gg.draw_line(xx, yy, xx, yy + theig, tb.win.theme.button_border_normal)
+		tb.win.gg.draw_line(xx, yy, xx, yy + theig, ctx.theme.button_border_normal)
 	}
 
 	// Draw Button Text
 	ctx.draw_text((tb.x + mx) + 3, tb.y + (theig / 2) - (sizh - 2), ' ' + key, ctx.font,
 		gx.TextCfg{
 		size: tb.win.font_size
-		color: tb.win.theme.text_color
+		color: ctx.theme.text_color
 	})
 
 	if tb.closable {
@@ -124,7 +124,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 
 		line_x := if mx == 0 { tb.x + mx } else { tb.x + mx - 1 }
 
-		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 2, tb.win.theme.checkbox_selected)
+		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 2, ctx.theme.checkbox_selected)
 	}
 
 	return tsize

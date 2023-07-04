@@ -25,14 +25,15 @@ pub mut:
 
 [params]
 pub struct ButtonConfig {
-	text           string
-	bounds         Bounds
-	click_event_fn fn (voidptr, voidptr, voidptr) = fn (a voidptr, b voidptr, c voidptr) {}
-	should_pack    bool
-	user_data      voidptr
-	area_filled    bool = true
+	text        string
+	bounds      Bounds
+	should_pack bool
+	user_data   voidptr
+	area_filled bool = true
+	icon        int  = -1
 }
 
+[deprecated: 'Use button(ButtonConfig)']
 pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 	return &Button{
 		text: ''
@@ -43,7 +44,7 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 		height: conf.bounds.height
 		app: unsafe { nil }
 		click_event_fn: fn (mut win Window, a Button) {}
-		new_click_event_fn: conf.click_event_fn
+		new_click_event_fn: unsafe { nil }
 		user_data: conf.user_data
 		need_pack: conf.should_pack
 		area_filled: conf.area_filled
@@ -54,38 +55,20 @@ pub fn button(conf ButtonConfig) &Button {
 	return &Button{
 		app: unsafe { nil }
 		text: conf.text
-		icon: -1
+		icon: conf.icon
 		x: conf.bounds.x
 		y: conf.bounds.y
 		width: conf.bounds.width
 		height: conf.bounds.height
 		click_event_fn: fn (mut win Window, a Button) {}
-		new_click_event_fn: conf.click_event_fn
+		new_click_event_fn: unsafe { nil }
 		user_data: conf.user_data
 		need_pack: conf.should_pack
 		area_filled: conf.area_filled
 	}
 }
 
-[deprecated: 'use button(ButtonConfig)']
-pub fn button_old(app &Window, text string, conf ButtonConfig) Button {
-	return Button{
-		text: text
-		icon: -1
-		x: conf.bounds.x
-		y: conf.bounds.y
-		width: conf.bounds.width
-		height: conf.bounds.height
-		app: app
-		click_event_fn: fn (mut win Window, a Button) {}
-		new_click_event_fn: conf.click_event_fn
-		user_data: conf.user_data
-		need_pack: conf.should_pack
-		area_filled: conf.area_filled
-	}
-}
-
-// Sets the contentAreaFilled property, weather to paint
+// Sets the contentAreaFilled property, whether to paint
 // See https://docs.oracle.com/javase/7/docs/api/javax/swing/AbstractButton.html#setContentAreaFilled(boolean)
 pub fn (mut this Button) set_area_filled(val bool) {
 	this.area_filled = val
@@ -109,7 +92,7 @@ pub fn (mut btn Button) pack() {
 }
 
 pub fn (mut btn Button) pack_do() {
-	width := text_width(btn.app, btn.text)
+	width := text_width(btn.app, btn.text) + 4
 	btn.width = width
 	btn.height = 20 // text_height(btn.app, btn.text + 'a') + 13
 	btn.need_pack = false
@@ -179,7 +162,9 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	if btn.is_mouse_rele {
 		if app.bar == unsafe { nil } || app.bar.tik > 90 {
 			btn.click_event_fn(mut app, *btn)
-			btn.new_click_event_fn(app, btn, btn.user_data)
+			if !isnil(btn.new_click_event_fn) {
+				btn.new_click_event_fn(app, btn, btn.user_data)
+			}
 		}
 		btn.is_mouse_rele = false
 	}
@@ -215,11 +200,12 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 	})
 }
 
-// TODO [deprecated: 'use set_click_fn']
+[deprecated: 'use subscribe_event']
 pub fn (mut com Button) set_click(b fn (mut Window, Button)) {
 	com.click_event_fn = b
 }
 
+[deprecated: 'use subscribe_event']
 pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
 	com.new_click_event_fn = b
 	com.user_data = extra_data

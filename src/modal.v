@@ -101,7 +101,7 @@ pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 	)
 
 	if ce {
-		close.set_click(default_modal_close_fn)
+		close.subscribe_event('mouse_up', default_modal_close_fn)
 	}
 
 	this.children << close
@@ -109,8 +109,8 @@ pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 	return close
 }
 
-pub fn default_modal_close_fn(mut win Window, btn Button) {
-	win.components = win.components.filter(mut it !is Modal)
+pub fn default_modal_close_fn(mut e MouseEvent) {
+	e.ctx.win.components = e.ctx.win.components.filter(mut it !is Modal)
 }
 
 pub fn (mut com Modal) set_click(b fn (mut Window, Modal)) {

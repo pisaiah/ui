@@ -9,7 +9,7 @@ fn main() {
 		height: 400
 	)
 
-	mut hbox := ui.hbox(win)
+	mut hbox := ui.HBox.new()
 
 	// Set bounds for the button; If `bounds` is not
 	// set, then the button will pack to the text size.
