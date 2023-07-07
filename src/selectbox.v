@@ -24,6 +24,7 @@ pub struct SelectConfig {
 	items  []string
 }
 
+[deprecated: 'use select_box']
 pub fn selector(app &Window, text string, cfg SelectConfig) &Select {
 	return &Select{
 		text: text
@@ -184,16 +185,8 @@ fn (mut app Window) draw_button_2(x int, y int, width int, height int, mut btn B
 	}
 
 	// Draw Button Text
-	if sel.center {
-		ctx.draw_text((x + (width / 2)) - size, y + (height / 2) - sizh, text, ctx.font,
-			gx.TextCfg{
-			size: app.font_size
-			color: app.theme.text_color
-		})
-	} else {
-		ctx.draw_text(x + 8, y + (height / 2) - sizh, text, ctx.font, gx.TextCfg{
-			size: app.font_size
-			color: app.theme.text_color
-		})
-	}
+	ctx.draw_text(x + 8, y + (height / 2) - sizh, text, ctx.font, gx.TextCfg{
+		size: app.font_size
+		color: app.theme.text_color
+	})
 }

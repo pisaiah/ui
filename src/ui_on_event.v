@@ -177,6 +177,13 @@ pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 		return
 	}
 
+	for mut pop in app.popups {
+		mut com := &Component(pop)
+		if com.on_mouse_down_component(app) {
+			return
+		}
+	}
+
 	// Sort by Z-index
 	app.components.sort(a.z_index > b.z_index)
 
@@ -202,6 +209,14 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	res := app.bar.check_mouse(app, app.mouse_x, app.mouse_y)
 	if res {
 		return
+	}
+
+	for mut pop in app.popups {
+		mut com := &Component(pop)
+		if com.on_mouse_rele_component(app) {
+			pop.hide(app.graphics_context)
+			return
+		}
 	}
 
 	app.components.sort(a.z_index > b.z_index)

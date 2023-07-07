@@ -125,6 +125,7 @@ pub mut:
 	theme            Theme
 	bar              &Menubar
 	components       []Component
+	popups           []Popup
 	show_menu_bar    bool = true
 	shift_pressed    bool
 	key_down_event   fn (mut Window, gg.KeyCode, &gg.Event) = fn (mut win Window, key gg.KeyCode, e &gg.Event) {}
@@ -253,6 +254,10 @@ pub fn (mut win Window) add_child(com Component) {
 
 pub fn (win &Window) add_child(com Component) {
 	unsafe { win.components << com }
+}
+
+pub fn (win &Window) add_popup(com &Popup) {
+	unsafe { win.popups << com }
 }
 
 pub fn window(cfg &WindowConfig) &Window {
@@ -420,6 +425,24 @@ fn (mut app Window) draw() {
 		com.draw(app.graphics_context)
 		com.invoke_after_draw_event(app.graphics_context)
 		com.after_draw_event_fn(mut app, com)
+	}
+
+	// Draw Popups last
+	/*
+	for mut com in app.components {
+		for mut kid in com.children {
+			if mut kid is Popup {
+				invoke_draw_event(com, app.graphics_context)
+				com.draw(app.graphics_context)
+				com.invoke_after_draw_event(app.graphics_context)
+			}
+		}
+	}*/
+
+	for mut pop in app.popups {
+		// invoke_draw_event(pop, app.graphics_context)
+		pop.draw(app.graphics_context)
+		// pop.invoke_after_draw_event(app.graphics_context)
 	}
 
 	// Draw Menubar last

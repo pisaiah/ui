@@ -7,14 +7,13 @@ import gx
 pub struct Selectbox {
 	Component_A
 pub mut:
-	app  &Window
-	text string
-	// click_event_fn  fn (mut Window, Select)
-	// change_event_fn fn (mut Window, Select, string, string)
+	app        &Window
+	text       string
 	items      []string
 	show_items bool
 	center     bool
 	sub_height int = 28
+	popup      &Popup
 }
 
 [params]
@@ -28,7 +27,6 @@ pub fn select_box(cfg SelectboxConfig) &Selectbox {
 	return &Selectbox{
 		text: cfg.text
 		app: unsafe { nil }
-		z_index: 1
 		x: cfg.bounds.x
 		y: cfg.bounds.y
 		width: cfg.bounds.width
@@ -38,16 +36,24 @@ pub fn select_box(cfg SelectboxConfig) &Selectbox {
 }
 
 // Items -> Children
-pub fn (mut this Selectbox) make_items(ctx &GraphicsContext) {
-	this.children.clear()
+pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
+	mut pop := if n { &Popup{} } else { this.popup }
+
+	if !n {
+		pop.children.clear()
+	}
+
 	for item in this.items {
 		mut subb := button(text: item)
-		subb.border_radius = 10
-		subb.subscribe_event('mouse_down', fn (mut e MouseEvent) {
-			dump('hello?')
+		subb.border_radius = 0
+		subb.subscribe_event('mouse_up', fn [mut this] (mut e MouseEvent) {
+			this.text = e.target.text
 		})
-		this.add_child(subb)
+		subb.set_bounds(0, 0, this.width, this.sub_height)
+		pop.add_child(subb)
 	}
+	pop.set_bounds(this.x, this.y + this.height, this.width, this.items.len * this.sub_height)
+	this.popup = pop
 }
 
 pub fn (mut item Selectbox) draw_children(ctx &GraphicsContext) {
@@ -63,23 +69,12 @@ pub fn (mut item Selectbox) draw_children(ctx &GraphicsContext) {
 		wid = item.width
 	}
 
-	if item.items.len != item.children.len {
-		item.make_items(ctx)
-	}
-
-	list_height := (item.items.len * (item.sub_height + 1)) + 1
-	ctx.win.draw_filled_rect(item.x, item.y + item.height, wid, list_height, 2, ctx.theme.button_bg_normal,
-		ctx.theme.button_border_normal)
-
-	mut y := item.y + item.height
-	for mut subb in item.children {
-		subb.height = item.sub_height
-		subb.draw_with_offset(ctx, item.x, y)
-
-		y += item.sub_height + 1
-		subb.height = item.sub_height
-		subb.width = item.width
-		subb.z_index = 10
+	if isnil(item.popup) {
+		item.setup_popup(ctx, true)
+	} else {
+		if item.items.len != item.popup.children.len {
+			item.setup_popup(ctx, false)
+		}
 	}
 }
 
@@ -94,7 +89,7 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 	width := item.width
 	height := item.height
 	size := ctx.text_width(item.text) / 2
-	sizh := ctx.gg.text_height(item.text) / 2 // ctx.line_height / 2
+	sizh := ctx.gg.text_height(item.text) / 2
 
 	mut bg := ctx.theme.button_bg_normal
 	mut border := ctx.theme.button_border_normal
@@ -115,7 +110,6 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 		bg = ctx.theme.button_bg_click
 		border = ctx.theme.button_border_click
 		item.show_items = true
-		// item.click_event_fn(mut app, *item)
 	}
 
 	mut yy := item.y + item.height
@@ -127,10 +121,27 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 		bg = ctx.theme.button_bg_click
 		border = ctx.theme.button_border_normal
 		item.draw_children(ctx)
+		if !item.popup.shown {
+			item.popup.show(item, 0, item.height, ctx)
+		}
+	} else {
+		if !isnil(item.popup) {
+			if item.popup.shown {
+				item.popup.shown = false
+			}
+		}
 	}
 
 	if item.show_items && app.click_x != -1 && app.click_y != -1 && !clicked {
 		item.show_items = false
+		if !isnil(item.popup) {
+			mid_y := (item.popup.y + (item.popup.height / 2))
+			clickedd := (abs(midx - app.click_x) < (width / 2)
+				&& abs(mid_y - app.click_y) < (item.popup.height / 2))
+			if !clickedd {
+				item.popup.hide(ctx)
+			}
+		}
 	}
 
 	// Draw Button Background & Border
@@ -144,6 +155,7 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 		color: ctx.theme.text_color
 	})
 
+	ctx.theme.button_fill_fn(x + width - 25, y, 25, height, 1, bg, ctx)
 	ctx.gg.draw_rect_empty(x + width - 25, y, 25, height, border)
 
 	// Draw down arrow

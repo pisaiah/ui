@@ -107,7 +107,7 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 		size: ctx.win.font_size
 	}
 
-	wid := ctx.gg.text_width(this.text[0..this.carrot_left])
+	wid := ctx.text_width(this.text[0..this.carrot_left])
 
 	pipe_color := if this.blinked && this.is_selected {
 		ctx.theme.button_bg_hover
