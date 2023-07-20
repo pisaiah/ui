@@ -84,11 +84,11 @@ pub fn theme_default() &Theme {
 		button_border_normal: gx.rgb(190, 190, 190)
 		button_border_hover: gx.rgb(0, 120, 215)
 		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.rgb(255, 255, 255)
-		menubar_border: gx.rgb(255, 255, 255)
-		dropdown_background: gx.rgb(255, 255, 255)
+		menubar_background: gx.white
+		menubar_border: gx.white
+		dropdown_background: gx.white
 		dropdown_border: gx.rgb(224, 224, 224)
-		textbox_background: gx.rgb(255, 255, 255)
+		textbox_background: gx.white
 		textbox_border: gx.rgb(215, 215, 215)
 		checkbox_selected: gx.rgb(37, 161, 218)
 		checkbox_bg: gx.rgb(254, 254, 254)
@@ -128,7 +128,7 @@ pub fn theme_dark() &Theme {
 pub fn theme_dark_hc() &Theme {
 	return &Theme{
 		name: 'Dark Black'
-		text_color: gx.rgb(255, 255, 255)
+		text_color: gx.white
 		background: gx.rgb(0, 0, 0)
 		button_bg_normal: gx.rgb(0, 0, 0)
 		button_bg_hover: gx.rgb(70, 70, 70)
@@ -153,7 +153,7 @@ pub fn theme_dark_hc() &Theme {
 pub fn theme_black_red() &Theme {
 	return &Theme{
 		name: 'Black Red'
-		text_color: gx.rgb(255, 255, 255)
+		text_color: gx.white
 		background: gx.rgb(0, 0, 0)
 		button_bg_normal: gx.rgb(0, 0, 0)
 		button_bg_hover: gx.rgb(70, 0, 0)
@@ -190,7 +190,7 @@ pub fn theme_minty() &Theme {
 		menubar_border: gx.rgb(242, 242, 242)
 		dropdown_background: gx.rgb(242, 242, 242)
 		dropdown_border: gx.rgb(204, 204, 204)
-		textbox_background: gx.rgb(255, 255, 255)
+		textbox_background: gx.white
 		textbox_border: gx.rgb(215, 215, 215)
 		checkbox_selected: gx.rgb(154, 184, 124)
 		checkbox_bg: gx.rgb(247, 247, 247)

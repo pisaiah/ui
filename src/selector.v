@@ -23,6 +23,10 @@ pub struct SelectboxConfig {
 	text   string
 }
 
+pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
+	return select_box(cfg)
+}
+
 pub fn select_box(cfg SelectboxConfig) &Selectbox {
 	return &Selectbox{
 		text: cfg.text
@@ -32,7 +36,15 @@ pub fn select_box(cfg SelectboxConfig) &Selectbox {
 		width: cfg.bounds.width
 		height: cfg.bounds.height
 		items: cfg.items
+		popup: unsafe { nil }
 	}
+}
+
+[deprecated]
+pub fn selector(app &Window, text string, cfg SelectboxConfig) &Selectbox {
+	return select_box(
+		text: text
+	)
 }
 
 // Items -> Children
@@ -47,13 +59,27 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 		mut subb := button(text: item)
 		subb.border_radius = 0
 		subb.subscribe_event('mouse_up', fn [mut this] (mut e MouseEvent) {
+			old_val := this.text
 			this.text = e.target.text
+			this.invoke_change_event(e.ctx, old_val, e.target.text)
 		})
 		subb.set_bounds(0, 0, this.width, this.sub_height)
 		pop.add_child(subb)
 	}
 	pop.set_bounds(this.x, this.y + this.height, this.width, this.items.len * this.sub_height)
 	this.popup = pop
+}
+
+pub fn (mut this Selectbox) invoke_change_event(ctx &GraphicsContext, ov string, nv string) {
+	ev := ItemChangeEvent{
+		target: this
+		ctx: ctx
+		old_val: ov
+		new_val: nv
+	}
+	for f in this.events.event_map['item_change'] {
+		f(ev)
+	}
 }
 
 pub fn (mut item Selectbox) draw_children(ctx &GraphicsContext) {
@@ -88,7 +114,6 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 	mut app := item.app
 	width := item.width
 	height := item.height
-	size := ctx.text_width(item.text) / 2
 	sizh := ctx.gg.text_height(item.text) / 2
 
 	mut bg := ctx.theme.button_bg_normal
@@ -112,7 +137,6 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 		item.show_items = true
 	}
 
-	mut yy := item.y + item.height
 	for mut subb in item.children {
 		subb.height = 0
 	}

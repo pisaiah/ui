@@ -36,6 +36,7 @@ pub fn (mut this Progressbar) bind_to(val &f32) {
 pub fn progressbar(val f32) &Progressbar {
 	return &Progressbar{
 		text: val.str()
+		bind_val: unsafe { nil }
 	}
 }
 

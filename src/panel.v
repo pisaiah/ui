@@ -11,7 +11,74 @@ interface Layout {
 
 // https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html
 pub struct BorderLayout {
+mut:
 	// TODO
+	north  &Component
+	west   &Component
+	east   &Component
+	south  &Component
+	center &Component
+	hgap   int = 2
+	vgap   int = 2
+}
+
+pub const (
+	borderlayout_north  = 0
+	borderlayout_west   = 1
+	borderlayout_east   = 2
+	borderlayout_south  = 3
+	borderlayout_center = 4
+)
+
+fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
+	mut x := panel.x + this.hgap
+	mut y := panel.y + this.vgap
+	mut lay := panel.layout
+
+	if panel.rh == 0 {
+		for mut child in panel.children {
+			child.draw_with_offset(ctx, x, y)
+		}
+		panel.rh = 1
+	}
+
+	if mut lay is BorderLayout {
+		mut cw := panel.width - (lay.hgap * 2)
+		mut ch := panel.height - (lay.vgap * 2)
+
+		if !isnil(lay.north) {
+			lay.north.width = panel.width - (this.hgap * 2)
+			lay.north.draw_with_offset(ctx, x, y)
+			y += lay.north.height + lay.vgap
+			ch -= lay.north.height + lay.vgap
+		}
+
+		if !isnil(lay.south) {
+			lay.south.width = cw
+			ch -= lay.south.height
+			lay.south.draw_with_offset(ctx, x, y + ch)
+			ch -= lay.vgap
+		}
+
+		if !isnil(lay.east) {
+			lay.east.height = ch
+			cw -= lay.east.width
+			lay.east.draw_with_offset(ctx, x + cw, y)
+			cw -= lay.hgap
+		}
+
+		if !isnil(lay.west) {
+			lay.west.height = ch
+			lay.west.draw_with_offset(ctx, x, y)
+			x += lay.west.width + lay.hgap
+			cw -= lay.west.width + lay.hgap
+		}
+
+		lay.center.height = ch
+		lay.center.width = cw
+		lay.center.draw_with_offset(ctx, x, y)
+		x += lay.center.width + lay.hgap
+	}
 }
 
 // https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
@@ -162,4 +229,16 @@ pub fn (mut this Panel) set_layout(layout Layout) {
 
 pub fn (mut this Panel) add_child_with_flag(com &Component, flag int) {
 	this.children << com
+	if mut this.layout is BorderLayout {
+		unsafe {
+			match flag {
+				0 { this.layout.north = com }
+				1 { this.layout.west = com }
+				2 { this.layout.east = com }
+				3 { this.layout.south = com }
+				4 { this.layout.center = com }
+				else {}
+			}
+		}
+	}
 }

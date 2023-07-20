@@ -93,6 +93,10 @@ fn (mut app App) make_select_box_section() &ui.Titlebox {
 	}
 	// sel.set_change(sel_change)
 
+	sel.subscribe_event('item_change', fn (mut e ui.ItemChangeEvent) {
+		dump(e.new_val)
+	})
+
 	mut title_box := ui.title_box('Selector', [sel])
 	title_box.set_bounds(130, 40, 120, 150)
 	// app.pane.add_child(title_box)

@@ -7,7 +7,6 @@ Planned TODO Features:
 - Use in `java2v` to support translating swing
 - port JavaFx's charts
 - add BorderLayout
-- Popup menu (https://docs.oracle.com/javase/8/docs/api/javax/swing/JPopupMenu.html)
 - List (https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html)
 - Spinner (https://docs.oracle.com/javase/8/docs/api/javax/swing/JSpinner.html)
 
@@ -16,6 +15,9 @@ Planned TODO Features:
 - (WIP) Now uses the new static methods introduced in V 0.3.5 (ex. `ui.Button.new`)
 - ProgressBar: new `bind_to` function (inspired by https://docs.oracle.com/javafx/2/binding/jfxpub-binding.htm)
 - ScrollView: new `set_border_painted` function
+- Popup: New Popups (https://docs.oracle.com/javase/8/docs/api/javax/swing/JPopupMenu.html)
+- Selectbox: Use new Popups for displaying choice items.
+- Selector: Deprecate, has been replaced by Selectbox.
 
 ## 0.0.18
 *April, 23rd*

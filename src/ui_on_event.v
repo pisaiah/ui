@@ -53,6 +53,73 @@ pub fn on_event(e &gg.Event, mut app Window) {
 	// app.has_event = false
 }
 
+fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool {
+	if mut a is TextField {
+		app.runebox_key(key, e, mut a)
+		return a.is_selected
+	}
+	if mut a is TextArea {
+		app.textarea_key_down(key, e, mut a)
+		return true
+	}
+	if mut a is Textbox {
+		app.textbox_key_down(key, e, mut a)
+		return true
+	}
+	if mut a is Tabbox {
+		mut kids := a.kids[a.active_tab]
+		for mut comm in kids {
+			app.check_box(key, e, mut comm)
+		}
+	}
+	if mut a is VBox || mut a is HBox || mut a is Titlebox || mut a is SplitView {
+		for mut comm in a.children {
+			if app.check_box(key, e, mut comm) {
+				return true
+			}
+		}
+	}
+	if mut a is ScrollView || mut a is Panel {
+		for mut comm in a.children {
+			if app.check_box(key, e, mut comm) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
+	// global keys
+	match key {
+		.left_alt {
+			app.debug_draw = !app.debug_draw
+			return
+		}
+		.left_control {
+			// TODO: Copy & Paste, Undo & Redo
+			return
+		}
+		else {}
+	}
+	for mut a in app.components {
+		app.check_box(key, e, mut a)
+
+		if mut a is Modal {
+			for mut child in a.children {
+				app.check_box(key, e, mut child)
+			}
+		}
+		if mut a is Page {
+			for mut child in a.children {
+				app.check_box(key, e, mut child)
+			}
+			return
+		}
+	}
+	app.key_down_event(mut app, key, e)
+}
+
 pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	is_point_in := point_in_raw(mut com, app.click_x, app.click_y)
 	if !is_point_in {
@@ -254,18 +321,18 @@ pub fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 	}
 }
 
-pub fn (mut comm Component) scroll_y_by(e &gg.Event) {
+pub fn (mut com Component) scroll_y_by(e &gg.Event) {
 	scroll_y := int(e.scroll_y)
 	if abs(e.scroll_y) != e.scroll_y {
-		comm.scroll_i += -scroll_y
-	} else if comm.scroll_i > 0 {
-		comm.scroll_i -= scroll_y
+		com.scroll_i += -scroll_y
+	} else if com.scroll_i > 0 {
+		com.scroll_i -= scroll_y
 	}
 
-	comm.scroll_change_event(comm, -scroll_y, 0)
+	com.scroll_change_event(com, -scroll_y, 0)
 
-	if comm.scroll_i < 0 {
-		comm.scroll_i = 0
+	if com.scroll_i < 0 {
+		com.scroll_i = 0
 	}
 }
 

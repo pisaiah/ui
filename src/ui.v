@@ -228,6 +228,10 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id int,
 	ctx.gg.set_text_cfg(cfg)
 	ctx.gg.ft.fons.set_font(font_id)
 	ctx.gg.ft.fons.draw_text(x * scale, y * scale, text_)
+
+	/*$if windows {
+		win_draw_text(x, y, text_, cfg)
+	}*/
 }
 
 fn new_graphics_context(win &Window) &GraphicsContext {
@@ -402,10 +406,19 @@ fn (mut app Window) draw() {
 	now := time.now().unix_time_milli()
 
 	// Sort by Z-index; Lower draw first
-	app.components.sort(a.z_index < b.z_index)
+	// app.components.sort(a.z_index < b.z_index)
 
 	if app.graphics_context.line_height == 0 {
 		app.graphics_context.calculate_line_height()
+	}
+
+	if app.components.len == 1 {
+		if app.components[0] is Panel {
+			// Content Pane
+			ws := app.gg.window_size()
+			app.components[0].width = ws.width
+			app.components[0].height = ws.height
+		}
 	}
 
 	// Draw components
@@ -428,21 +441,8 @@ fn (mut app Window) draw() {
 	}
 
 	// Draw Popups last
-	/*
-	for mut com in app.components {
-		for mut kid in com.children {
-			if mut kid is Popup {
-				invoke_draw_event(com, app.graphics_context)
-				com.draw(app.graphics_context)
-				com.invoke_after_draw_event(app.graphics_context)
-			}
-		}
-	}*/
-
 	for mut pop in app.popups {
-		// invoke_draw_event(pop, app.graphics_context)
 		pop.draw(app.graphics_context)
-		// pop.invoke_after_draw_event(app.graphics_context)
 	}
 
 	// Draw Menubar last

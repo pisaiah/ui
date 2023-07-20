@@ -77,22 +77,18 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 		}
 	}
 
-	mut my := 0
-	for spl in this.text.split('\n') {
-		ctx.draw_text(x, y + this.height - line_height + my, fix_tab(spl), ctx.font, gx.TextCfg{
-			size: size
-			color: color
-			bold: this.bold
-		})
+	ctx.draw_text(x, y + this.height - line_height, fix_tab(this.text), ctx.font, gx.TextCfg{
+		size: size
+		color: color
+		bold: this.bold
+	})
 
-		ctx.set_cfg(gx.TextCfg{
-			size: ctx.font_size
-			color: ctx.theme.text_color
-			bold: false
-		})
+	ctx.set_cfg(gx.TextCfg{
+		size: ctx.font_size
+		color: ctx.theme.text_color
+		bold: false
+	})
 
-		my += line_height
-	}
 	yp := y + this.height - 2
 	ctx.gg.draw_line(x, yp, x + this.width, yp, color)
 

@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 
 struct Popup {
 	Component_A

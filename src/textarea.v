@@ -41,6 +41,7 @@ pub fn (mut this TextArea) pack() {
 	this.needs_pack = true
 }
 
+[deprecated: 'Use text_box']
 pub fn textarea(win &Window, lines []string) &TextArea {
 	return &TextArea{
 		win: win

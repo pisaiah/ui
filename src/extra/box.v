@@ -1,4 +1,4 @@
-module iui
+module extra
 
 // Box -
 //     Box is a combination of VBox & HBox
@@ -14,7 +14,7 @@ pub mut:
 pub fn box(win &Window) &Box {
 	return &Box{
 		win: win
-		vbox: vbox(win)
+		vbox: VBox.new()
 	}
 }
 
@@ -55,7 +55,7 @@ pub fn (mut this Box) add_break(min_height int) {
 		}
 	}
 
-	mut h_box := hbox(this.win)
+	mut h_box := HBox.new()
 	h_box.set_bounds(this.x, this.y, this.width, this.height)
 	h_box.set_min_height(min_height)
 	h_box.pack()

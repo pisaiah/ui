@@ -58,7 +58,7 @@ fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 
 	ctx.gg.set_text_cfg(cfg)
 
-	wid := ctx.text_width('12345')
+	wid := ctx.text_width('${this.lines.len * 100}')
 	this.px = wid
 	ctx.gg.draw_rect_filled(this.x, this.y, this.px - 4, this.height - 1, ctx.theme.button_bg_normal)
 	sy := this.y + 2

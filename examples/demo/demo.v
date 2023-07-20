@@ -266,13 +266,13 @@ fn (mut app App) make_checkbox_section() {
 }
 
 fn (mut app App) make_selectbox_section() {
-	mut sel := ui.selector(app.win, 'Selectbox')
+	mut sel := ui.select_box(text: 'Selectbox')
 	sel.set_bounds(0, 0, 100, 25)
 
 	for i := 0; i < 3; i++ {
 		sel.items << (25 * (i + 1)).str() + '%'
 	}
-	sel.set_change(sel_change)
+	// sel.set_change(sel_change)
 
 	mut title_box := ui.title_box('Selector', [sel])
 	title_box.set_bounds(8, 8, 120, 150)
@@ -406,6 +406,7 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 	win.set_theme(theme)
 }
 
+/*
 fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) {
 	debug('OLD: ' + old_val + ', NEW: ' + new_val)
 	mut a := new_val.replace('%', '')
@@ -416,6 +417,7 @@ fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) 
 		}
 	}
 }
+*/
 
 fn test_page(mut e ui.MouseEvent) {
 	mut page := ui.page(e.ctx.win, 'Page 1')

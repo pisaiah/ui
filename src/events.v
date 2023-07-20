@@ -45,3 +45,11 @@ pub:
 	x    int
 	y    int
 }
+
+// Selectbox change event
+pub struct ItemChangeEvent {
+	ComponentEvent
+pub:
+	old_val string
+	new_val string
+}

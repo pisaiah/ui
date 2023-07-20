@@ -249,14 +249,15 @@ fn open_about_modal(app &Window) &Modal {
 	about.in_height = 250
 	about.in_width = 370
 
-	mut title := label(app, 'iUI ')
+	mut title := Label.new(text: 'iUI ')
 	title.set_pos(40, 16)
 	title.set_config(16, false, true)
 	title.pack()
 	about.add_child(title)
 
-	mut lbl := label(app, "Isaiah's UI Toolkit for V.\nVersion: ${version}\nCompiled with " +
-		full_v_version(false))
+	mut lbl := Label.new(
+		text: "Isaiah's UI Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}"
+	)
 	lbl.set_pos(40, 70)
 	about.add_child(lbl)
 
@@ -271,7 +272,7 @@ fn open_about_modal(app &Window) &Modal {
 	)
 	about.add_child(gh)
 
-	mut copy := label(app, 'Copyright © 2021-2023 Isaiah.')
+	mut copy := Label.new(text: 'Copyright © 2021-2023 Isaiah.')
 	copy.set_pos(40, 185)
 	copy.set_config(12, true, false)
 	about.add_child(copy)
