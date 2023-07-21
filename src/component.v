@@ -84,8 +84,14 @@ pub fn (mut this Component_A) add_child(com &Component) {
 	this.children << com
 }
 
-pub fn (mut com Component_A) set_parent(mut par Component_A) {
-	com.parent = par
+pub fn (this &Component_A) get_parent[T]() T {
+	return T(this.parent)
+}
+
+pub fn (mut com Component) set_parent(par voidptr) {
+	unsafe {
+		com.parent = par
+	}
 }
 
 pub fn (mut com Component_A) get_com() Component_A {

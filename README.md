@@ -1,3 +1,5 @@
+<img src="https://github.com/isaiahpatton/ui/assets/16439221/14ccf60b-cff4-4f49-884f-d6dc2cc796ef?s=200&v=4" align="right" alt="Isaiah's UI" height="64">
+
 # Isaiah's UI ![0.0.19](https://img.shields.io/badge/version-0.0.19-white?style=for-the-badge) ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 
 Cross-platform GUI library for V. Inspired by the syntax of Java's Swing.
@@ -61,8 +63,8 @@ import iui as ui
 ![image](https://user-images.githubusercontent.com/16439221/147748093-21c792e5-a746-491f-8d03-a3eae0491f8e.png)
 
 Included Themes:
-- Light: Default, Minty, Ocean.
-- Dark:  Dark, Black (with White, Red, & Green accent colors)
+- Light: Default, Minty, Ocean, Seven.
+- Dark:  Dark, Black (with White, Red, & Green accent colors), Seven Dark.
 
 ## Used in
 - [Vide](https://github.com/isaiahpatton/vide)

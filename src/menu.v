@@ -49,7 +49,7 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 			this.click_event_fn(mut win, *this)
 			this.is_mouse_rele = false
 			if !isnil(this.parent) {
-				mut par := &MenuItem(this.parent)
+				mut par := this.get_parent[&MenuItem]() //&MenuItem(this.parent)
 				par.open = false
 			}
 		}
@@ -109,7 +109,7 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 	mut hei := 0
 	mut wi := 100
 	for mut item in this.children {
-		item.parent = this
+		item.set_parent(this)
 		if mut item is MenuItem {
 			if item.sub != 1 {
 				item.sub = 1
@@ -249,32 +249,47 @@ fn open_about_modal(app &Window) &Modal {
 	about.in_height = 250
 	about.in_width = 370
 
+	mut p := panel(
+		layout: BoxLayout{
+			ori: 1
+		}
+	)
+
+	p.set_pos(40, 16)
+
+	ws := app.gg.window_size()
+	if 370 > ws.width {
+		about.top_off = 20
+		about.in_width = ws.width - 10
+		p.set_pos(20, 16)
+	}
+
 	mut title := Label.new(text: 'iUI ')
-	title.set_pos(40, 16)
 	title.set_config(16, false, true)
 	title.pack()
-	about.add_child(title)
+	p.add_child(title)
 
 	mut lbl := Label.new(
 		text: "Isaiah's UI Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}"
 	)
-	lbl.set_pos(40, 70)
-	about.add_child(lbl)
+	lbl.pack()
+	p.add_child(lbl)
 
 	gh := link(
 		text: 'Github'
 		url: 'https://github.com/isaiahpatton/ui'
 		bounds: Bounds{
-			x: 40
-			y: 135
+			x: 0
+			y: 15
 		}
 		pack: true
 	)
-	about.add_child(gh)
+	p.add_child(gh)
 
 	mut copy := Label.new(text: 'Copyright © 2021-2023 Isaiah.')
-	copy.set_pos(40, 185)
+	copy.set_pos(0, 25)
 	copy.set_config(12, true, false)
-	about.add_child(copy)
+	p.add_child(copy)
+	about.add_child(p)
 	return about
 }

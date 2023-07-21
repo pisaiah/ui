@@ -100,6 +100,10 @@ pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 		bounds: Bounds{200, this.in_height - 35, 100, 25}
 	)
 
+	if 300 > this.in_width {
+		close.x = this.in_width - 115
+	}
+
 	if ce {
 		close.subscribe_event('mouse_up', default_modal_close_fn)
 	}

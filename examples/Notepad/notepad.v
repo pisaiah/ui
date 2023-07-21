@@ -109,13 +109,6 @@ fn main() {
 		}
 	})
 
-	sv.subscribe_event('draw', fn (mut e ui.DrawEvent) {
-		size := gg.window_size()
-
-		e.target.width = size.width - 2
-		e.target.height = size.height - 31
-	})
-
 	window.add_child(sv)
 
 	window.gg.run()

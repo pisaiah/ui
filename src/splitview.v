@@ -61,7 +61,8 @@ pub fn (mut this SplitView) draw(ctx &GraphicsContext) {
 	mut win := ctx.win
 	for mut child in this.children {
 		if child.parent == unsafe { nil } {
-			child.parent = this
+			child.set_parent(this)
+			// child.set_parent(this)
 		}
 
 		child.draw_event_fn(mut win, child)

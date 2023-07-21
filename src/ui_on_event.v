@@ -10,7 +10,7 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		app.has_event = true
 	}*/
 
-	// app.has_event = true
+	app.has_event = true
 
 	if e.typ == .mouse_move {
 		app.mouse_x = app.gg.mouse_pos_x
@@ -50,7 +50,7 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		on_scroll_event(e, mut app)
 	}
 
-	// app.has_event = false
+	app.has_event = false
 }
 
 fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool {

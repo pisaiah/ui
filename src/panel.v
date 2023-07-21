@@ -152,7 +152,6 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		}
 	}
 
-	dump(cols)
 	for mut child in panel.children {
 		child.draw_with_offset(ctx, x, y)
 
@@ -214,7 +213,7 @@ fn (mut this Panel) draw(ctx &GraphicsContext) {
 	}
 	for mut kid in this.children {
 		if kid.parent == unsafe { nil } {
-			kid.parent = this
+			kid.set_parent(this)
 		}
 	}
 	if ctx.win.debug_draw {

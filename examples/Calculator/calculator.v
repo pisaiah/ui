@@ -4,54 +4,42 @@ import gg
 import iui as ui
 import gx
 
-[console]
 fn main() {
 	// Create Window
 	mut window := ui.make_window(
-		theme: ui.get_system_theme()
+		theme: theme_dark()
 		title: 'Calculator'
 		width: 280
-		height: 342
+		height: 360
 		ui_mode: true
-		font_size: 16
+		font_size: 18
 	)
 
 	// Setup Menubar and items
-	window.bar = ui.menubar(window, window.theme)
+	window.bar = make_menu_bar()
 
-	mut theme_menu := ui.menuitem('Theme')
-
-	themes := ui.get_all_themes()
-	for theme2 in themes {
-		mut item := ui.menuitem(theme2.name)
-		item.set_click(theme_click)
-		theme_menu.add_child(item)
-	}
-
-	help_menu := ui.menu_item(
-		text: 'Help'
-		children: [
-			ui.menu_item(
-				text: 'About Calculator'
-				click_event_fn: about_click
-			),
-			ui.menu_item(
-				text: 'About iUI'
-			),
-		]
+	// Set content panel
+	mut cp := ui.panel(
+		layout: ui.BoxLayout{
+			ori: 1
+		}
 	)
 
-	window.bar.add_child(help_menu)
-	window.bar.add_child(theme_menu)
-
-	mut vbox := ui.vbox(window)
-
 	mut res_box := ui.text_field(text: '')
-	res_box.set_bounds(0, 0, 64 * 4, 35)
-	vbox.add_child(res_box)
+	res_box.set_bounds(5, 1, 260, 40)
+	res_box.set_id(mut window, 'res_box')
+	cp.add_child(res_box)
 
-	vbox.add_child(seperator(4))
+	mut pp := button_panel()
 
+	cp.set_bounds(5, 35, 0, 0)
+	cp.add_child(pp)
+	window.add_child(cp)
+
+	window.gg.run()
+}
+
+fn button_panel() &ui.Panel {
 	rows := [
 		[' % ', ' CE ', ' C ', ' ← '],
 		[' 1/x ', ' ^2 ', ' √ ', ' / '],
@@ -60,75 +48,41 @@ fn main() {
 		['1', '2', '3', ' + '],
 		['Neg', '0', '.', ' = '],
 	]
-	el_width := 64
-	el_height := 42
+
+	mut pp := ui.panel(
+		layout: ui.GridLayout{
+			cols: 4
+		}
+	)
+
+	pp.set_bounds(0, 10, 260, 250)
+	pp.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		ws := e.ctx.gg.window_size()
+		e.target.width = ws.width - (e.target.x * 2)
+		e.target.height = ws.height - e.target.y - 5
+	})
 
 	for row in rows {
-		mut hbox_br := ui.hbox(window)
-		hbox_br.set_bounds(0, 0, el_width * row.len, el_height)
-		hbox_br.draw_event_fn = vbtn_draw
 		for el in row {
 			mut num_btn := ui.button(text: el)
-			num_btn.set_bounds(1, 1, el_width, el_height)
-			num_btn.user_data = res_box
-			num_btn.draw_event_fn = btn_draw
-			hbox_br.add_child(num_btn)
-		}
-		vbox.add_child(hbox_br)
-	}
 
-	vbox.set_bounds(5, 30, el_width * 4, el_height * rows.len)
-	vbox.draw_event_fn = vbtn_draw
-	window.add_child(vbox)
+			num_btn.subscribe_event('mouse_up', fn [mut num_btn] (mut e ui.MouseEvent) {
+				on_click_fn(num_btn, e.ctx.win)
+			})
 
-	window.gg.run()
-}
-
-struct Seperator {
-	ui.Component_A
-mut:
-	size int
-}
-
-fn seperator(size int) &Seperator {
-	return &Seperator{
-		width: size
-		height: size
-		size: size
-	}
-}
-
-fn (mut this Seperator) draw(ctx &ui.GraphicsContext) {
-}
-
-fn vbtn_draw(mut win ui.Window, com &ui.Component) {
-	size := gg.window_size()
-
-	mut this := *com
-
-	this.width = size.width
-	this.height = size.height
-}
-
-fn btn_draw(mut win ui.Window, com &ui.Component) {
-	size := gg.window_size()
-	width := size.width - 10
-	height := size.height - 74
-
-	mut this := *com
-	this.width = width / 4
-	this.height = height / 6
-
-	if mut this is ui.Button {
-		if this.is_mouse_rele {
-			on_click_fn(unsafe { nil }, mut this, unsafe { nil })
+			if el == ' = ' {
+				num_btn.set_background(gx.rgb(30, 75, 145))
+			}
+			num_btn.border_radius = 4
+			pp.add_child(num_btn)
 		}
 	}
+	return pp
 }
 
-fn on_click_fn(ptr_win voidptr, mut btn ui.Button, extra voidptr) {
+fn on_click_fn(btn &ui.Button, win &ui.Window) {
 	mut txt := btn.text
-	mut res_box := &ui.TextField(btn.user_data)
+	mut res_box := win.get[&ui.TextField]('res_box')
 
 	if txt == ' C ' || txt == ' CE ' {
 		res_box.text = ''
@@ -137,6 +91,10 @@ fn on_click_fn(ptr_win voidptr, mut btn ui.Button, extra voidptr) {
 
 	if txt == ' √ ' {
 		txt = 'sqrt'
+	}
+
+	if txt == 'Neg' {
+		txt = '-'
 	}
 
 	if txt == ' ← ' {
@@ -162,76 +120,94 @@ fn on_click_fn(ptr_win voidptr, mut btn ui.Button, extra voidptr) {
 	res_box.carrot_left = res_box.text.len
 }
 
-fn compute_value(input string) f32 {
-	ops := ['x', '+', '/', '-']
-	mut has_op := false
-	for op in ops {
-		if input.contains(op) {
-			has_op = true
-			break
-		}
-	}
-	if !has_op {
-		return input.f32()
-	}
-
-	mut res := input.f32()
-	if input.contains('x') {
-		spl := input.split('x')
-		res = spl[0].f32() * spl[1].f32()
-	}
-	if input.contains('+') {
-		spl := input.split('+')
-		res = spl[0].f32() + spl[1].f32()
-	}
-	if input.contains('/') {
-		spl := input.split('/')
-		res = spl[0].f32() / spl[1].f32()
-	}
-	if input.contains('-') {
-		spl := input.split('-')
-		res = spl[0].f32() - spl[1].f32()
-	}
-
-	return res
-}
-
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
+	if com.text == 'CalcDark' {
+		win.set_theme(theme_dark())
+		return
+	}
 	mut theme := ui.theme_by_name(com.text)
 	win.set_theme(theme)
 }
 
+// Setup Menubar and items
+fn make_menu_bar() &ui.Menubar {
+	mut bar := ui.menu_bar()
+	mut theme_menu := ui.menu_item(text: 'Theme')
+
+	mut themes := ui.get_all_themes()
+	themes.insert(0, theme_dark())
+	for theme2 in themes {
+		mut item := ui.menuitem(theme2.name)
+		item.set_click(theme_click)
+		theme_menu.add_child(item)
+	}
+
+	help_menu := ui.menu_item(
+		text: 'Help'
+		children: [
+			ui.menu_item(
+				text: 'About Calculator'
+				click_event_fn: about_click
+			),
+			ui.menu_item(
+				text: 'About iUI'
+			),
+		]
+	)
+
+	bar.add_child(help_menu)
+	bar.add_child(theme_menu)
+	return bar
+}
+
 fn about_click(mut win ui.Window, com ui.MenuItem) {
 	mut modal := ui.modal(win, 'About Calculator')
-	modal.in_height = 210
-	modal.in_width = 250
-	modal.top_off = 20
+	modal.in_height = 200
+	modal.in_width = 240
 
-	mut title := ui.label(win, 'Calculator')
-	title.set_pos(20, 20)
-	title.set_config(28, true, true)
-	title.bold = true
-	title.pack()
+	mut label := ui.Label.new(
+		text: 'Small Calculator made in\nthe V Language.\n\nVersion: 0.1\nUI Version: ${ui.version}'
+	)
 
-	mut label := ui.label(win,
-		'Small Calculator made in\nthe V Programming Language.\n\nVersion: 0.1\nUI Version: ' +
-		ui.version)
-
-	label.set_pos(22, 64)
+	label.set_pos(15, 20)
 	label.pack()
 
 	mut can := ui.button(
 		text: 'OK'
-		bounds: ui.Bounds{10, 170, 70, 25}
+		bounds: ui.Bounds{15, 150, 210, 35}
 	)
-	can.set_click(fn (mut win ui.Window, btn ui.Button) {
-		win.components = win.components.filter(mut it !is ui.Modal)
+	can.subscribe_event('mouse_up', fn (mut e ui.MouseEvent) {
+		e.ctx.win.components = e.ctx.win.components.filter(mut it !is ui.Modal)
 	})
+
 	modal.needs_init = false
-	modal.add_child(can)
-
-	modal.add_child(title)
 	modal.add_child(label)
-
+	modal.add_child(can)
 	win.add_child(modal)
+}
+
+// Custom Dark Theme that memics Windows Calc colors
+pub fn theme_dark() &ui.Theme {
+	return &ui.Theme{
+		name: 'CalcDark'
+		text_color: gx.rgb(230, 230, 230)
+		background: gx.rgb(32, 32, 32)
+		button_bg_normal: gx.rgb(57, 57, 57)
+		button_bg_hover: gx.rgb(75, 75, 75)
+		button_bg_click: gx.rgb(30, 30, 30)
+		button_border_normal: gx.rgb(38, 38, 38)
+		button_border_hover: gx.rgb(0, 140, 250)
+		button_border_click: gx.rgb(0, 84, 153)
+		menubar_background: gx.rgb(10, 10, 10)
+		menubar_border: gx.rgb(30, 30, 30)
+		dropdown_background: gx.rgb(10, 10, 10)
+		dropdown_border: gx.rgb(0, 0, 0)
+		textbox_background: gx.rgb(50, 50, 50)
+		textbox_border: gx.rgb(40, 40, 40)
+		checkbox_selected: gx.rgb(99, 99, 40)
+		checkbox_bg: gx.rgb(0, 0, 0)
+		progressbar_fill: gx.rgb(130, 130, 130)
+		scroll_track_color: gx.rgb(0, 0, 0)
+		scroll_bar_color: gx.rgb(170, 170, 170)
+	}
 }

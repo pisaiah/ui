@@ -92,7 +92,7 @@ pub fn (mut this ScrollView) draw_children(ctx &GraphicsContext) (int, int) {
 
 	for mut child in this.children {
 		if child.parent == unsafe { nil } {
-			child.parent = this
+			child.set_parent(this)
 		}
 
 		// Override child's scroll index;

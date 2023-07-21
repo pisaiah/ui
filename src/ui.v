@@ -314,7 +314,7 @@ pub fn make_window(config &WindowConfig) &Window {
 		// TODO config.user_data
 		font_path: config.font_path
 		font_size: config.font_size
-		ui_mode: config.ui_mode
+		ui_mode: false // config.ui_mode
 	)
 	win.graphics_context = new_graphics_context(win)
 	if win.graphics_context.icon_cache.len == 0 {
@@ -396,7 +396,7 @@ fn (mut app Window) do_sleep() {
 	}
 
 	if !app.has_event {
-		// time.sleep(20 * time.millisecond) // Reduce CPU Usage
+		time.sleep(20 * time.millisecond) // Reduce CPU Usage
 	}
 }
 
@@ -406,14 +406,14 @@ fn (mut app Window) draw() {
 	now := time.now().unix_time_milli()
 
 	// Sort by Z-index; Lower draw first
-	// app.components.sort(a.z_index < b.z_index)
+	app.components.sort(a.z_index < b.z_index)
 
 	if app.graphics_context.line_height == 0 {
 		app.graphics_context.calculate_line_height()
 	}
 
 	if app.components.len == 1 {
-		if app.components[0] is Panel {
+		if app.components[0] is Panel || app.components[0] is ScrollView {
 			// Content Pane
 			ws := app.gg.window_size()
 			app.components[0].width = ws.width

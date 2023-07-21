@@ -17,11 +17,9 @@ fn main() {
 	)
 
 	make_button(mut pan, '1 (NORTH)', ui.borderlayout_north)
-
-	// make_button(mut pan, '2 (WEST)', ui.borderlayout_west)
+	make_button(mut pan, '2 (WEST)', ui.borderlayout_west)
 	make_button(mut pan, '3 (EAST)', ui.borderlayout_east)
-
-	// make_button(mut pan, '4 (SOUTH)', ui.borderlayout_south)
+	make_button(mut pan, '4 (SOUTH)', ui.borderlayout_south)
 	make_button(mut pan, '5 (CENTER)', ui.borderlayout_center)
 
 	win.add_child(pan)
