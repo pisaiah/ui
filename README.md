@@ -1,12 +1,14 @@
-<img src="https://github.com/isaiahpatton/ui/assets/16439221/14ccf60b-cff4-4f49-884f-d6dc2cc796ef?s=200&v=4" align="right" alt="Isaiah's UI" height="64">
+<img src="https://user-images.githubusercontent.com/16439221/200154661-4e83f755-da21-4c6d-8cda-87e0ee01d105.png#gh-light-mode-only" width="400" align="right"> <img src="https://user-images.githubusercontent.com/16439221/200154731-a08ce323-6d07-47ec-bc28-e171811e639a.png#gh-dark-mode-only" align="right" width="400">
 
-# Isaiah's UI ![0.0.19](https://img.shields.io/badge/version-0.0.19-white?style=for-the-badge) ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
+# <img src="https://github.com/isaiahpatton/ui/assets/16439221/14ccf60b-cff4-4f49-884f-d6dc2cc796ef?s=200&v=4" align="" alt="Isaiah's UI" height="64">
 
-Cross-platform GUI library for V. Inspired by the syntax of Java's Swing.
+![0.0.19](https://img.shields.io/badge/version-0.0.19-white?style=flat)
+![GitHub](https://img.shields.io/badge/license-MIT-blue?style=flat)
+![vlang](http://img.shields.io/badge/V-0.4.0-%236d8fc5?style=flat)
+
+Isaiah's cross-platform GUI library for V. Inspired by the syntax of Java's Swing.
 
 Example: *([examples/demo/](examples/demo/demo.v))*
-
-<img src="https://user-images.githubusercontent.com/16439221/200154661-4e83f755-da21-4c6d-8cda-87e0ee01d105.png" width="400"> <img src="https://user-images.githubusercontent.com/16439221/200154731-a08ce323-6d07-47ec-bc28-e171811e639a.png" width="400">
 
 ## Example 
 
