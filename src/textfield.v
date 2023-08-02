@@ -122,7 +122,7 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	if this.center {
 		// Y-center text
-		th := ctx.gg.text_height(this.text)
+		th := ctx.line_height // ctx.gg.text_height(this.text)
 		ycp := this.y + (this.height - th) / 2
 		ctx.draw_text(xp, ycp, this.text, ctx.font, cfg)
 		ctx.gg.draw_line(xp + wid, ycp, xp + wid, ycp + th, pipe_color)
@@ -149,8 +149,8 @@ fn (mut this TextField) mouse_down_caret(ctx &GraphicsContext) {
 	x := if this.rx != 0 { this.rx } else { this.x }
 
 	mx := ctx.win.mouse_x - x
-	wid_char := text_width(ctx.win, 'A')
-	full_wid := text_width(ctx.win, this.text)
+	wid_char := ctx.text_width('A')
+	full_wid := ctx.text_width(this.text)
 
 	if mx > full_wid {
 		this.carrot_left = this.text.len
@@ -158,7 +158,7 @@ fn (mut this TextField) mouse_down_caret(ctx &GraphicsContext) {
 
 	for i in 0 .. this.text.len + 1 {
 		substr := this.text[0..i]
-		wid := text_width(ctx.win, substr)
+		wid := ctx.text_width(substr)
 
 		if abs(mx - wid) <= wid_char {
 			this.carrot_left = i

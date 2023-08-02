@@ -35,20 +35,15 @@ pub struct ButtonConfig {
 
 [deprecated: 'Use button(ButtonConfig)']
 pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
-	return &Button{
-		text: ''
+	cfg := ButtonConfig{
+		...conf
 		icon: icon
-		x: conf.bounds.x
-		y: conf.bounds.y
-		width: conf.bounds.width
-		height: conf.bounds.height
-		app: unsafe { nil }
-		click_event_fn: fn (mut win Window, a Button) {}
-		new_click_event_fn: unsafe { nil }
-		user_data: conf.user_data
-		need_pack: conf.should_pack
-		area_filled: conf.area_filled
 	}
+	return button(cfg)
+}
+
+pub fn Button.new(cfg ButtonConfig) &Button {
+	return button(cfg)
 }
 
 pub fn button(conf ButtonConfig) &Button {
@@ -92,9 +87,9 @@ pub fn (mut btn Button) pack() {
 }
 
 pub fn (mut btn Button) pack_do() {
-	width := text_width(btn.app, btn.text) + 4
+	width := text_width(btn.app, btn.text) + 6
 	btn.width = width
-	btn.height = 20 // text_height(btn.app, btn.text + 'a') + 13
+	btn.height = 30
 	btn.need_pack = false
 }
 
@@ -177,6 +172,7 @@ fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn But
 
 	if btn.width == 0 && btn.height == 0 {
 		btn.pack_do()
+		btn.need_pack = true
 	}
 
 	if btn.icon != -1 {

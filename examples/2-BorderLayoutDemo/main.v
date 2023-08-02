@@ -12,7 +12,7 @@ fn main() {
 	// Set Swing theme
 	win.set_theme(ui.theme_ocean())
 
-	mut pan := ui.panel(
+	mut pan := ui.Panel.new(
 		layout: ui.BorderLayout{}
 	)
 
@@ -27,10 +27,9 @@ fn main() {
 }
 
 fn make_button(mut pan ui.Panel, id string, constrain int) &ui.Button {
-	mut btn := ui.button(
+	mut btn := ui.Button.new(
 		text: 'Button ${id}'
 	)
-	btn.set_bounds(0, 0, 150, 50)
 	pan.add_child_with_flag(btn, constrain)
 	return btn
 }

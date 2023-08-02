@@ -25,7 +25,9 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	text_height := ctx.line_height / 2
 
 	for mut com in this.children {
-		com.draw_event_fn(mut win, com)
+		if !isnil(com.draw_event_fn) {
+			com.draw_event_fn(mut win, com)
+		}
 		y := this.y + this.padding + text_height + 5
 		win.draw_with_offset(mut com, this.x + this.padding, y)
 		com.after_draw_event_fn(mut win, com)

@@ -6,7 +6,7 @@ import gx
 struct App {
 mut:
 	win  &ui.Window
-	pane &ui.HBox
+	pane &ui.Panel
 }
 
 [console]
@@ -20,7 +20,12 @@ fn main() {
 		ui_mode: false
 	)
 
-	mut pane := ui.hbox(window)
+	mut pane := ui.panel(
+		layout: &ui.FlowLayout{
+			hgap: 10
+			vgap: 10
+		}
+	)
 	mut app := &App{
 		win: window
 		pane: pane
@@ -43,7 +48,7 @@ fn main() {
 	mut img := ui.image(window, v_img)
 	img.set_bounds(5, 5, 50, 50)
 	mut title_box := ui.title_box('Image', [img])
-	title_box.set_bounds(8, 8, 100, 150)
+	title_box.set_bounds(0, 0, 100, 130)
 	pane.add_child(title_box)
 
 	app.make_tree_section()
@@ -53,13 +58,11 @@ fn main() {
 
 	pane.set_pos(4, 10)
 
-	pane.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
-		ws := win.gg.window_size()
-		com.width = 700 // ws.width - 100
-		if mut com is ui.HBox {
-			com.min_height = ws.height - 50
-		}
-	}
+	pane.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		ws := e.ctx.gg.window_size()
+		e.target.width = ws.width
+		e.target.height = ws.height
+	})
 
 	mut tb := ui.tabbox(window)
 	tb.set_pos(2, 30)
@@ -197,27 +200,27 @@ fn (mut app App) make_hbox_section() {
 	mut hbox_title_box := ui.title_box('HBox layout', [hbox])
 
 	hbox.set_bounds(0, 0, 150, 0)
-	hbox_title_box.set_bounds(8, 8, 200, 150)
+	hbox_title_box.set_bounds(0, 0, 200, 150)
 	app.pane.add_child(hbox_title_box)
 }
 
 fn (mut app App) make_edits_section() {
 	tbox := ui.text_field(
 		text: 'This is a TextField'
-		bounds: ui.Bounds{2, 8, 200, 30}
+		bounds: ui.Bounds{2, 5, 175, 30}
 	)
 
 	mut code_box := ui.text_box(['module main', '', 'fn main() {', '}'])
-	code_box.set_bounds(0, 0, 200, 100)
+	code_box.set_bounds(0, 0, 175, 100)
 
 	mut sv := ui.scroll_view(
 		view: code_box
-		bounds: ui.Bounds{2, 48, 200, 100}
+		bounds: ui.Bounds{2, 44, 175, 100}
 		padding: 0
 	)
 
-	mut edits_title_box := ui.title_box('TextField / TextArea', [tbox, sv])
-	edits_title_box.set_bounds(18, 8, 200, 210)
+	mut edits_title_box := ui.title_box('TextField / TextBox', [tbox, sv])
+	edits_title_box.set_bounds(0, 0, 200, 150)
 	app.pane.add_child(edits_title_box)
 }
 
@@ -232,19 +235,20 @@ fn (mut app App) make_progress_section() {
 	pb3.set_bounds(0, 60, 110, 24)
 
 	mut title_box := ui.title_box('Progressbar', [pb, pb2, pb3])
-	title_box.set_bounds(8, 8, 120, 150)
+	title_box.set_bounds(0, 0, 120, 130)
 	app.pane.add_child(title_box)
 }
 
 fn (mut app App) make_tree_section() {
 	mut tree := create_tree(app.win)
 	mut tree_view := ui.scroll_view(
-		bounds: ui.Bounds{0, 0, 180, 170}
+		bounds: ui.Bounds{0, 0, 170, 145}
 		view: tree
 	)
 
 	mut title_box := ui.title_box('Treeview', [tree_view])
-	title_box.set_bounds(8, 8, 180, 210)
+	title_box.set_bounds(0, 0, 190, 180)
+
 	app.pane.add_child(title_box)
 }
 
@@ -261,7 +265,7 @@ fn (mut app App) make_checkbox_section() {
 	)
 
 	mut title_box := ui.title_box('Checkbox', [cbox, cbox2])
-	title_box.set_bounds(8, 8, 130, 150)
+	title_box.set_bounds(0, 0, 130, 130)
 	app.pane.add_child(title_box)
 }
 
@@ -275,7 +279,7 @@ fn (mut app App) make_selectbox_section() {
 	// sel.set_change(sel_change)
 
 	mut title_box := ui.title_box('Selector', [sel])
-	title_box.set_bounds(8, 8, 120, 150)
+	title_box.set_bounds(0, 0, 120, 130)
 	app.pane.add_child(title_box)
 }
 
@@ -300,13 +304,13 @@ fn (mut app App) make_button_section() {
 	btn3.icon_height = 28
 
 	mut title_box := ui.title_box('Button', [btn, btn2, btn3])
-	title_box.set_bounds(8, 8, 150, 150)
+	title_box.set_bounds(0, 0, 150, 130)
 	app.pane.add_child(title_box)
 }
 
 fn (mut app App) make_tab_section() {
 	mut tb := ui.tabbox(app.win)
-	tb.set_bounds(5, 5, 170, 140)
+	tb.set_bounds(2, 2, 155, 140)
 	tb.compact = true
 
 	mut tbtn := ui.button(text: 'In Tab A')
@@ -314,13 +318,14 @@ fn (mut app App) make_tab_section() {
 	tbtn.pack()
 	tb.add_child('Tab A', tbtn)
 
-	mut tbtn1 := ui.label(app.win, 'Now in Tab B')
+	mut tbtn1 := ui.Label.new(text: 'Now in Tab B')
 	tbtn1.set_pos(10, 10)
 	tbtn1.pack()
 	tb.add_child('Tab B', tbtn1)
 
 	mut title_box := ui.title_box('Tabbox', [tb])
-	title_box.set_bounds(18, 8, 200, 210)
+	title_box.set_bounds(0, 0, 180, 180)
+
 	app.pane.add_child(title_box)
 }
 
@@ -347,7 +352,7 @@ fn create_help_menu() &ui.MenuItem {
 // Create the tree demo
 fn create_tree(window &ui.Window) &ui.Tree2 {
 	mut tree := ui.tree('My Tree')
-	tree.set_bounds(0, 0, 180, 210)
+	tree.set_bounds(0, 0, 170, 200)
 
 	// tree.pack()
 	tree.needs_pack = true

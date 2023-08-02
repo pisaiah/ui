@@ -133,16 +133,56 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 	com.y = com.y + off_y
 
 	invoke_draw_event(com, ctx)
+
 	com.draw(ctx)
 	com.invoke_after_draw_event(ctx)
 	com.x = com.x - off_x
 	com.y = com.y - off_y
 }
 
+pub fn (mut com Component) set_x(x int) {
+	if com.x == com.rx {
+		if !isnil(com.parent) {
+			com.x = com.parent.x + x
+			return
+		}
+	}
+	com.x = x
+}
+
+pub fn (mut com Component) set_y(y int) {
+	if com.y == com.ry {
+		if !isnil(com.parent) {
+			com.y = com.parent.ry + y
+			return
+		}
+	}
+	com.y = y
+}
+
+pub fn (mut com Component_A) set_x(x int) {
+	if com.x == com.rx {
+		if !isnil(com.parent) {
+			com.x = com.parent.x + x
+			return
+		}
+	}
+	com.x = x
+}
+
+pub fn (mut com Component_A) set_y(y int) {
+	if com.y == com.ry {
+		if !isnil(com.parent) {
+			com.y = com.parent.ry + y
+			return
+		}
+	}
+	com.y = y
+}
+
 pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
 	com.rx = com.x + off_x
 	com.ry = com.y + off_y
-
 	com.x = com.x + off_x
 	com.y = com.y + off_y
 

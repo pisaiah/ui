@@ -191,7 +191,7 @@ pub fn theme_dark() &ui.Theme {
 	return &ui.Theme{
 		name: 'CalcDark'
 		text_color: gx.rgb(230, 230, 230)
-		background: gx.rgb(32, 32, 32)
+		background: gx.rgb(30, 30, 30)
 		button_bg_normal: gx.rgb(57, 57, 57)
 		button_bg_hover: gx.rgb(75, 75, 75)
 		button_bg_click: gx.rgb(30, 30, 30)

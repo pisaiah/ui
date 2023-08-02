@@ -21,24 +21,35 @@ fn compute_value(input string) f32 {
 
 	mut cn := ''
 	mut op := ''
+	mut neg := false
 
-	for s in spl {
+	for i, s in spl {
 		if s in nums {
 			cn = cn + s
 		} else {
 			if cn.len > 0 {
-				val << cn
+				if neg {
+					val << '-' + cn
+				} else {
+					val << cn
+				}
 			}
 			cn = ''
 
 			if op.len > 0 && val.len > 1 {
-				vvv := do_op(val[0] + op + val[1])
+				// dump(val)
+				// dump(op)
+				vvv := do_op(val[0] + op + val[1], op)
 				op = ''
 				val.clear()
 				val << '${vvv}'
 			}
-			if s.trim(' ').len > 0 {
+
+			if s == '-' && (op.len > 0 || i == 0) {
+				neg = true
+			} else if s.trim(' ').len > 0 {
 				op = s
+				neg = false
 			}
 		}
 	}
@@ -50,22 +61,23 @@ fn compute_value(input string) f32 {
 	return res
 }
 
-fn do_op(input string) f32 {
+fn do_op(input string, op string) f32 {
 	mut res := input.f32()
-	if input.contains('x') {
+	mut inp := input
+	if op.contains('x') {
 		spl := input.split('x')
 		res = spl[0].f32() * spl[1].f32()
 	}
-	if input.contains('+') {
-		spl := input.split('+')
-		res = spl[0].f32() + spl[1].f32()
-	}
-	if input.contains('/') {
-		spl := input.split('/')
+	if op.contains('/') {
+		spl := inp.split('/')
 		res = spl[0].f32() / spl[1].f32()
 	}
-	if input.contains('-') {
-		spl := input.split('-')
+	if op.contains('+') {
+		spl := inp.split('+')
+		res = spl[0].f32() + spl[1].f32()
+	}
+	if op.contains('-') {
+		spl := inp.split('-')
 		res = spl[0].f32() - spl[1].f32()
 	}
 	return res

@@ -415,16 +415,29 @@ fn (mut app Window) draw() {
 	if app.components.len == 1 {
 		if app.components[0] is Panel || app.components[0] is ScrollView {
 			// Content Pane
+			mut bar := app.get_bar()
 			ws := app.gg.window_size()
-			app.components[0].width = ws.width
-			app.components[0].height = ws.height
+			if ws.width > 0 {
+				app.components[0].width = ws.width
+			}
+			if bar != unsafe { nil } {
+				hei := ws.height
+				if hei > 0 {
+					app.components[0].y = 26
+					app.components[0].height = ws.height - 26
+				}
+			} else {
+				app.components[0].height = ws.height
+			}
 		}
 	}
 
 	// Draw components
 	mut bar_drawn := false
 	for mut com in app.components {
-		com.draw_event_fn(mut app, com)
+		if !isnil(com.draw_event_fn) {
+			com.draw_event_fn(mut app, com)
+		}
 
 		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()

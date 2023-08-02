@@ -65,7 +65,7 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	app.gg.draw_rounded_rect_filled(xs, this.top_off, wid, 40, 8, bg)
 
 	title := this.text
-	tw := text_width(app, title)
+	tw := ctx.text_width(title)
 	th := ctx.line_height
 
 	app.gg.draw_text((ws.width / 2) - (tw / 2), this.top_off + (th / 2) - 1, title, gx.TextCfg{
@@ -79,7 +79,9 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	app.gg.draw_rect_empty(xs + bord_wid, this.top_off + top, wid_2, hei, app.theme.button_bg_click)
 
 	// Do component draw event again to fix z-index
-	this.draw_event_fn(mut app, &Component(this))
+	if !isnil(this.draw_event_fn) {
+		this.draw_event_fn(mut app, &Component(this))
+	}
 
 	if this.needs_init {
 		this.create_close_btn(mut app, true)
@@ -87,10 +89,10 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	}
 
 	y_off := this.y + this.top_off + top
-	for mut com in this.children {
-		com.draw_event_fn(mut app, com)
-		app.draw_with_offset(mut com, xs, y_off + 2)
-		com.after_draw_event_fn(mut app, com)
+	for mut kid in this.children {
+		kid.draw_event_fn(mut app, kid)
+		app.draw_with_offset(mut kid, xs, y_off + 2)
+		kid.after_draw_event_fn(mut app, kid)
 	}
 }
 

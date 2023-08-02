@@ -79,23 +79,29 @@ fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		lay.center.draw_with_offset(ctx, x, y)
 		x += lay.center.width + lay.hgap
 	}
+	// if panel.width == 0 {
+	//	panel.width = x - panel.x
+	//	panel.height = y - panel.y
+	//}
 }
 
 // https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
 pub struct BoxLayout {
 mut:
-	ori int
+	ori  int
+	hgap int = 5
+	vgap int = 5
 }
 
 fn (this &BoxLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
-	mut x := panel.x
-	mut y := panel.y
+	mut x := panel.x + this.hgap
+	mut y := panel.y + this.vgap
 	for mut child in panel.children {
 		child.draw_with_offset(ctx, x, y)
 		if this.ori == 0 {
-			x += child.width
+			x += child.width + this.hgap
 		} else {
-			y += child.height
+			y += child.height + this.vgap
 		}
 	}
 }
@@ -110,23 +116,30 @@ mut:
 fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
-	for mut child in panel.children {
-		if child.height > panel.rh {
-			panel.rh = child.height
-		}
 
+	panel.rh = 0
+
+	for mut child in panel.children {
 		ex := x + child.width + this.hgap
 		if ex > panel.x + panel.width {
 			x = panel.x + this.hgap
 			y += panel.rh + this.vgap
 			panel.rh = 0
+		} else {
+			if child.height > panel.rh {
+				panel.rh = child.height
+			}
 		}
 
 		child.draw_with_offset(ctx, x, y)
+
 		x += child.width + this.hgap
 		if child.height > panel.rh {
 			panel.rh = child.height
 		}
+	}
+	if panel.width == 0 {
+		panel.width = x - panel.x
 	}
 }
 
@@ -183,6 +196,10 @@ mut:
 [params]
 pub struct PanelConfig {
 	layout Layout = FlowLayout{}
+}
+
+pub fn Panel.new(cfg PanelConfig) &Panel {
+	return panel(cfg)
 }
 
 pub fn panel(cfg PanelConfig) &Panel {
