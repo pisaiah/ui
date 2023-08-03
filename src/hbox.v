@@ -8,15 +8,14 @@ import gx
 pub struct HBox {
 	Component_A
 pub mut:
-	win            &Window
-	click_event_fn fn (voidptr, voidptr)
-	needs_pack     bool
-	raw_width      int
-	is_width_per   bool
-	center_screen  bool
-	min_height     int
-	yyy            int
-	overflow_full  bool = true
+	win           &Window
+	needs_pack    bool
+	raw_width     int
+	is_width_per  bool
+	center_screen bool
+	min_height    int
+	yyy           int
+	overflow_full bool = true
 }
 
 [params]
@@ -44,7 +43,6 @@ pub fn HBox.new(cfg HBoxConfig) &HBox {
 pub fn hbox(win &Window) &HBox {
 	return &HBox{
 		win: win
-		click_event_fn: fn (a voidptr, b voidptr) {}
 	}
 }
 

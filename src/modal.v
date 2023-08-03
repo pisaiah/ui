@@ -21,6 +21,15 @@ pub mut:
 	xs        int
 }
 
+[params]
+pub struct ModalConfig {
+	title string
+}
+
+pub fn Modal.new(c ModalConfig) &Modal {
+	return modal(unsafe { nil }, c.title)
+}
+
 pub fn modal(app &Window, title string) &Modal {
 	return &Modal{
 		text: title
@@ -43,6 +52,9 @@ pub fn modal(app &Window, title string) &Modal {
 }
 
 pub fn (mut this Modal) draw(ctx &GraphicsContext) {
+	if isnil(this.window) {
+		this.window = ctx.win
+	}
 	mut app := this.window
 	ws := gg.window_size()
 
@@ -51,7 +63,7 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 
 	if this.z_index <= 501 {
 		// Only draw background for one modal.
-		app.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 170))
+		ctx.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 170))
 	}
 
 	wid := this.in_width
@@ -62,21 +74,21 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 
 	xs := (ws.width / 2) - (wid / 2) - this.left_off
 	this.xs = xs
-	app.gg.draw_rounded_rect_filled(xs, this.top_off, wid, 40, 8, bg)
+	ctx.gg.draw_rounded_rect_filled(xs, this.top_off, wid, 40, 8, bg)
 
 	title := this.text
 	tw := ctx.text_width(title)
 	th := ctx.line_height
 
-	app.gg.draw_text((ws.width / 2) - (tw / 2), this.top_off + (th / 2) - 1, title, gx.TextCfg{
+	ctx.gg.draw_text((ws.width / 2) - (tw / 2), this.top_off + (th / 2) - 1, title, gx.TextCfg{
 		size: app.font_size
-		color: app.theme.text_color
+		color: ctx.theme.text_color
 	})
 
 	top := 28
-	app.gg.draw_rect_filled(xs, this.top_off + top, wid, hei + bord_wid, bg)
-	app.gg.draw_rect_filled(xs + bord_wid, this.top_off + top, wid_2, hei, app.theme.background)
-	app.gg.draw_rect_empty(xs + bord_wid, this.top_off + top, wid_2, hei, app.theme.button_bg_click)
+	ctx.gg.draw_rect_filled(xs, this.top_off + top, wid, hei + bord_wid, bg)
+	ctx.gg.draw_rect_filled(xs + bord_wid, this.top_off + top, wid_2, hei, ctx.theme.background)
+	ctx.gg.draw_rect_empty(xs + bord_wid, this.top_off + top, wid_2, hei, ctx.theme.button_bg_click)
 
 	// Do component draw event again to fix z-index
 	if !isnil(this.draw_event_fn) {

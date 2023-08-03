@@ -48,21 +48,25 @@ pub struct FieldCfg {
 	bounds Bounds
 }
 
-pub fn text_field(cfg FieldCfg) &TextField {
+pub fn TextField.new(c FieldCfg) &TextField {
 	return &TextField{
-		text: cfg.text
+		text: c.text
 		click_event_fn: fn (a voidptr, b voidptr) {}
 		before_txtc_event_fn: fn (mut a Window, b TextField) bool {
 			return false
 		}
-		x: cfg.bounds.x
-		y: cfg.bounds.y
-		width: cfg.bounds.width
-		height: cfg.bounds.height
-		center: cfg.center
+		x: c.bounds.x
+		y: c.bounds.y
+		width: c.bounds.width
+		height: c.bounds.height
+		center: c.center
 		text_change_event_fn: fn (a voidptr, b voidptr) {}
-		carrot_left: cfg.text.len
+		carrot_left: c.text.len
 	}
+}
+
+pub fn text_field(cfg FieldCfg) &TextField {
+	return TextField.new(cfg)
 }
 
 fn (mut this TextField) draw_background(ctx &GraphicsContext) {

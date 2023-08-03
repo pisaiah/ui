@@ -24,18 +24,22 @@ pub mut:
 	h2          int = 50
 }
 
-pub fn split_view(cfg SplitViewConfig) &SplitView {
-	split_view := &SplitView{
-		x: cfg.bounds.x
-		y: cfg.bounds.y
-		width: cfg.bounds.width
-		height: cfg.bounds.height
-		children: [cfg.first, cfg.second]
-		min_percent: cfg.min_percent
-		h1: cfg.h1
-		h2: cfg.h2
+pub fn SplitView.new(c SplitViewConfig) &SplitView {
+	return &SplitView{
+		x: c.bounds.x
+		y: c.bounds.y
+		width: c.bounds.width
+		height: c.bounds.height
+		children: [c.first, c.second]
+		min_percent: c.min_percent
+		h1: c.h1
+		h2: c.h2
 	}
-	return split_view
+}
+
+[deprecated: 'Use SplitView.new']
+pub fn split_view(cfg SplitViewConfig) &SplitView {
+	return SplitView.new(cfg)
 }
 
 // Set height of children in percentage

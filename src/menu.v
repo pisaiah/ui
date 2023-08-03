@@ -191,9 +191,11 @@ pub struct MenubarConfig {
 }
 
 pub fn menu_bar(cfg MenubarConfig) &Menubar {
-	return &Menubar{
-		// theme: cfg.theme
-	}
+	return &Menubar{}
+}
+
+pub fn Menubar.new(cfg MenubarConfig) &Menubar {
+	return &Menubar{}
 }
 
 [deprecated]
@@ -228,16 +230,20 @@ pub fn menuitem(text string) &MenuItem {
 	}
 }
 
-pub fn menu_item(confg MenuItemConfig) &MenuItem {
+pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
 	mut item := &MenuItem{
-		text: confg.text
-		icon: confg.icon
-		click_event_fn: confg.click_event_fn
+		text: c.text
+		icon: c.icon
+		click_event_fn: c.click_event_fn
 	}
-	for kid in confg.children {
+	for kid in c.children {
 		item.add_child(kid)
 	}
 	return item
+}
+
+pub fn menu_item(cfg MenuItemConfig) &MenuItem {
+	return MenuItem.new(cfg)
 }
 
 pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
@@ -245,7 +251,7 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 }
 
 fn open_about_modal(app &Window) &Modal {
-	mut about := modal(app, 'About iUI')
+	mut about := Modal.new(title: 'About iUI')
 	about.in_height = 250
 	about.in_width = 370
 

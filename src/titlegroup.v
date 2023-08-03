@@ -11,7 +11,19 @@ pub mut:
 	padding int = 10
 }
 
-// Return new Progressbar
+[params]
+pub struct TitleboxConfig {
+	text     string
+	children []Component
+}
+
+pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
+	return &Titlebox{
+		text: c.text
+		children: c.children
+	}
+}
+
 pub fn title_box(text string, children []Component) &Titlebox {
 	return &Titlebox{
 		text: text

@@ -33,6 +33,15 @@ mut:
 	y1 int = -1
 }
 
+[params]
+pub struct TextboxConfig {
+	lines []string
+}
+
+pub fn Textbox.new(c TextboxConfig) &Textbox {
+	return text_box(c.lines)
+}
+
 pub fn text_box(lines []string) &Textbox {
 	return &Textbox{
 		lines: lines

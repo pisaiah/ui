@@ -36,22 +36,25 @@ pub struct SliderConfig {
 	thumb_color gg.Color = gg.Color{0, 0, 0, 0}
 }
 
-pub fn new_slider(cfg SliderConfig) &Slider {
-	mut slid := &Slider{
+pub fn Slider.new(c SliderConfig) &Slider {
+	return &Slider{
 		text: ''
-		min: cfg.min
-		max: cfg.max
-		dir: cfg.dir
+		min: c.min
+		max: c.max
+		dir: c.dir
 		scroll: true
 		thumb_wid: 30
-		thumb_color: cfg.thumb_color
+		thumb_color: c.thumb_color
 	}
+}
 
-	return slid
+[deprecated: 'Use Slider.new']
+pub fn new_slider(cfg SliderConfig) &Slider {
+	return Slider.new(cfg)
 }
 
 pub fn slider(cfg SliderConfig) &Slider {
-	return new_slider(cfg)
+	return Slider.new(cfg)
 }
 
 // Draw this component

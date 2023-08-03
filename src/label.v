@@ -82,7 +82,7 @@ pub fn (mut btn Label) pack_do(ctx &GraphicsContext) {
 	hi := th * lines.len
 
 	font_size := btn.size
-	btn.height = hi + 4 + (font_size * lines.len)
+	btn.height = hi + 4 // + (font_size * lines.len)
 
 	if btn.height < th {
 		btn.height = th

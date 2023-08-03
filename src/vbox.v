@@ -21,15 +21,15 @@ pub struct VBoxConfig {
 	bounds   Bounds
 }
 
-pub fn VBox.new(cfg VBoxConfig) &VBox {
+pub fn VBox.new(c VBoxConfig) &VBox {
 	return &VBox{
-		needs_pack: cfg.pack
-		overflow: cfg.overflow
+		needs_pack: c.pack
+		overflow: c.overflow
 		win: unsafe { nil }
-		x: cfg.bounds.x
-		y: cfg.bounds.y
-		width: cfg.bounds.width
-		height: cfg.bounds.height
+		x: c.bounds.x
+		y: c.bounds.y
+		width: c.bounds.width
+		height: c.bounds.height
 	}
 }
 
@@ -94,8 +94,8 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 
 		if ctx.win.bar != unsafe { nil } {
 			if ctx.win.bar.tik < 99 {
-				this.is_mouse_down = false
-				this.is_mouse_rele = false
+				// this.is_mouse_down = false
+				// this.is_mouse_rele = false
 			}
 		}
 
@@ -118,15 +118,6 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 		this.width = width
 	}
 
-	/*
-	if this.needs_pack {
-        this.width = width
-        this.height = o_y
-        this.needs_pack = false
-    }*/
-
-	// this.is_mouse_down = false
-	// this.is_mouse_rele = false
 	if ctx.win.debug_draw {
 		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.orange)
 	}

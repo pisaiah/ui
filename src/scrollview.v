@@ -31,6 +31,10 @@ pub mut:
 	padding     int = 20
 }
 
+pub fn ScrollView.new(c ScrollViewConfig) &ScrollView {
+	return scroll_view(c)
+}
+
 pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
 	scroll_view := &ScrollView{
 		x: cfg.bounds.x

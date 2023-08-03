@@ -21,6 +21,17 @@ pub mut:
 	compact             bool
 }
 
+[params]
+pub struct TabboxConfig {
+}
+
+pub fn Tabbox.new(c TabboxConfig) &Tabbox {
+	return &Tabbox{
+		win: unsafe { nil }
+		text: ''
+	}
+}
+
 // Return new Tabbox
 pub fn tabbox(win &Window) &Tabbox {
 	return &Tabbox{
@@ -66,9 +77,9 @@ pub fn (this &Tabbox) get_inactive_tab_height(ctx &GraphicsContext) int {
 
 pub fn (tb &Tabbox) get_tab_width(ctx &GraphicsContext, key string) int {
 	if tb.compact {
-		return text_width(tb.win, key)
+		return ctx.text_width(key)
 	}
-	return text_width(tb.win, key) + 30
+	return ctx.text_width(key) + 30
 }
 
 // Draw tab
@@ -93,7 +104,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 		xx := tb.x + mx + tsize
 		yy := tb.y + my
 
-		tb.win.gg.draw_line(xx, yy, xx, yy + theig, ctx.theme.button_border_normal)
+		ctx.gg.draw_line(xx, yy, xx, yy + theig, ctx.theme.button_border_normal)
 	}
 
 	// Draw Button Text
@@ -113,7 +124,6 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 		tb.active_tab = key_
 	}
 
-	// mx += tsize
 	if tb.active_tab == key_ {
 		val.sort(a.z_index < b.z_index)
 		for mut com in val {
@@ -131,7 +141,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 }
 
 pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsize int, theig int, sizh int, key_ string) {
-	c_s := text_width(tb.win, 'x')
+	c_s := ctx.text_width('x')
 	csy := text_height(tb.win, 'x')
 	c_x := (tb.x + mx + tsize) - c_s - 4
 	c_y := tb.y + my + (theig / 2) - (sizh / 2)

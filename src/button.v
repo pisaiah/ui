@@ -116,6 +116,10 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 		this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
 			border)
 	}
+	if this.extra.len != 0 && mouse_in {
+		mut win := this.app
+		win.tooltip = this.extra
+	}
 }
 
 fn (this &Button) get_border(is_hover bool) gx.Color {

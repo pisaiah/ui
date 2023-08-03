@@ -168,7 +168,8 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 		}
 	}
 
-	if mut com is VBox || mut com is HBox || mut com is ScrollView || mut com is SplitView {
+	if mut com is VBox || mut com is HBox || mut com is ScrollView || mut com is SplitView
+		|| mut com is Panel {
 		return false
 	}
 
@@ -221,7 +222,8 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 		}
 	}
 
-	if mut com is VBox || mut com is HBox || mut com is ScrollView || mut com is SplitView {
+	if mut com is VBox || mut com is HBox || mut com is ScrollView || mut com is SplitView
+		|| mut com is Panel {
 		return false
 	}
 

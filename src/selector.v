@@ -173,7 +173,6 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 	ctx.gg.draw_rect_empty(x, y, width, height, border)
 
 	// Draw Button Text
-	// ctx.draw_text((x + (width / 2)) - size - 4, y + (height / 2) - sizh, item.text, ctx.font,
 	ctx.draw_text(x + 5, y + (height / 2) - sizh, item.text, ctx.font, gx.TextCfg{
 		size: ctx.font_size
 		color: ctx.theme.text_color

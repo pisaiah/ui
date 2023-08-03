@@ -141,6 +141,32 @@ pub mut:
 	frame_evnt_count int
 	sleep_if_no_evnt bool = true
 	second_pass      u8
+	tooltip          string
+}
+
+fn (win &Window) draw_tooltip(ctx &GraphicsContext) {
+	mut x := win.mouse_x
+	mut y := win.mouse_y - 16
+
+	lines := win.tooltip.split_into_lines()
+
+	if lines.len > 1 {
+		x += 20
+	}
+
+	ts := ctx.text_width(lines[0])
+	th := ctx.line_height * lines.len
+
+	ctx.gg.draw_rect_filled(x, y, ts, th, gx.rgb(184, 207, 229))
+	ctx.gg.draw_rect_empty(x, y, ts, th, gx.rgb(99, 130, 191))
+
+	for line in lines {
+		ctx.draw_text(x, y, line, ctx.font, gx.TextCfg{
+			size: win.font_size
+			color: ctx.theme.text_color
+		})
+		y += ctx.line_height
+	}
 }
 
 // fonts
@@ -458,6 +484,11 @@ fn (mut app Window) draw() {
 		pop.draw(app.graphics_context)
 	}
 
+	if app.tooltip.len != 0 {
+		app.draw_tooltip(app.graphics_context)
+		// app.tooltip = ''
+	}
+
 	// Draw Menubar last
 	if app.show_menu_bar && !bar_drawn {
 		mut bar := app.get_bar()
@@ -475,6 +506,7 @@ fn (mut app Window) draw() {
 	if end - app.last_update > 500 {
 		app.last_update = end
 		app.second_pass += 1
+		app.tooltip = ''
 	} else {
 		app.second_pass = 0
 	}

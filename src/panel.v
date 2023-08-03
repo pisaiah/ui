@@ -22,6 +22,25 @@ mut:
 	vgap   int = 2
 }
 
+[params]
+pub struct BorderLayoutConfig {
+	hgap int = 5
+	vgap int = 5
+}
+
+pub fn BorderLayout.new(c BorderLayoutConfig) BorderLayout {
+	return BorderLayout{
+		hgap: c.hgap
+		vgap: c.vgap
+		// nil != isnil() ?
+		// north: unsafe { nil }
+		// west: unsafe { nil }
+		// east: unsafe { nil }
+		// south: unsafe { nil }
+		// center: unsafe { nil }
+	}
+}
+
 pub const (
 	borderlayout_north  = 0
 	borderlayout_west   = 1
@@ -29,6 +48,11 @@ pub const (
 	borderlayout_south  = 3
 	borderlayout_center = 4
 )
+
+fn is_nil(a &Component) bool {
+	// dump(a == unsafe { nil })
+	return isnil(a)
+}
 
 fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
@@ -93,6 +117,21 @@ mut:
 	vgap int = 5
 }
 
+[params]
+pub struct BoxLayoutConfig {
+	ori  int
+	hgap int = 5
+	vgap int = 5
+}
+
+pub fn BoxLayout.new(c BoxLayoutConfig) BoxLayout {
+	return BoxLayout{
+		ori: c.ori
+		hgap: c.hgap
+		vgap: c.vgap
+	}
+}
+
 fn (this &BoxLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
@@ -100,9 +139,21 @@ fn (this &BoxLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		child.draw_with_offset(ctx, x, y)
 		if this.ori == 0 {
 			x += child.width + this.hgap
+			if panel.height < child.height {
+				panel.height = child.height
+			}
 		} else {
 			y += child.height + this.vgap
+			if panel.width < child.width {
+				panel.width = child.width
+			}
 		}
+	}
+	if panel.height == 0 {
+		panel.height = y - panel.y
+	}
+	if panel.width == 0 {
+		panel.width = x - panel.x
 	}
 }
 
@@ -111,6 +162,19 @@ pub struct FlowLayout {
 mut:
 	hgap int = 5
 	vgap int = 5
+}
+
+[params]
+pub struct FlowLayoutConfig {
+	hgap int = 5
+	vgap int = 5
+}
+
+pub fn FlowLayout.new(c FlowLayoutConfig) FlowLayout {
+	return FlowLayout{
+		hgap: c.hgap
+		vgap: c.vgap
+	}
 }
 
 fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
@@ -151,6 +215,23 @@ mut:
 	hgap int = 5
 	vgap int = 5
 	zv   int
+}
+
+[params]
+pub struct GridLayoutConfig {
+	rows int
+	cols int
+	hgap int = 5
+	vgap int = 5
+}
+
+pub fn GridLayout.new(c GridLayoutConfig) GridLayout {
+	return GridLayout{
+		rows: c.rows
+		cols: c.cols
+		hgap: c.hgap
+		vgap: c.vgap
+	}
 }
 
 fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
