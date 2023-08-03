@@ -67,7 +67,8 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	x := this.x
 	y := this.y
 
-	color := if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
+	hover := is_in(this, ctx.win.mouse_x, ctx.win.mouse_y)
+	color := if hover {
 		gx.rgb(100, 100, 200)
 	} else {
 		if ctx.theme.text_color.r > 150 {
@@ -91,6 +92,11 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 
 	yp := y + this.height - 2
 	ctx.gg.draw_line(x, yp, x + this.width, yp, color)
+	
+	if hover {
+		mut win := ctx.win
+		win.tooltip = this.url
+	}
 
 	this.debug_draw(ctx)
 }

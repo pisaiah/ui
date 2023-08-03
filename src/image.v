@@ -67,13 +67,14 @@ pub fn image_from_bytes(mut app Window, b []u8, width int, height int) &Image {
 
 pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	if this.need_init {
+		mut win := ctx.win
 		if os.exists(this.text) {
-			img := ctx.gg.create_image(this.text) or { panic(err) }
+			img := win.gg.create_image(this.text) or { panic(err) }
 			this.img = &img
 		} else {
 			abp := os.resource_abs_path(this.text)
 			if os.exists(abp) {
-				img := ctx.gg.create_image(abp) or { panic(err) }
+				img := win.gg.create_image(abp) or { panic(err) }
 				mut ggg := ctx.gg
 				this.img_id = ggg.cache_image(img)
 			}
