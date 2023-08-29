@@ -92,7 +92,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 
 	yp := y + this.height - 2
 	ctx.gg.draw_line(x, yp, x + this.width, yp, color)
-	
+
 	if hover {
 		mut win := ctx.win
 		win.tooltip = this.url

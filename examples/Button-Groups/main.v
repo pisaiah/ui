@@ -11,7 +11,7 @@ mut:
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.make_window(
+	mut window := ui.Window.new(
 		title: 'My Window'
 		width: 520
 		height: 400
@@ -20,13 +20,13 @@ fn main() {
 
 	mut app := &App{}
 
-	mut hbox := ui.hbox(window)
+	mut panel := ui.Panel.new()
 
 	choices := ['A', 'B', 'C']
 
-	mut group := ui.buttongroup[ui.Checkbox]()
+	mut group := ui.ButtonGroup.new[ui.Checkbox]()
 	for choice in choices {
-		mut box := ui.check_box(
+		mut box := ui.Checkbox.new(
 			text: choice
 		)
 
@@ -37,19 +37,18 @@ fn main() {
 		})
 
 		group.add(box)
-		hbox.add_child(box)
+		panel.add_child(box)
 	}
 	group.setup()
 	group.subscribe_event('mouse_up', app.group_clicked)
 
-	hbox.set_pos(50, 30)
-	hbox.pack()
+	panel.set_bounds(50, 30, 300, 0)
 
-	mut lbl := ui.label(window, 'You selected: ')
-	app.res_label = &lbl
+	mut lbl := ui.Label.new(text: 'You selected: ')
+	app.res_label = lbl
 	lbl.set_bounds(50, 80, 100, 30)
 
-	window.add_child(hbox)
+	window.add_child(panel)
 	window.add_child(lbl)
 
 	// Start GG / Show Window

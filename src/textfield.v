@@ -124,9 +124,18 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 		color
 	}
 
+	if this.width == 0 {
+		width := ctx.text_width(this.text)
+		this.width = width + 8 + this.padding_x
+	}
+
 	if this.center {
 		// Y-center text
 		th := ctx.line_height // ctx.gg.text_height(this.text)
+		if this.height < th {
+			this.height = th + 4
+		}
+
 		ycp := this.y + (this.height - th) / 2
 		ctx.draw_text(xp, ycp, this.text, ctx.font, cfg)
 		ctx.gg.draw_line(xp + wid, ycp, xp + wid, ycp + th, pipe_color)

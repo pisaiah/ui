@@ -115,12 +115,12 @@ fn (mut this Textbox) draw_bg(ctx &GraphicsContext) {
 
 fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	if this.keys.len == 0 {
-		this.keys << iui.blue_keys
-		this.keys << iui.purp_keys
-		this.keys << iui.numbers
-		this.keys << iui.keys
-		this.keys << iui.red_keys
-		this.keys << iui.colors
+		this.keys << blue_keys
+		this.keys << purp_keys
+		this.keys << numbers
+		this.keys << keys
+		this.keys << red_keys
+		this.keys << colors
 	}
 
 	if ctx.win.second_pass == 1 {
@@ -253,21 +253,21 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &
 		}
 		color = cfg.color
 
-		if str in iui.colors {
+		if str in colors {
 			color = gx.color_from_string(str)
 		}
 
-		if str in iui.numbers {
+		if str in numbers {
 			color = gx.orange
 		}
-		if str in iui.blue_keys {
+		if str in blue_keys {
 			color = gx.rgb(51, 153, 255)
 		}
-		if str in iui.red_keys {
+		if str in red_keys {
 			color = gx.red
 		}
 
-		if str in iui.purp_keys {
+		if str in purp_keys {
 			color = gx.rgb(190, 40, 250)
 		}
 
@@ -489,7 +489,6 @@ fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Tex
 			return
 		}
 		com.fs += 2
-		dump(win.font_size)
 		return
 	}
 

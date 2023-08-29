@@ -340,7 +340,7 @@ pub fn make_window(config &WindowConfig) &Window {
 		// TODO config.user_data
 		font_path: config.font_path
 		font_size: config.font_size
-		ui_mode: false // config.ui_mode
+		ui_mode: config.ui_mode
 	)
 	win.graphics_context = new_graphics_context(win)
 	if win.graphics_context.icon_cache.len == 0 {

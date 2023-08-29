@@ -26,6 +26,15 @@ fn draw_cfg() gx.TextCfg {
 	}
 }
 
+[params]
+pub struct PageCfg {
+	title string
+}
+
+pub fn Page.new(c PageCfg) &Page {
+	return page(unsafe { nil }, c.title)
+}
+
 pub fn page(app &Window, title string) &Page {
 	return &Page{
 		text: title
@@ -53,6 +62,11 @@ fn (this &Page) draw_bg(ctx &GraphicsContext) {
 }
 
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
+	if isnil(this.window) {
+		mut win := ctx.win
+		this.window = win
+	}
+
 	mut app := this.window
 	ws := gg.window_size()
 
@@ -87,7 +101,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 }
 
 pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
-	mut close := button(text: '<')
+	mut close := Button.new(text: '<')
 	y := 10
 	wid := this.top_off - (y * 2)
 	close.set_bounds(8, -this.top_off + y, 40, wid)

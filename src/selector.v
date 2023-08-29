@@ -57,6 +57,7 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 
 	for item in this.items {
 		mut subb := button(text: item)
+		subb.set_area_filled(false)
 		subb.border_radius = 0
 		subb.subscribe_event('mouse_up', fn [mut this] (mut e MouseEvent) {
 			old_val := this.text

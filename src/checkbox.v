@@ -106,8 +106,8 @@ fn (this &Checkbox) draw_text(ctx &GraphicsContext) {
 
 // TODO: Better Checkmark
 fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
-	cut := 2
-	wid := com.height - (cut * 2) - 1
+	cut := 1
+	wid := com.height - (cut * 2)
 	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 2, ctx.theme.checkbox_selected)
 
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{

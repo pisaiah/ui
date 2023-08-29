@@ -50,7 +50,6 @@ pub const (
 )
 
 fn is_nil(a &Component) bool {
-	// dump(a == unsafe { nil })
 	return isnil(a)
 }
 
@@ -204,6 +203,9 @@ fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	}
 	if panel.width == 0 {
 		panel.width = x - panel.x
+		if panel.height == 0 {
+			panel.height = y - panel.y
+		}
 	}
 }
 
