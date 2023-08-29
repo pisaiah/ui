@@ -465,6 +465,10 @@ fn (mut app Window) draw() {
 			com.draw_event_fn(mut app, com)
 		}
 
+		if mut com is Page {
+			bar_drawn = true
+		}
+
 		if com.z_index > 100 && app.show_menu_bar && !bar_drawn {
 			mut bar := app.get_bar()
 			if bar != unsafe { nil } {

@@ -93,6 +93,18 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 	y_off := this.y + this.top_off
 
+	if this.children.len == 2 {
+		if this.children[0] is Panel || this.children[0] is ScrollView {
+			// Content Pane
+			if ws.width > 0 {
+				this.children[0].width = ws.width
+			}
+			if ws.height > 5 {
+				this.children[0].height = ws.height - y_off - 3
+			}
+		}
+	}
+
 	// this.children.sort(a.z_index < b.z_index)
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
