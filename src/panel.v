@@ -3,6 +3,10 @@ module iui
 import gx
 import math
 
+const (
+	nill = unsafe { nil }
+)
+
 // Layout
 // TODO: Add BorderLayout, Box Layout, Flow Layout, Grid Layout,
 interface Layout {
@@ -33,11 +37,11 @@ pub fn BorderLayout.new(c BorderLayoutConfig) BorderLayout {
 		hgap: c.hgap
 		vgap: c.vgap
 		// nil != isnil() ?
-		// north: unsafe { nil }
-		// west: unsafe { nil }
-		// east: unsafe { nil }
-		// south: unsafe { nil }
-		// center: unsafe { nil }
+		north: unsafe { nil }
+		west: unsafe { nil }
+		east: unsafe { nil }
+		south: unsafe { nil }
+		center: unsafe { nil }
 	}
 }
 
@@ -49,7 +53,7 @@ pub const (
 	borderlayout_center = 4
 )
 
-fn is_nil(a &Component) bool {
+fn is_nil(a voidptr) bool {
 	return isnil(a)
 }
 
@@ -69,32 +73,37 @@ fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		mut cw := panel.width - (lay.hgap * 2)
 		mut ch := panel.height - (lay.vgap * 2)
 
-		if !isnil(lay.north) {
-			lay.north.width = panel.width - (this.hgap * 2)
+		mut north := lay.north
+		mut south := lay.south
+		mut east := lay.east
+		mut west := lay.west
+
+		if mut north is Component {
+			north.width = panel.width - (this.hgap * 2)
 			lay.north.draw_with_offset(ctx, x, y)
-			y += lay.north.height + lay.vgap
-			ch -= lay.north.height + lay.vgap
+			y += north.height + lay.vgap
+			ch -= north.height + lay.vgap
 		}
 
-		if !isnil(lay.south) {
-			lay.south.width = cw
-			ch -= lay.south.height
+		if mut south is Component {
+			south.width = cw
+			ch -= south.height
 			lay.south.draw_with_offset(ctx, x, y + ch)
 			ch -= lay.vgap
 		}
 
-		if !isnil(lay.east) {
-			lay.east.height = ch
-			cw -= lay.east.width
+		if mut east is Component {
+			east.height = ch
+			cw -= east.width
 			lay.east.draw_with_offset(ctx, x + cw, y)
 			cw -= lay.hgap
 		}
 
-		if !isnil(lay.west) {
-			lay.west.height = ch
+		if mut west is Component {
+			west.height = ch
 			lay.west.draw_with_offset(ctx, x, y)
-			x += lay.west.width + lay.hgap
-			cw -= lay.west.width + lay.hgap
+			x += west.width + lay.hgap
+			cw -= west.width + lay.hgap
 		}
 
 		lay.center.height = ch

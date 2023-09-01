@@ -401,9 +401,9 @@ pub fn (app &Window) draw_filled_rect(x int, y int, width int, height int, a int
 	app.gg.draw_rect_empty(x, y, width, height, bord)
 }
 
-// Implement our own 'ui_mode', locking to 60fps.
-// This fixes high cpu usage
-// Related?: https://github.com/floooh/sokol/issues/550
+// Implement our own 'ui_mode'.
+// This helps high cpu usage.
+// Related: https://github.com/floooh/sokol/issues/550
 fn (mut app Window) do_sleep() {
 	if app.config.ui_mode {
 		return
@@ -415,7 +415,7 @@ fn (mut app Window) do_sleep() {
 
 	if app.has_event {
 		app.frame_evnt_count += 1
-		if app.frame_evnt_count > 30 {
+		if app.frame_evnt_count > 3 {
 			app.has_event = false
 			app.frame_evnt_count = 0
 		}

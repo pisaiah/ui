@@ -13,7 +13,7 @@ fn main() {
 	win.set_theme(ui.theme_ocean())
 
 	mut pan := ui.Panel.new(
-		layout: ui.BorderLayout{}
+		layout: ui.BorderLayout.new()
 	)
 
 	make_button(mut pan, '1 (NORTH)', ui.borderlayout_north)

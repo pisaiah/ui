@@ -339,6 +339,16 @@ pub fn (mut com Component) scroll_y_by(e &gg.Event) {
 }
 
 pub fn on_scroll_event(e &gg.Event, mut app Window) {
+	for mut pop in app.popups {
+		mut com := &Component(pop)
+		com.on_scroll_component(app, e)
+
+		is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
+		if is_point_in {
+			return
+		}
+	}
+
 	app.components.sort(a.z_index > b.z_index)
 	for mut a in app.components {
 		a.on_scroll_component(app, e)

@@ -4,7 +4,7 @@ import gg
 
 pub struct Popup {
 	Component_A
-mut:
+pub mut:
 	shown bool
 }
 
