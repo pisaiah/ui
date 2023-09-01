@@ -2,10 +2,18 @@ module iui
 
 import gg
 
-struct Popup {
+pub struct Popup {
 	Component_A
 mut:
 	shown bool
+}
+
+[params]
+pub struct PopupCfg {
+}
+
+pub fn Popup.new(c PopupCfg) &Popup {
+	return &Popup{}
 }
 
 fn (mut this Popup) draw(ctx &GraphicsContext) {
@@ -23,7 +31,7 @@ fn (mut this Popup) draw(ctx &GraphicsContext) {
 }
 
 // https://docs.oracle.com/javase/8/docs/api/javax/swing/JPopupMenu.html#show-java.awt.Component-int-int-
-fn (mut this Popup) show(invoker &Component, x int, y int, ctx &GraphicsContext) {
+pub fn (mut this Popup) show(invoker &Component, x int, y int, ctx &GraphicsContext) {
 	this.x = invoker.x + x
 	this.y = invoker.y + y
 
@@ -35,7 +43,7 @@ fn (mut this Popup) show(invoker &Component, x int, y int, ctx &GraphicsContext)
 	ctx.win.add_popup(this)
 }
 
-fn (mut this Popup) hide(ctx &GraphicsContext) {
+pub fn (mut this Popup) hide(ctx &GraphicsContext) {
 	mut win := ctx.win
 	this.shown = false
 	win.popups = win.popups.filter(it.x != this.x && it.y != this.y)

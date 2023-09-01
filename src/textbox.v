@@ -236,6 +236,10 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	ws := ctx.gg.window_size()
 
 	ctx.gg.scissor_rect(0, 0, ws.width, ws.height)
+
+	if ctx.win.debug_draw {
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
+	}
 }
 
 fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &GraphicsContext) {
