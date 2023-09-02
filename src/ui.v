@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.18'
+	version = '0.0.19'
 )
 
 pub fn default_font() string {
@@ -20,12 +20,6 @@ pub fn default_font() string {
 	return def
 }
 
-struct Percent {
-	val int
-}
-
-type Size = Percent | int
-
 pub struct Bounds {
 	x      int
 	y      int
@@ -34,9 +28,6 @@ pub struct Bounds {
 }
 
 pub fn debug(o string) {
-	$if debug ? {
-		dump('(Debug) ' + o)
-	}
 }
 
 pub fn is_in_bounds(px int, py int, bounds Bounds) bool {
