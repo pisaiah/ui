@@ -4,7 +4,7 @@ import gx
 
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'Test', 400, 300)
+	mut window := ui.Window.new(theme: ui.get_system_theme(), title: 'Test', width: 400, height: 300)
 
 	mut lbl := ui.label(window, 'Text Width Test:')
 	lbl.set_pos(4, 4)

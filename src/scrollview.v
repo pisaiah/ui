@@ -68,6 +68,10 @@ pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
 	x := this.x
 	y := this.y
 
+	if this.width < 0 {
+		return
+	}
+
 	// Set Scissor
 	ctx.gg.scissor_rect(x - 1, y - 1, this.width + 2, this.height + 1)
 

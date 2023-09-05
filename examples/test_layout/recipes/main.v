@@ -11,9 +11,8 @@ mut:
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.make_window(
+	mut window := ui.Window.new(
 		title: 'My Recipes'
-		// theme: ui.theme_seven()
 		width: 800
 		height: 550
 	)
@@ -32,34 +31,19 @@ fn main() {
 	}
 
 	hbox.pack()
-	hbox.set_width_as_percent(true, 99)
+	hbox.set_width_as_percent(true, 100)
 
 	mut sv := ui.scroll_view(
 		view: hbox
 		bounds: ui.Bounds{0, 0, 600, 390}
 	)
 
-	sv.subscribe_event('draw', fn (mut e ui.DrawEvent) {
-		ss := e.ctx.gg.window_size()
-		e.target.width = ss.width - 24
-		e.target.height = ss.height - 50
-	})
-
-	mut tb := ui.title_box('Browse', [sv])
-	tb.set_pos(12, 24)
+	// mut tb := ui.title_box('Browse', [sv])
+	// tb.set_pos(12, 24)
 
 	// Show Window
-	window.add_child(tb)
+	window.add_child(sv)
 	window.gg.run()
-}
-
-// on click event function
-// The Label we want to update is sent as data.
-fn on_click(win &ui.Window, btn voidptr, data voidptr) {
-	mut lbl := &ui.Label(data)
-	current_value := lbl.text.int()
-	lbl.text = (current_value + 1).str()
-	lbl.pack()
 }
 
 fn (mut app App) make_recipes() []Recipe {
@@ -102,8 +86,8 @@ mut:
 }
 
 fn (mut recipe Recipe) make_icon() &ui.VBox {
-	w := 180
-	h := 150
+	w := 120
+	h := 110
 
 	mut box := ui.vbox(recipe.app.win)
 	box.set_pos(2, 2)

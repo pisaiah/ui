@@ -1,5 +1,6 @@
 module iui
 
+import gx
 // Component Interface
 
 [heap; minify]
@@ -221,6 +222,9 @@ pub fn (com &Component_A) invoke_after_draw_event(ctx &GraphicsContext) {
 	}
 	for f in com.events.event_map['after_draw'] {
 		f(ev)
+	}
+	if ctx.win.debug_draw {
+		ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gx.red)
 	}
 }
 
