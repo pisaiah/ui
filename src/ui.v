@@ -8,7 +8,7 @@ import os
 import os.font
 
 pub const (
-	version = '0.0.19'
+	version = '0.0.20'
 )
 
 pub fn default_font() string {
@@ -30,14 +30,14 @@ pub struct Bounds {
 pub fn debug(o string) {
 }
 
-pub fn is_in_bounds(px int, py int, bounds Bounds) bool {
-	x := bounds.x
-	y := bounds.y
+pub fn is_in_bounds(px int, py int, b Bounds) bool {
+	x := b.x
+	y := b.y
 
-	midx := x + (bounds.width / 2)
-	midy := y + (bounds.height / 2)
+	midx := x + (b.width / 2)
+	midy := y + (b.height / 2)
 
-	return abs(midx - px) < (bounds.width / 2) && abs(midy - py) < (bounds.height / 2)
+	return abs(midx - px) < (b.width / 2) && abs(midy - py) < (b.height / 2)
 }
 
 pub fn is_in(com &Component, px int, py int) bool {
@@ -59,7 +59,7 @@ pub fn point_in_raw(mut com Component, px int, py int) bool {
 	mut hei := com.height / 2
 	if mut com is Selectbox {
 		if com.show_items {
-			list_height := (com.items.len * (com.sub_height + 1)) + 2
+			list_height := (com.items.len * com.sub_height)
 			hei = list_height / 2
 		}
 	}
@@ -251,7 +251,7 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id int,
 	}*/
 }
 
-fn new_graphics_context(win &Window) &GraphicsContext {
+fn new_graphics(win &Window) &GraphicsContext {
 	return &GraphicsContext{
 		gg: win.gg
 		theme: &win.theme
@@ -281,8 +281,8 @@ pub fn (win &Window) add_popup(com &Popup) {
 	unsafe { win.popups << com }
 }
 
-pub fn window(cfg &WindowConfig) &Window {
-	return make_window(cfg)
+pub fn window(c &WindowConfig) &Window {
+	return Window.new(c)
 }
 
 [heap; params]
@@ -301,39 +301,39 @@ pub fn (mut win Window) run() {
 	win.gg.run()
 }
 
-pub fn make_window(config &WindowConfig) &Window {
+pub fn Window.new(cfg &WindowConfig) &Window {
 	mut win := &Window{
 		gg: 0
-		theme: config.theme
+		theme: cfg.theme
 		bar: 0
-		config: config
-		font_size: config.font_size
+		config: cfg
+		font_size: cfg.font_size
 		graphics_context: 0
 	}
 
 	blank_draw_event_fn(mut win, &Component_A{})
 
-	the_title := $if emscripten ? {
+	txt := $if emscripten ? {
 		'canvas'
 	} $else {
-		config.title
+		cfg.title
 	}
 
 	win.gg = gg.new_context(
 		bg_color: win.theme.background
-		width: config.width
-		height: config.height
+		width: cfg.width
+		height: cfg.height
 		create_window: true
-		window_title: the_title
+		window_title: txt
 		frame_fn: frame
 		event_fn: on_event
 		user_data: win
 		// TODO config.user_data
-		font_path: config.font_path
-		font_size: config.font_size
-		ui_mode: config.ui_mode
+		font_path: cfg.font_path
+		font_size: cfg.font_size
+		ui_mode: cfg.ui_mode
 	)
-	win.graphics_context = new_graphics_context(win)
+	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {
 		win.graphics_context.fill_icon_cache(mut win)
 	}
@@ -349,8 +349,9 @@ pub fn make_window(config &WindowConfig) &Window {
 	return win
 }
 
-pub fn Window.new(config &WindowConfig) &Window {
-	return make_window(config)
+[deprecated: 'Use Window.new']
+pub fn make_window(c &WindowConfig) &Window {
+	return Window.new(c)
 }
 
 pub fn (mut win Window) set_theme(theme Theme) {
@@ -382,14 +383,16 @@ fn frame(mut app Window) {
 fn (app &Window) display() {
 }
 
-pub fn (app &Window) draw_bordered_rect(x int, y int, width int, height int, a int, bg gx.Color, bord gx.Color) {
-	app.gg.draw_rounded_rect_filled(x, y, width, height, a, bg)
-	app.gg.draw_rounded_rect_empty(x, y, width, height, a, bord)
+[deprecated]
+pub fn (app &Window) draw_bordered_rect(x int, y int, w int, h int, a int, bg gx.Color, bord gx.Color) {
+	app.gg.draw_rounded_rect_filled(x, y, w, h, a, bg)
+	app.gg.draw_rounded_rect_empty(x, y, w, h, a, bord)
 }
 
-pub fn (app &Window) draw_filled_rect(x int, y int, width int, height int, a int, bg gx.Color, bord gx.Color) {
-	app.gg.draw_rect_filled(x, y, width, height, bg)
-	app.gg.draw_rect_empty(x, y, width, height, bord)
+[deprecated]
+pub fn (app &Window) draw_filled_rect(x int, y int, w int, h int, a int, bg gx.Color, bord gx.Color) {
+	app.gg.draw_rect_filled(x, y, w, h, bg)
+	app.gg.draw_rect_empty(x, y, w, h, bord)
 }
 
 // Implement our own 'ui_mode'.
@@ -470,7 +473,7 @@ fn (mut app Window) draw() {
 
 		invoke_draw_event(com, app.graphics_context)
 		com.draw(app.graphics_context)
-		com.invoke_after_draw_event(app.graphics_context)
+		invoke_after_draw_event(com, app.graphics_context)
 		com.after_draw_event_fn(mut app, com)
 	}
 
@@ -530,6 +533,7 @@ pub fn (g &GraphicsContext) text_width(text string) int {
 }
 
 // Functions for GG
+[deprecated: 'use ctx.text_width']
 pub fn text_width(win Window, text string) int {
 	$if windows {
 		if win.gg.native_rendering {
@@ -551,10 +555,8 @@ pub fn abs[T](a T) T {
 }
 
 pub fn open_url(url string) {
-	mut url_ := url
-	if !url.starts_with('http') {
-		url_ = 'https://' + url
-	}
+	url_ := if url.starts_with('http') { url } else { 'http://' + url }
+
 	$if windows {
 		os.execute('cmd.exe /c "start ${url_}"')
 	} $else $if macos {

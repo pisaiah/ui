@@ -10,8 +10,12 @@ Planned TODO Features:
 - List (https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html)
 - Spinner (https://docs.oracle.com/javase/8/docs/api/javax/swing/JSpinner.html)
 
-## 0.0.19
+## 0.0.20
 *TODO*
+- Remove some deprecated functions
+
+## 0.0.19
+*Sept, 8th*
 - (WIP) Now uses the new static methods introduced in V 0.3.5 (ex. `ui.Button.new`)
 - ProgressBar: new `bind_to` function (inspired by https://docs.oracle.com/javafx/2/binding/jfxpub-binding.htm)
 - ScrollView: new `set_border_painted` function
@@ -27,7 +31,7 @@ Planned TODO Features:
 	- BoxLayout -  inspired by https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
 	- FlowLayout - inspired by https://docs.oracle.com/javase/tutorial/uiswing/layout/flow.html
 	- GridLayout - inspired by https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
-	- BorderLayout is coming soon.
+	- BorderLayout - inspired by https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html
 
 ## 0.0.17
 *Mar 30th, 2023*

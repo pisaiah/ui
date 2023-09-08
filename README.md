@@ -2,7 +2,7 @@
 
 # <img src="https://github.com/isaiahpatton/ui/assets/16439221/14ccf60b-cff4-4f49-884f-d6dc2cc796ef?s=200&v=4" align="" alt="Isaiah's UI" height="64">
 
-![0.0.19](https://img.shields.io/badge/version-0.0.19-white?style=flat)
+![0.0.20](https://img.shields.io/badge/version-0.0.20-white?style=flat)
 ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=flat)
 ![vlang](http://img.shields.io/badge/V-0.4.0-%236d8fc5?style=flat)
 
@@ -14,22 +14,19 @@ Example: *([examples/demo/](examples/demo/demo.v))*
 
 ```v
 fn main() {
-	mut window := ui.make_window(
+	mut window := ui.Window.new(
 		title: 'My App'
 		width: 640
 		height: 480
-		theme: ui.theme_default()
 	)
 
 	// Create Button
-	mut btn := ui.button(
-		text: 'A Button'
-	)
+	mut btn := ui.Button.new(text: 'My Button')
 	btn.subscribe_event('mouse_up', on_click_event)
 
 	// Add Button to Window & Run
 	window.add_child(btn)
-	window.gg.run() 
+	window.gg.run()
 }
 
 fn on_click_event(mut e ui.MouseEvent) {

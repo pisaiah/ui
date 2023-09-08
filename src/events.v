@@ -53,3 +53,10 @@ pub:
 	old_val string
 	new_val string
 }
+
+// Scroll
+pub struct ScrollEvent {
+	ComponentEvent
+	delta int
+	dir   i8
+}

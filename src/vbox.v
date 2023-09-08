@@ -90,7 +90,7 @@ pub fn (mut this VBox) draw(ctx &GraphicsContext) {
 			continue
 		}
 
-		ctx.win.draw_with_offset(mut child, this.x + o_x, ypos)
+		child.draw_with_offset(ctx, this.x + o_x, ypos)
 
 		if ctx.win.bar != unsafe { nil } {
 			if ctx.win.bar.tik < 99 {

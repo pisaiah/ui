@@ -313,7 +313,7 @@ pub fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 	}
 
 	if is_point_in {
-		com.scroll_y_by(e)
+		com.scroll_y_by(e, app.graphics_context)
 	}
 
 	for mut child in com.children {
@@ -323,7 +323,7 @@ pub fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 	}
 }
 
-pub fn (mut com Component) scroll_y_by(e &gg.Event) {
+pub fn (mut com Component) scroll_y_by(e &gg.Event, ctx &GraphicsContext) {
 	scroll_y := int(e.scroll_y)
 	if abs(e.scroll_y) != e.scroll_y {
 		com.scroll_i += -scroll_y
@@ -331,7 +331,7 @@ pub fn (mut com Component) scroll_y_by(e &gg.Event) {
 		com.scroll_i -= scroll_y
 	}
 
-	com.scroll_change_event(com, -scroll_y, 0)
+	invoke_scroll_event(com, ctx, -scroll_y)
 
 	if com.scroll_i < 0 {
 		com.scroll_i = 0

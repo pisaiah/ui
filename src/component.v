@@ -16,7 +16,6 @@ mut:
 	is_selected bool
 	z_index int
 	scroll_i int
-	scroll_change_event fn (&Component, int, int)
 	is_mouse_down bool
 	is_mouse_rele bool
 	parent &Component_A
@@ -28,7 +27,11 @@ mut:
 	events &EventManager
 	draw(&GraphicsContext)
 	invoke_draw_event(&GraphicsContext)
-	invoke_after_draw_event(&GraphicsContext)
+	// invoke_after_draw_event(&GraphicsContext)
+}
+
+fn (com &Component) str() string {
+	return com.type_name() // typeof(com)
 }
 
 [heap]
@@ -48,7 +51,6 @@ pub mut:
 	is_mouse_rele       bool
 	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
-	scroll_change_event fn (&Component, int, int)   = fn (_ &Component, delta int, dir int) {}
 	parent              &Component_A = unsafe { nil }
 	children            []Component
 	id                  string
@@ -99,7 +101,7 @@ pub fn (mut com Component_A) get_com() Component_A {
 	return com
 }
 
-fn blank_draw_event_fn(mut win Window, tree &Component) {
+fn blank_draw_event_fn(mut win Window, c &Component) {
 	// Stub
 }
 
@@ -112,18 +114,8 @@ pub fn (mut com Component_A) set_id(mut win Window, id string) {
 	win.id_map[id] = com
 }
 
-pub fn (win &Window) draw_with_offset(mut com Component, offx int, offy int) {
-	com.rx = com.x + offx
-	com.ry = com.y + offy
-
-	com.x = com.x + offx
-	com.y = com.y + offy
-
-	invoke_draw_event(com, win.graphics_context)
-	com.draw(win.graphics_context)
-	com.invoke_after_draw_event(win.graphics_context)
-	com.x = com.x - offx
-	com.y = com.y - offy
+[deprecated: 'removed']
+pub fn (win &Window) draw_with_offset_old(mut c Component, x int, y int) {
 }
 
 pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
@@ -136,9 +128,30 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 	invoke_draw_event(com, ctx)
 
 	com.draw(ctx)
-	com.invoke_after_draw_event(ctx)
+	invoke_after_draw_event(com, ctx)
+	com.debug_draw(ctx)
 	com.x = com.x - off_x
 	com.y = com.y - off_y
+}
+
+pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
+	if !ctx.win.debug_draw {
+		return
+	}
+	txt := com.str().replace('iui.', '')
+
+	tw := ctx.text_width(txt)
+	tx := com.x + (com.width / 2) - (tw / 2)
+	ty := com.y + (com.height / 2) - (ctx.line_height / 2)
+
+	x2 := com.x + com.width
+	y2 := com.y + com.height
+
+	ctx.gg.draw_line(com.x, com.y, x2, y2, gx.green)
+	ctx.gg.draw_line(x2, com.y, com.x, y2, gx.green)
+
+	ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gx.rgba(250, 0, 0, 150))
+	ctx.draw_text(tx, ty, txt, 0)
 }
 
 pub fn (mut com Component) set_x(x int) {
@@ -181,19 +194,6 @@ pub fn (mut com Component_A) set_y(y int) {
 	com.y = y
 }
 
-pub fn (mut com Component_A) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
-	com.rx = com.x + off_x
-	com.ry = com.y + off_y
-	com.x = com.x + off_x
-	com.y = com.y + off_y
-
-	invoke_draw_event(com, ctx)
-	com.draw(ctx)
-	com.invoke_after_draw_event(ctx)
-	com.x = com.x - off_x
-	com.y = com.y - off_y
-}
-
 pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
 	ev := DrawEvent{
 		target: com
@@ -205,6 +205,10 @@ pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
 }
 
 pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
+	if isnil(com.events) {
+		return
+	}
+
 	ev := DrawEvent{
 		target: unsafe { com }
 		ctx: ctx
@@ -215,9 +219,13 @@ pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
 	}
 }
 
-pub fn (com &Component_A) invoke_after_draw_event(ctx &GraphicsContext) {
+pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
+	if isnil(com.events) {
+		return
+	}
+
 	ev := DrawEvent{
-		target: com
+		target: unsafe { com }
 		ctx: ctx
 	}
 	for f in com.events.event_map['after_draw'] {
@@ -244,6 +252,19 @@ pub fn invoke_mouse_up(com &Component, ctx &GraphicsContext) {
 		ctx: ctx
 	}
 	for f in com.events.event_map['mouse_up'] {
+		f(ev)
+	}
+}
+
+pub fn invoke_scroll_event(com &Component, ctx &GraphicsContext, delta int) {
+	ev := ScrollEvent{
+		target: unsafe { com }
+		ctx: ctx
+		delta: delta
+		dir: 0
+	}
+
+	for f in com.events.event_map['scroll_wheel'] {
 		f(ev)
 	}
 }

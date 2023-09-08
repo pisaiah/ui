@@ -103,7 +103,8 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 	y_off := this.y + this.top_off + top
 	for mut kid in this.children {
 		kid.draw_event_fn(mut app, kid)
-		app.draw_with_offset(mut kid, xs, y_off + 2)
+		// app.draw_with_offset(mut kid, xs, y_off + 2)
+		kid.draw_with_offset(ctx, xs, y_off + 2)
 		kid.after_draw_event_fn(mut app, kid)
 	}
 }

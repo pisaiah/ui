@@ -87,7 +87,7 @@ pub fn (mut item Selectbox) draw_children(ctx &GraphicsContext) {
 	mut wid := 100
 
 	for mut sub in item.items {
-		sub_size := text_width(ctx.win, sub + '...')
+		sub_size := ctx.text_width(sub + '...')
 		if wid < sub_size {
 			wid = sub_size
 		}

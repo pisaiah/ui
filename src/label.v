@@ -71,7 +71,7 @@ pub fn (mut btn Label) pack_do(ctx &GraphicsContext) {
 
 	mut min_width := 0
 	for line in lines {
-		width := text_width(ctx.win, line)
+		width := ctx.text_width(line)
 		if min_width < width {
 			min_width = width
 		}

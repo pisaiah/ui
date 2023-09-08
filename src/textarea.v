@@ -230,12 +230,12 @@ fn (this &TextArea) draw_line_number_background(ctx &GraphicsContext) int {
 	if !this.code_syntax_on {
 		return 4
 	}
-	padding_x := text_width(this.win, '1000')
+	padding_x := ctx.text_width('1000')
 	ctx.gg.draw_rect_filled(this.x + 1, this.y + 1, padding_x, this.height - 2, ctx.theme.button_bg_normal)
 	return padding_x
 }
 
-fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, llen int, str_fix_tab string) {
+fn (mut this TextArea) draw_caret(ctx &GraphicsContext, x int, y int, current_len int, llen int, str_fix_tab string) {
 	in_min := this.caret_left >= current_len
 	in_max := this.caret_left <= current_len + llen
 	caret_zero := this.caret_left == 0 && current_len == 0
@@ -245,26 +245,25 @@ fn (mut this TextArea) draw_caret(win &Window, x int, y int, current_len int, ll
 	}
 	caret_pos := this.caret_left - current_len
 	pretext := str_fix_tab[0..caret_pos]
-	ctx := win.graphics_context
 
-	wid := text_width(win, pretext) - 1
+	wid := ctx.text_width(pretext) - 1
 	height := get_line_height(ctx) + 1
 
 	pipe_color := ctx.theme.text_color
 	ctx.gg.draw_rect_filled(x + wid, y - 1, 1, height, pipe_color)
 }
 
-fn (mut this TextArea) move_caret(win &Window, x int, y int, current_len int, llen int, str_fix_tab string, mx int, lw int) {
+fn (mut this TextArea) move_caret(ctx &GraphicsContext, x int, y int, current_len int, llen int, str_fix_tab string, mx int, lw int) {
 	rx := x - this.x
 
 	if mx >= rx && mx < rx + lw {
 		for i in 0 .. str_fix_tab.len + 1 {
 			pretext := str_fix_tab[0..i]
-			wid := text_width(win, pretext)
+			wid := ctx.text_width(pretext)
 
 			nx := rx + wid
 
-			cwidth := text_width(win, 'A') / 2
+			cwidth := ctx.text_width('A') / 2
 
 			if abs(mx - nx) < cwidth {
 				if this.down_pos.left == -1 {
@@ -295,6 +294,7 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 	mut comment := false
 	mut is_str := false
 	mut current_len := 0
+	ctx := win.graphics_context
 
 	for str in text {
 		tab_size := ' '.repeat(8)
@@ -302,7 +302,7 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 		llen := if str == '\t' { 0 } else { str.len }
 
 		if is_cur_line {
-			this.draw_caret(win, x + x_off, y, current_len, llen, str)
+			this.draw_caret(ctx, x + x_off, y, current_len, llen, str)
 		}
 
 		color = cfg.color
@@ -351,8 +351,7 @@ fn (mut this TextArea) draw_matched_text(win &Window, x int, y int, text []strin
 			size: win.font_size
 		}
 
-		wid := text_width(win, str_fix_tab)
-		ctx := win.graphics_context
+		wid := ctx.text_width(str_fix_tab)
 		ctx.draw_text(x + x_off, y, str_fix_tab, ctx.font, conf)
 
 		if this.is_mouse_down {
@@ -374,7 +373,8 @@ fn (mut this TextArea) do_mouse_down(x int, y int, current_len int, llen int, st
 		this.caret_top = my_lh + this.scroll_i
 	}
 	if line == this.caret_top {
-		this.move_caret(this.win, x, y, current_len, llen, str_fix_tab, mx, wid)
+		this.move_caret(this.win.graphics_context, x, y, current_len, llen, str_fix_tab,
+			mx, wid)
 	}
 }
 

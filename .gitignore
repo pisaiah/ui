@@ -5,6 +5,7 @@ examples/*.exe
 iui/tree.v
 *.def
 *.log
+test.bat
 
 #  See: https://github.com/isaiahpatton/vide
 examples/ide/
