@@ -259,13 +259,17 @@ fn (mut app App) make_checkbox_section() {
 	)
 
 	cbox2 := ui.Switch.new(
-		text: 'Switch me'
+		text: 'Switch'
 		bounds: ui.Bounds{0, 30, 50, 25}
 		selected: true
 	)
 
-	mut title_box := ui.title_box('Checkbox/Switch', [cbox, cbox2])
+	mut title_box := ui.Titlebox.new(
+		text: 'Checkbox/Switch'
+		children: [cbox, cbox2]
+	)
 	title_box.set_bounds(0, 0, 130, 130)
+
 	app.pane.add_child(title_box)
 }
 
@@ -273,7 +277,7 @@ fn (mut app App) make_selectbox_section() {
 	mut sel := ui.select_box(text: 'Selectbox')
 	sel.set_bounds(0, 0, 100, 25)
 
-	for i := 0; i < 3; i++ {
+	for i in 0 .. 3 {
 		sel.items << (25 * (i + 1)).str() + '%'
 	}
 	// sel.set_change(sel_change)

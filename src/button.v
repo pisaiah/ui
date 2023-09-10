@@ -118,7 +118,7 @@ pub fn (mut btn Button) pack() {
 pub fn (mut btn Button) pack_do(ctx &GraphicsContext) {
 	width := ctx.text_width(btn.text) + 6
 	btn.width = width
-	btn.height = 30
+	btn.height = ctx.line_height + 10
 	btn.need_pack = false
 }
 

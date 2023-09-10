@@ -15,15 +15,18 @@ pub mut:
 pub struct TitleboxConfig {
 	text     string
 	children []Component
+	padding  int = 10
 }
 
 pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 	return &Titlebox{
 		text: c.text
 		children: c.children
+		padding: c.padding
 	}
 }
 
+[deprecated: 'Use Titlebox.new']
 pub fn title_box(text string, children []Component) &Titlebox {
 	return &Titlebox{
 		text: text
@@ -56,7 +59,7 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	}
 
 	y := this.y + text_height
-	x := this.x + 16
+	x := this.x + 12
 	hei := this.height - text_height
 
 	wid := ctx.text_width(this.text)

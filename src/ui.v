@@ -388,27 +388,29 @@ pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx
 	g.gg.draw_rect_empty(x, y, w, h, bord)
 }
 
-// Implement our own 'ui_mode'.
-// This helps high cpu usage.
-// Related: https://github.com/floooh/sokol/issues/550
-fn (mut app Window) do_sleep() {
-	if app.config.ui_mode {
+// Implement our own 'ui_mode'. This helps high cpu usage.
+// Related:
+// - https://github.com/vlang/v/issues/14691
+// - https://github.com/floooh/sokol/issues/550
+//
+fn (mut w Window) do_sleep() {
+	if w.config.ui_mode {
 		return
 	}
 
-	if !app.sleep_if_no_evnt {
+	if !w.sleep_if_no_evnt {
 		return
 	}
 
-	if app.has_event {
-		app.frame_evnt_count += 1
-		if app.frame_evnt_count > 3 {
-			app.has_event = false
-			app.frame_evnt_count = 0
+	if w.has_event {
+		w.frame_evnt_count += 1
+		if w.frame_evnt_count > 3 {
+			w.has_event = false
+			w.frame_evnt_count = 0
 		}
 	}
 
-	if !app.has_event {
+	if !w.has_event {
 		time.sleep(20 * time.millisecond) // Reduce CPU Usage
 	}
 }
@@ -504,12 +506,14 @@ fn (mut app Window) draw() {
 	app.frame_time = int(end - now)
 }
 
-pub fn (mut ctx GraphicsContext) calculate_line_height() {
-	ctx.line_height = ctx.gg.text_height('A1!|{}j;') + 2
+pub fn (mut g GraphicsContext) calculate_line_height() {
+	g.line_height = g.gg.text_height('A1!{}j;') + 2
 
-	if ctx.line_height < ctx.font_size {
+	if g.line_height < g.font_size {
 		// Fix for wasm
-		ctx.line_height = ctx.font_size + 2
+		$if emscripten ? {
+			g.line_height = g.font_size + 2
+		}
 	}
 }
 

@@ -48,6 +48,10 @@ fn (this &Switch) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
 		return ctx.theme.button_bg_click
 	}
 
+	if this.is_selected {
+		return ctx.theme.checkbox_selected
+	}
+
 	if is_hover {
 		return ctx.theme.button_bg_hover
 	}
@@ -72,12 +76,15 @@ pub fn (mut com Switch) draw(ctx &GraphicsContext) {
 
 	// Draw checkmark
 	if com.is_selected {
-		com.draw_checkmark(ctx)
 		if com.a < com.height {
 			com.a += 5
 			mut win := ctx.win
 			win.refresh_ui()
 		}
+		if com.a > com.height {
+			com.a = com.height
+		}
+		com.draw_circ(0, ctx)
 	} else {
 		if com.a > 0 {
 			com.a -= 5
@@ -87,8 +94,7 @@ pub fn (mut com Switch) draw(ctx &GraphicsContext) {
 		if com.a < 0 {
 			com.a = 0
 		}
-		wid := com.height
-		ctx.gg.draw_rounded_rect_filled(com.x + com.a, com.y, wid, wid, 16, ctx.theme.button_border_normal)
+		com.draw_circ(2, ctx)
 	}
 
 	// Draw text
@@ -111,15 +117,15 @@ fn (com &Switch) draw_background(ctx &GraphicsContext) {
 	border := com.get_border(is_hover, ctx)
 
 	bh := com.height * 2
-	h := com.height - 6
-	y := com.y + 3
-	ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 16, bg)
-	ctx.gg.draw_rounded_rect_empty(com.x, y, bh, h, 16, border)
+	h := com.height // - 6
+	y := com.y // + 3
+	ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 8, bg)
+	ctx.gg.draw_rounded_rect_empty(com.x, y, bh, h, 8, border)
 }
 
 // Draw the text of Switch
 fn (this &Switch) draw_text(ctx &GraphicsContext) {
-	sizh := ctx.gg.text_height(this.text) / 2
+	sizh := ctx.line_height / 2 // ctx.gg.text_height(this.text) / 2
 	left := this.height * 2
 
 	ctx.draw_text(this.x + left + 4, this.y + (this.height / 2) - sizh, this.text, ctx.font,
@@ -129,9 +135,9 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 	})
 }
 
-// TODO: Better Checkmark
-fn (com &Switch) draw_checkmark(ctx &GraphicsContext) {
-	wid := com.height
-	ctx.gg.draw_rounded_rect_filled(com.x + com.a, com.y, wid, wid, 16, ctx.theme.checkbox_selected)
-	ctx.gg.draw_rounded_rect_empty(com.x + com.a, com.y, wid, wid, 16, ctx.theme.button_bg_normal)
+fn (com &Switch) draw_circ(o int, g &GraphicsContext) {
+	wid := com.height - 3
+	x := com.x + com.a + o
+	g.gg.draw_rounded_rect_filled(x, com.y + 1, wid, wid, 16, g.theme.button_bg_normal)
+	g.gg.draw_rounded_rect_empty(x, com.y + 1, wid, wid, 16, g.theme.button_border_normal)
 }
