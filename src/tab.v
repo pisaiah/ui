@@ -23,12 +23,14 @@ pub mut:
 
 [params]
 pub struct TabboxConfig {
+	compact bool
 }
 
 // Return new Tabbox
 pub fn Tabbox.new(c TabboxConfig) &Tabbox {
 	return &Tabbox{
 		win: unsafe { nil }
+		compact: c.compact
 		text: ''
 	}
 }
@@ -65,7 +67,7 @@ pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
 
 pub fn (tb &Tabbox) get_tab_width(ctx &GraphicsContext, key string) int {
 	if tb.compact {
-		return ctx.text_width(key)
+		return ctx.text_width(key) + 15
 	}
 	return ctx.text_width(key) + 30
 }

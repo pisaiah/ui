@@ -68,12 +68,5 @@ pub fn make_window(c &WindowConfig) &Window {
 
 [deprecated: 'use ctx.text_width']
 pub fn text_width(win Window, text string) int {
-	$if windows {
-		if win.gg.native_rendering {
-			return win.gg.text_width(text)
-		}
-	}
-	ctx := win.gg
-	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
-	return int(adv / ctx.scale)
+	return win.graphics_context.text_width(text)
 }

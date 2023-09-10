@@ -97,6 +97,7 @@ fn (com &Checkbox) draw_background(ctx &GraphicsContext) {
 // Draw the text of Checkbox
 fn (this &Checkbox) draw_text(ctx &GraphicsContext) {
 	sizh := ctx.gg.text_height(this.text) / 2
+
 	ctx.draw_text(this.x + this.height + 4, this.y + (this.height / 2) - sizh, this.text,
 		ctx.font, gx.TextCfg{
 		size: ctx.font_size

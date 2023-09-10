@@ -225,13 +225,13 @@ fn (mut app App) make_edits_section() {
 }
 
 fn (mut app App) make_progress_section() {
-	mut pb := ui.progressbar(30)
+	mut pb := ui.Progressbar.new(val: 30)
 	pb.set_bounds(0, 0, 110, 24)
 
-	mut pb2 := ui.progressbar(50)
+	mut pb2 := ui.Progressbar.new(val: 50)
 	pb2.set_bounds(0, 30, 110, 24)
 
-	mut pb3 := ui.progressbar(70)
+	mut pb3 := ui.Progressbar.new(val: 70)
 	pb3.set_bounds(0, 60, 110, 24)
 
 	mut title_box := ui.title_box('Progressbar', [pb, pb2, pb3])
@@ -253,18 +253,18 @@ fn (mut app App) make_tree_section() {
 }
 
 fn (mut app App) make_checkbox_section() {
-	cbox := ui.check_box(
+	cbox := ui.Checkbox.new(
 		text: 'Check me!'
 		bounds: ui.Bounds{0, 0, 50, 25}
 	)
 
-	cbox2 := ui.check_box(
-		text: 'Check me!'
+	cbox2 := ui.Switch.new(
+		text: 'Switch me'
 		bounds: ui.Bounds{0, 30, 50, 25}
 		selected: true
 	)
 
-	mut title_box := ui.title_box('Checkbox', [cbox, cbox2])
+	mut title_box := ui.title_box('Checkbox/Switch', [cbox, cbox2])
 	title_box.set_bounds(0, 0, 130, 130)
 	app.pane.add_child(title_box)
 }
@@ -309,11 +309,12 @@ fn (mut app App) make_button_section() {
 }
 
 fn (mut app App) make_tab_section() {
-	mut tb := ui.tabbox(app.win)
+	mut tb := ui.Tabbox.new(
+		compact: true
+	)
 	tb.set_bounds(2, 2, 155, 140)
-	tb.compact = true
 
-	mut tbtn := ui.button(text: 'In Tab A')
+	mut tbtn := ui.Button.new(text: 'In Tab A')
 	tbtn.set_pos(10, 10)
 	tbtn.pack()
 	tb.add_child('Tab A', tbtn)
@@ -411,21 +412,8 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 	win.set_theme(theme)
 }
 
-/*
-fn sel_change(mut win ui.Window, com ui.Select, old_val string, new_val string) {
-	debug('OLD: ' + old_val + ', NEW: ' + new_val)
-	mut a := new_val.replace('%', '')
-
-	for mut kid in win.components {
-		if mut kid is ui.Progressbar {
-			kid.text = a
-		}
-	}
-}
-*/
-
 fn test_page(mut e ui.MouseEvent) {
-	mut page := ui.page(e.ctx.win, 'Page 1')
+	mut page := ui.Page.new(title: 'Page 1')
 	e.ctx.win.add_child(page)
 
 	debug('btn click')

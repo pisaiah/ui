@@ -15,14 +15,14 @@ pub mut:
 [params]
 pub struct ProgressbarConfig {
 	val  f32
-	bind &f32
+	bind ?&f32
 }
 
 // Return new Progressbar
 pub fn Progressbar.new(conf ProgressbarConfig) &Progressbar {
 	return &Progressbar{
 		text: conf.val.str()
-		bind_val: conf.bind
+		bind_val: conf.bind or { unsafe { nil } }
 	}
 }
 

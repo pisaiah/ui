@@ -525,6 +525,10 @@ pub fn (g &GraphicsContext) text_width(text string) int {
 	return int(adv / ctx.scale)
 }
 
+pub fn (mut w Window) refresh_ui() {
+	w.gg.refresh_ui()
+}
+
 // Functions for GG
 pub fn text_height(win Window, text string) int {
 	return win.gg.text_height(text)
