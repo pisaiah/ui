@@ -15,10 +15,6 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 	return button(cfg)
 }
 
-[deprecated]
-fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn Button) {
-}
-
 [deprecated: 'Use HBox.new()']
 pub fn hbox(win &Window) &HBox {
 	return &HBox{
@@ -31,13 +27,6 @@ pub fn vbox(win &Window) &VBox {
 	return &VBox{
 		win: win
 	}
-}
-
-[deprecated: 'Replaced by new static method: Label.new']
-pub fn label(app &Window, text string, conf LabelConfig) &Label {
-	mut lbl := Label.new(conf)
-	lbl.text = text
-	return lbl
 }
 
 [deprecated: 'Replaced with menu_item(MenuItemConfig)']
@@ -67,21 +56,9 @@ pub fn progressbar(val f32) &Progressbar {
 	}
 }
 
-[deprecated]
-pub fn selector(app &Window, text string, cfg SelectboxConfig) &Selectbox {
-	return select_box(
-		text: text
-	)
-}
-
 [deprecated: 'Use Slider.new']
 pub fn new_slider(cfg SliderConfig) &Slider {
 	return Slider.new(cfg)
-}
-
-[deprecated: 'Replaced by Textbox.new']
-pub fn textarea(win &Window, lines []string) &Textbox {
-	return Textbox.new(lines: lines)
 }
 
 [deprecated: 'Use Window.new']
@@ -99,8 +76,4 @@ pub fn text_width(win Window, text string) int {
 	ctx := win.gg
 	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
 	return int(adv / ctx.scale)
-}
-
-[deprecated: 'removed']
-pub fn (win &Window) draw_with_offset_old(mut c Component, x int, y int) {
 }
