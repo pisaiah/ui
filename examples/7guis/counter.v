@@ -3,50 +3,53 @@
 import gg
 import iui as ui
 
-[console]
+[heap]
+struct App {
+mut:
+	lbl &ui.Label
+}
+
 fn main() {
 	// Create Window
-	mut window := ui.window(ui.get_system_theme(), 'Counter', 230, 200)
+	mut window := ui.Window.new(
+		title: 'Counter'
+		width: 230
+		height: 200
+	)
 
-	window.debug_draw = true
-
-	// Create an HBox
-	mut hbox := ui.hbox(window)
-	hbox.set_bounds(10, 10, 230, 80)
+	// Create an Panel
+	mut p := ui.Panel.new(
+		// Vertical Box layout
+		layout: ui.BoxLayout.new(ori: 1)
+	)
 
 	// Create the Label
-	mut lbl := ui.label(window, '0')
-	lbl.set_bounds(42, 20, 0, 0)
+	mut lbl := ui.Label.new(text: '0')
 	lbl.pack()
 
 	// Create Count Button
 	mut btn := ui.button(
 		text: 'Count'
-		bounds: ui.Bounds{64, 13, 0, 0}
-		click_event_fn: on_click
 		should_pack: true
-		user_data: &lbl
 	)
 
-	btn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
-		dump('DRAW')
-	})
+	mut app := &App{
+		lbl: lbl
+	}
 
-	// Add to HBox
-	hbox.add_child(lbl)
-	hbox.add_child(btn)
-	hbox.pack()
+	btn.subscribe_event('mouse_up', app.btn_click_fn)
+
+	// Add to panel
+	p.add_child(lbl)
+	p.add_child(btn)
 
 	// Show Window
-	window.add_child(hbox)
+	window.add_child(p)
 	window.gg.run()
 }
 
-// on click event function
-// The Label we want to update is sent as data.
-fn on_click(win &ui.Window, btn voidptr, data voidptr) {
-	mut lbl := &ui.Label(data)
-	current_value := lbl.text.int()
-	lbl.text = (current_value + 1).str()
-	lbl.pack()
+fn (mut app App) btn_click_fn(mut e ui.MouseEvent) {
+	current_value := app.lbl.text.int()
+	app.lbl.text = (current_value + 1).str()
+	app.lbl.pack()
 }

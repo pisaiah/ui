@@ -68,6 +68,7 @@ pub fn (mut com Switch) draw(ctx &GraphicsContext) {
 	if com.is_mouse_rele {
 		com.is_mouse_rele = false
 		com.is_selected = !com.is_selected
+		invoke_switch(com, ctx)
 	}
 
 	if com.a == -1 {
@@ -140,4 +141,18 @@ fn (com &Switch) draw_circ(o int, g &GraphicsContext) {
 	x := com.x + com.a + o
 	g.gg.draw_rounded_rect_filled(x, com.y + 1, wid, wid, 16, g.theme.button_bg_normal)
 	g.gg.draw_rounded_rect_empty(x, com.y + 1, wid, wid, 16, g.theme.button_border_normal)
+}
+
+pub struct SwitchEvent {
+	ComponentEvent
+}
+
+pub fn invoke_switch(com &Switch, ctx &GraphicsContext) {
+	ev := SwitchEvent{
+		target: com // unsafe { com }
+		ctx: ctx
+	}
+	for f in com.events.event_map['change'] {
+		f(ev)
+	}
 }
