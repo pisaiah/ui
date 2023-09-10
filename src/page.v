@@ -32,33 +32,22 @@ pub struct PageCfg {
 }
 
 pub fn Page.new(c PageCfg) &Page {
-	return page(unsafe { nil }, c.title)
-}
-
-pub fn page(app &Window, title string) &Page {
 	return &Page{
-		text: title
-		window: app
+		text: c.title
+		window: 0
 		z_index: 500
 		needs_init: true
-		draw_event_fn: fn (mut win Window, mut com Component) {
-			if mut com is Page {
-				for mut kid in com.children {
-					kid.draw_event_fn(mut win, kid)
-				}
-			}
-		}
 		text_cfg: draw_cfg()
 		in_height: 300
 		close: 0
 	}
 }
 
-fn (this &Page) draw_bg(ctx &GraphicsContext) {
+fn (p &Page) draw_bg(ctx &GraphicsContext) {
 	bg := gx.rgb(51, 114, 153)
-	ctx.gg.draw_rect_filled(0, 0, this.width, this.height, ctx.theme.background)
-	ctx.gg.draw_rect_filled(0, 0, this.width, this.top_off, bg)
-	ctx.gg.draw_rect_filled(0, this.top_off - 5, this.width, 3, this.line_color)
+	ctx.gg.draw_rect_filled(0, 0, p.width, p.height, ctx.theme.background)
+	ctx.gg.draw_rect_filled(0, 0, p.width, p.top_off, bg)
+	ctx.gg.draw_rect_filled(0, p.top_off - 5, p.width, 3, p.line_color)
 }
 
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
@@ -75,19 +64,15 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 	this.draw_bg(ctx)
 
-	title := this.text
-	ctx.draw_text(56, 18, title, ctx.font, this.text_cfg)
+	ctx.draw_text(56, 18, this.text, ctx.font, this.text_cfg)
 
 	ctx.gg.set_text_cfg(gx.TextCfg{
 		size: ctx.font_size
 		color: ctx.theme.text_color
 	})
 
-	// Do component draw event again to fix z-index
-	this.draw_event_fn(mut app, &Component(this))
-
 	if this.needs_init {
-		this.create_close_btn(mut app, true)
+		this.create_close_btn(true)
 		this.needs_init = false
 	}
 
@@ -108,14 +93,13 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	// this.children.sort(a.z_index < b.z_index)
 	for mut com in this.children {
 		com.draw_event_fn(mut app, com)
-		// app.draw_with_offset(mut com, 0, y_off + 2)
 		com.draw_with_offset(ctx, 0, y_off + 2)
 	}
 }
 
-pub fn (mut this Page) create_close_btn(mut app Window, ce bool) &Button {
+pub fn (mut this Page) create_close_btn(ce bool) &Button {
 	mut close := Button.new(text: '<')
-	y := 10
+	y := 16
 	wid := this.top_off - (y * 2)
 	close.set_bounds(8, -this.top_off + y, 40, wid)
 

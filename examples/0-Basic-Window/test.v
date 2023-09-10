@@ -5,7 +5,7 @@ import iui as ui
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.make_window(
+	mut window := ui.Window.new(
 		title: 'My Window'
 		width: 520
 		height: 400

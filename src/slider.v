@@ -49,10 +49,6 @@ pub fn Slider.new(c SliderConfig) &Slider {
 }
 
 [deprecated: 'Use Slider.new']
-pub fn new_slider(cfg SliderConfig) &Slider {
-	return Slider.new(cfg)
-}
-
 pub fn slider(cfg SliderConfig) &Slider {
 	return Slider.new(cfg)
 }
@@ -64,18 +60,7 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 	}
 
 	if this.is_mouse_down {
-		if this.dir == .hor {
-			mut cx := math.clamp(ctx.win.mouse_x - this.x, 0, this.width)
-			mut perr := cx / this.width
-			perr = perr * this.max
-			this.cur = f32(perr)
-		} else {
-			mut cx := math.clamp(ctx.win.mouse_y - this.y, 0, this.height)
-			mut perr := cx / this.height
-			perr = perr * this.max
-			this.cur = f32(perr)
-		}
-		this.scroll_i = int(this.cur)
+		this.on_mouse_down(ctx)
 	}
 
 	if this.is_mouse_rele {
@@ -97,21 +82,36 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 
 	if this.dir == .hor {
 		wid := (this.width * per) - per * this.thumb_wid
-
-		// Horizontal
-		hei := this.height
-		ctx.win.draw_bordered_rect(this.x, this.y, this.width, hei, 8, ctx.theme.scroll_track_color,
-			ctx.theme.button_border_normal)
-		ctx.gg.draw_rounded_rect_filled(this.x + wid, this.y, this.thumb_wid, hei, 16,
-			thumb_color)
+		this.draw_hor(ctx, wid, thumb_color)
 	} else {
 		wid := (this.height * per) - per * this.thumb_wid
-
-		// Vertical
-		ctx.win.draw_filled_rect(this.x, this.y, this.width, this.height, 1, ctx.theme.scroll_track_color,
-			ctx.theme.button_border_normal)
-		ctx.gg.draw_rounded_rect_filled(this.x, this.y + wid, this.width, this.thumb_wid,
-			8, ctx.theme.scroll_bar_color)
-		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.button_border_normal)
+		this.draw_vert(ctx, wid)
 	}
+}
+
+fn (mut s Slider) on_mouse_down(g &GraphicsContext) {
+	if s.dir == .hor {
+		mut cx := math.clamp(g.win.mouse_x - s.x, 0, s.width)
+		mut perr := cx / s.width
+		perr = perr * s.max
+		s.cur = f32(perr)
+	} else {
+		mut cx := math.clamp(g.win.mouse_y - s.y, 0, s.height)
+		mut perr := cx / s.height
+		perr = perr * s.max
+		s.cur = f32(perr)
+	}
+	s.scroll_i = int(s.cur)
+}
+
+fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
+	hei := s.height
+	g.win.draw_bordered_rect(s.x, s.y, s.width, hei, 8, g.theme.scroll_track_color, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(s.x + wid, s.y, s.thumb_wid, hei, 16, thumb_color)
+}
+
+fn (s &Slider) draw_vert(g &GraphicsContext, wid f32) {
+	g.draw_bordered_rect(s.x, s.y, s.width, s.height, g.theme.scroll_track_color, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(s.x, s.y + wid, s.width, s.thumb_wid, 8, g.theme.scroll_bar_color)
+	g.gg.draw_rect_empty(s.x, s.y, s.width, s.height, g.theme.button_border_normal)
 }

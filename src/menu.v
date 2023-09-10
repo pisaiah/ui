@@ -198,11 +198,6 @@ pub fn Menubar.new(cfg MenubarConfig) &Menubar {
 	return &Menubar{}
 }
 
-[deprecated]
-pub fn menubar(app &Window, theme Theme) &Menubar {
-	return &Menubar{}
-}
-
 fn (mut app Window) get_bar() &Menubar {
 	return app.bar
 }
@@ -219,15 +214,6 @@ pub struct MenuItemConfig {
 	icon           &Image = unsafe { nil }
 	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
 	children       []&MenuItem
-}
-
-// [deprecated: 'Replaced with menu_item(MenuItemConfig)']
-pub fn menuitem(text string) &MenuItem {
-	return &MenuItem{
-		text: text
-		icon: 0
-		click_event_fn: fn (mut win Window, item MenuItem) {}
-	}
 }
 
 pub fn MenuItem.new(c MenuItemConfig) &MenuItem {

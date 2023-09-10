@@ -6,6 +6,29 @@
 //  	Output: ['mut', ' str', ':=', ' test']
 module iui
 
+import gg
+
+pub const keys = ['fn', 'mut', '// ', '\t', "'", '(', ')', ' as ', '/*', '*/']
+
+pub const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'if', 'else', 'for']
+
+pub const blue_keys = ['fn', 'module', 'import', 'interface', 'map', 'assert', 'sizeof', 'typeof',
+	'mut', '[', ']']
+
+pub const purp_keys = ' int,i8,i16,i64,i128,u8,u16,u32,u64,u128,f32,f64, bool, byte,byteptr,charptr, voidptr,string,ustring, rune,(,)'.split(',')
+
+pub const red_keys = '||,&&,&,=,:=,==,<=,>=,>,<,!'.split(',')
+
+pub const colors = 'blue,red,green,yellow,orange,purple,black,gray,pink,white'.split(',')
+
+fn is_enter(key gg.KeyCode) bool {
+	return key == .enter || key == .kp_enter
+}
+
+pub fn get_line_height(ctx &GraphicsContext) int {
+	return ctx.line_height + 2
+}
+
 pub struct Group {
 pub:
 	start int = -1

@@ -114,10 +114,6 @@ pub fn (mut com Component_A) set_id(mut win Window, id string) {
 	win.id_map[id] = com
 }
 
-[deprecated: 'removed']
-pub fn (win &Window) draw_with_offset_old(mut c Component, x int, y int) {
-}
-
 pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
 	com.rx = com.x + off_x
 	com.ry = com.y + off_y

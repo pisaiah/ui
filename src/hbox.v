@@ -39,13 +39,6 @@ pub fn HBox.new(cfg HBoxConfig) &HBox {
 	}
 }
 
-[deprecated: 'Use HBox.new()']
-pub fn hbox(win &Window) &HBox {
-	return &HBox{
-		win: win
-	}
-}
-
 pub fn (mut this HBox) pack() {
 	this.needs_pack = true
 }

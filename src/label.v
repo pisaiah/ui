@@ -41,13 +41,6 @@ pub fn Label.new(conf LabelConfig) &Label {
 	}
 }
 
-[deprecated: 'Replaced by new static method: Label.new']
-pub fn label(app &Window, text string, conf LabelConfig) &Label {
-	mut lbl := Label.new(conf)
-	lbl.text = text
-	return lbl
-}
-
 pub fn (mut btn Label) draw(ctx &GraphicsContext) {
 	if btn.app == unsafe { nil } {
 		btn.app = ctx.win
@@ -179,9 +172,4 @@ pub fn (mut this Label) set_config(fs int, abs bool, bold bool) {
 	this.size = fs
 	this.abs_fsize = abs
 	this.bold = bold
-}
-
-[deprecated: 'Use subscribe_event']
-pub fn (mut this Label) set_click_old(b fn (mut Window, Label)) {
-	this.click_event_fn = b
 }

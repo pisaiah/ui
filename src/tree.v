@@ -28,16 +28,16 @@ pub mut:
 	open  bool
 }
 
+// new tree
+pub fn Tree.new() &Tree2 {
+	return tree('')
+}
+
 pub fn tree(text string) &Tree2 {
 	return &Tree2{
 		text: text
 		click_event_fn: unsafe { nil }
 	}
-}
-
-[deprecated]
-pub fn tree2(text string) &Tree2 {
-	return tree(text)
 }
 
 pub fn (mut this Tree2) add_child(node &TreeNode) {

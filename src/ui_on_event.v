@@ -58,10 +58,6 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 		app.runebox_key(key, e, mut a)
 		return a.is_selected
 	}
-	if mut a is TextArea {
-		app.textarea_key_down(key, e, mut a)
-		return true
-	}
 	if mut a is Textbox {
 		app.textbox_key_down(key, e, mut a)
 		return true

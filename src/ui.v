@@ -349,11 +349,6 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 	return win
 }
 
-[deprecated: 'Use Window.new']
-pub fn make_window(c &WindowConfig) &Window {
-	return Window.new(c)
-}
-
 pub fn (mut win Window) set_theme(theme Theme) {
 	theme.setup_fn(mut win)
 	win.theme = theme
@@ -383,16 +378,14 @@ fn frame(mut app Window) {
 fn (app &Window) display() {
 }
 
-[deprecated]
 pub fn (app &Window) draw_bordered_rect(x int, y int, w int, h int, a int, bg gx.Color, bord gx.Color) {
 	app.gg.draw_rounded_rect_filled(x, y, w, h, a, bg)
 	app.gg.draw_rounded_rect_empty(x, y, w, h, a, bord)
 }
 
-[deprecated]
-pub fn (app &Window) draw_filled_rect(x int, y int, w int, h int, a int, bg gx.Color, bord gx.Color) {
-	app.gg.draw_rect_filled(x, y, w, h, bg)
-	app.gg.draw_rect_empty(x, y, w, h, bord)
+pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx.Color, bord gx.Color) {
+	g.gg.draw_rect_filled(x, y, w, h, bg)
+	g.gg.draw_rect_empty(x, y, w, h, bord)
 }
 
 // Implement our own 'ui_mode'.
@@ -533,18 +526,6 @@ pub fn (g &GraphicsContext) text_width(text string) int {
 }
 
 // Functions for GG
-[deprecated: 'use ctx.text_width']
-pub fn text_width(win Window, text string) int {
-	$if windows {
-		if win.gg.native_rendering {
-			return win.gg.text_width(text)
-		}
-	}
-	ctx := win.gg
-	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
-	return int(adv / ctx.scale)
-}
-
 pub fn text_height(win Window, text string) int {
 	return win.gg.text_height(text)
 }

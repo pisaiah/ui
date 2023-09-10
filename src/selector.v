@@ -40,13 +40,6 @@ pub fn select_box(cfg SelectboxConfig) &Selectbox {
 	}
 }
 
-[deprecated]
-pub fn selector(app &Window, text string, cfg SelectboxConfig) &Selectbox {
-	return select_box(
-		text: text
-	)
-}
-
 // Items -> Children
 pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 	mut pop := if n { &Popup{} } else { this.popup }

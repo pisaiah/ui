@@ -179,19 +179,6 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 
 // Deprecated functions:
 
-[deprecated: 'Use Button.new(ButtonConfig)']
-pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
-	cfg := ButtonConfig{
-		...conf
-		icon: icon
-	}
-	return button(cfg)
-}
-
-[deprecated]
-fn (mut app Window) draw_button(x int, y int, width int, height int, mut btn Button) {
-}
-
 [deprecated: 'use subscribe_event']
 pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
 	com.old_click_fn = b

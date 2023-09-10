@@ -33,13 +33,6 @@ pub fn VBox.new(c VBoxConfig) &VBox {
 	}
 }
 
-[deprecated: 'Use VBox.new()']
-pub fn vbox(win &Window) &VBox {
-	return &VBox{
-		win: win
-	}
-}
-
 pub fn (mut this VBox) pack() {
 	this.needs_pack = true
 }

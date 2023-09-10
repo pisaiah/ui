@@ -36,7 +36,6 @@ pub fn BorderLayout.new(c BorderLayoutConfig) BorderLayout {
 	return BorderLayout{
 		hgap: c.hgap
 		vgap: c.vgap
-		// nil != isnil() ?
 		north: unsafe { nil }
 		west: unsafe { nil }
 		east: unsafe { nil }

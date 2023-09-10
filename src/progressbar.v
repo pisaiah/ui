@@ -18,6 +18,7 @@ pub struct ProgressbarConfig {
 	bind &f32
 }
 
+// Return new Progressbar
 pub fn Progressbar.new(conf ProgressbarConfig) &Progressbar {
 	return &Progressbar{
 		text: conf.val.str()
@@ -28,15 +29,6 @@ pub fn Progressbar.new(conf ProgressbarConfig) &Progressbar {
 pub fn (mut this Progressbar) bind_to(val &f32) {
 	unsafe {
 		this.bind_val = val
-	}
-}
-
-// Return new Progressbar
-[deprecated: 'v 0.3.5: Use Progressbar.new']
-pub fn progressbar(val f32) &Progressbar {
-	return &Progressbar{
-		text: val.str()
-		bind_val: unsafe { nil }
 	}
 }
 
