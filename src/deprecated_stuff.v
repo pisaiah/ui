@@ -104,8 +104,3 @@ pub fn text_width(win Window, text string) int {
 [deprecated: 'removed']
 pub fn (win &Window) draw_with_offset_old(mut c Component, x int, y int) {
 }
-
-[deprecated: 'Use subscribe_event']
-pub fn (mut this Label) set_click_old(b fn (mut Window, Label)) {
-	this.click_event_fn = b
-}

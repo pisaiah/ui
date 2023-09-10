@@ -7,15 +7,14 @@ import gx
 pub struct Label {
 	Component_A
 pub mut:
-	app            &Window
-	text           string
-	click_event_fn fn (mut Window, Label)
-	need_pack      bool
-	size           int
-	bold           bool
-	abs_fsize      bool
-	center_text_y  bool
-	color          gx.Color
+	app           &Window
+	text          string
+	need_pack     bool
+	size          int
+	bold          bool
+	abs_fsize     bool
+	center_text_y bool
+	color         gx.Color
 }
 
 [params]
@@ -110,10 +109,6 @@ fn (app Window) draw_label(x int, y int, width int, height int, mut this Label, 
 
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
-		if !isnil(this.click_event_fn) {
-			mut win := ctx.win
-			this.click_event_fn(mut win, *this)
-		}
 	}
 
 	size := if this.abs_fsize {
