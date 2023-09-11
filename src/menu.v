@@ -214,6 +214,7 @@ pub struct MenuItemConfig {
 	icon           &Image = unsafe { nil }
 	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
 	children       []&MenuItem
+	click_fn       ?fn (voidptr)
 }
 
 pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
@@ -222,6 +223,13 @@ pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
 		icon: c.icon
 		click_event_fn: c.click_event_fn
 	}
+
+	fns := c.click_fn or { unsafe { nil } }
+
+	if !isnil(fns) {
+		item.subscribe_event('mouse_up', fns)
+	}
+
 	for kid in c.children {
 		item.add_child(kid)
 	}

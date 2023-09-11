@@ -8,8 +8,8 @@ import math
 fn main() {
 	mut win := ui.Window.new(
 		title: 'Clock'
-		width: 640
-		height: 480
+		width: 240
+		height: 280
 	)
 	win.set_theme(ui.theme_seven_dark())
 

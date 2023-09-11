@@ -89,16 +89,16 @@ fn main() {
 
 	mut res_box := ui.text_box(['hello'])
 	res_box.set_id(mut window, 'notepad')
-	res_box.set_bounds(1, 0, 100, 100)
+	res_box.set_bounds(1, 1, 100, 100)
 	// res_box.draw_event_fn = vbtn_draw
 
 	mut sv := ui.scroll_view(
 		view: res_box
-		bounds: ui.Bounds{0, 28, 400, 500}
 		padding: 0
 	)
+	sv.noborder = true
 
-	res_box.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+	res_box.subscribe_event('after_draw', fn (mut e ui.DrawEvent) {
 		size := gg.window_size()
 
 		e.target.width = size.width - 3
@@ -148,15 +148,16 @@ fn theme_click(mut win ui.Window, com ui.MenuItem) {
 }
 
 fn about_click(mut win ui.Window, com ui.MenuItem) {
-	mut modal := ui.page(win, 'About Notepad')
+	mut modal := ui.Page.new(title: 'About Notepad')
 
-	mut title := ui.label(win, 'Notepad')
+	mut title := ui.Label.new(text: 'Notepad')
 	title.set_config(28, true, true)
 	title.pack()
 
-	mut label := ui.label(win,
-		'Small Notepad made in the V Programming Language.\n\nVersion: 0.1' +
-		'\nUI Version: ${ui.version}')
+	mut label := ui.Label.new(
+		text: 'Small Notepad made in the V Programming Language.\n\nVersion: 0.1' +
+			'\nUI Version: ${ui.version}'
+	)
 
 	label.pack()
 

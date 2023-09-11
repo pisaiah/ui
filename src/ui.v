@@ -435,11 +435,12 @@ fn (mut app Window) draw() {
 			if ws.width > 0 {
 				app.components[0].width = ws.width
 			}
+
 			if bar != unsafe { nil } {
 				hei := ws.height
 				if hei > 0 {
-					app.components[0].y = 26
-					app.components[0].height = ws.height - 26
+					app.components[0].y = 27
+					app.components[0].height = ws.height - 27
 				}
 			} else {
 				app.components[0].height = ws.height
