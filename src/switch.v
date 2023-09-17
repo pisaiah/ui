@@ -7,8 +7,25 @@ import gx
 pub struct Switch {
 	Component_A
 pub mut:
-	text string
-	a    int
+	text     string
+	a        int
+	bind_val &bool = unsafe { nil }
+}
+
+pub fn (mut s Switch) bind_to(val &bool) {
+	unsafe {
+		s.bind_val = val
+	}
+}
+
+pub fn (mut s Switch) update_bind() {
+	if isnil(s.bind_val) {
+		return
+	}
+
+	unsafe {
+		*s.bind_val = s.is_selected
+	}
 }
 
 [params]
@@ -69,6 +86,15 @@ pub fn (mut com Switch) draw(ctx &GraphicsContext) {
 		com.is_mouse_rele = false
 		com.is_selected = !com.is_selected
 		invoke_switch(com, ctx)
+		com.update_bind()
+	}
+
+	if !isnil(com.bind_val) {
+	}
+	if !isnil(com.bind_val) {
+		if com.is_selected != com.bind_val {
+			com.is_selected = com.bind_val
+		}
 	}
 
 	if com.a == -1 {

@@ -29,9 +29,10 @@ fn main() {
 	mut clock := &ClockComponent{
 		x: 0
 	}
+	switch.bind_to(&clock.smooth)
 
 	switch.subscribe_event('change', fn [mut clock] (mut e ui.SwitchEvent) {
-		clock.smooth = e.target.is_selected
+		//	clock.smooth = e.target.is_selected
 	})
 
 	p.add_child_with_flag(clock, ui.borderlayout_center)
@@ -46,8 +47,8 @@ fn main() {
 struct ClockComponent {
 	ui.Component_A
 mut:
-	size   int = 100
-	smooth bool
+	size   int  = 100
+	smooth bool = true
 }
 
 fn (mut this ClockComponent) draw_nums(ctx &ui.GraphicsContext, i int) {

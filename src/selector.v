@@ -98,6 +98,15 @@ pub fn (mut item Selectbox) draw_children(ctx &GraphicsContext) {
 	}
 }
 
+pub fn (mut sb Selectbox) do_pack(ctx &GraphicsContext) {
+	if sb.height == 0 {
+		sb.height = min_h(ctx)
+	}
+	if sb.width == 0 {
+		sb.width = ctx.text_width(sb.text) + 40
+	}
+}
+
 pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 	if item.app == unsafe { nil } {
 		item.app = ctx.win
@@ -109,6 +118,8 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 	width := item.width
 	height := item.height
 	sizh := ctx.gg.text_height(item.text) / 2
+
+	item.do_pack(ctx)
 
 	mut bg := ctx.theme.button_bg_normal
 	mut border := ctx.theme.button_border_normal

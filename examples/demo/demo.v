@@ -81,34 +81,26 @@ fn main() {
 	window.gg.run()
 }
 
-fn (mut app App) make_button_tab() &ui.HBox {
-	mut hbox := ui.hbox(app.win)
+fn (mut app App) make_button_tab() &ui.Panel {
+	mut hbox := ui.Panel.new()
 	hbox.set_pos(12, 12)
-
-	bounds := ui.Bounds{5, 5, 99, 36}
 
 	mut btn := ui.button(
 		text: 'Button'
-		bounds: bounds
 	)
 
 	mut btn2 := ui.button(
 		text: 'Round Button'
-		bounds: bounds
-		should_pack: false
 	)
 	btn2.border_radius = 100
 
 	mut sq_btn := ui.button(
 		text: 'Square Button'
-		bounds: bounds
-		should_pack: false
 	)
 	sq_btn.border_radius = 0
 
 	mut tbtn := ui.button(
 		text: 'Button'
-		bounds: bounds
 	)
 	tbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
 	tbtn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
@@ -117,7 +109,6 @@ fn (mut app App) make_button_tab() &ui.HBox {
 
 	mut sbtn := ui.button(
 		text: 'Button'
-		bounds: bounds
 	)
 	sbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
 	sbtn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
@@ -126,7 +117,7 @@ fn (mut app App) make_button_tab() &ui.HBox {
 
 	img_file := $embed_file('v.png')
 	mut btn3 := app.icon_btn(img_file.to_bytes())
-	btn3.set_bounds(5, 5, 45, 36)
+	btn3.set_bounds(0, 0, 45, 32)
 	btn3.icon_width = 28
 	btn3.icon_height = 28
 
@@ -275,12 +266,10 @@ fn (mut app App) make_checkbox_section() {
 
 fn (mut app App) make_selectbox_section() {
 	mut sel := ui.select_box(text: 'Selectbox')
-	sel.set_bounds(0, 0, 100, 25)
 
 	for i in 0 .. 3 {
 		sel.items << (25 * (i + 1)).str() + '%'
 	}
-	// sel.set_change(sel_change)
 
 	mut title_box := ui.title_box('Selector', [sel])
 	title_box.set_bounds(0, 0, 120, 130)

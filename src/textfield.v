@@ -21,6 +21,23 @@ pub mut:
 	center               bool
 	numeric              bool
 	blinked              bool
+	bind_val             &string = unsafe { nil }
+}
+
+pub fn (mut tf TextField) bind_to(val &string) {
+	unsafe {
+		tf.bind_val = val
+	}
+}
+
+pub fn (mut tf TextField) update_bind() {
+	if isnil(tf.bind_val) {
+		return
+	}
+
+	unsafe {
+		*tf.bind_val = tf.text
+	}
 }
 
 pub fn (mut box TextField) set_text_change(b fn (a voidptr, b voidptr)) {
@@ -129,11 +146,17 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 		this.width = width + 8 + this.padding_x
 	}
 
+	if !isnil(this.bind_val) {
+		if this.text.len != this.bind_val.len {
+			this.text = this.bind_val
+		}
+	}
+
 	if this.center {
 		// Y-center text
 		th := ctx.line_height // ctx.gg.text_height(this.text)
 		if this.height < th {
-			this.height = th + 4
+			this.height = min_h(ctx)
 		}
 
 		ycp := this.y + (this.height - th) / 2
@@ -203,6 +226,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 	if key == .backspace {
 		com.text = com.text.substr_ni(0, com.carrot_left - 1) +
 			com.text.substr_ni(com.carrot_left, com.text.len)
+		com.update_bind()
 		com.carrot_left -= 1
 		com.ctrl_down = false
 		return
@@ -252,6 +276,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 
 		com.text = com.text.substr_ni(0, com.carrot_left) + letter +
 			com.text.substr_ni(com.carrot_left, com.text.len)
+		com.update_bind()
 
 		com.carrot_left += 1
 	}

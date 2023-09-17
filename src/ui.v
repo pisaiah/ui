@@ -555,3 +555,7 @@ pub fn open_url(url string) {
 		os.execute('xdg-open "${url_}"')
 	}
 }
+
+pub fn min_h(ctx &GraphicsContext) int {
+	return ctx.line_height + 9
+}
