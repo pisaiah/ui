@@ -4,7 +4,7 @@
 
 ![0.0.20](https://img.shields.io/badge/version-0.0.20-white?style=flat)
 ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=flat)
-![vlang](http://img.shields.io/badge/V-0.4.0-%236d8fc5?style=flat)
+![vlang](http://img.shields.io/badge/V-0.4.1-%236d8fc5?style=flat)
 
 Isaiah's cross-platform GUI library for V. Inspired by the syntax of Java's Swing.
 
@@ -80,16 +80,31 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 ## Included Examples
 
 <table>
-	<tr><th>Notepad</th><th>Calculator</th><th>BorderLayout Demo</th></tr>
+	<tr><th>Notepad</th><th>Calculator</th><th>BorderLayout Demo</th><th>Clock</th></tr>
 	<tr>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/b606df32-382d-4977-a06c-7d8d8d2fb042" align="left" height="130"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/1a42c4dd-351d-4c28-8edd-b85905ea9b1f" height="170"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/0b058466-6775-4edc-a571-7d77870827fd" height="170"></td>
+		<td><img src="https://github.com/pisaiah/ui/assets/16439221/23a2e490-2aa6-4a3b-b606-3a611eccdb52" height="170"></td>
 	</tr>
 	<tr>
 		<td>See: <a href="examples/Notepad/">examples/Notepad/</a></td>
 		<td><a href="examples/Notepad/">examples/Calculator/</a></td>
 		<td><a href="examples/2-BorderLayoutDemo/">examples/2-BorderLayoutDemo/</a></td>
+		<td><a href="examples/Clock/">examples/Clock/</a></td>
+	</tr>
+</table>
+
+
+<table>
+	<tr><th>Mines</th><th>(Tic Tac Toe)^2</th></tr>
+	<tr>
+		<td><img src="https://github.com/pisaiah/ui/assets/16439221/fae5d2d2-abf3-490a-ac63-ce685a64abae" height="170"></td>
+		<td><img src="https://github.com/pisaiah/ui/assets/16439221/5caab783-4341-48a7-84dd-78906280f4e2" height="170"></td>
+	</tr>
+	<tr>
+		<td><a href="examples/Games/1-Minesweeper">1-Minesweeper</a></td>
+		<td><a href="examples/Games/2-Tic-Tac-Toe-Squared">2-Tic-Tac-Toe-Squared</a></td>
 	</tr>
 </table>
 
