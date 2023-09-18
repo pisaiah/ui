@@ -167,7 +167,6 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 	}
 
 	should := true // this.app.bar == unsafe { nil } || this.app.bar.tik > 90
-
 	if this.is_mouse_down && should {
 		return this.app.theme.button_bg_click
 	}
@@ -178,7 +177,6 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 }
 
 // Deprecated functions:
-
 [deprecated: 'use subscribe_event']
 pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
 	com.old_click_fn = b

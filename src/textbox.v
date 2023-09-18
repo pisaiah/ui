@@ -445,7 +445,6 @@ pub fn (mut this Textbox) delete_current_line() {
 }
 
 // Key Down stuff:
-
 fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textbox) {
 	if !com.is_selected {
 		return

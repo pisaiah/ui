@@ -147,7 +147,7 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 	}
 
 	if !isnil(this.bind_val) {
-		if this.text.len != this.bind_val.len {
+		if this.text != this.bind_val {
 			this.text = this.bind_val
 		}
 	}

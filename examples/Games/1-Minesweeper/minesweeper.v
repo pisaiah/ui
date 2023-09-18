@@ -176,7 +176,6 @@ fn (mut app App) square_click_(mut target ui.Component) {
 
 	possibles << idx - 9 // Above
 	possibles << idx + 9 // Below
-
 	if xx > 0 {
 		possibles << idx - 1 // Left
 		possibles << idx + 8 // Below-left

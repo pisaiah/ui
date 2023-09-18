@@ -110,6 +110,7 @@ fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		lay.center.draw_with_offset(ctx, x, y)
 		x += lay.center.width + lay.hgap
 	}
+
 	// if panel.width == 0 {
 	//	panel.width = x - panel.x
 	//	panel.height = y - panel.y

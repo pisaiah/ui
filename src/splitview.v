@@ -66,6 +66,7 @@ pub fn (mut this SplitView) draw(ctx &GraphicsContext) {
 	for mut child in this.children {
 		if child.parent == unsafe { nil } {
 			child.set_parent(this)
+
 			// child.set_parent(this)
 		}
 

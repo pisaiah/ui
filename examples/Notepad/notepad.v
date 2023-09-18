@@ -1,8 +1,8 @@
 module main
 
+// import iui.extra
 import gg
 import iui as ui
-// import iui.extra
 import os
 import os.font
 
@@ -90,8 +90,8 @@ fn main() {
 	mut res_box := ui.text_box(['hello'])
 	res_box.set_id(mut window, 'notepad')
 	res_box.set_bounds(1, 1, 100, 100)
-	// res_box.draw_event_fn = vbtn_draw
 
+	// res_box.draw_event_fn = vbtn_draw
 	mut sv := ui.scroll_view(
 		view: res_box
 		padding: 0

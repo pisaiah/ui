@@ -97,7 +97,6 @@ pub fn (mut this ScrollView) draw_children(ctx &GraphicsContext) (int, int) {
 	x_pos := this.x - (this.scroll_x * this.increment)
 	mut total_height := 0 // this.padding
 	mut total_width := 0 // this.padding
-
 	for mut child in this.children {
 		if child.parent == unsafe { nil } {
 			child.set_parent(this)
