@@ -345,7 +345,6 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 	}
 
 	// win.theme.setup_fn(mut win)
-
 	return win
 }
 
@@ -480,6 +479,7 @@ fn (mut app Window) draw() {
 
 	if app.tooltip.len != 0 {
 		app.draw_tooltip(app.graphics_context)
+
 		// app.tooltip = ''
 	}
 

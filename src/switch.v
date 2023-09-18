@@ -175,7 +175,8 @@ pub struct SwitchEvent {
 
 pub fn invoke_switch(com &Switch, ctx &GraphicsContext) {
 	ev := SwitchEvent{
-		target: com // unsafe { com }
+		target: com
+		// unsafe { com }
 		ctx: ctx
 	}
 	for f in com.events.event_map['change'] {

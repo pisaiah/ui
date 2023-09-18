@@ -66,12 +66,12 @@ fn (mut app App) make_selectbox_section() &ui.Titlebox {
 	for i := 0; i < 3; i++ {
 		sel.items << (25 * (i + 1)).str() + '%'
 	}
-	// sel.set_change(sel_change)
 
+	// sel.set_change(sel_change)
 	mut title_box := ui.title_box('Selector', [sel])
 	title_box.set_bounds(8, 40, 120, 150)
-	// app.pane.add_child(title_box)
 
+	// app.pane.add_child(title_box)
 	mut btn := ui.button(
 		text: 'Hello'
 		bounds: ui.Bounds{0, 70, 60, 40}
@@ -91,16 +91,16 @@ fn (mut app App) make_select_box_section() &ui.Titlebox {
 	for i := 0; i < 3; i++ {
 		sel.items << (25 * (i + 1)).str() + '%'
 	}
-	// sel.set_change(sel_change)
 
+	// sel.set_change(sel_change)
 	sel.subscribe_event('item_change', fn (mut e ui.ItemChangeEvent) {
 		dump(e.new_val)
 	})
 
 	mut title_box := ui.title_box('Selector', [sel])
 	title_box.set_bounds(130, 40, 120, 150)
-	// app.pane.add_child(title_box)
 
+	// app.pane.add_child(title_box)
 	mut btn := ui.button(
 		text: 'Hello'
 		bounds: ui.Bounds{0, 70, 60, 40}

@@ -54,7 +54,6 @@ fn main() {
 	// app.make_tree_section()
 	// app.make_tab_section()
 	// app.make_edits_section()
-
 	pane.set_pos(4, 10)
 
 	pane.subscribe_event('draw', fn (mut e ui.DrawEvent) {
@@ -74,7 +73,6 @@ fn main() {
 
 	// mut button_tab := app.make_button_tab()
 	// tb.add_child('Buttons', button_tab)
-
 	window.add_child(tb)
 
 	window.gg.run()

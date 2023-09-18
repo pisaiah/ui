@@ -7,7 +7,8 @@ import gx
 pub struct VBox {
 	Component_A
 pub mut:
-	win           &Window // Deprecated field
+	win           &Window
+	// Deprecated field
 	needs_pack    bool
 	overflow      bool = true
 	update_width  bool = true

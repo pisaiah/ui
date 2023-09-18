@@ -1,6 +1,7 @@
 module iui
 
 import gx
+
 // Component Interface
 
 [heap; minify]

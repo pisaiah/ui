@@ -6,7 +6,6 @@ module iui
 //	Mouse       - https://docs.oracle.com/javase/7/docs/api/java/awt/event/MouseEvent.html
 //	Key         - https://docs.oracle.com/javase/7/docs/api/java/awt/event/KeyEvent.html
 //	Resize/Move - https://docs.oracle.com/javase/7/docs/api/java/awt/event/ComponentEvent.html
-
 pub struct Event {
 }
 
