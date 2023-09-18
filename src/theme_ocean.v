@@ -194,9 +194,6 @@ pub fn seven_dark_setup(mut win Window) {
 
 	mut img2 := $embed_file('assets/theme/7d/menu.png')
 	cache_image('seven_dark-menu', mut ctx, img2.data(), img2.len)
-
-	mut img3 := $embed_file('assets/theme/7d/barw.png')
-	cache_image('seven_dark-bar-w', mut ctx, img3.data(), img3.len)
 }
 
 pub fn seven_dark_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, ctx &GraphicsContext) {
@@ -208,13 +205,14 @@ pub fn seven_dark_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color,
 }
 
 pub fn seven_dark_bar_fill_fn(x int, y f32, w int, h f32, hor bool, ctx &GraphicsContext) {
-	id := if hor { ctx.icon_cache['seven_dark-bar-w'] } else { ctx.icon_cache['seven_dark-bar'] }
-
 	if hor {
-		ctx.gg.draw_image_by_id(x, y - 2, w, h + 4, id)
-		ctx.gg.draw_rect_empty(x, y - 2, w, h + 4, ctx.theme.scroll_bar_color)
+		hh := h / 2
+		ctx.gg.draw_rect_filled(x, y, w, hh, gx.rgb(80, 80, 80))
+		ctx.gg.draw_rect_filled(x, y + hh, w, hh, gx.rgb(37, 37, 37))
+		ctx.gg.draw_rect_empty(x, y, w, h, ctx.theme.scroll_bar_color)
 	} else {
-		ctx.gg.draw_image_by_id(x - 1, y, w + 3, h, id)
+		id := ctx.icon_cache['seven_dark-bar']
+		ctx.gg.draw_image_by_id(x - 2, y, w + 5, h, id)
 		ctx.gg.draw_rect_empty(x - 2, y, w + 5, h, ctx.theme.scroll_bar_color)
 	}
 }
