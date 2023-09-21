@@ -236,7 +236,7 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len f
 	// Draw Scroll
 	if requires_scrollbar {
 		ctx.win.gg.draw_rect_filled(x, y, width, wid, ctx.theme.scroll_track_color)
-		ctx.theme.bar_fill_fn(int(x + 17 + sth), y + 2, int(enh - 3), wid - 5, true, ctx)
+		ctx.theme.bar_fill_fn(int(x + 17 + sth), y + 2, int(enh - 3), wid - 3, true, ctx)
 	} else {
 		return
 	}
