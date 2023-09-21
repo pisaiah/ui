@@ -12,7 +12,7 @@ mut:
 	turn   bool
 	winner string
 	comput bool = false
-	// TODO: improve
+	// TODO: improve computer ai
 }
 
 fn main() {
@@ -133,7 +133,7 @@ fn (mut app App) main_draw(mut e ui.DrawEvent) {
 			app.sq = -1
 			return
 		}
-		c := e.ctx.theme.button_bg_hover
+		c := e.ctx.theme.button_bg_click
 		e.ctx.gg.draw_rect_filled(sq.rx, sq.ry, sq.width, sq.height, c)
 	}
 
@@ -193,8 +193,6 @@ fn (mut app App) mup_(mut target ui.Component) {
 		kd.text = don
 	}
 	p.subscribe_event('after_draw', draw_win)
-
-	dump(don)
 }
 
 fn draw_win(mut e ui.DrawEvent) {
@@ -211,6 +209,10 @@ fn draw_win(mut e ui.DrawEvent) {
 	tw := e.ctx.text_width(txt)
 	x := p.x + (p.width / 2) - tw / 2
 	e.ctx.draw_text(x, p.y, txt, 0, cfg)
+
+	e.ctx.set_cfg(gx.TextCfg{
+		size: e.ctx.font_size
+	})
 
 	p.text = txt
 	p.id = 'WIN=${txt}'
