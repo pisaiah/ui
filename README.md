@@ -97,14 +97,16 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 
 
 <table>
-	<tr><th>Mines</th><th>(Tic Tac Toe)^2</th></tr>
+	<tr><th>Mines</th><th>(Tic Tac Toe)^2</th><th>Snake</th></tr>
 	<tr>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/fae5d2d2-abf3-490a-ac63-ce685a64abae" height="170"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/5caab783-4341-48a7-84dd-78906280f4e2" height="170"></td>
+		<td><img src="https://github.com/pisaiah/ui/assets/16439221/3f25af12-67c7-4808-a96c-9ca8d4a80ba4" height="170"></td>
 	</tr>
 	<tr>
 		<td><a href="examples/Games/1-Minesweeper">1-Minesweeper</a></td>
 		<td><a href="examples/Games/2-Tic-Tac-Toe-Squared">2-Tic-Tac-Toe-Squared</a></td>
+		<td><a href="examples/Games/3-Snake">3-Snake</a></td>
 	</tr>
 </table>
 
