@@ -49,7 +49,7 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 	}
 
 	for item in this.items {
-		mut subb := button(text: item)
+		mut subb := Button.new(text: item)
 		subb.set_area_filled(false)
 		subb.border_radius = 0
 		subb.subscribe_event('mouse_up', fn [mut this] (mut e MouseEvent) {
@@ -57,10 +57,11 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 			this.text = e.target.text
 			this.invoke_change_event(e.ctx, old_val, e.target.text)
 		})
-		subb.set_bounds(0, 0, this.width, this.sub_height)
+		subb.set_bounds(0, 1, this.width, this.sub_height)
 		pop.add_child(subb)
 	}
-	pop.set_bounds(this.x, this.y + this.height, this.width, this.items.len * this.sub_height)
+	ph := (this.items.len * this.sub_height) + this.items.len
+	pop.set_bounds(this.x, this.y + this.height, this.width, ph)
 	this.popup = pop
 }
 

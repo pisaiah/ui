@@ -26,7 +26,7 @@ fn (mut this Popup) draw(ctx &GraphicsContext) {
 		if this.width < child.width {
 			this.width = child.width
 		}
-		y += child.height
+		y += child.height + child.y
 	}
 }
 
