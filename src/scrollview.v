@@ -1,6 +1,6 @@
 module iui
 
-import math
+import math { clamp }
 
 // ScrollView Component
 //
@@ -207,7 +207,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll {
 			this.in_scroll = true
-			cx := math.clamp(ctx.win.mouse_y - y - sub, 0, height)
+			cx := clamp(ctx.win.mouse_y - y - sub, 0, height)
 			perr := (cx / height) * spl_len
 			this.scroll_i = int(perr) / this.increment
 		}
@@ -272,7 +272,7 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len f
 
 		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll_x {
 			this.in_scroll_x = true
-			cx := math.clamp(ctx.win.mouse_x - x - sub, 0, width)
+			cx := clamp(ctx.win.mouse_x - x - sub, 0, width)
 			perr := (cx / width) * spl_len
 			this.scroll_x = int(perr) / this.increment
 		}

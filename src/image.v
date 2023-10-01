@@ -7,62 +7,50 @@ import os
 pub struct Image {
 	Component_A
 pub mut:
-	app            &Window
-	text           string
-	click_event_fn fn (mut Window, Image)
-	need_pack      bool
-	img            &gg.Image
-	rotate         int
-	need_init      bool
-	img_id         int
+	text      string
+	need_pack bool
+	img       &gg.Image
+	rotate    int
+	need_init bool
+	img_id    int
 }
 
-pub fn image_from_file(path string) &Image {
+[params]
+pub struct ImgConfig {
+	file   string
+	img    &gg.Image = unsafe { nil }
+	rotate int
+	id     int
+	pack   bool
+}
+
+// New Image
+pub fn Image.new(c ImgConfig) &Image {
 	return &Image{
-		need_init: true
-		text: path
-		app: unsafe { nil }
-		img: unsafe { nil }
-		click_event_fn: blank_event_im
+		text: c.file
+		need_init: c.file.len > 0
+		need_pack: c.pack
+		img_id: c.id
+		img: c.img
+		rotate: c.rotate
 	}
 }
 
-pub fn image(app &Window, img &gg.Image) &Image {
-	return &Image{
-		text: ''
-		img: img
-		app: app
-		click_event_fn: blank_event_im
-	}
-}
-
-pub fn image_with_size(app &Window, img &gg.Image, width int, height int) &Image {
-	return &Image{
-		text: ''
-		img: img
-		app: app
-		width: width
-		height: height
-		click_event_fn: blank_event_im
-	}
-}
-
-pub fn image_from_byte_array_with_size(mut app Window, b []u8, width int, height int) &Image {
+// [deprecated]
+pub fn image_from_byte_array_with_size(mut w Window, b []u8, width int, h int) &Image {
 	mut img := &Image{
 		text: ''
 		img: 0
-		app: app
 		width: width
-		height: height
-		click_event_fn: blank_event_im
+		height: h
 	}
-	gg_im := app.gg.create_image_from_byte_array(b) or { panic(err) }
+	gg_im := w.gg.create_image_from_byte_array(b) or { panic(err) }
 	img.img = &gg_im
 	return img
 }
 
-pub fn image_from_bytes(mut app Window, b []u8, width int, height int) &Image {
-	return image_from_byte_array_with_size(mut app, b, width, height)
+pub fn image_from_bytes(mut w Window, b []u8, width int, height int) &Image {
+	return image_from_byte_array_with_size(mut w, b, width, height)
 }
 
 pub fn (mut this Image) draw(ctx &GraphicsContext) {
@@ -82,10 +70,12 @@ pub fn (mut this Image) draw(ctx &GraphicsContext) {
 		this.need_init = false
 	}
 
+	if this.need_pack {
+		this.pack_do()
+	}
+
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
-		mut win := ctx.win
-		this.click_event_fn(mut win, *this)
 	}
 
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
@@ -101,25 +91,15 @@ pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	})
 }
 
-pub fn (mut this Image) pack() {
-	this.need_pack = true
+pub fn (mut i Image) pack() {
+	i.need_pack = true
 }
 
-pub fn (mut btn Image) pack_do(ctx &GraphicsContext) {
-	width := ctx.gg.text_width(btn.text + 'ab')
-	btn.width = width
-	btn.height = ctx.gg.text_height(btn.text) + 4
-	btn.need_pack = false
+pub fn (mut i Image) pack_do() {
+	i.width = i.img.width
+	i.height = i.img.height
 }
 
-[deprecated]
-pub fn (mut com Image) set_click(b fn (mut Window, Image)) {
-	com.click_event_fn = b
-}
-
-pub fn blank_event_im(mut win Window, a Image) {
-}
-
-pub fn (mut this Image) set_draw_rotation(deg int) {
-	this.rotate = deg
+pub fn (mut i Image) set_draw_rotation(deg int) {
+	i.rotate = deg
 }

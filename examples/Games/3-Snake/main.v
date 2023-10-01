@@ -9,8 +9,9 @@ import time
 [heap]
 struct App {
 mut:
-	win       &ui.Window
-	dir       gg.KeyCode // left, right, up, down
+	win &ui.Window
+	dir gg.KeyCode
+	// left, right, up, down
 	by        int = 16
 	hx        int
 	hy        int

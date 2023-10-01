@@ -332,6 +332,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		font_path: cfg.font_path
 		font_size: cfg.font_size
 		ui_mode: cfg.ui_mode
+		sample_count: 2
 	)
 	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {
@@ -390,6 +391,8 @@ pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx
 // Implement our own 'ui_mode'. This helps high cpu usage.
 // Related:
 // - https://github.com/vlang/v/issues/14691
+// - https://github.com/vlang/ui/issues/542
+// - https://github.com/vlang/ui/issues/361
 // - https://github.com/floooh/sokol/issues/550
 //
 fn (mut w Window) do_sleep() {

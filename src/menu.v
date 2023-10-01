@@ -18,6 +18,7 @@ pub mut:
 	open_width     int
 	sub            u8
 	click_event_fn fn (mut Window, MenuItem)
+	win_nat        voidptr
 }
 
 fn (mut this MenuItem) draw(ctx &GraphicsContext) {
@@ -79,15 +80,35 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 		this.icon.set_pos(this.x + (this.width / 2) - (this.icon.width / 2), image_y)
 		this.icon.draw(ctx)
 	} else {
-		ctx.draw_text(this.x + 7, y, this.text, ctx.font, gx.TextCfg{
-			size: ctx.win.font_size
-			color: ctx.theme.text_color
-		})
+		this.draw_text(ctx, y)
 	}
 
 	if this.open {
 		this.draw_open_contents(ctx)
 	}
+}
+
+fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
+	$if windows {
+		// Native Text Rendering
+		if this.sub == 0 && ctx.theme.text_color == gx.black {
+			if isnil(this.win_nat) {
+				this.win_nat = &WLabel{
+					text: this.text
+				}
+			}
+			mut wl := unsafe { &WLabel(this.win_nat) }
+			wl.x = this.x + 7
+			wl.y = y - 2
+			this.width = wl.width + 14
+			wl.draw(ctx)
+			return
+		}
+	}
+	ctx.draw_text(this.x + 7, y, this.text, ctx.font, gx.TextCfg{
+		size: ctx.win.font_size
+		color: ctx.theme.text_color
+	})
 }
 
 fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {

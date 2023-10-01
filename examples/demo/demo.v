@@ -44,8 +44,9 @@ fn main() {
 	app.make_selectbox_section()
 	app.make_progress_section()
 
-	mut v_img := window.gg.create_image(os.resource_abs_path('v.png')) or { panic(err) }
-	mut img := ui.image(window, v_img)
+	mut img := ui.Image.new(
+		file: 'v.png'
+	)
 	img.set_bounds(5, 5, 50, 50)
 	mut title_box := ui.title_box('Image', [img])
 	title_box.set_bounds(0, 0, 100, 130)

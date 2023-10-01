@@ -118,15 +118,6 @@ pub fn seven_setup(mut win Window) {
 
 	mut img0 := $embed_file('assets/theme/7/btn.png')
 	cache_image('seven-btn', mut ctx, img0.data(), img0.len)
-
-	mut img1 := $embed_file('assets/theme/7/bar.png')
-	cache_image('seven-bar', mut ctx, img1.data(), img1.len)
-
-	mut img2 := $embed_file('assets/theme/7/menu.png')
-	cache_image('seven-menu', mut ctx, img2.data(), img2.len)
-
-	mut img3 := $embed_file('assets/theme/7/barw.png')
-	cache_image('seven-bar-w', mut ctx, img3.data(), img3.len)
 }
 
 pub fn seven_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, ctx &GraphicsContext) {
@@ -138,19 +129,27 @@ pub fn seven_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, ctx 
 }
 
 pub fn seven_bar_fill_fn(x int, y f32, w int, h f32, hor bool, ctx &GraphicsContext) {
-	id := if hor { ctx.icon_cache['seven-bar-w'] } else { ctx.icon_cache['seven-bar'] }
-
 	if hor {
-		ctx.gg.draw_image_by_id(x, y - 2, w, h + 4, id)
-		ctx.gg.draw_rect_empty(x, y - 2, w, h + 4, gx.rgb(99, 130, 191))
+		hh := h / 2
+		ctx.gg.draw_rect_filled(x, y, w, hh, gx.rgb(238, 238, 238))
+		ctx.gg.draw_rect_filled(x, y + hh, w, hh, gx.rgb(214, 214, 214))
+		ctx.gg.draw_rect_empty(x, y, w, h, ctx.theme.scroll_bar_color)
 	} else {
-		ctx.gg.draw_image_by_id(x - 2, y, w + 5, h, id)
-		ctx.gg.draw_rect_empty(x - 2, y, w + 4, h, gx.rgb(99, 130, 191))
+		xx := x - 1
+		ww := (w + 2) / 2
+		ctx.gg.draw_rect_filled(xx, y, w + 3, h, gx.rgb(238, 238, 238))
+		ctx.gg.draw_rect_filled(xx + ww, y, ww + 1, h, gx.rgb(214, 214, 214))
+		ctx.gg.draw_rect_empty(xx, y, w + 3, h, gx.rgb(99, 130, 191))
 	}
 }
 
 pub fn seven_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext) {
-	ctx.gg.draw_image_by_id(x, y, w, h + 1, ctx.icon_cache['seven-menu'])
+	yy := y + 8
+	hh := (h - 8) / 4
+	ctx.gg.draw_rect_filled(x, y, w, h, gx.rgb(244, 244, 244))
+	ctx.gg.draw_rect_filled(x, yy + hh, w, hh, gx.rgb(239, 239, 239))
+	ctx.gg.draw_rect_filled(x, yy + (hh + hh), w, hh, gx.rgb(233, 233, 233))
+	ctx.gg.draw_rect_filled(x, yy + (hh * 3), w, hh, gx.rgb(228, 228, 228))
 }
 
 // Seven - Memic windows 7

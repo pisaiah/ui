@@ -7,12 +7,11 @@ import gx
 pub struct Modal {
 	Component_A
 pub mut:
-	window         &Window
-	text           string
-	click_event_fn fn (mut Window, Modal)
-	needs_init     bool
-	close          &Button
-	shown          bool
+	window     &Window
+	text       string
+	needs_init bool
+	close      &Button
+	shown      bool
 
 	in_width  int
 	in_height int
@@ -34,7 +33,6 @@ pub fn modal(app &Window, title string) &Modal {
 	return &Modal{
 		text: title
 		window: app
-		click_event_fn: fn (mut win Window, a Modal) {}
 		z_index: 500
 		needs_init: true
 		draw_event_fn: fn (mut win Window, mut com Component) {
@@ -109,9 +107,9 @@ pub fn (mut this Modal) draw(ctx &GraphicsContext) {
 }
 
 pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
-	mut close := button(
+	mut close := Button.new(
 		text: 'OK'
-		bounds: Bounds{200, this.in_height - 35, 100, 25}
+		bounds: Bounds{200, this.in_height - 35, 100, 30}
 	)
 
 	if 300 > this.in_width {
@@ -129,8 +127,4 @@ pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 
 pub fn default_modal_close_fn(mut e MouseEvent) {
 	e.ctx.win.components = e.ctx.win.components.filter(mut it !is Modal)
-}
-
-pub fn (mut com Modal) set_click(b fn (mut Window, Modal)) {
-	com.click_event_fn = b
 }

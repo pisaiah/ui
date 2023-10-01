@@ -9,7 +9,7 @@ import os.font
 [console]
 fn main() {
 	// Create Window
-	mut window := ui.make_window(
+	mut window := ui.Window.new(
 		title: 'Notepad'
 		theme: ui.get_system_theme()
 		width: 520
@@ -18,9 +18,9 @@ fn main() {
 	)
 
 	// Setup Menubar and items
-	window.bar = ui.menu_bar()
+	window.bar = ui.Menubar.new()
 
-	mut theme_menu := ui.menuitem('Theme')
+	mut theme_menu := ui.MenuItem.new(text: 'Theme')
 
 	themes := ui.get_all_themes()
 	for theme2 in themes {
@@ -42,20 +42,20 @@ fn main() {
 		]
 	)
 
-	help_menu := ui.menu_item(
+	help_menu := ui.MenuItem.new(
 		text: 'Help'
 		children: [
-			ui.menu_item(
+			ui.MenuItem.new(
 				text: 'About Notepad'
 				click_event_fn: about_click
 			),
-			ui.menu_item(
+			ui.MenuItem.new(
 				text: 'About iUI'
 			),
 		]
 	)
 
-	font_menu := ui.menu_item(
+	font_menu := ui.MenuItem.new(
 		text: 'Font'
 		children: [
 			font_type_item('OS Default'),
@@ -63,6 +63,9 @@ fn main() {
 			font_type_item('VeraMono.ttf'),
 			font_type_item('JetBrainsMono-Regular.ttf'),
 			font_type_item('AnomalyMono-Regular.otf'),
+			font_type_item('System arial.ttf'),
+			font_type_item('System segoeui.ttf'),
+			font_type_item('System seguiemj.ttf'),
 			ui.menu_item(
 				text: 'More...'
 				// click_event_fn: font_picker
@@ -70,7 +73,7 @@ fn main() {
 		]
 	)
 
-	size_menu := ui.menu_item(
+	size_menu := ui.MenuItem.new(
 		text: 'Size'
 		children: [
 			font_size_item('12'),
@@ -78,6 +81,7 @@ fn main() {
 			font_size_item('16'),
 			font_size_item('18'),
 			font_size_item('24'),
+			font_size_item('42'),
 		]
 	)
 
@@ -87,11 +91,9 @@ fn main() {
 	window.bar.add_child(font_menu)
 	window.bar.add_child(size_menu)
 
-	mut res_box := ui.text_box(['hello'])
-	res_box.set_id(mut window, 'notepad')
+	mut res_box := ui.Textbox.new(lines: ['hello'])
 	res_box.set_bounds(1, 1, 100, 100)
 
-	// res_box.draw_event_fn = vbtn_draw
 	mut sv := ui.scroll_view(
 		view: res_box
 		padding: 0
@@ -115,11 +117,11 @@ fn main() {
 }
 
 fn font_size_item(size string) &ui.MenuItem {
-	return ui.menu_item(text: size, click_event_fn: on_size_click)
+	return ui.MenuItem.new(text: size, click_event_fn: on_size_click)
 }
 
 fn font_type_item(size string) &ui.MenuItem {
-	return ui.menu_item(text: size, click_event_fn: font_click)
+	return ui.MenuItem.new(text: size, click_event_fn: font_click)
 }
 
 fn font_click(mut win ui.Window, com ui.MenuItem) {
@@ -127,6 +129,7 @@ fn font_click(mut win ui.Window, com ui.MenuItem) {
 	txt := com.text
 
 	if txt == 'OS Default' {
+		println(font.default())
 		path = font.default()
 	}
 	if txt.starts_with('System ') {
@@ -161,12 +164,12 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 
 	label.pack()
 
-	mut vbox := ui.vbox(win)
-	vbox.set_pos(24, 18)
-	vbox.add_child(title)
-	vbox.add_child(label)
+	mut p := ui.Panel.new(layout: ui.BoxLayout.new(ori: 1))
+	p.set_pos(24, 18)
+	p.add_child(title)
+	p.add_child(label)
 
-	modal.add_child(vbox)
+	modal.add_child(p)
 
 	win.add_child(modal)
 }

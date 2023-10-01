@@ -70,3 +70,20 @@ pub fn make_window(c &WindowConfig) &Window {
 pub fn text_width(win Window, text string) int {
 	return win.graphics_context.text_width(text)
 }
+
+[deprecated]
+pub fn image_from_file(path string) &Image {
+	return Image.new(file: path)
+}
+
+// [deprecated]
+// pub fn image(w &Window, img &gg.Image) &Image {
+//	return Image.new(img: img)
+// }
+
+// [deprecated]
+// pub fn image_with_size(w &Window, img &gg.Image, width int, height int) &Image {
+//	mut i := Image.new(img: img)
+//	i.set_bounds(0, 0, width, height)
+//	return i
+// }
