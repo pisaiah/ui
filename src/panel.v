@@ -188,6 +188,7 @@ pub fn FlowLayout.new(c FlowLayoutConfig) FlowLayout {
 fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
+	min_h := panel.children[0].height
 
 	panel.rh = 0
 
@@ -214,7 +215,13 @@ fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		panel.width = x - panel.x
 		if panel.height == 0 {
 			panel.height = y - panel.y
+			if panel.height < min_h {
+				panel.height = min_h
+			}
 		}
+	}
+	if panel.height == this.vgap * 2 && min_h > 0 {
+		panel.height = min_h + this.vgap * 2
 	}
 }
 

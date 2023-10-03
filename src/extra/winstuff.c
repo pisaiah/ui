@@ -28,8 +28,43 @@ SIZE iui_text_size(HDC hdc, char* txt, int len, int font_size) {
 	return size;
 }
 
+
+// converts image data from the BGR format to the RGB format.
+// It creates a copy of the input data, swaps the blue and red components of each pixel, and returns the modified copy.
+unsigned char* ConvertBGRToRGB_(unsigned char* data, int width, int height, int bytesPerPixel) {
+	unsigned char* copyData = malloc(width * height * bytesPerPixel);
+	memcpy(copyData, data, width * height * bytesPerPixel);
+	for (int i = 0; i < width * height * bytesPerPixel; i += bytesPerPixel) {
+		unsigned char temp = copyData[i];
+		copyData[i] = copyData[i + 2];
+		copyData[i + 2] = temp;
+	}
+	return copyData;
+}
+
+// creates a bitmap in memory from pixel data provided as input. 
+// The function first calls the ConvertBGRToRGB function to convert the input pixel data from BGR format to RGB format.
+// This is necessary because the CreateDIBitmap function expects pixel data in RGB format.
+HBITMAP CreateBitmapFromPixels_(HDC hdc,int width,int height,void *pixelss) {
+	unsigned char* pixels = ConvertBGRToRGB_(pixelss, width, height, 4);
+
+	BITMAPINFO bmi = {
+	  .bmiHeader.biSize = sizeof(BITMAPINFOHEADER),
+	  .bmiHeader.biWidth = width,
+	  .bmiHeader.biHeight = -height,
+	  .bmiHeader.biPlanes = 1,
+	  .bmiHeader.biBitCount = 32,
+	  .bmiHeader.biCompression = BI_RGB
+	};
+
+	HBITMAP hbm = CreateDIBitmap(hdc, &bmi.bmiHeader, CBM_INIT, pixels, &bmi, DIB_RGB_COLORS);
+	free(pixels);
+
+	return hbm;
+}
+
 // Native TextOut
-unsigned char* iui_text_pix(char* txt, int len, int font_size, int *ww, int *hh) {
+unsigned char* i_txt_pix(char* txt, int len, int font_size, int *ww, int *hh, COLORREF tc) {
 	HDC hdc = GetDC(NULL);
     HDC mDC = CreateCompatibleDC(hdc);
 	
@@ -45,8 +80,9 @@ unsigned char* iui_text_pix(char* txt, int len, int font_size, int *ww, int *hh)
     HBITMAP bmap = CreateCompatibleBitmap(hdc, wid, hei);
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(mDC, bmap);
 
-    SetTextColor(mDC, RGB(0, 0, 0));
-    SetBkColor(mDC, RGB(255, 255, 255));
+    // SetTextColor(mDC, RGB(0, 0, 0));
+     SetTextColor(mDC, tc);
+     SetBkColor(mDC, RGB(255, 255, 255));
 
     TextOut(mDC, 0, 0, txt, len);
 	DeleteObject(font);

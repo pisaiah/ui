@@ -240,6 +240,13 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id int,
 			ctx.gg.draw_text(x, y, text_, cfg)
 			return
 		}
+
+		$if wintxt ? {
+			if text_.len > 0 {
+				ctx.draw_win32_text(x, y, text_, cfg)
+			}
+			return
+		}
 	}
 	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
 	ctx.gg.set_text_cfg(cfg)

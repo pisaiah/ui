@@ -189,6 +189,10 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	for i in tb.scroll_i .. tb_keys.len {
 		key := tb_keys[i]
 		mut val := tb.kids[key]
+		if val.len == 1 {
+			val[0].width = tb.width
+			val[0].height = tb.height - tb.get_active_tab_height(ctx)
+		}
 		mx += tb.draw_tab(ctx, key, mut val, mx)
 	}
 }

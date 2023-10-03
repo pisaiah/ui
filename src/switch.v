@@ -163,10 +163,10 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 }
 
 fn (com &Switch) draw_circ(o int, g &GraphicsContext) {
-	wid := com.height - 3
+	wid := com.height - 4
 	x := com.x + com.a + o
-	g.gg.draw_rounded_rect_filled(x, com.y + 1, wid, wid, 16, g.theme.button_bg_normal)
-	g.gg.draw_rounded_rect_empty(x, com.y + 1, wid, wid, 16, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(x, com.y + 2, wid, wid, 16, g.theme.button_bg_normal)
+	g.gg.draw_rounded_rect_empty(x, com.y + 2, wid, wid, 16, g.theme.button_border_normal)
 }
 
 pub struct SwitchEvent {
