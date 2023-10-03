@@ -134,9 +134,7 @@ fn (mut this SplitView) do_size(y_pos int, diff int) {
 	}
 
 	min := this.min_percent
-
-	res := (f32(diff) / this.height) * 100
-	d := int(res)
+	d := (diff * 100) / this.height
 
 	if this.h1 > min && this.h2 > min {
 		this.h1 += d
