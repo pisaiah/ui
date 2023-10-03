@@ -55,8 +55,8 @@ fn (mut this Tree2) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
 	scroll := (this.scroll_i / 4)
 	bar_height := this.height - 35
 
-	sth := int((f32(scroll) / f32(spl_len)) * bar_height)
-	enh := int((f32(cl) / f32(spl_len)) * bar_height)
+	sth := (scroll * bar_height) / spl_len
+	enh := (cl * bar_height) / spl_len
 	requires_scrollbar := (bar_height - enh) > 0
 
 	// Draw Scroll

@@ -151,7 +151,7 @@ fn (mut this ScrollView) clamp_scroll_x(total_width int) {
 	}
 }
 
-fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f32) {
+fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
 	xx := if this.rx != 0 { this.rx } else { this.x }
 	y := if this.rx != 0 { this.ry } else { this.y }
 
@@ -163,8 +163,8 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 	scroll := this.scroll_i * this.increment
 	bar_height := height - 35
 
-	sth := (scroll / spl_len) * bar_height
-	enh := (cl / spl_len) * bar_height
+	sth := (scroll * bar_height) / spl_len
+	enh := (cl * bar_height) / spl_len
 	requires_scrollbar := this.always_show || (bar_height - enh) > 0
 
 	// Draw Scroll
@@ -216,7 +216,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len f3
 	}
 }
 
-fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len f32) {
+fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len int) {
 	x := if this.rx != 0 { this.rx } else { this.x }
 	yy := if this.ry != 0 { this.ry } else { this.y }
 
@@ -229,8 +229,8 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len f
 	scroll := this.scroll_x * this.increment
 	bar_height := width - 35
 
-	sth := (scroll / spl_len) * bar_height
-	enh := (cl / spl_len) * bar_height
+	sth := (scroll * bar_height) / spl_len
+	enh := (cl * bar_height) / spl_len
 	requires_scrollbar := this.always_show || (bar_height - enh) > 0
 
 	// Draw Scroll
