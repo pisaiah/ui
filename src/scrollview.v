@@ -229,6 +229,10 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len i
 	scroll := this.scroll_x * this.increment
 	bar_height := width - 35
 
+	if spl_len == 0 {
+		return
+	}
+
 	sth := (scroll * bar_height) / spl_len
 	enh := (cl * bar_height) / spl_len
 	requires_scrollbar := this.always_show || (bar_height - enh) > 0

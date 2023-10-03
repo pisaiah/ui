@@ -16,9 +16,8 @@ pub mut:
 	closable            bool = true
 	tab_height_active   int
 	tab_height_inactive int
-	active_offset       int
-	inactive_offset     int = 4
 	compact             bool
+	rows                int
 }
 
 [params]
@@ -73,18 +72,16 @@ pub fn (tb &Tabbox) get_tab_width(ctx &GraphicsContext, key string) int {
 }
 
 // Draw tab
-fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Component, mx int) int {
+fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) int {
 	key := os.base(key_)
 	is_active := tb.active_tab == key_
 
 	theig := tb.get_active_tab_height(ctx)
-	my := tb.active_offset
 
 	size := tb.get_tab_width(ctx, key)
 	sizh := ctx.gg.text_height(key) / 2
 
 	tsize := if tb.closable { size + 12 } else { size }
-
 	tab_color := tb.get_tab_color(ctx, is_active)
 
 	if tb.active_tab == key_ {
@@ -100,7 +97,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	// Draw Button Text
 	tx := tb.x + mx + 8
 	ty := (theig / 2) - sizh
-	ctx.draw_text(tx, tb.y + ty, key, ctx.font, gx.TextCfg{
+	ctx.draw_text(tx, tb.y + my + ty, key, ctx.font, gx.TextCfg{
 		size: tb.win.font_size
 		color: ctx.theme.text_color
 	})
@@ -110,21 +107,13 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mut val []Compone
 	}
 
 	mid := (tb.x + mx + (tsize / 2))
-	midy := (tb.y + (theig / 2))
+	midy := (tb.y + my + (theig / 2))
 	if abs(mid - tb.win.click_x) < (tsize / 2) && abs(midy - tb.win.click_y) < (theig / 2) {
 		tb.active_tab = key_
 	}
 
 	if tb.active_tab == key_ {
-		val.sort(a.z_index < b.z_index)
-		for mut com in val {
-			com.draw_event_fn(mut tb.win, com)
-			com.draw_with_offset(ctx, tb.x, tb.y + theig)
-			com.after_draw_event_fn(mut tb.win, com)
-		}
-
 		line_x := if mx == 0 { tb.x + mx } else { tb.x + mx - 1 }
-
 		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 2, ctx.theme.checkbox_selected)
 	}
 
@@ -175,6 +164,7 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	t_heig := tb.get_active_tab_height(ctx)
 	ctx.gg.draw_rect_empty(tb.x, tb.y + t_heig, tb.width, tb.height - (t_heig - 1), ctx.theme.button_border_normal)
 	mut mx := 0
+	mut my := 0
 
 	if tb.scroll_i > tb.kids.len - 1 {
 		tb.scroll_i = tb.kids.len - 1
@@ -186,6 +176,8 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 		tb.active_tab = tb_keys[tb_keys.len - 1]
 	}
 
+	mut rows := 0
+
 	for i in tb.scroll_i .. tb_keys.len {
 		key := tb_keys[i]
 		mut val := tb.kids[key]
@@ -193,7 +185,23 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 			val[0].width = tb.width
 			val[0].height = tb.height - tb.get_active_tab_height(ctx)
 		}
-		mx += tb.draw_tab(ctx, key, mut val, mx)
+		if mx + 30 > tb.width {
+			mx = 0
+			my += tb.get_active_tab_height(ctx)
+			rows += 1
+		}
+		mx += tb.draw_tab(ctx, key, mx, my)
+	}
+	tb.rows = rows
+
+	my += tb.get_active_tab_height(ctx)
+
+	mut val := tb.kids[tb.active_tab]
+	val.sort(a.z_index < b.z_index)
+	for mut com in val {
+		com.draw_event_fn(mut tb.win, com)
+		com.draw_with_offset(ctx, tb.x, tb.y + my)
+		com.after_draw_event_fn(mut tb.win, com)
 	}
 }
 
