@@ -450,11 +450,6 @@ fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textb
 		return
 	}
 
-	// Clear selection
-	com.sel = Selection{
-		x0: -1
-	}
-
 	match key {
 		.right {
 			com.caret_x += 1
@@ -475,6 +470,11 @@ fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textb
 		else {
 			win.textbox_key_down_2(key, ev, mut com)
 		}
+	}
+
+	// Clear selection
+	com.sel = Selection{
+		x0: -1
 	}
 }
 
