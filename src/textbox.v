@@ -25,8 +25,8 @@ pub mut:
 }
 
 // Text Selection
-struct Selection {
-mut:
+pub struct Selection {
+pub mut:
 	x0 int = -1
 	y0 int = -1
 	x1 int = -1
