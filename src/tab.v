@@ -182,8 +182,8 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 		key := tb_keys[i]
 		mut val := tb.kids[key]
 		if val.len == 1 {
-			val[0].width = tb.width
-			val[0].height = tb.height - tb.get_active_tab_height(ctx)
+			val[0].width = tb.width - val[0].x
+			val[0].height = tb.height - tb.get_active_tab_height(ctx) - val[0].y
 		}
 		if mx + 30 > tb.width {
 			mx = 0

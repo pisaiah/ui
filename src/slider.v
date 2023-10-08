@@ -91,15 +91,11 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 
 fn (mut s Slider) on_mouse_down(g &GraphicsContext) {
 	if s.dir == .hor {
-		mut cx := math.clamp(g.win.mouse_x - s.x, 0, s.width)
-		mut perr := cx / s.width
-		perr = perr * s.max
-		s.cur = f32(perr)
+		cx := math.clamp(g.win.mouse_x - s.x, 0, s.width)
+		s.cur = f32((cx * s.max) / s.width)
 	} else {
-		mut cx := math.clamp(g.win.mouse_y - s.y, 0, s.height)
-		mut perr := cx / s.height
-		perr = perr * s.max
-		s.cur = f32(perr)
+		cx := math.clamp(g.win.mouse_y - s.y, 0, s.height)
+		s.cur = f32((cx * s.max) / s.height)
 	}
 	s.scroll_i = int(s.cur)
 }

@@ -404,7 +404,7 @@ pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx
 //
 fn (mut w Window) do_sleep() {
 	if w.config.ui_mode {
-		return
+		// return
 	}
 
 	if !w.sleep_if_no_evnt {

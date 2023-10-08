@@ -17,7 +17,7 @@ fn main() {
 		width: 700
 		height: 480
 		theme: ui.get_system_theme()
-		ui_mode: false
+		ui_mode: true
 	)
 
 	mut pane := ui.panel(

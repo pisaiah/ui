@@ -39,6 +39,7 @@ mut:
 	simg gfx.Image
 	cfg  gx.TextCfg
 	dirt bool
+	samp gfx.Sampler
 }
 
 pub fn C.RGB(r u8, g u8, b u8) C.COLORREF
@@ -80,7 +81,7 @@ pub fn (mut wl WLabel) draw(ctx &GraphicsContext) {
 	sgl.load_pipeline(ctx.gg.pipeline.alpha)
 
 	sgl.enable_texture()
-	sgl.texture(wl.simg)
+	sgl.texture(wl.simg, wl.samp)
 
 	c := gx.white
 
@@ -100,11 +101,19 @@ pub fn (mut l WLabel) init_sokol_image() {
 		width: l.width
 		height: l.height
 		num_mipmaps: 0
-		wrap_u: .clamp_to_edge
-		wrap_v: .clamp_to_edge
+		// wrap_u: .clamp_to_edge
+		// wrap_v: .clamp_to_edge
 		label: ''.str
 		d3d11_texture: 0
 	}
+
+	mut smp_desc := gfx.SamplerDesc{
+		min_filter: .linear
+		mag_filter: .linear
+		wrap_u: .clamp_to_edge
+		wrap_v: .clamp_to_edge
+	}
+	l.samp = gfx.make_sampler(&smp_desc)
 
 	img_size := usize(4 * l.width * l.height)
 	img_desc.data.subimage[0][0] = gfx.Range{

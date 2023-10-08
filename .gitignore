@@ -6,11 +6,14 @@ iui/tree.v
 *.def
 *.log
 test.bat
+*.dll
 
-#  See: https://github.com/isaiahpatton/vide
+#  See: https://github.com/pisaiah/vide
 examples/ide/
 examples/vide
-#  See: https://github.com/isaiahpatton/vpaint
+#  See: https://github.com/pisaiah/vpaint
 examples/vpaint/
-#  See: https://github.com/isaiahpatton/File-Explorer
+#  See: https://github.com/pisaiah/File-Explorer
 examples/explore
+
+examples/VideoPlayer/*.dll
