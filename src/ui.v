@@ -395,16 +395,10 @@ pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx
 	g.gg.draw_rect_empty(x, y, w, h, bord)
 }
 
-// Implement our own 'ui_mode'. This helps high cpu usage.
-// Related:
-// - https://github.com/vlang/v/issues/14691
-// - https://github.com/vlang/ui/issues/542
-// - https://github.com/vlang/ui/issues/361
-// - https://github.com/floooh/sokol/issues/550
-//
+// ui_mode: lower cpu usage
 fn (mut w Window) do_sleep() {
 	if w.config.ui_mode {
-		// return
+		return
 	}
 
 	if !w.sleep_if_no_evnt {
@@ -420,7 +414,7 @@ fn (mut w Window) do_sleep() {
 	}
 
 	if !w.has_event {
-		time.sleep(20 * time.millisecond) // Reduce CPU Usage
+		time.sleep(10 * time.millisecond) // Reduce CPU Usage
 	}
 }
 

@@ -9,6 +9,7 @@ const (
 	c_win_width     = 640 // 1280
 	c_win_height    = 360 // 720
 	c_win_font_size = 30
+	resolution      = [c_win_width, c_win_height]
 )
 
 //
@@ -28,6 +29,8 @@ mut:
 
 	i_video_duration f64
 	i_video_position f64
+	is_pause         bool
+	rend_params      voidptr //[]MPVRenderParameter
 pub mut:
 	ctx &gg.Context = unsafe { nil }
 
@@ -65,11 +68,22 @@ pub fn (mut mpv MPVPlayer) init(_ voidptr) {
 	// Observe props
 	C.mpv_observe_property(mpv.i_mpv_handle, 0, 'duration'.str, C.MPV_FORMAT_DOUBLE)
 	C.mpv_observe_property(mpv.i_mpv_handle, 0, 'time-pos'.str, C.MPV_FORMAT_DOUBLE)
+	C.mpv_observe_property(mpv.i_mpv_handle, 0, 'pause'.str, C.MPV_FORMAT_STRING)
 
 	// Texture
 	i_texture_id := mpv.ctx.new_streaming_image(c_win_width, c_win_height, 4, pixel_format: .rgba8)
 	mpv.i_texture = mpv.ctx.get_cached_image_by_idx(i_texture_id)
 	mpv.i_text_id = i_texture_id
+
+	pitch := int(4 * c_win_width)
+
+	mpv.rend_params = [
+		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_SIZE, resolution.data},
+		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_FORMAT, 'rgb0'.str},
+		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_STRIDE, &pitch},
+		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_POINTER, &mpv.i_pixels},
+		C.mpv_render_param{0, &voidptr(0)},
+	].data
 
 	//
 	mpv.play_video(mpv.video_path)
@@ -102,6 +116,12 @@ pub fn (mut mpv MPVPlayer) on_mpv_events() {
 				if prop.format == C.MPV_FORMAT_DOUBLE {
 					mpv.i_video_duration = unsafe { *(&f64(prop.data)) }
 				}
+			} else if unsafe { cstring_to_vstring(prop.name) } == 'pause' {
+				if prop.format == C.MPV_FORMAT_STRING {
+					vall := prop.data
+					vs := cstring_to_vstring(*vall)
+					mpv.is_pause = vs.contains('yes')
+				}
 			}
 
 			mpv.i_lock.unlock()
@@ -111,19 +131,10 @@ pub fn (mut mpv MPVPlayer) on_mpv_events() {
 
 [direct_array_access]
 pub fn (mut mpv MPVPlayer) update_texture() {
-	resolution := [c_win_width, c_win_height]
-
-	pitch := int(4 * c_win_width)
-
-	rend_params := [
-		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_SIZE, resolution.data},
-		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_FORMAT, 'rgb0'.str},
-		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_STRIDE, &pitch},
-		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_POINTER, &mpv.i_pixels},
-		C.mpv_render_param{0, &voidptr(0)},
-	]
-
-	r := C.mpv_render_context_render(mpv.i_mpv_context, rend_params.data)
+	if mpv.is_pause {
+		return
+	}
+	r := C.mpv_render_context_render(mpv.i_mpv_context, mpv.rend_params)
 
 	if r < 0 {
 		unsafe {
@@ -131,7 +142,6 @@ pub fn (mut mpv MPVPlayer) update_texture() {
 		}
 	}
 
-	// fuck it we ballin
 	// converts RGB to ABGR
 	for y in 0 .. c_win_height {
 		for x in 0 .. c_win_width {
@@ -142,16 +152,4 @@ pub fn (mut mpv MPVPlayer) update_texture() {
 
 	ue := &u8(&mpv.i_pixels)
 	mpv.ctx.update_pixel_data(mpv.i_text_id, ue)
-}
-
-pub fn (mut mpv MPVPlayer) draw_texture() {
-}
-
-pub fn (mut mpv MPVPlayer) draw_overlay() {
-}
-
-pub fn (mut mpv MPVPlayer) draw(_ voidptr) {
-}
-
-fn main_not() {
 }

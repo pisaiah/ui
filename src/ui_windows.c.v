@@ -7,6 +7,7 @@ import sokol.gfx
 
 #flag -I @VMODROOT/src/extra/
 #include "@VMODROOT/src/extra/winstuff.c"
+#include "@VMODROOT/src/extra/sokol_patch.c"
 
 pub fn (ctx &GraphicsContext) draw_win32_text(x int, y int, txt string, cfg gx.TextCfg) {
 	mut win := ctx.win
@@ -50,7 +51,6 @@ pub fn winc(co gx.Color) C.COLORREF {
 
 pub fn (mut wl WLabel) draw(ctx &GraphicsContext) {
 	if isnil(wl.data) {
-		// dump(wl.x)
 		bb := C.i_txt_pix(wl.text.to_wide(), wl.text.len, ctx.font_size, &wl.width, &wl.height,
 			winc(wl.cfg.color))
 		wl.data = bb
@@ -101,8 +101,6 @@ pub fn (mut l WLabel) init_sokol_image() {
 		width: l.width
 		height: l.height
 		num_mipmaps: 0
-		// wrap_u: .clamp_to_edge
-		// wrap_v: .clamp_to_edge
 		label: ''.str
 		d3d11_texture: 0
 	}
@@ -124,21 +122,19 @@ pub fn (mut l WLabel) init_sokol_image() {
 	l.sok = true
 }
 
-pub fn (mut wl WLabel) update_simg(ctx &GraphicsContext) {
-	// fn update_image(img Image, data &ImageData)
-
+pub fn (mut l WLabel) update_simg(ctx &GraphicsContext) {
 	mut imd := &gfx.ImageData{}
 
-	bb := C.i_txt_pix(wl.text.to_wide(), wl.text.len, ctx.font_size, &wl.width, &wl.height,
-		winc(wl.cfg.color))
-	wl.data = bb
+	bb := C.i_txt_pix(l.text.to_wide(), l.text.len, ctx.font_size, &l.width, &l.height,
+		winc(l.cfg.color))
+	l.data = bb
 
-	img_size := usize(4 * wl.width * wl.height)
+	img_size := usize(4 * l.width * l.height)
 	imd.subimage[0][0] = gfx.Range{
-		ptr: wl.data
+		ptr: l.data
 		size: img_size
 	}
-	gfx.update_image(wl.simg, imd)
+	gfx.update_image(l.simg, imd)
 }
 
 fn C.i_txt_pix(lpchtext &u16, le int, fs int, w &int, h &int, tc C.COLORREF) &u8
