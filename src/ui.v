@@ -268,7 +268,7 @@ fn new_graphics(win &Window) &GraphicsContext {
 }
 
 pub fn (win &Window) get_from_id(id string) voidptr {
-	return win.id_map[id]
+	return unsafe { win.id_map[id] }
 }
 
 pub fn (win &Window) get[T](id string) T {

@@ -9,7 +9,7 @@ import os
 pub struct Tree2 {
 	Component_A
 pub mut:
-	click_event_fn fn (voidptr, voidptr, voidptr)
+	click_event_fn fn (voidptr, voidptr, voidptr) = unsafe { nil }
 	open           int
 	min_y          int
 	in_scroll      bool
@@ -36,7 +36,6 @@ pub fn Tree.new() &Tree2 {
 pub fn tree(text string) &Tree2 {
 	return &Tree2{
 		text: text
-		click_event_fn: unsafe { nil }
 	}
 }
 

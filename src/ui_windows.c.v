@@ -43,6 +43,10 @@ mut:
 	samp gfx.Sampler
 }
 
+[typedef]
+struct C.COLORREF {
+}
+
 pub fn C.RGB(r u8, g u8, b u8) C.COLORREF
 
 pub fn winc(co gx.Color) C.COLORREF {

@@ -14,9 +14,11 @@ pub mut:
 	carrot_left          int
 	ctrl_down            bool
 	last_letter          string
-	click_event_fn       fn (voidptr, voidptr)
-	before_txtc_event_fn fn (mut Window, TextField) bool
-	text_change_event_fn fn (voidptr, voidptr)
+	click_event_fn       fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
+	before_txtc_event_fn fn (mut Window, TextField) bool = fn (mut a Window, b TextField) bool {
+		return false
+	}
+	text_change_event_fn fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
 	padding_x            int
 	center               bool
 	numeric              bool
@@ -49,11 +51,6 @@ pub fn numeric_field(val int) &TextField {
 		text: val.str()
 		numeric: true
 		center: true
-		click_event_fn: fn (a voidptr, b voidptr) {}
-		before_txtc_event_fn: fn (mut a Window, b TextField) bool {
-			return false
-		}
-		text_change_event_fn: fn (a voidptr, b voidptr) {}
 		carrot_left: val.str().len
 	}
 }
@@ -68,16 +65,11 @@ pub struct FieldCfg {
 pub fn TextField.new(c FieldCfg) &TextField {
 	return &TextField{
 		text: c.text
-		click_event_fn: fn (a voidptr, b voidptr) {}
-		before_txtc_event_fn: fn (mut a Window, b TextField) bool {
-			return false
-		}
 		x: c.bounds.x
 		y: c.bounds.y
 		width: c.bounds.width
 		height: c.bounds.height
 		center: c.center
-		text_change_event_fn: fn (a voidptr, b voidptr) {}
 		carrot_left: c.text.len
 	}
 }

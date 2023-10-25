@@ -10,7 +10,7 @@ pub struct Button {
 pub mut:
 	app               &Window
 	icon              int
-	old_click_fn      fn (voidptr, voidptr, voidptr)
+	old_click_fn      fn (voidptr, voidptr, voidptr) = unsafe { nil }
 	need_pack         bool
 	extra             string
 	user_data         voidptr

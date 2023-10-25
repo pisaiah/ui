@@ -17,9 +17,10 @@ pub mut:
 	reset_sel            bool
 	px                   int
 	last_letter          string
-	click_event_fn       fn (voidptr, voidptr)
-	before_txtc_event_fn fn (mut Window, Textbox) bool
-	text_change_event_fn fn (voidptr, voidptr)
+	before_txtc_event_fn fn (mut Window, Textbox) bool = fn (mut a Window, b Textbox) bool {
+		return false
+	}
+	text_change_event_fn fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
 	ctrl_down            bool
 	no_line_numbers      bool
 }
@@ -48,10 +49,6 @@ pub fn text_box(lines []string) &Textbox {
 		sel: Selection{
 			x0: -1
 		}
-		before_txtc_event_fn: fn (mut a Window, b Textbox) bool {
-			return false
-		}
-		text_change_event_fn: fn (a voidptr, b voidptr) {}
 	}
 }
 

@@ -10,7 +10,6 @@ pub struct Tabbox {
 pub mut:
 	win                 &Window
 	text                string
-	click_event_fn      fn (mut Window, Tabbox)
 	kids                map[string][]Component
 	active_tab          string
 	closable            bool = true

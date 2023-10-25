@@ -7,9 +7,8 @@ import gx
 pub struct Progressbar {
 	Component_A
 pub mut:
-	text           string
-	bind_val       &f32
-	click_event_fn fn (mut Window, Button)
+	text     string
+	bind_val &f32
 }
 
 [params]

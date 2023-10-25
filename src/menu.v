@@ -17,7 +17,7 @@ pub mut:
 	open           bool
 	open_width     int
 	sub            u8
-	click_event_fn fn (mut Window, MenuItem)
+	click_event_fn fn (mut Window, MenuItem) = unsafe { nil }
 	win_nat        voidptr
 }
 
