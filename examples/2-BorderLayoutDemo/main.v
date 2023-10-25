@@ -2,6 +2,11 @@ module main
 
 import iui as ui
 
+struct App {
+mut:
+	p &ui.Panel
+}
+
 fn main() {
 	mut win := ui.Window.new(
 		title: 'BorderLayoutDemo'
@@ -9,27 +14,26 @@ fn main() {
 		height: 295
 	)
 
-	// Set Swing theme
-	win.set_theme(ui.theme_ocean())
+	mut pan := ui.Panel.new(layout: ui.BorderLayout.new())
 
-	mut pan := ui.Panel.new(
-		layout: ui.BorderLayout.new()
-	)
+	mut app := &App{
+		p: pan
+	}
 
-	make_button(mut pan, '1 (NORTH)', ui.borderlayout_north)
-	make_button(mut pan, '2 (WEST)', ui.borderlayout_west)
-	make_button(mut pan, '3 (EAST)', ui.borderlayout_east)
-	make_button(mut pan, '4 (SOUTH)', ui.borderlayout_south)
-	make_button(mut pan, '5 (CENTER)', ui.borderlayout_center)
+	app.make_button('1 (NORTH)', ui.borderlayout_north)
+	app.make_button('2 (WEST)', ui.borderlayout_west)
+	app.make_button('3 (EAST)', ui.borderlayout_east)
+	app.make_button('4 (SOUTH)', ui.borderlayout_south)
+	app.make_button('5 (CENTER)', ui.borderlayout_center)
 
 	win.add_child(pan)
 	win.gg.run()
 }
 
-fn make_button(mut pan ui.Panel, id string, constrain int) &ui.Button {
+fn (mut app App) make_button(id string, constrain int) &ui.Button {
 	mut btn := ui.Button.new(
 		text: 'Button ${id}'
 	)
-	pan.add_child_with_flag(btn, constrain)
+	app.p.add_child_with_flag(btn, constrain)
 	return btn
 }

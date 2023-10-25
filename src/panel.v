@@ -148,7 +148,7 @@ fn (this &BoxLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		if this.ori == 0 {
 			x += child.width + this.hgap
 			if panel.height < child.height {
-				panel.height = child.height
+				panel.height = child.height + this.vgap
 			}
 		} else {
 			y += child.height + this.vgap
@@ -158,7 +158,7 @@ fn (this &BoxLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		}
 	}
 	if panel.height == 0 {
-		panel.height = y - panel.y
+		panel.height = y - panel.y + this.vgap
 	}
 	if panel.width == 0 {
 		panel.width = x - panel.x
@@ -188,7 +188,6 @@ pub fn FlowLayout.new(c FlowLayoutConfig) FlowLayout {
 fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
-	min_h := panel.children[0].height
 
 	panel.rh = 0
 
@@ -211,6 +210,13 @@ fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 			panel.rh = child.height
 		}
 	}
+
+	if panel.children.len == 0 {
+		return
+	}
+
+	min_h := panel.children[0].height
+
 	if panel.width == 0 {
 		panel.width = x - panel.x
 		if panel.height == 0 {

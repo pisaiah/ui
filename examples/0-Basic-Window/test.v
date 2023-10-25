@@ -2,7 +2,6 @@ module main
 
 import iui as ui
 
-[console]
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
