@@ -14,7 +14,6 @@ pub mut:
 	carrot_left          int
 	ctrl_down            bool
 	last_letter          string
-	click_event_fn       fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
 	text_change_event_fn fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
 	padding_x            int
 	center               bool
@@ -89,7 +88,7 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	// Detect Click
 	if this.is_mouse_rele {
 		this.is_selected = true
-		this.click_event_fn(ctx.win, this)
+		// this.click_event_fn(ctx.win, this)
 		this.is_mouse_rele = false
 		return
 	}
