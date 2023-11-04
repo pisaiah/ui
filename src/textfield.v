@@ -15,9 +15,6 @@ pub mut:
 	ctrl_down            bool
 	last_letter          string
 	click_event_fn       fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
-	before_txtc_event_fn fn (mut Window, TextField) bool = fn (mut a Window, b TextField) bool {
-		return false
-	}
 	text_change_event_fn fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
 	padding_x            int
 	center               bool
@@ -233,7 +230,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 
 	if enter {
 		com.last_letter = 'enter'
-		bevnt := com.before_txtc_event_fn(mut w, *com)
+		bevnt := invoke_text_change(com, w.graphics_context, 'before_text_change')
 		if bevnt || key == .up || key == .down {
 			return
 		}
@@ -251,7 +248,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 
 	com.last_letter = letter
 
-	bevnt := com.before_txtc_event_fn(mut w, *com)
+	bevnt := invoke_text_change(com, w.graphics_context, 'before_text_change')
 	if bevnt || key == .up || key == .down {
 		// 'true' indicates cancel event
 		return
