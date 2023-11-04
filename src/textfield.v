@@ -146,7 +146,7 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	if this.center {
 		// Y-center text
-		th := ctx.line_height // ctx.gg.text_height(this.text)
+		th := ctx.line_height
 		if this.height < th {
 			this.height = min_h(ctx)
 		}
@@ -195,7 +195,7 @@ fn (mut this TextField) mouse_down_caret(ctx &GraphicsContext) {
 	}
 }
 
-fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
+fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 	if !com.is_selected {
 		return
 	}
@@ -225,7 +225,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 	}
 
 	if key == .left_shift || key == .right_shift {
-		app.shift_pressed = true
+		w.shift_pressed = true
 		return
 	}
 
@@ -233,11 +233,11 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 
 	if enter {
 		com.last_letter = 'enter'
-		bevnt := com.before_txtc_event_fn(mut app, *com)
+		bevnt := com.before_txtc_event_fn(mut w, *com)
 		if bevnt || key == .up || key == .down {
 			return
 		}
-		com.text_change_event_fn(app, com)
+		com.text_change_event_fn(w, com)
 		com.ctrl_down = false
 		return
 	}
@@ -251,7 +251,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 
 	com.last_letter = letter
 
-	bevnt := com.before_txtc_event_fn(mut app, *com)
+	bevnt := com.before_txtc_event_fn(mut w, *com)
 	if bevnt || key == .up || key == .down {
 		// 'true' indicates cancel event
 		return
@@ -261,7 +261,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 		if com.numeric {
 			if letter !in iui.numbers_val {
 				com.last_letter = letter
-				com.text_change_event_fn(app, com)
+				com.text_change_event_fn(w, com)
 				return
 			}
 		}
@@ -278,7 +278,7 @@ fn (mut app Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField)
 	} else {
 		com.last_letter = letter
 	}
-	com.text_change_event_fn(app, com)
+	com.text_change_event_fn(w, com)
 	com.ctrl_down = false
 	unsafe {
 		resu.free()

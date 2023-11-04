@@ -59,3 +59,10 @@ pub struct ScrollEvent {
 	delta int
 	dir   i8
 }
+
+// Text change
+pub struct TextChangeEvent {
+	ComponentEvent
+pub mut:
+	cancel bool
+}

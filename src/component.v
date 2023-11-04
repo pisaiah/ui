@@ -265,3 +265,15 @@ pub fn invoke_scroll_event(com &Component, ctx &GraphicsContext, delta int) {
 		f(ev)
 	}
 }
+
+pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
+	ev := TextChangeEvent{
+		target: unsafe { com }
+		ctx: ctx
+	}
+
+	for f in com.events.event_map[n] {
+		f(ev)
+	}
+	return ev.cancel
+}

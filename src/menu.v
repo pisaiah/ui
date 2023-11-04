@@ -268,7 +268,7 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 fn open_about_modal(app &Window) &Modal {
 	mut about := Modal.new(title: 'About iUI')
 	about.in_height = 250
-	about.in_width = 370
+	about.in_width = 350
 
 	mut p := panel(
 		layout: BoxLayout{
@@ -276,13 +276,12 @@ fn open_about_modal(app &Window) &Modal {
 		}
 	)
 
-	p.set_pos(40, 16)
+	p.set_pos(15, 11)
 
 	ws := app.gg.window_size()
 	if 370 > ws.width {
 		about.top_off = 20
 		about.in_width = ws.width - 10
-		p.set_pos(20, 16)
 	}
 
 	mut title := Label.new(text: 'iUI ')

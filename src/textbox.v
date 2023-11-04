@@ -20,9 +20,8 @@ pub mut:
 	before_txtc_event_fn fn (mut Window, Textbox) bool = fn (mut a Window, b Textbox) bool {
 		return false
 	}
-	text_change_event_fn fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
-	ctrl_down            bool
-	no_line_numbers      bool
+	ctrl_down       bool
+	no_line_numbers bool
 }
 
 // Text Selection
@@ -509,7 +508,13 @@ fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Tex
 	com.sel = Selection{
 		x0: -1
 	}
-	mut bevnt := com.before_txtc_event_fn(mut win, *com)
+
+	bevnt_old := com.before_txtc_event_fn(mut win, *com)
+	if bevnt_old {
+		return
+	}
+
+	bevnt := invoke_text_change(com, win.graphics_context, 'before_text_change')
 	if bevnt {
 		// 'true' indicates cancel event
 		return
@@ -564,7 +569,12 @@ fn (mut win Window) textbox_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com
 		com.last_letter = 'enter'
 	}
 
-	bevnt := com.before_txtc_event_fn(mut win, *com)
+	mut bevnt_old := com.before_txtc_event_fn(mut win, *com)
+	if bevnt_old {
+		return
+	}
+
+	bevnt := invoke_text_change(com, win.graphics_context, 'before_text_change')
 	if bevnt {
 		// 'true' indicates cancel event
 		return
@@ -595,7 +605,7 @@ fn (mut win Window) textbox_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com
 
 	if letter.len != 0 {
 		com.last_letter = letter
-		com.text_change_event_fn(win, com)
+		invoke_text_change(com, win.graphics_context, 'text_change')
 	}
 
 	if !enter {
