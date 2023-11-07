@@ -28,7 +28,6 @@ mut:
 	events &EventManager
 	draw(&GraphicsContext)
 	invoke_draw_event(&GraphicsContext)
-	// invoke_after_draw_event(&GraphicsContext)
 }
 
 fn (com &Component) str() string {

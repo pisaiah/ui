@@ -8,13 +8,11 @@ import gx
 pub struct HBox {
 	Component_A
 pub mut:
-	win           &Window
 	needs_pack    bool
 	raw_width     int
 	is_width_per  bool
 	center_screen bool
 	min_height    int
-	yyy           int
 	overflow_full bool = true
 }
 
@@ -31,7 +29,6 @@ pub fn HBox.new(cfg HBoxConfig) &HBox {
 		center_screen: cfg.center_screen
 		needs_pack: cfg.pack
 		overflow_full: cfg.overflow
-		win: unsafe { nil }
 		x: cfg.bounds.x
 		y: cfg.bounds.y
 		width: cfg.bounds.width
@@ -76,10 +73,9 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 
 	for mut child in this.children {
 		if !isnil(child.draw_event_fn) {
-			if isnil(this.win) {
-				this.win = ctx.win
-			}
-			child.draw_event_fn(mut this.win, &child)
+			// deprecated draw fn
+			mut win := ctx.win
+			child.draw_event_fn(mut win, &child)
 		}
 
 		gw := if this.overflow_full {
@@ -119,7 +115,6 @@ pub fn (mut this HBox) draw(ctx &GraphicsContext) {
 		this.height = yyy
 	}
 	this.height = o_y
-	this.yyy = o_y
 
 	if this.needs_pack {
 		this.width = o_x

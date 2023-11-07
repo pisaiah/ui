@@ -91,7 +91,7 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 	$if windows {
 		// Native Text Rendering
-		if this.sub == 0 && ctx.theme.text_color == gx.black {
+		if this.sub == 0 && ctx.theme.text_color == gx.black && !ctx.gg.native_rendering {
 			if isnil(this.win_nat) {
 				this.win_nat = &WLabel{
 					text: this.text

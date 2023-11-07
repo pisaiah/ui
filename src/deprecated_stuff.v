@@ -15,20 +15,6 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 	return button(cfg)
 }
 
-[deprecated: 'Use HBox.new()']
-pub fn hbox(win &Window) &HBox {
-	return &HBox{
-		win: win
-	}
-}
-
-[deprecated: 'Use VBox.new()']
-pub fn vbox(win &Window) &VBox {
-	return &VBox{
-		win: win
-	}
-}
-
 [deprecated: 'Replaced with menu_item(MenuItemConfig)']
 pub fn menuitem(text string) &MenuItem {
 	return &MenuItem{
@@ -86,4 +72,16 @@ pub fn image_from_file(path string) &Image {
 //	mut i := Image.new(img: img)
 //	i.set_bounds(0, 0, width, height)
 //	return i
+// }
+
+// [deprecated: 'Use HBox.new()']
+// pub fn hbox(win &Window) &HBox {
+// 	return &HBox{
+// 	}
+// }
+
+// [deprecated: 'Use VBox.new()']
+// pub fn vbox(win &Window) &VBox {
+// 	return &VBox{
+// 	}
 // }

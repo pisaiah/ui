@@ -9,7 +9,6 @@ pub struct Page {
 pub:
 	text_cfg gx.TextCfg
 pub mut:
-	window     &Window
 	text       string
 	needs_init bool
 	close      &Button
@@ -34,7 +33,6 @@ pub struct PageCfg {
 pub fn Page.new(c PageCfg) &Page {
 	return &Page{
 		text: c.title
-		window: 0
 		z_index: 500
 		needs_init: true
 		text_cfg: draw_cfg()
@@ -47,16 +45,10 @@ fn (p &Page) draw_bg(ctx &GraphicsContext) {
 	bg := gx.rgb(51, 114, 153)
 	ctx.gg.draw_rect_filled(0, 0, p.width, p.height, ctx.theme.background)
 	ctx.gg.draw_rect_filled(0, 0, p.width, p.top_off, bg)
-	ctx.gg.draw_rect_filled(0, p.top_off - 5, p.width, 3, p.line_color)
+	ctx.gg.draw_rect_filled(0, p.top_off - 5, p.width, 5, p.line_color)
 }
 
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
-	if isnil(this.window) {
-		mut win := ctx.win
-		this.window = win
-	}
-
-	mut app := this.window
 	ws := gg.window_size()
 
 	this.width = ws.width
@@ -92,7 +84,10 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 	// this.children.sort(a.z_index < b.z_index)
 	for mut com in this.children {
-		com.draw_event_fn(mut app, com)
+		if !isnil(com.draw_event_fn) {
+			mut win := ctx.win
+			com.draw_event_fn(mut win, com)
+		}
 		com.draw_with_offset(ctx, 0, y_off + 2)
 	}
 }

@@ -177,7 +177,7 @@ fn create_theme_menu() &ui.MenuItem {
 }
 
 fn (mut app App) make_hbox_section() {
-	mut hbox := ui.hbox(app.win)
+	mut hbox := ui.Panel.new()
 
 	mut btn_ := ui.button(text: 'Button in HBox')
 	btn_.pack()

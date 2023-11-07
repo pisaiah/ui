@@ -77,7 +77,11 @@ pub fn text_field(cfg FieldCfg) &TextField {
 fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	click := this.is_mouse_rele
 	bg := if click { ctx.theme.button_bg_click } else { ctx.theme.textbox_background }
-	border := if click || this.is_selected { ctx.theme.button_border_click } else { ctx.theme.textbox_border }
+	border := if click || this.is_selected {
+		ctx.theme.button_border_click
+	} else {
+		ctx.theme.textbox_border
+	}
 
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)

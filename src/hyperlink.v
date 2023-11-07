@@ -9,7 +9,6 @@ pub struct Hyperlink {
 pub mut:
 	text           string
 	click_event_fn fn (voidptr) = unsafe { nil }
-	in_modal       bool
 	need_pack      bool
 	size           int
 	abs_size       bool

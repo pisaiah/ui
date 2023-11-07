@@ -6,13 +6,15 @@ Planned TODO Features:
 - System L&F themes
 - Use in `java2v` to support translating swing
 - port JavaFx's charts
-- add BorderLayout
 - List (https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html)
 - Spinner (https://docs.oracle.com/javase/8/docs/api/javax/swing/JSpinner.html)
 
 ## 0.0.20
 *TODO*
 - Remove some deprecated functions
+- Improve SwapBuffers CPU usage on Windows
+- Tab overflow
+- draw focus border for Textfield
 
 ## 0.0.19
 *Sept, 8th*

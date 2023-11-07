@@ -267,6 +267,7 @@ fn new_graphics(win &Window) &GraphicsContext {
 	}
 }
 
+[deprecated: 'Use get[T](id)']
 pub fn (win &Window) get_from_id(id string) voidptr {
 	return unsafe { win.id_map[id] }
 }

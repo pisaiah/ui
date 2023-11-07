@@ -91,7 +91,7 @@ fn (com &Checkbox) draw_background(ctx &GraphicsContext) {
 	bg := com.get_background(is_hover, ctx)
 	border := com.get_border(is_hover, ctx)
 
-	ctx.win.draw_bordered_rect(com.x, com.y, com.height, com.height, 0, bg, border)
+	ctx.win.draw_bordered_rect(com.x, com.y, com.height, com.height, 2, bg, border)
 }
 
 // Draw the text of Checkbox
