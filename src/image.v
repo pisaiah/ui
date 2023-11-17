@@ -71,7 +71,7 @@ pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	}
 
 	if this.need_pack {
-		this.pack_do()
+		this.pack_do(ctx)
 	}
 
 	if this.is_mouse_rele {
@@ -95,7 +95,15 @@ pub fn (mut i Image) pack() {
 	i.need_pack = true
 }
 
-pub fn (mut i Image) pack_do() {
+pub fn (mut i Image) pack_do(ctx &GraphicsContext) {
+	if isnil(i.img) {
+		mut ggg := ctx.gg
+		im := ggg.get_cached_image_by_idx(i.img_id)
+		i.width = im.width
+		i.height = im.height
+		return
+	}
+
 	i.width = i.img.width
 	i.height = i.img.height
 }

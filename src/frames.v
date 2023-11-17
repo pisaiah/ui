@@ -7,14 +7,11 @@ import gx
 //[heap]
 pub struct DesktopPane {
 	Panel
-mut:
-	active &InternalFrame
 }
 
 pub fn DesktopPane.new() &DesktopPane {
 	return &DesktopPane{
 		layout: unsafe { nil }
-		active: unsafe { nil }
 	}
 }
 
@@ -33,11 +30,19 @@ mut:
 	active   bool
 }
 
-pub fn InternalFrame.new() &InternalFrame {
+[params]
+pub struct FrameConfig {
+	text string
+	bounds Bounds
+}
+
+pub fn InternalFrame.new(c FrameConfig) &InternalFrame {
 	return &InternalFrame{
-		text: 'InternalFrameDemo'
-		width: 300
-		height: 200
+		text: c.text
+		x: c.bounds.x
+		y: c.bounds.y
+		width: c.bounds.width
+		height: c.bounds.height
 		controls: Panel.new(layout: FlowLayout.new(hgap: 0, vgap: 2))
 	}
 }
@@ -76,6 +81,14 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	if !this.init {
 		this.init_controls()
 	}
+	
+	if this.width == 0 {
+		this.width = ctx.text_width(this.text) + 120
+	}
+	
+	if this.height == 0 {
+		this.height = 120
+	}
 
 	this.do_move(ctx)
 
@@ -105,14 +118,19 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 
 	this.children.sort(a.z_index < b.z_index)
 
+	if this.children.len == 2 {
+		if this.children[0] is Panel || this.children[0] is ScrollView {
+			this.children[0].width = this.width - (bord_wid * 2)
+			this.children[0].height = this.height - top - bord_wid
+		}
+	}
+
 	for mut kid in this.children {
 		if kid.parent == unsafe { nil } {
 			kid.set_parent(this)
 		}
 		kid.draw_with_offset(ctx, this.x + bord_wid, this.y + top)
 	}
-
-	ctx.draw_text(this.x + 20, this.y + 30, '${this.z_index}', 0)
 }
 
 fn (mut this InternalFrame) init_controls() {

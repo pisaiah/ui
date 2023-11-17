@@ -3,8 +3,8 @@ module main
 import os
 import gg
 import sync
-// import sokol.gfx
 
+// import sokol.gfx
 const (
 	c_win_width     = 640 // 1280
 	c_win_height    = 360 // 720
@@ -30,7 +30,8 @@ mut:
 	i_video_duration f64
 	i_video_position f64
 	is_pause         bool
-	rend_params      voidptr //[]MPVRenderParameter
+	rend_params      voidptr
+	//[]MPVRenderParameter
 pub mut:
 	ctx &gg.Context = unsafe { nil }
 

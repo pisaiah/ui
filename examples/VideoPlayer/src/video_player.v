@@ -19,7 +19,6 @@ fn main() {
 	mut mb := ui.Menubar.new()
 
 	// window.set_theme(ui.theme_seven_dark())
-
 	mut p := ui.Panel.new(
 		layout: ui.BorderLayout.new(hgap: 0, vgap: 0)
 	)
@@ -39,11 +38,11 @@ fn main() {
 		height: 360
 		vmpv: unsafe { nil }
 		logo: unsafe { nil }
-		path: '' // video_path
+		path: ''
+		// video_path
 	}
 
 	// Media Playback Audio Video Subtitle Tools View Help
-
 	mb.add_child(ui.MenuItem.new(
 		text: 'Media'
 		children: [
@@ -115,8 +114,9 @@ fn (mut p Player) slid_down(mut e ui.MouseEvent) {
 pub struct Player {
 	ui.Component_A
 mut:
-	init       bool
-	vmpv       &MPVPlayer //= unsafe { nil }
+	init bool
+	vmpv &MPVPlayer
+	//= unsafe { nil }
 	tik        int
 	path       string
 	logo       &ui.Image
@@ -128,7 +128,6 @@ mut:
 fn (mut this Player) draw(ctx &ui.GraphicsContext) {
 	bg := gx.black // ctx.theme.button_bg_normal
 	bo := gx.black // ctx.theme.button_border_normal
-
 	if this.is_mouse_rele {
 		this.is_mouse_rele = false
 	}
@@ -295,10 +294,8 @@ pub fn (mut mpv MPVPlayer) draw_texture_(x int, y int, w int, h int) {
 	}
 
 	ix := 0 // (w - int(c_win_width / factor)) / 2
-
 	iw := w // int(c_win_width / factor)
 	ih := h // int(c_win_height / factor)
-
 	mpv.ctx.draw_image(x + ix, y, iw, ih, mpv.i_texture)
 }
 
@@ -309,6 +306,5 @@ pub fn (mut mpv MPVPlayer) draw_(x int, y int, w int, h int) {
 
 pub fn (mut mpv MPVPlayer) seek(val int) {
 	/// C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('seek'.str), &char('absolute'.str), &char('${val}'.str)].data)
-
 	C.mpv_set_property_string(mpv.i_mpv_handle, 'time-pos'.str, '${val}'.str)
 }
