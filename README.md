@@ -80,18 +80,20 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 ## Included Examples
 
 <table>
-	<tr><th>Notepad</th><th>Calculator</th><th>BorderLayout Demo</th><th>Clock</th></tr>
+	<tr><th>Notepad</th><th>Calculator</th><th>BorderLayout Demo</th><th>Clock</th><th>Internal Frames</th></tr>
 	<tr>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/b606df32-382d-4977-a06c-7d8d8d2fb042" align="left" height="130"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/1a42c4dd-351d-4c28-8edd-b85905ea9b1f" height="170"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/0b058466-6775-4edc-a571-7d77870827fd" height="170"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/23a2e490-2aa6-4a3b-b606-3a611eccdb52" height="170"></td>
+		<td><img src="https://github.com/pisaiah/ui/assets/16439221/bc14ec6c-4318-40d7-bcdd-6e2cf6a270be" height="170"></td>
 	</tr>
 	<tr>
-		<td>See: <a href="examples/Notepad/">examples/Notepad/</a></td>
-		<td><a href="examples/Notepad/">examples/Calculator/</a></td>
-		<td><a href="examples/2-BorderLayoutDemo/">examples/2-BorderLayoutDemo/</a></td>
-		<td><a href="examples/Clock/">examples/Clock/</a></td>
+		<td>See: <a href="examples/Notepad/">Notepad</a></td>
+		<td><a href="examples/Notepad/">Calculator</a></td>
+		<td><a href="examples/2-BorderLayoutDemo/">Border Layout Demo</a></td>
+		<td><a href="examples/Clock/">Clock</a></td>
+		<td><a href="examples/Frames/">Internal Frames</a></td>
 	</tr>
 </table>
 
@@ -110,7 +112,6 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 	</tr>
 </table>
 
-
 ## Used in
 - [Vide](https://github.com/pisaiah/vide)
 - [Verminal](https://github.com/pisaiah/verminal)
@@ -120,3 +121,5 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 
 ## License
 This project is licensed under MIT OR Boost.
+
+<kbd><img src="https://github.com/pisaiah/ui/assets/16439221/5ebb8b15-52e0-4e64-8941-45390a60b3ab" width="128"><br>Veasel *(v mascot)* on a Swing</kbd>
