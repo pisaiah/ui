@@ -32,7 +32,7 @@ mut:
 
 [params]
 pub struct FrameConfig {
-	text string
+	text   string
 	bounds Bounds
 }
 
@@ -50,18 +50,14 @@ pub fn InternalFrame.new(c FrameConfig) &InternalFrame {
 fn (mut this DesktopPane) draw(ctx &GraphicsContext) {
 	this.children.sort(a.z_index > b.z_index)
 
-	// dump('draw')
-
-	// for mut kid in this.children {
 	// Draw backwards
 	for i in -this.children.len .. 0 {
 		mut kid := this.children[(-i) + -1]
 
-		// dump(kid.z_index)
-		if kid.x < this.x {
+		if kid.x < 0 {
 			kid.x = 0
 		}
-		if kid.y < this.y {
+		if kid.y < 0 {
 			kid.y = 0
 		}
 
@@ -81,11 +77,11 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	if !this.init {
 		this.init_controls()
 	}
-	
+
 	if this.width == 0 {
 		this.width = ctx.text_width(this.text) + 120
 	}
-	
+
 	if this.height == 0 {
 		this.height = 120
 	}

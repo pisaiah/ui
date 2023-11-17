@@ -141,6 +141,10 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 		}
 	}
 
+	if mut com is InternalFrame {
+		com.is_mouse_down = is_point_in
+	}
+
 	for mut child in com.children {
 		if child.on_mouse_down_component(app) {
 			return true

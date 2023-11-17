@@ -1,18 +1,19 @@
 import gg
 import iui as ui { debug }
-import os
 import gx
 
+[heap]
 struct App {
 mut:
-	win  &ui.Window
-	pane &ui.Panel
+	win   &ui.Window
+	pane  &ui.Panel
+	icons []int
+	dp    &ui.DesktopPane
 }
 
-[console]
 fn main() {
 	// Create Window
-	mut window := ui.make_window(
+	mut window := ui.Window.new(
 		title: 'UI Demo'
 		width: 700
 		height: 480
@@ -20,21 +21,19 @@ fn main() {
 		ui_mode: true
 	)
 
-	mut pane := ui.panel(
-		layout: &ui.FlowLayout{
-			hgap: 10
-			vgap: 10
-		}
+	mut pane := ui.Panel.new(
+		layout: ui.FlowLayout.new(hgap: 10, vgap: 10)
 	)
 	mut app := &App{
 		win: window
 		pane: pane
+		dp: ui.DesktopPane.new()
 	}
 
 	// Setup Menubar and items
 	window.bar = ui.menu_bar()
-	window.bar.add_child(ui.menu_item(text: 'File'))
-	window.bar.add_child(ui.menu_item(text: 'Edit'))
+	window.bar.add_child(ui.MenuItem.new(text: 'File'))
+	window.bar.add_child(ui.MenuItem.new(text: 'Edit'))
 	window.bar.add_child(create_help_menu())
 	window.bar.add_child(create_theme_menu())
 	window.add_child(window.bar)
@@ -48,7 +47,7 @@ fn main() {
 		file: 'v.png'
 	)
 	img.set_bounds(5, 5, 50, 50)
-	mut title_box := ui.title_box('Image', [img])
+	mut title_box := ui.Titlebox.new(text: 'Image', children: [img])
 	title_box.set_bounds(0, 0, 100, 130)
 	pane.add_child(title_box)
 
@@ -65,7 +64,7 @@ fn main() {
 		e.target.height = ws.height
 	})
 
-	mut tb := ui.tabbox(window)
+	mut tb := ui.Tabbox.new()
 	tb.set_pos(2, 30)
 	tb.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
 		ws := win.gg.window_size()
@@ -77,6 +76,9 @@ fn main() {
 	mut button_tab := app.make_button_tab()
 	tb.add_child('Buttons', button_tab)
 
+	mut frame_tab := app.make_frame_tab()
+	tb.add_child('Frames', frame_tab)
+
 	window.add_child(tb)
 
 	window.gg.run()
@@ -86,21 +88,19 @@ fn (mut app App) make_button_tab() &ui.Panel {
 	mut hbox := ui.Panel.new()
 	hbox.set_pos(12, 12)
 
-	mut btn := ui.button(
-		text: 'Button'
-	)
+	mut btn := ui.Button.new(text: 'Button')
 
-	mut btn2 := ui.button(
+	mut btn2 := ui.Button.new(
 		text: 'Round Button'
 	)
 	btn2.border_radius = 100
 
-	mut sq_btn := ui.button(
+	mut sq_btn := ui.Button.new(
 		text: 'Square Button'
 	)
 	sq_btn.border_radius = 0
 
-	mut tbtn := ui.button(
+	mut tbtn := ui.Button.new(
 		text: 'Button'
 	)
 	tbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
@@ -108,7 +108,7 @@ fn (mut app App) make_button_tab() &ui.Panel {
 		draw_custom_themed('ocean-btn', mut e)
 	})
 
-	mut sbtn := ui.button(
+	mut sbtn := ui.Button.new(
 		text: 'Button'
 	)
 	sbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
@@ -153,7 +153,7 @@ fn (mut app App) icon_btn(data []u8) &ui.Button {
 	mut gg_ := app.win.gg
 	gg_im := gg_.create_image_from_byte_array(data) or { panic(err) }
 	cim := gg_.cache_image(gg_im)
-	mut btn := ui.button_with_icon(cim)
+	mut btn := ui.Button.new(icon: cim)
 
 	btn.set_bounds(2, 4, 32, 32)
 	return btn
@@ -179,17 +179,17 @@ fn create_theme_menu() &ui.MenuItem {
 fn (mut app App) make_hbox_section() {
 	mut hbox := ui.Panel.new()
 
-	mut btn_ := ui.button(text: 'Button in HBox')
+	mut btn_ := ui.Button.new(text: 'Button in HBox')
 	btn_.pack()
 
-	mut btn3 := ui.button(text: 'Button 2')
+	mut btn3 := ui.Button.new(text: 'Button 2')
 	btn3.set_pos(4, 0)
 	btn3.pack()
 
 	hbox.add_child(btn_)
 	hbox.add_child(btn3)
 
-	mut hbox_title_box := ui.title_box('HBox layout', [hbox])
+	mut hbox_title_box := ui.Titlebox.new(text: 'HBox layout', children: [hbox])
 
 	hbox.set_bounds(0, 0, 150, 0)
 	hbox_title_box.set_bounds(0, 0, 200, 150)
@@ -211,7 +211,13 @@ fn (mut app App) make_edits_section() {
 		padding: 0
 	)
 
-	mut edits_title_box := ui.title_box('TextField / TextBox', [tbox, sv])
+	mut edits_title_box := ui.Titlebox.new(
+		text: 'TextField / TextBox'
+		children: [
+			tbox,
+			sv,
+		]
+	)
 	edits_title_box.set_bounds(0, 0, 200, 150)
 	app.pane.add_child(edits_title_box)
 }
@@ -226,7 +232,7 @@ fn (mut app App) make_progress_section() {
 	mut pb3 := ui.Progressbar.new(val: 70)
 	pb3.set_bounds(0, 60, 110, 24)
 
-	mut title_box := ui.title_box('Progressbar', [pb, pb2, pb3])
+	mut title_box := ui.Titlebox.new(text: 'Progressbar', children: [pb, pb2, pb3])
 	title_box.set_bounds(0, 0, 120, 130)
 	app.pane.add_child(title_box)
 }
@@ -238,7 +244,7 @@ fn (mut app App) make_tree_section() {
 		view: tree
 	)
 
-	mut title_box := ui.title_box('Treeview', [tree_view])
+	mut title_box := ui.Titlebox.new(text: 'Treeview', children: [tree_view])
 	title_box.set_bounds(0, 0, 190, 180)
 
 	app.pane.add_child(title_box)
@@ -272,18 +278,19 @@ fn (mut app App) make_selectbox_section() {
 		sel.items << (25 * (i + 1)).str() + '%'
 	}
 
-	mut title_box := ui.title_box('Selector', [sel])
+	mut title_box := ui.Titlebox.new(text: 'Selector', children: [sel])
+
 	title_box.set_bounds(0, 0, 120, 130)
 	app.pane.add_child(title_box)
 }
 
 fn (mut app App) make_button_section() {
-	mut btn := ui.button(
+	mut btn := ui.Button.new(
 		text: 'Button'
 		bounds: ui.Bounds{0, 0, 80, 32}
 	)
 
-	mut btn2 := ui.button(
+	mut btn2 := ui.Button.new(
 		text: 'Open Page'
 		bounds: ui.Bounds{0, 38, 130, 30}
 		should_pack: false
@@ -297,7 +304,7 @@ fn (mut app App) make_button_section() {
 	btn3.icon_width = 28
 	btn3.icon_height = 28
 
-	mut title_box := ui.title_box('Button', [btn, btn2, btn3])
+	mut title_box := ui.Titlebox.new(text: 'Button', children: [btn, btn2, btn3])
 	title_box.set_bounds(0, 0, 150, 130)
 	app.pane.add_child(title_box)
 }
@@ -318,7 +325,7 @@ fn (mut app App) make_tab_section() {
 	tbtn1.pack()
 	tb.add_child('Tab B', tbtn1)
 
-	mut title_box := ui.title_box('Tabbox', [tb])
+	mut title_box := ui.Titlebox.new(text: 'Tabbox', children: [tb])
 	title_box.set_bounds(0, 0, 180, 180)
 
 	app.pane.add_child(title_box)

@@ -227,7 +227,7 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len i
 	wid := this.xbar_width
 	width := this.width - wid - 1
 
-	y := yy + this.height - wid - 1
+	y := yy + this.height - wid
 
 	// Scroll Bar
 	scroll := this.scroll_x * this.increment

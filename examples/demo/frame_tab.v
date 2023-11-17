@@ -2,34 +2,8 @@ module main
 
 import iui as ui
 
-[heap]
-struct App {
-mut:
-	win   &ui.Window
-	dp    &ui.DesktopPane
-	icon1 int
-	icon2 int
-	icon3 int
-	icon4 int
-	icons []int
-}
-
-fn main() {
+fn (mut app App) make_frame_tab() &ui.Panel {
 	// Create Window
-	mut window := ui.Window.new(
-		title: 'My Window'
-		width: 600
-		height: 400
-		theme: ui.theme_default()
-	)
-
-	mut dp := ui.DesktopPane.new()
-
-	mut app := &App{
-		win: window
-		dp: dp
-	}
-
 	app.make_icons()
 
 	mut f := ui.InternalFrame.new(
@@ -43,7 +17,7 @@ fn main() {
 	pb.add_child_with_flag(pa, ui.borderlayout_center)
 
 	f.add_child(pb)
-	dp.add_child(f)
+	app.dp.add_child(f)
 
 	app.new_frame(4)
 	app.new_frame(5)
@@ -53,12 +27,9 @@ fn main() {
 		layout: ui.BorderLayout.new()
 	)
 
-	p.add_child_with_flag(dp, ui.borderlayout_center)
+	p.add_child_with_flag(app.dp, ui.borderlayout_center)
 
-	window.add_child(p)
-
-	// Start GG / Show Window
-	window.run()
+	return p
 }
 
 fn (mut app App) make_btns() &ui.Panel {
@@ -78,24 +49,23 @@ fn (mut app App) make_btns() &ui.Panel {
 	return pa
 }
 
-fn (mut app App) btn_click(mut e ui.MouseEvent) {
+fn (mut app App) btn_click(e &ui.MouseEvent) {
 	app.new_frame(e.target.text.int() + 4)
 }
 
 fn (mut app App) new_frame(img_id int) {
 	i := app.dp.children.len - 1
-	mut frame := ui.InternalFrame.new(text: 'Frame #${i}')
+	mut frame := ui.InternalFrame.new(
+		text: 'Frame #${i}'
+		bounds: ui.Bounds{210 + i * 20, i * 32, 0, 150}
+	)
 
-	frame.set_x(210 + i * 20)
-	frame.set_y(i * 32)
 	frame.z_index = i + 1
-	frame.height = 150
 
 	mut b := ui.Image.new(id: app.icons[img_id])
 	b.pack()
 
 	mut sv := ui.ScrollView.new(view: b)
-
 	frame.add_child(sv)
 
 	app.dp.add_child(frame)
