@@ -4,7 +4,7 @@ import iui as ui
 import examples.browser.webview
 import os
 
-[console]
+@[console]
 fn main() {
 	println('Browser - Alpha Test')
 

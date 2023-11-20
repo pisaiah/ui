@@ -30,7 +30,7 @@ mut:
 	active   bool
 }
 
-[params]
+@[params]
 pub struct FrameConfig {
 	text   string
 	bounds Bounds

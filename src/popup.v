@@ -8,7 +8,7 @@ pub mut:
 	shown bool
 }
 
-[params]
+@[params]
 pub struct PopupCfg {
 }
 

@@ -36,7 +36,7 @@ pub fn (this &FilePicker) get_file_name() string {
 	return ''
 }
 
-[parms]
+@[parms]
 pub struct FilePickerConfig {
 	in_modal       bool
 	path           string = os.home_dir()

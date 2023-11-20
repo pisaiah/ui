@@ -13,7 +13,7 @@ const (
 )
 
 //
-[heap]
+@[heap]
 pub struct MPVPlayer {
 mut:
 	i_mpv_handle  &MPVHandle        = unsafe { nil }
@@ -130,7 +130,7 @@ pub fn (mut mpv MPVPlayer) on_mpv_events() {
 	}
 }
 
-[direct_array_access]
+@[direct_array_access]
 pub fn (mut mpv MPVPlayer) update_texture() {
 	if mpv.is_pause {
 		return

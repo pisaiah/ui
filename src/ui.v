@@ -104,7 +104,7 @@ pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
 }
 
 // Window
-[heap]
+@[heap]
 pub struct Window {
 pub mut:
 	gg               &gg.Context
@@ -188,7 +188,7 @@ pub fn (mut win Window) add_font(font_name string, font_path string) int {
 }
 
 // Struct for Graphics context
-[heap]
+@[heap]
 pub struct GraphicsContext {
 pub mut:
 	gg          &gg.Context
@@ -267,7 +267,7 @@ fn new_graphics(win &Window) &GraphicsContext {
 	}
 }
 
-[deprecated: 'Use get[T](id)']
+@[deprecated: 'Use get[T](id)']
 pub fn (win &Window) get_from_id(id string) voidptr {
 	return unsafe { win.id_map[id] }
 }
@@ -293,7 +293,7 @@ pub fn window(c &WindowConfig) &Window {
 	return Window.new(c)
 }
 
-[heap; params]
+@[heap; params]
 pub struct WindowConfig {
 	font_path string = default_font()
 	font_size int    = 16
@@ -340,7 +340,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		font_path: cfg.font_path
 		font_size: cfg.font_size
 		ui_mode: cfg.ui_mode
-		sample_count: 2
+		// sample_count: 2
 	)
 	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {
@@ -544,7 +544,7 @@ pub fn text_height(win Window, text string) int {
 	return win.gg.text_height(text)
 }
 
-[inline]
+@[inline]
 pub fn abs[T](a T) T {
 	return if a > 0 { a } else { -a }
 }

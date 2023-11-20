@@ -1,7 +1,7 @@
 module iui
 
 // See https://docs.oracle.com/javase/7/docs/api/javax/swing/ButtonGroup.html
-[heap]
+@[heap]
 pub struct ButtonGroup[T] {
 mut:
 	buttons  []&T
@@ -13,7 +13,7 @@ pub fn (mut com ButtonGroup[T]) subscribe_event(val string, f fn (voidptr)) {
 	com.events.event_map[val] << f
 }
 
-[params]
+@[params]
 pub struct ButtonGroupConfig {
 	buttons []voidptr
 }

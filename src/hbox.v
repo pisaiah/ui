@@ -4,7 +4,7 @@ import gg
 import gx
 
 // HBox - implements Component interface
-[heap]
+@[heap]
 pub struct HBox {
 	Component_A
 pub mut:
@@ -16,7 +16,7 @@ pub mut:
 	overflow_full bool = true
 }
 
-[params]
+@[params]
 pub struct HBoxConfig {
 	pack          bool
 	overflow      bool = true

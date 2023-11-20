@@ -51,7 +51,7 @@ pub fn numeric_field(val int) &TextField {
 	}
 }
 
-[params]
+@[params]
 pub struct FieldCfg {
 	text   string
 	center bool = true

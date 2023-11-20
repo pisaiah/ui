@@ -11,7 +11,7 @@ pub mut:
 	bind_val &f32
 }
 
-[params]
+@[params]
 pub struct ProgressbarConfig {
 	val  f32
 	bind ?&f32

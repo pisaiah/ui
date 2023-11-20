@@ -21,7 +21,7 @@ pub mut:
 	padding     int = 20
 }
 
-[params]
+@[params]
 pub struct ScrollViewConfig {
 pub mut:
 	bounds      Bounds

@@ -28,7 +28,7 @@ pub fn (mut s Switch) update_bind() {
 	}
 }
 
-[params]
+@[params]
 pub struct SwitchConfig {
 	bounds   Bounds
 	selected bool

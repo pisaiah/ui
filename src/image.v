@@ -15,7 +15,7 @@ pub mut:
 	img_id    int
 }
 
-[params]
+@[params]
 pub struct ImgConfig {
 	file   string
 	img    &gg.Image = unsafe { nil }

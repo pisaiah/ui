@@ -19,7 +19,7 @@ pub mut:
 	xs        int
 }
 
-[params]
+@[params]
 pub struct ModalConfig {
 	title string
 }
@@ -98,7 +98,7 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 	}
 }
 
-[deprecated]
+@[deprecated]
 pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 	return this.make_close_btn(ce)
 }

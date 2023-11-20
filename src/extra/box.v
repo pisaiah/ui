@@ -6,7 +6,7 @@ pub mut:
 	vbox &VBox
 }
 
-[deprecated]
+@[deprecated]
 pub fn box(win &Window) &Box {
 	return &Box{
 		vbox: VBox.new()

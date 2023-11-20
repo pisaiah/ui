@@ -14,7 +14,7 @@ pub mut:
 	bar_size    int = 14
 }
 
-[params]
+@[params]
 pub struct SplitViewConfig {
 pub mut:
 	bounds      Bounds
@@ -38,7 +38,7 @@ pub fn SplitView.new(c SplitViewConfig) &SplitView {
 	}
 }
 
-[deprecated: 'Use SplitView.new']
+@[deprecated: 'Use SplitView.new']
 pub fn split_view(cfg SplitViewConfig) &SplitView {
 	return SplitView.new(cfg)
 }

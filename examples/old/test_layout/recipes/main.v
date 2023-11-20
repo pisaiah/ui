@@ -2,13 +2,13 @@ import gg
 import iui as ui
 import gx
 
-[heap]
+@[heap]
 struct App {
 mut:
 	win &ui.Window
 }
 
-[console]
+@[console]
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(

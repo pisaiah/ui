@@ -3,7 +3,7 @@
 import gg
 import iui as ui
 
-[heap]
+@[heap]
 struct App {
 mut:
 	lbl &ui.Label

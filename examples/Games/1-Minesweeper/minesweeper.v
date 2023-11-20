@@ -5,7 +5,7 @@ import gx
 import rand
 import gg
 
-[heap]
+@[heap]
 struct App {
 mut:
 	win      &ui.Window

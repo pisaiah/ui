@@ -110,7 +110,7 @@ fn (mut p Player) slid_down(mut e ui.MouseEvent) {
 	}
 }
 
-[heap]
+@[heap]
 pub struct Player {
 	ui.Component_A
 mut:

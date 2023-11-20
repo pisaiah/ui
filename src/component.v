@@ -4,28 +4,28 @@ import gx
 
 // Component Interface
 
-[heap; minify]
+@[heap; minify]
 pub interface Component {
 mut:
-	text string
-	x int
-	y int
-	rx int
-	ry int
-	width int
-	height int
-	is_selected bool
-	z_index int
-	scroll_i int
-	is_mouse_down bool
-	is_mouse_rele bool
-	parent &Component_A
-	draw_event_fn fn (mut Window, &Component)
+	text                string
+	x                   int
+	y                   int
+	rx                  int
+	ry                  int
+	width               int
+	height              int
+	is_selected         bool
+	z_index             int
+	scroll_i            int
+	is_mouse_down       bool
+	is_mouse_rele       bool
+	parent              &Component_A
+	draw_event_fn       fn (mut Window, &Component)
 	after_draw_event_fn fn (mut Window, &Component)
-	children []Component
-	id string
-	font int
-	events &EventManager
+	children            []Component
+	id                  string
+	font                int
+	events              &EventManager
 	draw(&GraphicsContext)
 	invoke_draw_event(&GraphicsContext)
 }
@@ -34,7 +34,7 @@ fn (com &Component) str() string {
 	return com.type_name() // typeof(com)
 }
 
-[heap]
+@[heap]
 pub struct Component_A {
 pub mut:
 	text                string

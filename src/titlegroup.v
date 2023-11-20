@@ -11,7 +11,7 @@ pub mut:
 	padding int = 10
 }
 
-[params]
+@[params]
 pub struct TitleboxConfig {
 	text     string
 	children []Component
@@ -26,7 +26,7 @@ pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 	}
 }
 
-[deprecated: 'Use Titlebox.new']
+@[deprecated: 'Use Titlebox.new']
 pub fn title_box(text string, children []Component) &Titlebox {
 	return &Titlebox{
 		text: text

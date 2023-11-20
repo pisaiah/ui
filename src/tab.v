@@ -19,7 +19,7 @@ pub mut:
 	rows                int
 }
 
-[params]
+@[params]
 pub struct TabboxConfig {
 	compact bool
 }

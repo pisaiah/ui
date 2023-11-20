@@ -2,13 +2,13 @@ module main
 
 import iui as ui
 
-[heap]
+@[heap]
 struct App {
 mut:
 	res_label &ui.Label
 }
 
-[console]
+@[console]
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(

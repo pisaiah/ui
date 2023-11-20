@@ -43,7 +43,7 @@ mut:
 	samp gfx.Sampler
 }
 
-[typedef]
+@[typedef]
 pub struct C.COLORREF {
 }
 

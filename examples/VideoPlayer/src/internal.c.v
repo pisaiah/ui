@@ -16,7 +16,7 @@ $if !windows {
 pub type MPVHandle = voidptr
 pub type MPVRenderContext = voidptr
 
-[typedef]
+@[typedef]
 struct C.mpv_event_property {
 pub:
 	name   &u8
@@ -26,7 +26,7 @@ pub:
 
 pub type MPVEventProperty = C.mpv_event_property
 
-[typedef]
+@[typedef]
 struct C.mpv_event {
 pub:
 	event_id int
@@ -35,7 +35,7 @@ pub:
 
 pub type MPVEvent = C.mpv_event
 
-[typedef]
+@[typedef]
 struct C.mpv_render_param {
 pub:
 	@type int

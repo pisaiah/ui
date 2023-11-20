@@ -206,7 +206,7 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 	return res
 }
 
-[params]
+@[params]
 pub struct MenubarConfig {
 	theme &Theme = unsafe { nil }
 }
@@ -229,7 +229,7 @@ fn (mut app Window) set_bar_tick(val int) {
 	}
 }
 
-[parms]
+@[parms]
 pub struct MenuItemConfig {
 	text           string
 	icon           &Image = unsafe { nil }

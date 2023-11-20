@@ -10,7 +10,7 @@ pub mut:
 	text string
 }
 
-[params]
+@[params]
 pub struct CheckboxConfig {
 	bounds   Bounds
 	selected bool

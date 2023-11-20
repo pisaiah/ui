@@ -6,7 +6,7 @@ import iui as ui
 import os
 import os.font
 
-[console]
+@[console]
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(

@@ -17,7 +17,7 @@ pub mut:
 	color         gx.Color
 }
 
-[params]
+@[params]
 pub struct LabelConfig {
 	should_pack bool
 	x           int

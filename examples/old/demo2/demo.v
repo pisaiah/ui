@@ -9,7 +9,7 @@ mut:
 	pane &ui.Panel
 }
 
-[console]
+@[console]
 fn main() {
 	// Create Window
 	mut window := ui.make_window(

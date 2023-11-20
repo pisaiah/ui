@@ -2,7 +2,7 @@ import gg
 import iui as ui { debug }
 import gx
 
-[heap]
+@[heap]
 struct App {
 mut:
 	win   &ui.Window

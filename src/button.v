@@ -22,7 +22,7 @@ pub mut:
 	area_filled       bool = true
 }
 
-[params]
+@[params]
 pub struct ButtonConfig {
 	text        string
 	bounds      Bounds
@@ -177,7 +177,7 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 }
 
 // Deprecated functions:
-[deprecated: 'use subscribe_event']
+@[deprecated: 'use subscribe_event']
 pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
 	com.old_click_fn = b
 	com.user_data = extra_data

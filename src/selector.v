@@ -16,7 +16,7 @@ pub mut:
 	popup      &Popup
 }
 
-[params]
+@[params]
 pub struct SelectboxConfig {
 	bounds Bounds
 	items  []string

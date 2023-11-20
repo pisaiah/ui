@@ -2,7 +2,7 @@ module main
 
 import iui as ui
 
-[heap]
+@[heap]
 struct App {
 mut:
 	win   &ui.Window

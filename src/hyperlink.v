@@ -16,7 +16,7 @@ pub mut:
 	url            string
 }
 
-[params]
+@[params]
 pub struct HyperlinkConfig {
 	text   string
 	url    string
@@ -154,7 +154,7 @@ fn (this &Hyperlink) debug_draw(ctx &GraphicsContext) {
 	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
 }
 
-[deprecated]
+@[deprecated]
 pub fn (mut this Hyperlink) set_config(fs int, abs bool, bold bool) {
 	this.size = fs
 	if abs {

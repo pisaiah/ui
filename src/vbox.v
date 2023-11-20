@@ -12,7 +12,7 @@ pub mut:
 	update_width bool = true
 }
 
-[params]
+@[params]
 pub struct VBoxConfig {
 	pack     bool
 	overflow bool = true

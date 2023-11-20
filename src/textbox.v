@@ -33,7 +33,7 @@ pub mut:
 	y1 int = -1
 }
 
-[params]
+@[params]
 pub struct TextboxConfig {
 	lines []string
 }

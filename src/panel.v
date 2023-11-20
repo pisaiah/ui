@@ -26,7 +26,7 @@ mut:
 	vgap   int = 2
 }
 
-[params]
+@[params]
 pub struct BorderLayoutConfig {
 	hgap int = 5
 	vgap int = 5
@@ -125,7 +125,7 @@ mut:
 	vgap int = 5
 }
 
-[params]
+@[params]
 pub struct BoxLayoutConfig {
 	ori  int
 	hgap int = 5
@@ -172,7 +172,7 @@ mut:
 	vgap int = 5
 }
 
-[params]
+@[params]
 pub struct FlowLayoutConfig {
 	hgap int = 5
 	vgap int = 5
@@ -241,7 +241,7 @@ mut:
 	zv   int
 }
 
-[params]
+@[params]
 pub struct GridLayoutConfig {
 	rows int
 	cols int
@@ -298,7 +298,7 @@ mut:
 	rh     int
 }
 
-[params]
+@[params]
 pub struct PanelConfig {
 	layout Layout = FlowLayout{}
 }

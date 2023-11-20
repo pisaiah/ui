@@ -2,7 +2,7 @@ module iui
 
 import gg
 import gx
-import math
+// import math
 import os
 
 // Tree (https://codejava.net/java-se/swing/jtree-basic-tutorial-and-examples
@@ -33,6 +33,7 @@ pub fn Tree.new() &Tree2 {
 	return tree('')
 }
 
+// @[deprecated: 'Use Tree.new()']
 pub fn tree(text string) &Tree2 {
 	return &Tree2{
 		text: text
@@ -41,70 +42,6 @@ pub fn tree(text string) &Tree2 {
 
 pub fn (mut this Tree2) add_child(node &TreeNode) {
 	this.children << node
-}
-
-fn (mut this Tree2) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
-	if !isnil(this.parent) {
-		return
-	}
-
-	x := this.x + this.width - 15
-
-	// Scroll Bar
-	scroll := (this.scroll_i / 4)
-	bar_height := this.height - 35
-
-	sth := (scroll * bar_height) / spl_len
-	enh := (cl * bar_height) / spl_len
-	requires_scrollbar := (bar_height - enh) > 0
-
-	// Draw Scroll
-	if requires_scrollbar {
-		wid := 15
-
-		ctx.win.draw_bordered_rect(x, this.y, wid, this.height, 2, ctx.theme.scroll_track_color,
-			ctx.win.theme.button_bg_hover)
-
-		ctx.win.gg.draw_rounded_rect_filled(x + 2, this.y + 15 + sth, 10, enh - 6, 4,
-			ctx.win.theme.scroll_bar_color)
-	} else {
-		return
-	}
-
-	ctx.gg.draw_rect_empty(x, this.y, 15, this.height, ctx.theme.textbox_border)
-	ctx.gg.draw_rect_empty(x, this.y + 15, 15, this.height - 30, ctx.theme.textbox_border)
-
-	// Scroll Buttons
-	if this.is_mouse_rele {
-		bounds := Bounds{x, this.y + this.height - 15, 15, 15}
-		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds) {
-			this.scroll_i += 4
-			this.is_mouse_rele = false
-		}
-
-		bounds1 := Bounds{x, this.y, 15, 15}
-		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) {
-			this.scroll_i -= 4
-			if this.scroll_i < 0 {
-				this.scroll_i = 0
-			}
-			this.is_mouse_rele = false
-		}
-	}
-
-	if this.is_mouse_down {
-		sub := enh / 2
-		bounds1 := Bounds{x, this.y + 15, 15, this.height - 30 - sub}
-
-		if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds1) || this.in_scroll {
-			this.in_scroll = true
-			cx := math.clamp(ctx.win.mouse_y - this.y - sub, 0, this.height)
-			perr := (cx / this.height) * spl_len
-			this.scroll_i = int(perr * 4)
-		}
-	} else {
-		this.in_scroll = false
-	}
 }
 
 fn (mut this TreeNode) draw(ctx &GraphicsContext) {
@@ -131,23 +68,14 @@ fn (mut this TreeNode) draw_icon(ctx &GraphicsContext, x int, y int) {
 	}
 }
 
-fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut tree Tree2) (bool, int, int) {
+fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut tree Tree2) bool {
 	cfg := gx.TextCfg{
 		color: ctx.theme.text_color
 		size: ctx.font_size
 	}
 
-	mut nodes := 1
-	mut hid := 0
-
-	if y < tree.y {
-		hid += 1
-		nodes -= 1
-	}
 	if y > tree.y + tree.height {
-		hid += 1
-		nodes -= 1
-		return false, nodes, hid
+		return false
 	}
 
 	if y >= tree.y {
@@ -171,24 +99,23 @@ fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut t
 				this.open = !this.open
 			}
 			tree.is_mouse_rele = false
-			return true, nodes, hid
+			return true
 		}
 	}
 
 	if !this.open {
-		return false, nodes, hid
+		return false
 	}
 
 	mut ny := y + this.height
 
 	for mut node in this.nodes {
 		node.height = this.height
-		_, nnodes, hidd := node.draw_content(ctx, xoff + this.height, ny, mut tree)
-		nodes += nnodes
-		hid += hidd
+		_ := node.draw_content(ctx, xoff + this.height, ny, mut tree)
+
 		ny += node.get_height()
 	}
-	return false, nodes, hid
+	return false
 }
 
 fn (this &TreeNode) get_height() int {
@@ -217,18 +144,14 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 	}
 
 	node_height := this.get_node_height(ctx)
-	scroll := ((this.scroll_i / 4) * node_height)
 
-	if scroll == 0 {
-		h := this.y + (node_height / 2) - (13 / 2)
-		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: ctx.get_icon_sheet_id()
-			img_rect: gg.Rect{this.x + 4, h - scroll + 4, 16, 13}
-			part_rect: gg.Rect{13, 3, 16, 13}
-		})
-		ctx.draw_text(this.x + 24, this.y - scroll + 4, os.base(this.text), ctx.font,
-			cfg)
-	}
+	h := this.y + (node_height / 2) - (13 / 2)
+	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
+		img_id: ctx.get_icon_sheet_id()
+		img_rect: gg.Rect{this.x + 4, h, 16, 13}
+		part_rect: gg.Rect{13, 3, 16, 13}
+	})
+	ctx.draw_text(this.x + 24, this.y + 4, os.base(this.text), ctx.font, cfg)
 
 	if this.parent == unsafe { nil } {
 		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
@@ -236,21 +159,14 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 
 	mut y := this.y + 5
 
-	mut drawn := 0
-	mut not_drawn := 0
-
 	mut hei := node_height + 5
 	for mut node in this.children {
 		if mut node is TreeNode {
 			wid := this.width - (this.x + node_height) - 15
-			node.set_bounds(this.x + node_height, y + node_height - scroll, wid, node_height)
+			node.set_bounds(this.x + node_height, y + node_height, wid, node_height)
 
 			node.draw(ctx)
-			change, draw, hide := node.draw_content(ctx, this.x + node_height, node.y, mut
-				this)
-
-			drawn += draw
-			not_drawn += hide
+			change := node.draw_content(ctx, this.x + node_height, node.y, mut this)
 
 			if change {
 				this.is_mouse_rele = false
@@ -260,15 +176,8 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 			hei += node.get_height()
 		}
 	}
-	this.draw_scrollbar(ctx, drawn, drawn + not_drawn)
 
 	if this.needs_pack {
 		this.height = hei
-	}
-
-	max := (drawn + not_drawn) - (this.height / node_height) + 2
-
-	if (this.scroll_i / 4) > max && max > 0 {
-		this.scroll_i = max * 4
 	}
 }

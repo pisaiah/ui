@@ -1,12 +1,12 @@
 module iui
 
 // deprecated stuff for removal
-[deprecated: 'Use Tabbox.new']
+@[deprecated: 'Use Tabbox.new']
 pub fn tabbox(win &Window) &Tabbox {
 	return Tabbox.new()
 }
 
-[deprecated: 'Use Button.new(ButtonConfig)']
+@[deprecated: 'Use Button.new(ButtonConfig)']
 pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 	cfg := ButtonConfig{
 		...conf
@@ -15,7 +15,7 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 	return button(cfg)
 }
 
-[deprecated: 'Replaced with menu_item(MenuItemConfig)']
+@[deprecated: 'Replaced with menu_item(MenuItemConfig)']
 pub fn menuitem(text string) &MenuItem {
 	return &MenuItem{
 		text: text
@@ -24,17 +24,17 @@ pub fn menuitem(text string) &MenuItem {
 	}
 }
 
-[deprecated]
+@[deprecated]
 pub fn menubar(app &Window, theme Theme) &Menubar {
 	return &Menubar{}
 }
 
-[deprecated: 'Use Page.new']
+@[deprecated: 'Use Page.new']
 pub fn page(app &Window, title string) &Page {
 	return Page.new(title: title)
 }
 
-[deprecated: 'Use Progressbar.new']
+@[deprecated: 'Use Progressbar.new']
 pub fn progressbar(val f32) &Progressbar {
 	return &Progressbar{
 		text: val.str()
@@ -42,24 +42,28 @@ pub fn progressbar(val f32) &Progressbar {
 	}
 }
 
-[deprecated: 'Use Slider.new']
+@[deprecated: 'Use Slider.new']
 pub fn new_slider(cfg SliderConfig) &Slider {
 	return Slider.new(cfg)
 }
 
-[deprecated: 'Use Window.new']
+@[deprecated: 'Use Window.new']
 pub fn make_window(c &WindowConfig) &Window {
 	return Window.new(c)
 }
 
-[deprecated: 'use ctx.text_width']
+@[deprecated: 'use ctx.text_width']
 pub fn text_width(win Window, text string) int {
 	return win.graphics_context.text_width(text)
 }
 
-[deprecated]
+@[deprecated]
 pub fn image_from_file(path string) &Image {
 	return Image.new(file: path)
+}
+
+@[deprecated: 'Use ScrollView instead']
+fn (mut this Tree2) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
 }
 
 // [deprecated]
