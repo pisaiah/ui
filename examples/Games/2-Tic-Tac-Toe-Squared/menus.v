@@ -5,6 +5,17 @@ import iui as ui
 fn (mut app App) setup_menus() &ui.Menubar {
 	mut bar := ui.Menubar.new()
 
+	mut theme_menu := ui.MenuItem.new(text: 'Theme')
+
+	themes := ui.get_all_themes()
+	for theme2 in themes {
+		item := ui.MenuItem.new(
+			text: theme2.name
+			click_event_fn: theme_click
+		)
+		theme_menu.add_child(item)
+	}
+
 	mut help := ui.MenuItem.new(
 		text: 'Help'
 		children: [
@@ -21,9 +32,15 @@ fn (mut app App) setup_menus() &ui.Menubar {
 			),
 		]
 	)
+	bar.add_child(theme_menu)
 	bar.add_child(help)
 
 	return bar
+}
+
+fn theme_click(mut win ui.Window, com ui.MenuItem) {
+	mut theme := ui.theme_by_name(com.text)
+	win.set_theme(theme)
 }
 
 // About modal

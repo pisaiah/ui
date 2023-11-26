@@ -98,6 +98,10 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 				}
 			}
 			mut wl := unsafe { &WLabel(this.win_nat) }
+			if wl.text != this.text {
+				wl.text = this.text
+				wl.dirt = true
+			}
 			wl.x = this.x + 7
 			wl.y = y - 2
 			this.width = wl.width + 14
