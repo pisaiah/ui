@@ -47,7 +47,11 @@ pub fn (mut this ButtonGroup[T]) setup() {
 			if mut tar is Button {
 				tar.is_selected = true
 			}
-			this.selected = e.target
+
+			if mut tar is T {
+				this.selected = tar
+			}
+
 			this.invoke_mouse_up(e.target, e.ctx)
 		})
 	}

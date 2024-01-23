@@ -18,7 +18,9 @@ fn main() {
 		theme: ui.theme_default()
 	)
 
-	mut app := &App{}
+	mut app := &App{
+		res_label: unsafe { nil }
+	}
 
 	mut panel := ui.Panel.new()
 

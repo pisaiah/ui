@@ -6,8 +6,6 @@ import gx
 // Checkbox - implements Component interface
 pub struct Checkbox {
 	Component_A
-pub mut:
-	text string
 }
 
 @[params]
