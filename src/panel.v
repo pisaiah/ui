@@ -3,9 +3,7 @@ module iui
 import gx
 import math
 
-const (
-	nill = unsafe { nil }
-)
+const nill = unsafe { nil }
 
 // Layout
 // TODO: Add BorderLayout, Box Layout, Flow Layout, Grid Layout,
@@ -44,13 +42,11 @@ pub fn BorderLayout.new(c BorderLayoutConfig) BorderLayout {
 	}
 }
 
-pub const (
-	borderlayout_north  = 0
-	borderlayout_west   = 1
-	borderlayout_east   = 2
-	borderlayout_south  = 3
-	borderlayout_center = 4
-)
+pub const borderlayout_north = 0
+pub const borderlayout_west = 1
+pub const borderlayout_east = 2
+pub const borderlayout_south = 3
+pub const borderlayout_center = 4
 
 fn is_nil(a voidptr) bool {
 	return isnil(a)

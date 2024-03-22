@@ -7,9 +7,7 @@ import time
 import os
 import os.font
 
-pub const (
-	version = '0.0.20'
-)
+pub const version = '0.0.20'
 
 pub fn default_font() string {
 	$if emscripten ? {

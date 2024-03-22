@@ -5,12 +5,12 @@ import gg
 import sync
 
 // import sokol.gfx
-const (
-	c_win_width     = 640 // 1280
-	c_win_height    = 360 // 720
-	c_win_font_size = 30
-	resolution      = [c_win_width, c_win_height]
-)
+const c_win_width = 640 // 1280
+
+const c_win_height = 360 // 720
+
+const c_win_font_size = 30
+const resolution = [c_win_width, c_win_height]
 
 //
 @[heap]

@@ -3,9 +3,7 @@ module iui
 import gx
 import gg
 
-const (
-	numbers_val = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
-)
+const numbers_val = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
 
 // TextField Component - Single line text input
 pub struct TextField {
