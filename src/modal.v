@@ -36,7 +36,7 @@ pub fn Modal.new(c ModalConfig) &Modal {
 		needs_init: true
 		in_width: 500
 		in_height: 300
-		close: 0
+		close: unsafe { nil }
 	}
 }
 
