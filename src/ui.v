@@ -7,9 +7,7 @@ import time
 import os
 import os.font
 
-pub const (
-	version = '0.0.20'
-)
+pub const version = '0.0.20'
 
 pub fn default_font() string {
 	$if emscripten ? {
@@ -311,12 +309,12 @@ pub fn (mut win Window) run() {
 
 pub fn Window.new(cfg &WindowConfig) &Window {
 	mut win := &Window{
-		gg: 0
+		gg: unsafe { nil }
 		theme: cfg.theme
-		bar: 0
+		bar: unsafe { nil }
 		config: cfg
 		font_size: cfg.font_size
-		graphics_context: 0
+		graphics_context: unsafe { nil }
 	}
 
 	blank_draw_event_fn(mut win, &Component_A{})

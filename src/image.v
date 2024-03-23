@@ -40,7 +40,7 @@ pub fn Image.new(c ImgConfig) &Image {
 pub fn image_from_byte_array_with_size(mut w Window, b []u8, width int, h int) &Image {
 	mut img := &Image{
 		text: ''
-		img: 0
+		img: unsafe { nil }
 		width: width
 		height: h
 	}

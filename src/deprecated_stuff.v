@@ -19,7 +19,7 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 pub fn menuitem(text string) &MenuItem {
 	return &MenuItem{
 		text: text
-		icon: 0
+		icon: unsafe { nil }
 		click_event_fn: fn (mut win Window, item MenuItem) {}
 	}
 }

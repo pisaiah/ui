@@ -37,7 +37,7 @@ pub fn Page.new(c PageCfg) &Page {
 		needs_init: true
 		text_cfg: draw_cfg()
 		in_height: 300
-		close: 0
+		close: unsafe { nil }
 	}
 }
 

@@ -18,12 +18,12 @@ fn (app &App) side_panel() &ui.Panel {
 	p.subscribe_event('draw', fn (mut e ui.DrawEvent) {
 		p := e.target
 		e.ctx.gg.draw_rect_filled(p.x, p.y, p.width, p.height, gx.rgb(192, 192, 192))
-		
+
 		ph := e.target.parent.height
 		pw := e.target.parent.width
 
 		dif := (pw - ph) / 2
-		
+
 		if dif > 0 {
 			e.target.width = dif
 		} else {
