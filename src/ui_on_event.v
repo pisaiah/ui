@@ -68,7 +68,8 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			app.check_box(key, e, mut comm)
 		}
 	}
-	if mut a is VBox || mut a is HBox || mut a is Titlebox || mut a is SplitView || mut a is InternalFrame {
+	if mut a is VBox || mut a is HBox || mut a is Titlebox || mut a is SplitView
+		|| mut a is InternalFrame {
 		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
 				return true

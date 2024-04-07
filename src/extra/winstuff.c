@@ -1,11 +1,23 @@
 #include <windows.h>
 #include <stdio.h>
 #include <wingdi.h>
+//#include <timeapi.h> 
+
+// Declare the function pointer for NtSetTimerResolution
+//typedef NTSTATUS (NTAPI *NtSetTimerResolutionFunc)(ULONG DesiredResolution, BOOLEAN SetResolution, PULONG CurrentResolution);
+
+int i_sleepy(int val) {
+    timeBeginPeriod(val);
+	Sleep(val);
+	timeEndPeriod(val);
+}
 
 // set the background mode to transparent
 void fix_text_bg(HDC hdc) {
 	SetBkMode(hdc, TRANSPARENT);
 }
+
+
 
 // set the text color
 void iui_text_color(HDC hdc, COLORREF color) {

@@ -1,7 +1,7 @@
 module main
 
 import iui as ui
-import examples.browser.webview
+import browser.webview
 import os
 
 @[console]

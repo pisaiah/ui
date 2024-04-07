@@ -8,6 +8,8 @@ import sokol.gfx
 #flag -I @VMODROOT/src/extra/
 #include "@VMODROOT/src/extra/winstuff.c"
 #include "@VMODROOT/src/extra/sokol_patch.c"
+#flag -lntdll
+#flag -lwinmm
 
 pub fn (ctx &GraphicsContext) draw_win32_text(x int, y int, txt string, cfg gx.TextCfg) {
 	mut win := ctx.win

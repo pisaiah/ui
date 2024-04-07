@@ -136,8 +136,9 @@ fn font_click(mut win ui.Window, com ui.MenuItem) {
 		path = 'C:/windows/fonts/' + com.text.split('System ')[1].to_lower()
 	}
 
-	new_font := win.add_font(txt, path)
-	win.graphics_context.font = new_font
+	//new_font := win.add_font(txt, path)
+	// win.graphics_context.font = new_font
+	win.set_font(path)
 }
 
 fn on_size_click(mut win ui.Window, com ui.MenuItem) {

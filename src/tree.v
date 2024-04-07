@@ -12,11 +12,11 @@ pub mut:
 	click_event_fn fn (voidptr, voidptr, voidptr) = unsafe { nil }
 	open           int
 	min_y          int
-	in_scroll      bool
 	is_hover       bool
 	padding_top    int
 	parent_height  int
 	needs_pack     bool
+	no_icon        bool
 }
 
 // Children
@@ -145,28 +145,33 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 
 	node_height := this.get_node_height(ctx)
 
-	h := this.y + (node_height / 2) - (13 / 2)
-	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-		img_id: ctx.get_icon_sheet_id()
-		img_rect: gg.Rect{this.x + 4, h, 16, 13}
-		part_rect: gg.Rect{13, 3, 16, 13}
-	})
-	ctx.draw_text(this.x + 24, this.y + 4, os.base(this.text), ctx.font, cfg)
+	if !this.no_icon {
+		h := this.y + (node_height / 2) - (13 / 2)
+		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
+			img_id: ctx.get_icon_sheet_id()
+			img_rect: gg.Rect{this.x + 4, h, 16, 13}
+			part_rect: gg.Rect{13, 3, 16, 13}
+		})
+	}
+
+	x := if this.no_icon { this.x + 4 } else { this.x + node_height }
+
+	ctx.draw_text(x, this.y + 4, os.base(this.text), ctx.font, cfg)
 
 	if this.parent == unsafe { nil } {
 		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
 	}
 
-	mut y := this.y + 5
+	mut y := this.y + 2
 
 	mut hei := node_height + 5
 	for mut node in this.children {
 		if mut node is TreeNode {
-			wid := this.width - (this.x + node_height) - 15
-			node.set_bounds(this.x + node_height, y + node_height, wid, node_height)
+			wid := this.width - x - 15
+			node.set_bounds(x, y + node_height, wid, node_height)
 
 			node.draw(ctx)
-			change := node.draw_content(ctx, this.x + node_height, node.y, mut this)
+			change := node.draw_content(ctx, x, node.y, mut this)
 
 			if change {
 				this.is_mouse_rele = false

@@ -136,9 +136,13 @@ fn (mut this InternalFrame) init_controls() {
 	mut max := Button.new(text: '□')
 	mut xxx := Button.new(text: 'x')
 
-	min.set_bounds(0, 0, 27, 25)
-	max.set_bounds(2, 0, 27, 25)
-	xxx.set_bounds(9, 0, 27, 25)
+	min.set_area_filled(false)
+	max.set_area_filled(false)
+	xxx.set_area_filled(false)
+
+	min.set_bounds(0, 0, 27, 24)
+	max.set_bounds(2, 0, 27, 24)
+	xxx.set_bounds(8, 0, 27, 24)
 
 	max.subscribe_event('mouse_up', btn_max_click)
 

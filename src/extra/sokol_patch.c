@@ -3,6 +3,9 @@
 
 bool need = true;
 
+static float SECC = 1000;
+static int FPS = (int)(((float)1000) / 120);
+
 float get_refresh_rate() {
     DEVMODE lpDevMode;
     memset(&lpDevMode, 0, sizeof(DEVMODE));
@@ -14,6 +17,38 @@ float get_refresh_rate() {
     } else {
         return lpDevMode.dmDisplayFrequency;
     }
+}
+
+static LARGE_INTEGER frequency, t1, t2; 
+static int frequency_set = 0;
+
+/*void QueryRDTSC(__int64* tick) {
+ __asm {
+  xor eax, eax
+  cpuid
+  rdtsc
+  mov edi, dword ptr tick
+  mov dword ptr [edi], eax
+  mov dword ptr [edi+4], edx
+ }
+}*/
+
+// Sleep
+void i_sleep(int u) {
+	if (0 == frequency_set) {
+		QueryPerformanceFrequency(&frequency);
+		QueryPerformanceCounter(&t1);
+		frequency_set = 1;
+	}
+
+	do {
+		QueryPerformanceCounter(&t2);
+		i_sleepy(1);
+	} while ( (( t2.QuadPart - t1.QuadPart ) * 1000.0 / frequency.QuadPart) < u);
+	
+	t1 = t2;
+	
+	//i_sleepy();
 }
 
 // We override the frame loop with our own FPS limit,
@@ -43,6 +78,7 @@ void _sapp_win32_run_2(const sapp_desc* desc) {
 	_sapp.valid = true;
 
 	int rr = (int)(1000 / get_refresh_rate());
+	printf("%i RR\n", rr);
 	bool done = false;
 	while (!(done || _sapp.quit_ordered)) {
 		_sapp_win32_timing_measure();
@@ -57,6 +93,8 @@ void _sapp_win32_run_2(const sapp_desc* desc) {
 				DispatchMessageW(&msg);
 			}
 		}
+		
+
 
 		_sapp_frame();
 		#if defined(SOKOL_D3D11)
@@ -68,13 +106,20 @@ void _sapp_win32_run_2(const sapp_desc* desc) {
 		}
 
 		#if defined(SOKOL_GLCORE33)
-			int time_taken = (int)(sapp_frame_duration() * 1000);
-			if (time_taken <= rr) { 
-				Sleep(rr / 2);
-			} else {
-				Sleep(1);
-			}
+		   i_sleep(FPS);
 		   _sapp_wgl_swap_buffers();
+		   //Sleep(30);
+		   
+		 //  int time_taken = (int)(sapp_frame_duration() * 1000);
+		  // printf("%i tt \n", time_taken);
+		   
+		   //int oh_no = 0;//time_taken - FPS;
+		   
+		    //printf("%i tt \n", oh_no);
+		   
+		   if (_sapp.swap_interval == 0) {
+			//i_sleep(FPS);
+		   }
 		#endif
 
 		if (_sapp_win32_update_dimensions()) {
