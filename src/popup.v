@@ -1,7 +1,5 @@
 module iui
 
-import gg
-
 pub struct Popup {
 	Component_A
 pub mut:

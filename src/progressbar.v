@@ -1,6 +1,5 @@
 module iui
 
-import gg
 import gx
 
 // Progress bar - implements Component interface

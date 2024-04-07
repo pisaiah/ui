@@ -147,7 +147,7 @@ pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
 	ctx.gg.draw_line(x2, com.y, com.x, y2, gx.green)
 
 	ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gx.rgba(250, 0, 0, 150))
-	ctx.draw_text(tx, ty, txt, 0)
+	ctx.draw_text(tx, ty, txt, ctx.font)
 }
 
 pub fn (mut com Component) set_x(x int) {

@@ -126,7 +126,6 @@ pub mut:
 	id_map           map[string]voidptr
 	debug_draw       bool
 	graphics_context &GraphicsContext
-	fonts            FontSet
 	frame_evnt_count int
 	sleep_if_no_evnt bool = true
 	second_pass      u8
@@ -158,15 +157,8 @@ fn (win &Window) draw_tooltip(ctx &GraphicsContext) {
 	}
 }
 
-// fonts
-pub struct FontSet {
-mut:
-	hash map[string]int
-	fonts []string
-}
-
-pub fn (mut win Window) set_font(font_path string) { 
-	win.graphics_context.family = font_path
+pub fn (mut win Window) set_font(font_path string) {
+	win.graphics_context.font = font_path
 }
 
 @[deprecated]
@@ -179,10 +171,10 @@ pub fn (mut win Window) add_font(font_name string, font_path string) int {
 @[heap]
 pub struct GraphicsContext {
 pub mut:
-	gg          &gg.Context
-	theme       &Theme
-	font        int
-	family      string
+	gg    &gg.Context
+	theme &Theme
+	// font        int
+	font        string
 	font_size   int = 16
 	line_height int
 	win         &Window
@@ -214,28 +206,25 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
-	//cfg.family = ''
-	
+	// cfg.family = ''
 	mut cfgg := gx.TextCfg{
 		...cfg
-		family: ctx.family
+		family: ctx.font
 	}
-	
+
 	ctx.gg.set_text_cfg(cfgg)
 	$if windows {
 		if ctx.gg.native_rendering {
 			return
 		}
 	}
-	//ctx.gg.ft.fons.set_font(ctx.font)
-	
+
+	// ctx.gg.ft.fons.set_font(ctx.font)
+
 	// ctx.gg.ft.fons.set_font(ctx.gg.ft.fonts_map[ ctx.win.fonts.names[ctx.font] ])
-	
 }
 
-
-
-pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id int, cfg gx.TextCfg) {
+pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id string, cfg gx.TextCfg) {
 	$if windows {
 		if ctx.gg.native_rendering {
 			ctx.gg.draw_text(x, y, text_, cfg)
@@ -250,14 +239,15 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id int,
 		}
 	}
 	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
-	
+
 	mut cfgg := gx.TextCfg{
 		...cfg
-		family: ctx.family
+		family: font_id // ctx.family
 	}
-	
+
 	ctx.gg.set_text_cfg(cfgg)
-	//ctx.gg.ft.fons.set_font(font_id)
+
+	// ctx.gg.ft.fons.set_font(font_id)
 	ctx.gg.ft.fons.draw_text(x * scale, y * scale, text_)
 
 	/*$if windows {

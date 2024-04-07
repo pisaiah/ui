@@ -1,6 +1,5 @@
 module iui
 
-import gg
 import gx
 
 // Select - implements Component interface

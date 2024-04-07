@@ -1,6 +1,5 @@
 module iui
 
-import gg
 import gx
 import sokol.sgl
 import sokol.gfx

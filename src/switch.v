@@ -1,6 +1,5 @@
 module iui
 
-import gg
 import gx
 
 // Checkbox - implements Component interface

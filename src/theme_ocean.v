@@ -1,7 +1,6 @@
 module iui
 
 import gx
-import gg
 
 //	Ocean - A Cross Platform Theme
 pub fn theme_ocean() &Theme {
