@@ -144,12 +144,12 @@ fn (this &BoxLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		if this.ori == 0 {
 			x += child.width + this.hgap
 			if panel.height < child.height {
-				panel.height = child.height + this.vgap
+				panel.height = child.height + (this.vgap * 2)
 			}
 		} else {
 			y += child.height + this.vgap
 			if panel.width < child.width {
-				panel.width = child.width
+				panel.width = child.width + (this.hgap * 2)
 			}
 		}
 	}

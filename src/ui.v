@@ -171,9 +171,8 @@ pub fn (mut win Window) add_font(font_name string, font_path string) int {
 @[heap]
 pub struct GraphicsContext {
 pub mut:
-	gg    &gg.Context
-	theme &Theme
-	// font        int
+	gg          &gg.Context
+	theme       &Theme
 	font        string
 	font_size   int = 16
 	line_height int

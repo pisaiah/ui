@@ -1,7 +1,11 @@
 #include <windows.h>
 #include <stdio.h>
 #include <wingdi.h>
-//#include <timeapi.h> 
+
+// Note: TCC does not have timeapi.h
+#ifdef __V_GCC__
+#include <timeapi.h> 
+#endif
 
 // Declare the function pointer for NtSetTimerResolution
 //typedef NTSTATUS (NTAPI *NtSetTimerResolutionFunc)(ULONG DesiredResolution, BOOLEAN SetResolution, PULONG CurrentResolution);
