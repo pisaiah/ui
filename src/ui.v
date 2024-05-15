@@ -19,6 +19,7 @@ pub fn default_font() string {
 }
 
 pub struct Bounds {
+pub:
 	x      int
 	y      int
 	width  int
@@ -291,6 +292,7 @@ pub fn window(c &WindowConfig) &Window {
 
 @[heap; params]
 pub struct WindowConfig {
+pub:
 	font_path string = default_font()
 	font_size int    = 16
 	ui_mode   bool

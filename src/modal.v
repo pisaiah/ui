@@ -21,6 +21,7 @@ pub mut:
 
 @[params]
 pub struct ModalConfig {
+pub:
 	title string
 }
 

@@ -51,6 +51,7 @@ pub fn numeric_field(val int) &TextField {
 
 @[params]
 pub struct FieldCfg {
+pub:
 	text   string
 	center bool = true
 	bounds Bounds

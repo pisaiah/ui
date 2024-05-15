@@ -17,6 +17,7 @@ pub mut:
 
 @[params]
 pub struct HyperlinkConfig {
+pub:
 	text   string
 	url    string
 	bounds Bounds

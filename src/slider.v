@@ -30,6 +30,7 @@ pub enum Direction {
 // Slider Config
 @[params]
 pub struct SliderConfig {
+pub:
 	min         int
 	max         int
 	dir         Direction

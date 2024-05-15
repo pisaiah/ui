@@ -17,6 +17,7 @@ pub mut:
 
 @[params]
 pub struct SelectboxConfig {
+pub:
 	bounds Bounds
 	items  []string
 	text   string

@@ -31,6 +31,7 @@ mut:
 
 @[params]
 pub struct FrameConfig {
+pub:
 	text   string
 	bounds Bounds
 }

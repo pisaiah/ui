@@ -14,6 +14,7 @@ pub mut:
 
 @[params]
 pub struct VBoxConfig {
+pub:
 	pack     bool
 	overflow bool = true
 	bounds   Bounds

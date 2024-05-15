@@ -15,6 +15,7 @@ pub fn (mut com ButtonGroup[T]) subscribe_event(val string, f fn (voidptr)) {
 
 @[params]
 pub struct ButtonGroupConfig {
+pub:
 	buttons []voidptr
 }
 

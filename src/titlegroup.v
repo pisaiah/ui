@@ -12,6 +12,7 @@ pub mut:
 
 @[params]
 pub struct TitleboxConfig {
+pub:
 	text     string
 	children []Component
 	padding  int = 10

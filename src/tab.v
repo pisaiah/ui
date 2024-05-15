@@ -20,6 +20,7 @@ pub mut:
 
 @[params]
 pub struct TabboxConfig {
+pub:
 	compact bool
 }
 

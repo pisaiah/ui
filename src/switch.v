@@ -29,6 +29,7 @@ pub fn (mut s Switch) update_bind() {
 
 @[params]
 pub struct SwitchConfig {
+pub:
 	bounds   Bounds
 	selected bool
 	text     string

@@ -18,6 +18,7 @@ pub mut:
 
 @[params]
 pub struct HBoxConfig {
+pub:
 	pack          bool
 	overflow      bool = true
 	bounds        Bounds

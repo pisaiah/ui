@@ -10,6 +10,7 @@ pub struct Checkbox {
 
 @[params]
 pub struct CheckboxConfig {
+pub:
 	bounds   Bounds
 	selected bool
 	text     string

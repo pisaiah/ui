@@ -35,6 +35,7 @@ pub mut:
 
 @[params]
 pub struct TextboxConfig {
+pub:
 	lines []string
 }
 

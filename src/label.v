@@ -18,6 +18,7 @@ pub mut:
 
 @[params]
 pub struct LabelConfig {
+pub:
 	should_pack bool
 	x           int
 	y           int

@@ -17,6 +17,7 @@ pub mut:
 
 @[params]
 pub struct ImgConfig {
+pub:
 	file   string
 	img    &gg.Image = unsafe { nil }
 	rotate int

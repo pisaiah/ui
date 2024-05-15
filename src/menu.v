@@ -235,6 +235,7 @@ fn (mut app Window) set_bar_tick(val int) {
 
 @[parms]
 pub struct MenuItemConfig {
+pub:
 	text           string
 	icon           &Image = unsafe { nil }
 	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}

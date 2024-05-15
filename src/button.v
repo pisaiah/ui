@@ -24,6 +24,7 @@ pub mut:
 
 @[params]
 pub struct ButtonConfig {
+pub:
 	text        string
 	bounds      Bounds
 	should_pack bool

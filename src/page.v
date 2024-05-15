@@ -27,6 +27,7 @@ fn draw_cfg() gx.TextCfg {
 
 @[params]
 pub struct PageCfg {
+pub:
 	title string
 }
 
