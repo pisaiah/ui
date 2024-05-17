@@ -76,17 +76,16 @@ pub fn text_field(cfg FieldCfg) &TextField {
 fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	click := this.is_mouse_rele
 	bg := if click { ctx.theme.button_bg_click } else { ctx.theme.textbox_background }
-	border := if click || this.is_selected {
-		ctx.theme.button_border_click
-	} else {
-		ctx.theme.textbox_border
-	}
 
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)
 
 	ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, border)
+	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
+
+	if click || this.is_selected {
+		ctx.gg.draw_rect_filled(this.x, this.y + this.height - 1, this.width, 2, ctx.theme.button_border_click)
+	}
 
 	// Detect Click
 	if this.is_mouse_rele {

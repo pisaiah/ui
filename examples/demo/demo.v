@@ -71,9 +71,9 @@ fn main() {
 		com.width = ws.width - 4
 		com.height = ws.height - 32
 	}
-	
+
 	tb.closable = false
-	
+
 	tb.add_child('Overview', pane)
 
 	mut button_tab := app.make_button_tab()

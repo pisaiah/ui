@@ -72,7 +72,7 @@ pub fn default_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext)
 	ctx.gg.draw_rect_filled(x, y, w, h, ctx.theme.menubar_background)
 }
 
-//	Default Theme - Memics Windows 10
+//	Default Theme - Memics Windows
 pub fn theme_default() &Theme {
 	return &Theme{
 		name: 'Default'
@@ -89,7 +89,7 @@ pub fn theme_default() &Theme {
 		dropdown_background: gx.white
 		dropdown_border: gx.rgb(224, 224, 224)
 		textbox_background: gx.white
-		textbox_border: gx.rgb(215, 215, 215)
+		textbox_border: gx.rgb(230, 230, 230)
 		checkbox_selected: gx.rgb(37, 161, 218)
 		checkbox_bg: gx.rgb(254, 254, 254)
 		progressbar_fill: gx.rgb(37, 161, 218)
