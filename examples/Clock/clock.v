@@ -32,7 +32,7 @@ fn main() {
 	switch.bind_to(&clock.smooth)
 
 	switch.subscribe_event('change', fn [mut clock] (mut e ui.SwitchEvent) {
-		//	clock.smooth = e.target.is_selected
+			clock.smooth = e.target.is_selected
 	})
 
 	p.add_child_with_flag(clock, ui.borderlayout_center)
@@ -62,7 +62,7 @@ fn (mut this ClockComponent) draw_nums(ctx &ui.GraphicsContext, i int) {
 	txt := '${i}'
 	tw := ctx.text_width(txt)
 
-	ctx.draw_text(x + lx - (tw / 2), y - ly - (ctx.line_height / 2), txt, 0, gx.TextCfg{
+	ctx.draw_text(x + lx - (tw / 2), y - ly - (ctx.line_height / 2), txt, ctx.font, gx.TextCfg{
 		color: ctx.theme.text_color
 	})
 }

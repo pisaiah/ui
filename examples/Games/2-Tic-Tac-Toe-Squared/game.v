@@ -11,7 +11,7 @@ mut:
 	sq     int = -1
 	turn   bool
 	winner string
-	comput bool = false
+	comput bool
 	// TODO: improve computer ai
 }
 
@@ -208,7 +208,7 @@ fn draw_win(mut e ui.DrawEvent) {
 
 	tw := e.ctx.text_width(txt)
 	x := p.x + (p.width / 2) - tw / 2
-	e.ctx.draw_text(x, p.y, txt, 0, cfg)
+	e.ctx.draw_text(x, p.y, txt, e.ctx.font, cfg)
 
 	e.ctx.set_cfg(gx.TextCfg{
 		size: e.ctx.font_size

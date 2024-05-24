@@ -1,6 +1,4 @@
-import gg
 import iui as ui
-import gx
 
 fn main() {
 	// Create Window

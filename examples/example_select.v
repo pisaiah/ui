@@ -3,17 +3,16 @@ module main
 import iui as ui
 
 fn main() {
-	mut win := ui.make_window(
+	mut win := ui.Window.new(
 		title: 'Button Demo'
 		width: 520
 		height: 400
 	)
 
-	mut hbox := ui.vbox(win)
+	mut hbox := ui.VBox.new()
 
 	// Set bounds for the button; If `bounds` is not
 	// set, then the button will pack to the text size.
-	button_bounds := ui.Bounds{5, 5, 100, 30}
 
 	mut sel := ui.select_box(
 		text: 'Pick value'
