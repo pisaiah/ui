@@ -1,12 +1,11 @@
 module main
 
-import gg
 import iui as ui
 import gx
 
 fn main() {
 	// Create Window
-	mut window := ui.make_window(
+	mut window := ui.Window.new(
 		theme: theme_dark()
 		title: 'Calculator'
 		width: 280
@@ -137,7 +136,7 @@ fn make_menu_bar() &ui.Menubar {
 	mut themes := ui.get_all_themes()
 	themes.insert(0, theme_dark())
 	for theme2 in themes {
-		mut item := ui.menuitem(theme2.name)
+		mut item := ui.menu_item(text: theme2.name)
 		item.set_click(theme_click)
 		theme_menu.add_child(item)
 	}

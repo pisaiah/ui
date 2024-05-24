@@ -1,7 +1,6 @@
 module main
 
 import iui as ui
-import gx
 
 fn main() {
 	// Create Window

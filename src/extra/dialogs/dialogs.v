@@ -2,8 +2,8 @@ module dialogs
 
 import os
 
-#include "@VMODROOT/extra/dialogs/tinyfiledialogs.h"
-#flag @VMODROOT/extra/dialogs/tinyfiledialogs.c
+#include "@VMODROOT/src/extra/dialogs/tinyfiledialogs.h"
+#flag @VMODROOT/src/extra/dialogs/tinyfiledialogs.c
 #flag windows -lole32
 #flag windows -lcomdlg32
 

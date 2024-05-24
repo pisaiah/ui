@@ -87,9 +87,9 @@ fn abs(v int) int {
 }
 
 fn (mut app App) h_draw(mut e ui.DrawEvent) {
-	e.ctx.draw_text(0, 0, '${app.score}', 0)
+	e.ctx.draw_text(0, 0, '${app.score}', e.ctx.font)
 
-	now := time.now().unix_time_milli()
+	now := time.now().unix_milli()
 	if now - app.last_tick < 50 {
 		return
 	}

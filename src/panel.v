@@ -116,7 +116,7 @@ fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 
 // https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
 pub struct BoxLayout {
-mut:
+pub mut:
 	ori  int
 	hgap int = 5
 	vgap int = 5
@@ -232,7 +232,7 @@ fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 
 // https://docs.oracle.com/javase/tutorial/uiswing/layout/grid.html
 pub struct GridLayout {
-mut:
+pub mut:
 	rows int
 	cols int
 	hgap int = 5

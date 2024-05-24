@@ -1,6 +1,5 @@
 // Based on the Counter example at
 // https://eugenkiss.github.io/7guis/tasks
-import gg
 import iui as ui
 
 @[heap]
