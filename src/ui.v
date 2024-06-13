@@ -270,12 +270,7 @@ pub fn (win &Window) get_from_id(id string) voidptr {
 }
 
 pub fn (win &Window) get[T](id string) T {
-	if id in win.id_map {
-		val := unsafe {win.id_map[id]} 
-		return *unsafe{&T(val)}
-	}
-	return *unsafe{&T(nil)}
-	//panic('Component with ID "${id}" not found.') 
+	return win.id_map[id] or { panic('Component with ID "${id}" not found.') }
 }
 
 /*
