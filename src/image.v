@@ -88,7 +88,7 @@ pub fn (mut this Image) draw(ctx &GraphicsContext) {
 			width: this.width
 			height: this.height
 		}
-		rotate: this.rotate
+		rotation: this.rotate
 	})
 }
 
