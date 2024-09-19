@@ -424,7 +424,7 @@ fn (mut w Window) do_sleep() {
 fn (mut app Window) draw() {
 	// Custom 'UI Mode' - Refresh text caret
 	app.do_sleep()
-	now := time.now().unix_time_milli()
+	now := time.now().unix_milli()
 
 	// Sort by Z-index; Lower draw first
 	app.components.sort(a.z_index < b.z_index)
@@ -503,7 +503,7 @@ fn (mut app Window) draw() {
 		app.graphics_context.calculate_line_height()
 	}
 
-	end := time.now().unix_time_milli()
+	end := time.now().unix_milli()
 	if end - app.last_update > 500 {
 		app.last_update = end
 		app.second_pass += 1

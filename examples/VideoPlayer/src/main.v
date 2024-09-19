@@ -1,6 +1,5 @@
 module main
 
-import os
 import gg
 import sync
 
@@ -120,7 +119,7 @@ pub fn (mut mpv MPVPlayer) on_mpv_events() {
 			} else if unsafe { cstring_to_vstring(prop.name) } == 'pause' {
 				if prop.format == C.MPV_FORMAT_STRING {
 					vall := prop.data
-					vs := cstring_to_vstring(*vall)
+					vs := unsafe {cstring_to_vstring(*vall) }
 					mpv.is_pause = vs.contains('yes')
 				}
 			}

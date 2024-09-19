@@ -48,6 +48,6 @@ fn top_panel_draw(mut e ui.DrawEvent) {
 	e.ctx.gg.set_text_cfg(tf)
 	tw := e.ctx.text_width(txt) / 2
 	py := p.y + (p.height / 2) - e.ctx.line_height
-	e.ctx.draw_text(p.x + (p.width / 2) - tw, py, 'Minesweeper', 0, tf)
+	e.ctx.draw_text(p.x + (p.width / 2) - tw, py, 'Minesweeper', e.ctx.font, tf)
 	e.ctx.gg.set_text_cfg(gx.TextCfg{ size: 12 })
 }

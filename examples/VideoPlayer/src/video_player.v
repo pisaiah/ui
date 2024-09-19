@@ -4,7 +4,6 @@ import iui as ui
 import gx
 import os
 import math
-// import dialog
 
 // bug? should be "iui.extra.dialogs"?
 import iui.src.extra.file_dialog
@@ -32,7 +31,7 @@ fn main() {
 		exit(1)
 	}
 
-	video_path := os.args[1..].join(' ')
+	video_path := os.args[1..].join(" ") // join_to_string[string](os.args[1..],' ',str)
 
 	mut plr := &Player{
 		x: 0
@@ -41,8 +40,7 @@ fn main() {
 		height: 360
 		vmpv: unsafe { nil }
 		logo: unsafe { nil }
-		path: ''
-		// video_path
+		path: video_path
 	}
 
 	// Media Playback Audio Video Subtitle Tools View Help
@@ -78,13 +76,21 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 	if !isnil(p.vmpv) {
 		dump('SET PAUSE')
 		p.vmpv.is_pause = true
-		p.vmpv.free()
+		unsafe {
+			p.vmpv.free()
+		}
 	}
 
 	selected_file := file_dialog.open_dialog('') // '' // dialog.file_dialog()
 	dump(selected_file)
 
 	p.path = selected_file // or { return }
+
+	//selected_file := dialogs.open_dialog("Select a video")
+	//dump(selected_file)
+
+	//p.path = selected_file 
+
 	p.setup(win.graphics_context)
 }
 

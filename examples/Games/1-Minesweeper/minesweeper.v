@@ -3,7 +3,6 @@ module main
 import iui as ui
 import gx
 import rand
-import gg
 
 @[heap]
 struct App {

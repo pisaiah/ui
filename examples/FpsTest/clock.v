@@ -41,7 +41,7 @@ fn main() {
 	switch.bind_to(&clock.smooth)
 
 	switch.subscribe_event('change', fn [mut clock] (mut e ui.SwitchEvent) {
-		//	clock.smooth = e.target.is_selected
+		clock.smooth = e.target.is_selected
 	})
 
 	p.add_child_with_flag(clock, ui.borderlayout_center)
@@ -72,7 +72,7 @@ fn (mut this ClockComponent) draw_nums(ctx &ui.GraphicsContext, i int) {
 	txt := '${i}'
 	tw := ctx.text_width(txt)
 
-	ctx.draw_text(x + lx - (tw / 2), y - ly - (ctx.line_height / 2), txt, 0, gx.TextCfg{
+	ctx.draw_text(x + lx - (tw / 2), y - ly - (ctx.line_height / 2), txt, ctx.font, gx.TextCfg{
 		color: ctx.theme.text_color
 	})
 }
@@ -112,7 +112,7 @@ fn (mut this ClockComponent) draw(ctx &ui.GraphicsContext) {
 	this.draw_line(ctx, (15 - minute) * 6, 90, gx.yellow)
 	this.draw_line(ctx, (15 - (hour * 5)) * 6, 60, gx.white)
 
-	for i in 0 .. 10 {
+	for _ in 0 .. 10 {
 		this.draw_line(ctx, (15 - this.app.lp) * 6, 100, gx.red)
 	}
 
@@ -122,7 +122,7 @@ fn (mut this ClockComponent) draw(ctx &ui.GraphicsContext) {
 	txt := '${this.app.fps} / ${this.app.frames}'
 	tw := ctx.text_width(txt)
 
-	ctx.draw_text(xt - (tw / 2), yt - (ctx.line_height / 2), txt, 0, gx.TextCfg{
+	ctx.draw_text(xt - (tw / 2), yt - (ctx.line_height / 2), txt, ctx.font, gx.TextCfg{
 		color: ctx.theme.text_color
 	})
 }

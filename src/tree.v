@@ -29,7 +29,7 @@ pub mut:
 }
 
 // new tree
-pub fn Tree.new() &Tree2 {
+pub fn Tree2.new() &Tree2 {
 	return tree('')
 }
 
