@@ -7,8 +7,8 @@ import math
 
 fn main() {
 	mut win := ui.Window.new(
-		title: 'Clock'
-		width: 240
+		title:  'Clock'
+		width:  240
 		height: 280
 	)
 	win.set_theme(ui.theme_seven_dark())
@@ -32,7 +32,7 @@ fn main() {
 	switch.bind_to(&clock.smooth)
 
 	switch.subscribe_event('change', fn [mut clock] (mut e ui.SwitchEvent) {
-			clock.smooth = e.target.is_selected
+		clock.smooth = e.target.is_selected
 	})
 
 	p.add_child_with_flag(clock, ui.borderlayout_center)

@@ -39,17 +39,17 @@ pub fn button(cfg ButtonConfig) &Button {
 
 pub fn Button.new(cf ButtonConfig) &Button {
 	return &Button{
-		app: unsafe { nil }
-		text: cf.text
-		icon: cf.icon
-		x: cf.bounds.x
-		y: cf.bounds.y
-		width: cf.bounds.width
-		height: cf.bounds.height
+		app:          unsafe { nil }
+		text:         cf.text
+		icon:         cf.icon
+		x:            cf.bounds.x
+		y:            cf.bounds.y
+		width:        cf.bounds.width
+		height:       cf.bounds.height
 		old_click_fn: unsafe { nil }
-		user_data: cf.user_data
-		need_pack: cf.should_pack
-		area_filled: cf.area_filled
+		user_data:    cf.user_data
+		need_pack:    cf.should_pack
+		area_filled:  cf.area_filled
 	}
 }
 
@@ -94,11 +94,11 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }
 		hei := if btn.icon_height > 0 { btn.icon_height } else { btn.height }
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: btn.icon
+			img_id:   btn.icon
 			img_rect: gg.Rect{
-				x: btn.x + (btn.width / 2) - (wid / 2)
-				y: btn.y + (btn.height / 2) - (hei / 2)
-				width: wid
+				x:      btn.x + (btn.width / 2) - (wid / 2)
+				y:      btn.y + (btn.height / 2) - (hei / 2)
+				width:  wid
 				height: hei
 			}
 		})
@@ -107,7 +107,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 
 	ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, text,
 		ctx.font, gx.TextCfg{
-		size: ctx.win.font_size
+		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 	})
 }

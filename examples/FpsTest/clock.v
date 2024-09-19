@@ -15,8 +15,8 @@ mut:
 
 fn main() {
 	mut win := ui.Window.new(
-		title: 'Test'
-		width: 240
+		title:  'Test'
+		width:  240
 		height: 280
 	)
 	win.set_theme(ui.theme_seven_dark())
@@ -35,7 +35,7 @@ fn main() {
 	)
 
 	mut clock := &ClockComponent{
-		x: 0
+		x:   0
 		app: &App{}
 	}
 	switch.bind_to(&clock.smooth)

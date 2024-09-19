@@ -1,20 +1,19 @@
 module main
 
+// bug? should be "iui.extra.dialogs"?
 import iui as ui
 import gx
 import os
 import math
-
-// bug? should be "iui.extra.dialogs"?
 import iui.src.extra.file_dialog
 
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'Video Player'
-		width: 520
-		height: 400
-		theme: ui.theme_dark()
+		title:   'Video Player'
+		width:   520
+		height:  400
+		theme:   ui.theme_dark()
 		ui_mode: false
 	)
 
@@ -31,31 +30,30 @@ fn main() {
 		exit(1)
 	}
 
-	video_path := os.args[1..].join(" ") // join_to_string[string](os.args[1..],' ',str)
-
+	video_path := os.args[1..].join(' ') // join_to_string[string](os.args[1..],' ',str)
 	mut plr := &Player{
-		x: 0
-		y: 0
-		width: 480
+		x:      0
+		y:      0
+		width:  480
 		height: 360
-		vmpv: unsafe { nil }
-		logo: unsafe { nil }
-		path: video_path
+		vmpv:   unsafe { nil }
+		logo:   unsafe { nil }
+		path:   video_path
 	}
 
 	// Media Playback Audio Video Subtitle Tools View Help
 	mb.add_child(ui.MenuItem.new(
-		text: 'Media'
+		text:     'Media'
 		children: [
 			ui.MenuItem.new(
-				text: 'Open File...'
+				text:           'Open File...'
 				click_event_fn: plr.open_click
 			),
 		]
 	))
 
 	mb.add_child(ui.MenuItem.new(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			ui.MenuItem.new(
 				text: 'About iUI'
@@ -86,11 +84,10 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 
 	p.path = selected_file // or { return }
 
-	//selected_file := dialogs.open_dialog("Select a video")
-	//dump(selected_file)
+	// selected_file := dialogs.open_dialog("Select a video")
+	// dump(selected_file)
 
-	//p.path = selected_file 
-
+	// p.path = selected_file
 	p.setup(win.graphics_context)
 }
 
@@ -125,6 +122,7 @@ pub struct Player {
 mut:
 	init bool
 	vmpv &MPVPlayer
+
 	//= unsafe { nil }
 	tik        int
 	path       string

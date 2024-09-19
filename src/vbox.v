@@ -23,11 +23,11 @@ pub:
 pub fn VBox.new(c VBoxConfig) &VBox {
 	return &VBox{
 		needs_pack: c.pack
-		overflow: c.overflow
-		x: c.bounds.x
-		y: c.bounds.y
-		width: c.bounds.width
-		height: c.bounds.height
+		overflow:   c.overflow
+		x:          c.bounds.x
+		y:          c.bounds.y
+		width:      c.bounds.width
+		height:     c.bounds.height
 	}
 }
 

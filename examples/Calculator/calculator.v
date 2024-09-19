@@ -6,11 +6,11 @@ import gx
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		theme: theme_dark()
-		title: 'Calculator'
-		width: 280
-		height: 360
-		ui_mode: true
+		theme:     theme_dark()
+		title:     'Calculator'
+		width:     280
+		height:    360
+		ui_mode:   true
 		font_size: 18
 	)
 
@@ -142,10 +142,10 @@ fn make_menu_bar() &ui.Menubar {
 	}
 
 	help_menu := ui.menu_item(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			ui.menu_item(
-				text: 'About Calculator'
+				text:           'About Calculator'
 				click_event_fn: about_click
 			),
 			ui.menu_item(
@@ -172,7 +172,7 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	label.pack()
 
 	mut can := ui.button(
-		text: 'OK'
+		text:   'OK'
 		bounds: ui.Bounds{15, 150, 210, 35}
 	)
 	can.subscribe_event('mouse_up', fn (mut e ui.MouseEvent) {
@@ -188,25 +188,25 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 // Custom Dark Theme that memics Windows Calc colors
 pub fn theme_dark() &ui.Theme {
 	return &ui.Theme{
-		name: 'CalcDark'
-		text_color: gx.rgb(230, 230, 230)
-		background: gx.rgb(30, 30, 30)
-		button_bg_normal: gx.rgb(57, 57, 57)
-		button_bg_hover: gx.rgb(75, 75, 75)
-		button_bg_click: gx.rgb(30, 30, 30)
+		name:                 'CalcDark'
+		text_color:           gx.rgb(230, 230, 230)
+		background:           gx.rgb(30, 30, 30)
+		button_bg_normal:     gx.rgb(57, 57, 57)
+		button_bg_hover:      gx.rgb(75, 75, 75)
+		button_bg_click:      gx.rgb(30, 30, 30)
 		button_border_normal: gx.rgb(38, 38, 38)
-		button_border_hover: gx.rgb(0, 140, 250)
-		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.rgb(10, 10, 10)
-		menubar_border: gx.rgb(30, 30, 30)
-		dropdown_background: gx.rgb(10, 10, 10)
-		dropdown_border: gx.rgb(0, 0, 0)
-		textbox_background: gx.rgb(50, 50, 50)
-		textbox_border: gx.rgb(40, 40, 40)
-		checkbox_selected: gx.rgb(99, 99, 40)
-		checkbox_bg: gx.rgb(0, 0, 0)
-		progressbar_fill: gx.rgb(130, 130, 130)
-		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(170, 170, 170)
+		button_border_hover:  gx.rgb(0, 140, 250)
+		button_border_click:  gx.rgb(0, 84, 153)
+		menubar_background:   gx.rgb(10, 10, 10)
+		menubar_border:       gx.rgb(30, 30, 30)
+		dropdown_background:  gx.rgb(10, 10, 10)
+		dropdown_border:      gx.rgb(0, 0, 0)
+		textbox_background:   gx.rgb(50, 50, 50)
+		textbox_border:       gx.rgb(40, 40, 40)
+		checkbox_selected:    gx.rgb(99, 99, 40)
+		checkbox_bg:          gx.rgb(0, 0, 0)
+		progressbar_fill:     gx.rgb(130, 130, 130)
+		scroll_track_color:   gx.rgb(0, 0, 0)
+		scroll_bar_color:     gx.rgb(170, 170, 170)
 	}
 }

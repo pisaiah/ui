@@ -39,12 +39,12 @@ pub:
 
 pub fn Slider.new(c SliderConfig) &Slider {
 	return &Slider{
-		text: ''
-		min: c.min
-		max: c.max
-		dir: c.dir
-		scroll: true
-		thumb_wid: 30
+		text:        ''
+		min:         c.min
+		max:         c.max
+		dir:         c.dir
+		scroll:      true
+		thumb_wid:   30
 		thumb_color: c.thumb_color
 	}
 }

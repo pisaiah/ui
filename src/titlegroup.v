@@ -20,16 +20,16 @@ pub:
 
 pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 	return &Titlebox{
-		text: c.text
+		text:     c.text
 		children: c.children
-		padding: c.padding
+		padding:  c.padding
 	}
 }
 
 @[deprecated: 'Use Titlebox.new']
 pub fn title_box(text string, children []Component) &Titlebox {
 	return &Titlebox{
-		text: text
+		text:     text
 		children: children
 	}
 }
@@ -68,6 +68,6 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	ctx.gg.draw_rect_filled(x - 8, this.y, wid + 16, text_height + 1, ctx.theme.background)
 	ctx.draw_text(x, this.y, this.text, ctx.font, gx.TextCfg{
 		color: ctx.theme.text_color
-		size: ctx.font_size
+		size:  ctx.font_size
 	})
 }

@@ -11,8 +11,8 @@ mut:
 
 fn main() {
 	mut win := ui.Window.new(
-		title: 'Open'
-		width: 630
+		title:  'Open'
+		width:  630
 		height: 330
 	)
 
@@ -27,7 +27,7 @@ fn main() {
 
 	mut app := &FileChooserApp{
 		win: win
-		cp: pan
+		cp:  pan
 	}
 
 	app.make_top_panel()

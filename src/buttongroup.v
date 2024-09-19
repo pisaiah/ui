@@ -21,14 +21,14 @@ pub:
 
 pub fn ButtonGroup.new[T](cfg ButtonGroupConfig) &ButtonGroup[T] {
 	return &ButtonGroup[T]{
-		buttons: cfg.buttons
+		buttons:  cfg.buttons
 		selected: unsafe { nil }
 	}
 }
 
 pub fn buttongroup[T](cfg ButtonGroupConfig) &ButtonGroup[T] {
 	return &ButtonGroup[T]{
-		buttons: cfg.buttons
+		buttons:  cfg.buttons
 		selected: unsafe { nil }
 	}
 }
@@ -65,7 +65,7 @@ pub fn (mut this ButtonGroup[T]) get_selected() &T {
 pub fn (mut this ButtonGroup[T]) invoke_mouse_up(com &Component, ctx &GraphicsContext) {
 	ev := MouseEvent{
 		target: unsafe { com }
-		ctx: ctx
+		ctx:    ctx
 	}
 	for f in this.events.event_map['mouse_up'] {
 		f(ev)

@@ -27,9 +27,9 @@ pub:
 // Return new Tabbox
 pub fn Tabbox.new(c TabboxConfig) &Tabbox {
 	return &Tabbox{
-		win: unsafe { nil }
+		win:     unsafe { nil }
 		compact: c.compact
-		text: ''
+		text:    ''
 	}
 }
 
@@ -97,7 +97,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 	tx := tb.x + mx + 8
 	ty := (theig / 2) - sizh
 	ctx.draw_text(tx, tb.y + my + ty, key, ctx.font, gx.TextCfg{
-		size: tb.win.font_size
+		size:  tb.win.font_size
 		color: ctx.theme.text_color
 	})
 

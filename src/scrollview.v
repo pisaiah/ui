@@ -37,14 +37,14 @@ pub fn ScrollView.new(c ScrollViewConfig) &ScrollView {
 
 pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
 	scroll_view := &ScrollView{
-		x: cfg.bounds.x
-		y: cfg.bounds.y
-		width: cfg.bounds.width
-		height: cfg.bounds.height
-		children: [cfg.view]
-		increment: cfg.increment
+		x:           cfg.bounds.x
+		y:           cfg.bounds.y
+		width:       cfg.bounds.width
+		height:      cfg.bounds.height
+		children:    [cfg.view]
+		increment:   cfg.increment
 		always_show: cfg.always_show
-		padding: cfg.padding
+		padding:     cfg.padding
 	}
 	return scroll_view
 }

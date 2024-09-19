@@ -35,7 +35,7 @@ fn (com &Component) str() string {
 }
 
 @[heap]
-pub struct Component_A {
+pub struct Component_A implements Component {
 pub mut:
 	text                string
 	x                   int
@@ -51,7 +51,7 @@ pub mut:
 	is_mouse_rele       bool
 	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
 	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
-	parent              &Component_A = unsafe { nil }
+	parent              &Component_A                = unsafe { nil }
 	children            []Component
 	id                  string
 	font                int
@@ -193,7 +193,7 @@ pub fn (mut com Component_A) set_y(y int) {
 pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
 	ev := DrawEvent{
 		target: com
-		ctx: ctx
+		ctx:    ctx
 	}
 	for f in com.events.event_map['draw'] {
 		f(ev)
@@ -207,7 +207,7 @@ pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
 
 	ev := DrawEvent{
 		target: unsafe { com }
-		ctx: ctx
+		ctx:    ctx
 	}
 
 	for f in com.events.event_map['draw'] {
@@ -222,7 +222,7 @@ pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 
 	ev := DrawEvent{
 		target: unsafe { com }
-		ctx: ctx
+		ctx:    ctx
 	}
 	for f in com.events.event_map['after_draw'] {
 		f(ev)
@@ -235,7 +235,7 @@ pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 pub fn invoke_mouse_down(com &Component, ctx &GraphicsContext) {
 	ev := MouseEvent{
 		target: unsafe { com }
-		ctx: ctx
+		ctx:    ctx
 	}
 	for f in com.events.event_map['mouse_down'] {
 		f(ev)
@@ -245,7 +245,7 @@ pub fn invoke_mouse_down(com &Component, ctx &GraphicsContext) {
 pub fn invoke_mouse_up(com &Component, ctx &GraphicsContext) {
 	ev := MouseEvent{
 		target: unsafe { com }
-		ctx: ctx
+		ctx:    ctx
 	}
 	for f in com.events.event_map['mouse_up'] {
 		f(ev)
@@ -255,9 +255,9 @@ pub fn invoke_mouse_up(com &Component, ctx &GraphicsContext) {
 pub fn invoke_scroll_event(com &Component, ctx &GraphicsContext, delta int) {
 	ev := ScrollEvent{
 		target: unsafe { com }
-		ctx: ctx
-		delta: delta
-		dir: 0
+		ctx:    ctx
+		delta:  delta
+		dir:    0
 	}
 
 	for f in com.events.event_map['scroll_wheel'] {
@@ -268,7 +268,7 @@ pub fn invoke_scroll_event(com &Component, ctx &GraphicsContext, delta int) {
 pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
 	ev := TextChangeEvent{
 		target: unsafe { com }
-		ctx: ctx
+		ctx:    ctx
 	}
 
 	for f in com.events.event_map[n] {

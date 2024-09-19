@@ -387,7 +387,7 @@ fn create_hyperlink_label(win &ui.Window, content string, conf DocConfig) &ui.Hy
 
 	mut lbl := ui.link(
 		text: content
-		url: href
+		url:  href
 	)
 
 	lbl.click_event_fn = fn [win] (a voidptr) {

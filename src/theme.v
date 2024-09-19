@@ -52,8 +52,8 @@ pub:
 	scroll_bar_color   gx.Color
 
 	button_fill_fn   fn (int, int, int, int, int, gx.Color, &GraphicsContext) = default_button_fill_fn
-	bar_fill_fn      fn (int, f32, int, f32, bool, &GraphicsContext) = default_bar_fill_fn
-	menu_bar_fill_fn fn (int, int, int, int, &GraphicsContext)       = default_menubar_fill_fn
+	bar_fill_fn      fn (int, f32, int, f32, bool, &GraphicsContext)          = default_bar_fill_fn
+	menu_bar_fill_fn fn (int, int, int, int, &GraphicsContext)                = default_menubar_fill_fn
 	setup_fn         fn (mut Window) = blank_setup
 }
 
@@ -75,151 +75,151 @@ pub fn default_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext)
 //	Default Theme - Memics Windows
 pub fn theme_default() &Theme {
 	return &Theme{
-		name: 'Default'
-		text_color: gx.black
-		background: gx.rgb(248, 248, 248)
-		button_bg_normal: gx.rgb(240, 240, 240)
-		button_bg_hover: gx.rgb(229, 241, 251)
-		button_bg_click: gx.rgb(204, 228, 247)
+		name:                 'Default'
+		text_color:           gx.black
+		background:           gx.rgb(248, 248, 248)
+		button_bg_normal:     gx.rgb(240, 240, 240)
+		button_bg_hover:      gx.rgb(229, 241, 251)
+		button_bg_click:      gx.rgb(204, 228, 247)
 		button_border_normal: gx.rgb(190, 190, 190)
-		button_border_hover: gx.rgb(0, 120, 215)
-		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.white
-		menubar_border: gx.white
-		dropdown_background: gx.white
-		dropdown_border: gx.rgb(224, 224, 224)
-		textbox_background: gx.white
-		textbox_border: gx.rgb(230, 230, 230)
-		checkbox_selected: gx.rgb(37, 161, 218)
-		checkbox_bg: gx.rgb(254, 254, 254)
-		progressbar_fill: gx.rgb(37, 161, 218)
-		scroll_track_color: gx.rgb(238, 238, 238)
-		scroll_bar_color: gx.rgb(170, 170, 170)
+		button_border_hover:  gx.rgb(0, 120, 215)
+		button_border_click:  gx.rgb(0, 84, 153)
+		menubar_background:   gx.white
+		menubar_border:       gx.white
+		dropdown_background:  gx.white
+		dropdown_border:      gx.rgb(224, 224, 224)
+		textbox_background:   gx.white
+		textbox_border:       gx.rgb(230, 230, 230)
+		checkbox_selected:    gx.rgb(37, 161, 218)
+		checkbox_bg:          gx.rgb(254, 254, 254)
+		progressbar_fill:     gx.rgb(37, 161, 218)
+		scroll_track_color:   gx.rgb(238, 238, 238)
+		scroll_bar_color:     gx.rgb(170, 170, 170)
 	}
 }
 
 //	Dark Theme
 pub fn theme_dark() &Theme {
 	return &Theme{
-		name: 'Dark'
-		text_color: gx.rgb(230, 230, 230)
-		background: gx.rgb(30, 30, 30)
-		button_bg_normal: gx.rgb(10, 10, 10)
-		button_bg_hover: gx.rgb(70, 70, 70)
-		button_bg_click: gx.rgb(50, 50, 50)
+		name:                 'Dark'
+		text_color:           gx.rgb(230, 230, 230)
+		background:           gx.rgb(30, 30, 30)
+		button_bg_normal:     gx.rgb(10, 10, 10)
+		button_bg_hover:      gx.rgb(70, 70, 70)
+		button_bg_click:      gx.rgb(50, 50, 50)
 		button_border_normal: gx.rgb(130, 130, 130)
-		button_border_hover: gx.rgb(0, 120, 215)
-		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.rgb(30, 30, 30)
-		menubar_border: gx.rgb(30, 30, 30)
-		dropdown_background: gx.rgb(10, 10, 10)
-		dropdown_border: gx.rgb(0, 0, 0)
-		textbox_background: gx.rgb(34, 39, 46)
-		textbox_border: gx.rgb(130, 130, 130)
-		checkbox_selected: gx.rgb(240, 99, 40)
-		checkbox_bg: gx.rgb(5, 5, 5)
-		progressbar_fill: gx.rgb(130, 130, 130)
-		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(170, 170, 170)
+		button_border_hover:  gx.rgb(0, 120, 215)
+		button_border_click:  gx.rgb(0, 84, 153)
+		menubar_background:   gx.rgb(30, 30, 30)
+		menubar_border:       gx.rgb(30, 30, 30)
+		dropdown_background:  gx.rgb(10, 10, 10)
+		dropdown_border:      gx.rgb(0, 0, 0)
+		textbox_background:   gx.rgb(34, 39, 46)
+		textbox_border:       gx.rgb(130, 130, 130)
+		checkbox_selected:    gx.rgb(240, 99, 40)
+		checkbox_bg:          gx.rgb(5, 5, 5)
+		progressbar_fill:     gx.rgb(130, 130, 130)
+		scroll_track_color:   gx.rgb(0, 0, 0)
+		scroll_bar_color:     gx.rgb(170, 170, 170)
 	}
 }
 
 //	Dark Theme - High Contrast
 pub fn theme_dark_hc() &Theme {
 	return &Theme{
-		name: 'Dark Black'
-		text_color: gx.white
-		background: gx.rgb(0, 0, 0)
-		button_bg_normal: gx.rgb(0, 0, 0)
-		button_bg_hover: gx.rgb(70, 70, 70)
-		button_bg_click: gx.rgb(50, 50, 50)
+		name:                 'Dark Black'
+		text_color:           gx.white
+		background:           gx.rgb(0, 0, 0)
+		button_bg_normal:     gx.rgb(0, 0, 0)
+		button_bg_hover:      gx.rgb(70, 70, 70)
+		button_bg_click:      gx.rgb(50, 50, 50)
 		button_border_normal: gx.rgb(220, 220, 220)
-		button_border_hover: gx.rgb(100, 220, 255)
-		button_border_click: gx.rgb(10, 94, 163)
-		menubar_background: gx.rgb(10, 10, 10)
-		menubar_border: gx.rgb(99, 99, 99)
-		dropdown_background: gx.rgb(10, 10, 10)
-		dropdown_border: gx.rgb(190, 190, 190)
-		textbox_background: gx.rgb(0, 0, 0)
-		textbox_border: gx.rgb(200, 200, 200)
-		checkbox_selected: gx.rgb(220, 220, 220)
-		checkbox_bg: gx.rgb(0, 0, 0)
-		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(205, 205, 205)
+		button_border_hover:  gx.rgb(100, 220, 255)
+		button_border_click:  gx.rgb(10, 94, 163)
+		menubar_background:   gx.rgb(10, 10, 10)
+		menubar_border:       gx.rgb(99, 99, 99)
+		dropdown_background:  gx.rgb(10, 10, 10)
+		dropdown_border:      gx.rgb(190, 190, 190)
+		textbox_background:   gx.rgb(0, 0, 0)
+		textbox_border:       gx.rgb(200, 200, 200)
+		checkbox_selected:    gx.rgb(220, 220, 220)
+		checkbox_bg:          gx.rgb(0, 0, 0)
+		scroll_track_color:   gx.rgb(0, 0, 0)
+		scroll_bar_color:     gx.rgb(205, 205, 205)
 	}
 }
 
 //	Black Red
 pub fn theme_black_red() &Theme {
 	return &Theme{
-		name: 'Black Red'
-		text_color: gx.white
-		background: gx.rgb(0, 0, 0)
-		button_bg_normal: gx.rgb(0, 0, 0)
-		button_bg_hover: gx.rgb(70, 0, 0)
-		button_bg_click: gx.rgb(40, 0, 0)
+		name:                 'Black Red'
+		text_color:           gx.white
+		background:           gx.rgb(0, 0, 0)
+		button_bg_normal:     gx.rgb(0, 0, 0)
+		button_bg_hover:      gx.rgb(70, 0, 0)
+		button_bg_click:      gx.rgb(40, 0, 0)
 		button_border_normal: gx.rgb(255, 0, 0)
-		button_border_hover: gx.rgb(230, 10, 15)
-		button_border_click: gx.rgb(150, 0, 0)
-		menubar_background: gx.rgb(10, 10, 10)
-		menubar_border: gx.rgb(160, 0, 0)
-		dropdown_background: gx.rgb(160, 0, 0)
-		dropdown_border: gx.rgb(0, 0, 0)
-		textbox_background: gx.rgb(0, 0, 0)
-		textbox_border: gx.rgb(200, 0, 0)
-		checkbox_selected: gx.rgb(255, 0, 0)
-		checkbox_bg: gx.rgb(0, 0, 0)
-		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(240, 0, 0)
+		button_border_hover:  gx.rgb(230, 10, 15)
+		button_border_click:  gx.rgb(150, 0, 0)
+		menubar_background:   gx.rgb(10, 10, 10)
+		menubar_border:       gx.rgb(160, 0, 0)
+		dropdown_background:  gx.rgb(160, 0, 0)
+		dropdown_border:      gx.rgb(0, 0, 0)
+		textbox_background:   gx.rgb(0, 0, 0)
+		textbox_border:       gx.rgb(200, 0, 0)
+		checkbox_selected:    gx.rgb(255, 0, 0)
+		checkbox_bg:          gx.rgb(0, 0, 0)
+		scroll_track_color:   gx.rgb(0, 0, 0)
+		scroll_bar_color:     gx.rgb(240, 0, 0)
 	}
 }
 
 //	MintY - Memics LinuxMint's Default Theme
 pub fn theme_minty() &Theme {
 	return &Theme{
-		name: 'Minty'
-		text_color: gx.black
-		background: gx.rgb(240, 240, 240)
-		button_bg_normal: gx.rgb(245, 245, 245)
-		button_bg_hover: gx.rgb(200, 225, 190)
-		button_bg_click: gx.rgb(154, 200, 124)
+		name:                 'Minty'
+		text_color:           gx.black
+		background:           gx.rgb(240, 240, 240)
+		button_bg_normal:     gx.rgb(245, 245, 245)
+		button_bg_hover:      gx.rgb(200, 225, 190)
+		button_bg_click:      gx.rgb(154, 200, 124)
 		button_border_normal: gx.rgb(207, 207, 207)
-		button_border_hover: gx.rgb(181, 203, 158)
-		button_border_click: gx.rgb(0, 153, 84)
-		menubar_background: gx.rgb(245, 245, 245)
-		menubar_border: gx.rgb(242, 242, 242)
-		dropdown_background: gx.rgb(242, 242, 242)
-		dropdown_border: gx.rgb(204, 204, 204)
-		textbox_background: gx.white
-		textbox_border: gx.rgb(215, 215, 215)
-		checkbox_selected: gx.rgb(154, 184, 124)
-		checkbox_bg: gx.rgb(247, 247, 247)
-		scroll_track_color: gx.rgb(238, 238, 238)
-		scroll_bar_color: gx.rgb(181, 203, 158)
+		button_border_hover:  gx.rgb(181, 203, 158)
+		button_border_click:  gx.rgb(0, 153, 84)
+		menubar_background:   gx.rgb(245, 245, 245)
+		menubar_border:       gx.rgb(242, 242, 242)
+		dropdown_background:  gx.rgb(242, 242, 242)
+		dropdown_border:      gx.rgb(204, 204, 204)
+		textbox_background:   gx.white
+		textbox_border:       gx.rgb(215, 215, 215)
+		checkbox_selected:    gx.rgb(154, 184, 124)
+		checkbox_bg:          gx.rgb(247, 247, 247)
+		scroll_track_color:   gx.rgb(238, 238, 238)
+		scroll_bar_color:     gx.rgb(181, 203, 158)
 	}
 }
 
 // Black Green
 pub fn theme_black_green() &Theme {
 	return &Theme{
-		name: 'Green Mono'
-		text_color: gx.rgb(200, 255, 200)
-		background: gx.rgb(0, 0, 0)
-		button_bg_normal: gx.rgb(0, 0, 0)
-		button_bg_hover: gx.rgb(0, 70, 0)
-		button_bg_click: gx.rgb(0, 40, 0)
+		name:                 'Green Mono'
+		text_color:           gx.rgb(200, 255, 200)
+		background:           gx.rgb(0, 0, 0)
+		button_bg_normal:     gx.rgb(0, 0, 0)
+		button_bg_hover:      gx.rgb(0, 70, 0)
+		button_bg_click:      gx.rgb(0, 40, 0)
 		button_border_normal: gx.rgb(0, 255, 0)
-		button_border_hover: gx.rgb(10, 230, 15)
-		button_border_click: gx.rgb(0, 150, 0)
-		menubar_background: gx.rgb(10, 10, 10)
-		menubar_border: gx.rgb(0, 160, 0)
-		dropdown_background: gx.rgb(0, 160, 0)
-		dropdown_border: gx.rgb(0, 0, 0)
-		textbox_background: gx.rgb(0, 0, 0)
-		textbox_border: gx.rgb(0, 200, 0)
-		checkbox_selected: gx.rgb(0, 255, 0)
-		checkbox_bg: gx.rgb(0, 0, 0)
-		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(0, 220, 0)
+		button_border_hover:  gx.rgb(10, 230, 15)
+		button_border_click:  gx.rgb(0, 150, 0)
+		menubar_background:   gx.rgb(10, 10, 10)
+		menubar_border:       gx.rgb(0, 160, 0)
+		dropdown_background:  gx.rgb(0, 160, 0)
+		dropdown_border:      gx.rgb(0, 0, 0)
+		textbox_background:   gx.rgb(0, 0, 0)
+		textbox_border:       gx.rgb(0, 200, 0)
+		checkbox_selected:    gx.rgb(0, 255, 0)
+		checkbox_bg:          gx.rgb(0, 0, 0)
+		scroll_track_color:   gx.rgb(0, 0, 0)
+		scroll_bar_color:     gx.rgb(0, 220, 0)
 	}
 }

@@ -33,12 +33,12 @@ pub:
 
 pub fn BorderLayout.new(c BorderLayoutConfig) BorderLayout {
 	return BorderLayout{
-		hgap: c.hgap
-		vgap: c.vgap
-		north: unsafe { nil }
-		west: unsafe { nil }
-		east: unsafe { nil }
-		south: unsafe { nil }
+		hgap:   c.hgap
+		vgap:   c.vgap
+		north:  unsafe { nil }
+		west:   unsafe { nil }
+		east:   unsafe { nil }
+		south:  unsafe { nil }
 		center: unsafe { nil }
 	}
 }
@@ -132,7 +132,7 @@ pub:
 
 pub fn BoxLayout.new(c BoxLayoutConfig) BoxLayout {
 	return BoxLayout{
-		ori: c.ori
+		ori:  c.ori
 		hgap: c.hgap
 		vgap: c.vgap
 	}

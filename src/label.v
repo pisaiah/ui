@@ -29,13 +29,13 @@ pub:
 
 pub fn Label.new(conf LabelConfig) &Label {
 	return &Label{
-		app: unsafe { nil }
-		text: conf.text
-		x: conf.x
-		y: conf.y
-		color: gx.rgba(0, 0, 0, 0)
-		height: conf.height
-		width: conf.width
+		app:       unsafe { nil }
+		text:      conf.text
+		x:         conf.x
+		y:         conf.y
+		color:     gx.rgba(0, 0, 0, 0)
+		height:    conf.height
+		width:     conf.width
 		need_pack: conf.should_pack
 	}
 }
@@ -54,9 +54,9 @@ pub fn (mut this Label) pack() {
 pub fn (mut btn Label) pack_do(ctx &GraphicsContext) {
 	// Set font size
 	ctx.set_cfg(gx.TextCfg{
-		size: ctx.win.font_size + btn.size
+		size:  ctx.win.font_size + btn.size
 		color: ctx.win.theme.text_color
-		bold: btn.bold
+		bold:  btn.bold
 	})
 
 	lines := btn.text.split_into_lines()
@@ -83,9 +83,9 @@ pub fn (mut btn Label) pack_do(ctx &GraphicsContext) {
 
 	// Reset for text_height
 	ctx.set_cfg(gx.TextCfg{
-		size: ctx.win.font_size
+		size:  ctx.win.font_size
 		color: ctx.win.theme.text_color
-		bold: false
+		bold:  false
 	})
 }
 
@@ -122,9 +122,9 @@ fn (app Window) draw_label(x int, y int, width int, height int, mut this Label, 
 		yp := if this.center_text_y { y + (height / 2) - sizh + my } else { y + my }
 
 		ctx.draw_text(x, yp, spl.replace('\t', '  '.repeat(8)), ctx.font, gx.TextCfg{
-			size: size
+			size:  size
 			color: this.get_color()
-			bold: this.bold
+			bold:  this.bold
 		})
 		if this.size != (app.font_size + this.size) {
 			// Reset for text_height
@@ -147,9 +147,9 @@ fn (app Window) draw_label(x int, y int, width int, height int, mut this Label, 
 
 fn (app &Window) reset_text_config(ctx &GraphicsContext) {
 	ctx.set_cfg(gx.TextCfg{
-		size: app.font_size
+		size:  app.font_size
 		color: app.theme.text_color
-		bold: false
+		bold:  false
 	})
 }
 

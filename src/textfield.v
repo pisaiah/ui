@@ -42,9 +42,9 @@ pub fn (mut box TextField) set_text_change(b fn (a voidptr, b voidptr)) {
 
 pub fn numeric_field(val int) &TextField {
 	return &TextField{
-		text: val.str()
-		numeric: true
-		center: true
+		text:        val.str()
+		numeric:     true
+		center:      true
 		carrot_left: val.str().len
 	}
 }
@@ -59,12 +59,12 @@ pub:
 
 pub fn TextField.new(c FieldCfg) &TextField {
 	return &TextField{
-		text: c.text
-		x: c.bounds.x
-		y: c.bounds.y
-		width: c.bounds.width
-		height: c.bounds.height
-		center: c.center
+		text:        c.text
+		x:           c.bounds.x
+		y:           c.bounds.y
+		width:       c.bounds.width
+		height:      c.bounds.height
+		center:      c.center
 		carrot_left: c.text.len
 	}
 }
@@ -121,7 +121,7 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	cfg := gx.TextCfg{
 		color: color
-		size: ctx.win.font_size
+		size:  ctx.win.font_size
 	}
 
 	wid := ctx.text_width(this.text[0..this.carrot_left])
@@ -258,7 +258,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 
 	if mod != 2 && !enter {
 		if com.numeric {
-			if letter !in iui.numbers_val {
+			if letter !in numbers_val {
 				com.last_letter = letter
 				com.text_change_event_fn(w, com)
 				return

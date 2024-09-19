@@ -20,7 +20,7 @@ pub mut:
 // Return new Progressbar
 pub fn Progressbar.new(conf ProgressbarConfig) &Progressbar {
 	return &Progressbar{
-		text: conf.val.str()
+		text:     conf.val.str()
 		bind_val: conf.bind or { unsafe { nil } }
 	}
 }
@@ -56,7 +56,7 @@ fn (bar &Progressbar) draw_text(ctx &GraphicsContext, val f32) {
 
 	ctx.draw_text((bar.x + (bar.width / 2)) - size, bar.y + (bar.height / 2) - sizh, text,
 		ctx.font, gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 }

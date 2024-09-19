@@ -7,7 +7,7 @@ fn (mut app App) make_frame_tab() &ui.Panel {
 	app.make_icons()
 
 	mut f := ui.InternalFrame.new(
-		text: 'Hello there'
+		text:   'Hello there'
 		bounds: ui.Bounds{0, 0, 200, 300}
 	)
 
@@ -56,7 +56,7 @@ fn (mut app App) btn_click(e &ui.MouseEvent) {
 fn (mut app App) new_frame(img_id int) {
 	i := app.dp.children.len - 1
 	mut frame := ui.InternalFrame.new(
-		text: 'Frame #${i}'
+		text:   'Frame #${i}'
 		bounds: ui.Bounds{210 + i * 20, i * 32, 0, 150}
 	)
 

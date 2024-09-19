@@ -22,11 +22,11 @@ pub fn Checkbox.new(conf CheckboxConfig) &Checkbox {
 
 pub fn check_box(conf CheckboxConfig) &Checkbox {
 	return &Checkbox{
-		text: conf.text
-		x: conf.bounds.x
-		y: conf.bounds.y
-		width: conf.bounds.width
-		height: conf.bounds.height
+		text:        conf.text
+		x:           conf.bounds.x
+		y:           conf.bounds.y
+		width:       conf.bounds.width
+		height:      conf.bounds.height
 		is_selected: conf.selected
 	}
 }
@@ -99,7 +99,7 @@ fn (this &Checkbox) draw_text(ctx &GraphicsContext) {
 
 	ctx.draw_text(this.x + this.height + 4, this.y + (this.height / 2) - sizh, this.text,
 		ctx.font, gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 }
@@ -111,7 +111,7 @@ fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
 	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 2, ctx.theme.checkbox_selected)
 
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-		img_id: ctx.icon_cache['check_box']
+		img_id:   ctx.icon_cache['check_box']
 		img_rect: gg.Rect{com.x + 2, com.y + 2, com.height - 5, com.height - 5}
 	})
 }

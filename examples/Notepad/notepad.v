@@ -10,10 +10,10 @@ import os.font
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'Notepad'
-		theme: ui.get_system_theme()
-		width: 520
-		height: 550
+		title:   'Notepad'
+		theme:   ui.get_system_theme()
+		width:   520
+		height:  550
 		ui_mode: true
 	)
 
@@ -25,7 +25,7 @@ fn main() {
 	themes := ui.get_all_themes()
 	for theme2 in themes {
 		item := ui.menu_item(
-			text: theme2.name
+			text:           theme2.name
 			click_event_fn: theme_click
 		)
 
@@ -33,7 +33,7 @@ fn main() {
 	}
 
 	file_menu := ui.menu_item(
-		text: 'File'
+		text:     'File'
 		children: [
 			ui.menu_item(
 				text: 'Save'
@@ -43,10 +43,10 @@ fn main() {
 	)
 
 	help_menu := ui.MenuItem.new(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			ui.MenuItem.new(
-				text: 'About Notepad'
+				text:           'About Notepad'
 				click_event_fn: about_click
 			),
 			ui.MenuItem.new(
@@ -56,7 +56,7 @@ fn main() {
 	)
 
 	font_menu := ui.MenuItem.new(
-		text: 'Font'
+		text:     'Font'
 		children: [
 			font_type_item('OS Default'),
 			font_type_item('scientifica.ttf'),
@@ -74,7 +74,7 @@ fn main() {
 	)
 
 	size_menu := ui.MenuItem.new(
-		text: 'Size'
+		text:     'Size'
 		children: [
 			font_size_item('12'),
 			font_size_item('14'),
@@ -95,7 +95,7 @@ fn main() {
 	res_box.set_bounds(1, 1, 100, 100)
 
 	mut sv := ui.scroll_view(
-		view: res_box
+		view:    res_box
 		padding: 0
 	)
 	sv.noborder = true

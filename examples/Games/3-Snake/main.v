@@ -11,6 +11,7 @@ struct App {
 mut:
 	win &ui.Window
 	dir gg.KeyCode
+
 	// left, right, up, down
 	by        int = 16
 	hx        int
@@ -25,10 +26,10 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'Snake'
-		width: 520
+		title:  'Snake'
+		width:  520
 		height: 400
-		theme: ui.theme_default()
+		theme:  ui.theme_default()
 	)
 
 	mut apple := ui.Button.new(text: 'A')
@@ -37,7 +38,7 @@ fn main() {
 	apple.set_bounds(64, 64, 16, 16)
 
 	mut app := &App{
-		win: window
+		win:   window
 		apple: apple
 	}
 	window.key_down_event = app.key_down

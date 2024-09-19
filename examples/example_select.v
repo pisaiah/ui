@@ -4,8 +4,8 @@ import iui as ui
 
 fn main() {
 	mut win := ui.Window.new(
-		title: 'Button Demo'
-		width: 520
+		title:  'Button Demo'
+		width:  520
 		height: 400
 	)
 
@@ -13,9 +13,8 @@ fn main() {
 
 	// Set bounds for the button; If `bounds` is not
 	// set, then the button will pack to the text size.
-
 	mut sel := ui.select_box(
-		text: 'Pick value'
+		text:  'Pick value'
 		items: [
 			'Apple',
 			'Orange',
@@ -25,7 +24,7 @@ fn main() {
 	sel.set_bounds(0, 0, 150, 30)
 
 	mut btn := ui.button(
-		text: 'Hello world'
+		text:   'Hello world'
 		bounds: ui.Bounds{99, 4, 99, 20}
 	)
 

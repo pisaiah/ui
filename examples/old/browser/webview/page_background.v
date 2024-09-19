@@ -14,8 +14,8 @@ pub mut:
 
 fn bg_area(win &ui.Window) &BackgroundBox {
 	return &BackgroundBox{
-		win: win
-		z_index: -4
+		win:        win
+		z_index:    -4
 		background: gx.white
 	}
 }

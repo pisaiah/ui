@@ -17,23 +17,23 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'My Window'
-		width: 600
+		title:  'My Window'
+		width:  600
 		height: 400
-		theme: ui.theme_default()
+		theme:  ui.theme_default()
 	)
 
 	mut dp := ui.DesktopPane.new()
 
 	mut app := &App{
 		win: window
-		dp: dp
+		dp:  dp
 	}
 
 	app.make_icons()
 
 	mut f := ui.InternalFrame.new(
-		text: 'Hello there'
+		text:   'Hello there'
 		bounds: ui.Bounds{0, 0, 200, 300}
 	)
 

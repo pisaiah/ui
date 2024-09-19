@@ -26,15 +26,15 @@ pub:
 
 pub fn link(cfg HyperlinkConfig) &Hyperlink {
 	return &Hyperlink{
-		text: cfg.text
-		x: cfg.bounds.x
-		y: cfg.bounds.y
-		width: cfg.bounds.width
-		height: cfg.bounds.height
+		text:           cfg.text
+		x:              cfg.bounds.x
+		y:              cfg.bounds.y
+		width:          cfg.bounds.width
+		height:         cfg.bounds.height
 		click_event_fn: fn (this &Hyperlink) {
 			open_url(this.url)
 		}
-		url: cfg.url
+		url:       cfg.url
 		need_pack: cfg.pack
 	}
 }
@@ -52,9 +52,9 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	size := this.get_font_size(ctx)
 
 	ctx.set_cfg(gx.TextCfg{
-		size: size
+		size:  size
 		color: ctx.theme.text_color
-		bold: this.bold
+		bold:  this.bold
 	})
 
 	// Draw Button Text
@@ -78,15 +78,15 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	}
 
 	ctx.draw_text(x, y + this.height - line_height, fix_tab(this.text), ctx.font, gx.TextCfg{
-		size: size
+		size:  size
 		color: color
-		bold: this.bold
+		bold:  this.bold
 	})
 
 	ctx.set_cfg(gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
-		bold: false
+		bold:  false
 	})
 
 	yp := y + this.height - 2
@@ -120,9 +120,9 @@ pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
 	size := btn.get_font_size(ctx)
 
 	ctx.set_cfg(gx.TextCfg{
-		size: size
+		size:  size
 		color: ctx.theme.text_color
-		bold: btn.bold
+		bold:  btn.bold
 	})
 
 	width := ctx.gg.text_width(fix_tab(btn.text))
@@ -139,9 +139,9 @@ pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
 
 	// Reset for text_height
 	ctx.set_cfg(gx.TextCfg{
-		size: ctx.win.font_size
+		size:  ctx.win.font_size
 		color: ctx.theme.text_color
-		bold: false
+		bold:  false
 	})
 }
 

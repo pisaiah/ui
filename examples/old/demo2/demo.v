@@ -13,10 +13,10 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.make_window(
-		title: 'UI Demo'
-		width: 700
-		height: 480
-		theme: ui.get_system_theme()
+		title:   'UI Demo'
+		width:   700
+		height:  480
+		theme:   ui.get_system_theme()
 		ui_mode: false
 	)
 
@@ -27,7 +27,7 @@ fn main() {
 		}
 	)
 	mut app := &App{
-		win: window
+		win:  window
 		pane: pane
 	}
 
@@ -97,7 +97,7 @@ fn create_theme_menu() &ui.MenuItem {
 	themes := ui.get_all_themes()
 	for theme in themes {
 		item := ui.menu_item(
-			text: theme.name
+			text:           theme.name
 			click_event_fn: theme_click
 		)
 		theme_menu.add_child(item)
@@ -108,7 +108,7 @@ fn create_theme_menu() &ui.MenuItem {
 // Make a 'Help' menu item
 fn create_help_menu() &ui.MenuItem {
 	help_menu := ui.menu_item(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			ui.menu_item(
 				text: 'Item 1'

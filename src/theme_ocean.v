@@ -5,30 +5,30 @@ import gx
 //	Ocean - A Cross Platform Theme
 pub fn theme_ocean() &Theme {
 	return &Theme{
-		name: 'Ocean'
-		text_color: gx.black
-		background: gx.rgb(240, 240, 240)
-		button_bg_normal: gx.rgb(240, 240, 240)
-		button_bg_hover: gx.rgb(229, 241, 251)
-		button_bg_click: gx.rgb(204, 228, 247)
+		name:                 'Ocean'
+		text_color:           gx.black
+		background:           gx.rgb(240, 240, 240)
+		button_bg_normal:     gx.rgb(240, 240, 240)
+		button_bg_hover:      gx.rgb(229, 241, 251)
+		button_bg_click:      gx.rgb(204, 228, 247)
 		button_border_normal: gx.rgb(135, 145, 155)
-		button_border_hover: gx.rgb(0, 120, 215)
-		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.rgb(255, 255, 255)
-		menubar_border: gx.rgb(255, 255, 255)
-		dropdown_background: gx.rgb(255, 255, 255)
-		dropdown_border: gx.rgb(224, 224, 224)
-		textbox_background: gx.rgb(255, 255, 255)
-		textbox_border: gx.rgb(200, 200, 200)
-		checkbox_selected: gx.rgb(143, 184, 218)
-		checkbox_bg: gx.rgb(254, 254, 254)
-		progressbar_fill: gx.rgb(143, 184, 210)
-		scroll_track_color: gx.rgb(238, 238, 238)
-		scroll_bar_color: gx.rgb(170, 170, 170)
-		button_fill_fn: ocean_button_fill_fn
-		bar_fill_fn: ocean_bar_fill_fn
-		setup_fn: ocean_setup
-		menu_bar_fill_fn: ocean_menubar_fill_fn
+		button_border_hover:  gx.rgb(0, 120, 215)
+		button_border_click:  gx.rgb(0, 84, 153)
+		menubar_background:   gx.rgb(255, 255, 255)
+		menubar_border:       gx.rgb(255, 255, 255)
+		dropdown_background:  gx.rgb(255, 255, 255)
+		dropdown_border:      gx.rgb(224, 224, 224)
+		textbox_background:   gx.rgb(255, 255, 255)
+		textbox_border:       gx.rgb(200, 200, 200)
+		checkbox_selected:    gx.rgb(143, 184, 218)
+		checkbox_bg:          gx.rgb(254, 254, 254)
+		progressbar_fill:     gx.rgb(143, 184, 210)
+		scroll_track_color:   gx.rgb(238, 238, 238)
+		scroll_bar_color:     gx.rgb(170, 170, 170)
+		button_fill_fn:       ocean_button_fill_fn
+		bar_fill_fn:          ocean_bar_fill_fn
+		setup_fn:             ocean_setup
+		menu_bar_fill_fn:     ocean_menubar_fill_fn
 	}
 }
 
@@ -85,30 +85,30 @@ pub fn ocean_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext) {
 // Seven - Memic windows 7
 pub fn theme_seven() &Theme {
 	return &Theme{
-		name: 'Seven'
-		text_color: gx.black
-		background: gx.rgb(248, 248, 248)
-		button_bg_normal: gx.rgb(240, 240, 240)
-		button_bg_hover: gx.rgb(229, 241, 251)
-		button_bg_click: gx.rgb(204, 228, 247)
+		name:                 'Seven'
+		text_color:           gx.black
+		background:           gx.rgb(248, 248, 248)
+		button_bg_normal:     gx.rgb(240, 240, 240)
+		button_bg_hover:      gx.rgb(229, 241, 251)
+		button_bg_click:      gx.rgb(204, 228, 247)
 		button_border_normal: gx.rgb(190, 190, 190)
-		button_border_hover: gx.rgb(0, 120, 215)
-		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.rgb(255, 255, 255)
-		menubar_border: gx.rgb(255, 255, 255)
-		dropdown_background: gx.rgb(255, 255, 255)
-		dropdown_border: gx.rgb(224, 224, 224)
-		textbox_background: gx.rgb(255, 255, 255)
-		textbox_border: gx.rgb(200, 200, 200)
-		checkbox_selected: gx.rgb(30, 160, 220)
-		checkbox_bg: gx.rgb(254, 254, 254)
-		progressbar_fill: gx.rgb(143, 184, 210)
-		scroll_track_color: gx.rgb(238, 238, 238)
-		scroll_bar_color: gx.rgb(170, 170, 170)
-		button_fill_fn: seven_button_fill_fn
-		bar_fill_fn: seven_bar_fill_fn
-		setup_fn: seven_setup
-		menu_bar_fill_fn: seven_menubar_fill_fn
+		button_border_hover:  gx.rgb(0, 120, 215)
+		button_border_click:  gx.rgb(0, 84, 153)
+		menubar_background:   gx.rgb(255, 255, 255)
+		menubar_border:       gx.rgb(255, 255, 255)
+		dropdown_background:  gx.rgb(255, 255, 255)
+		dropdown_border:      gx.rgb(224, 224, 224)
+		textbox_background:   gx.rgb(255, 255, 255)
+		textbox_border:       gx.rgb(200, 200, 200)
+		checkbox_selected:    gx.rgb(30, 160, 220)
+		checkbox_bg:          gx.rgb(254, 254, 254)
+		progressbar_fill:     gx.rgb(143, 184, 210)
+		scroll_track_color:   gx.rgb(238, 238, 238)
+		scroll_bar_color:     gx.rgb(170, 170, 170)
+		button_fill_fn:       seven_button_fill_fn
+		bar_fill_fn:          seven_bar_fill_fn
+		setup_fn:             seven_setup
+		menu_bar_fill_fn:     seven_menubar_fill_fn
 	}
 }
 
@@ -154,30 +154,30 @@ pub fn seven_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext) {
 // Seven - Memic windows 7
 pub fn theme_seven_dark() &Theme {
 	return &Theme{
-		name: 'Seven Dark'
-		text_color: gx.rgb(230, 230, 230)
-		background: gx.rgb(30, 30, 30)
-		button_bg_normal: gx.rgb(10, 10, 10)
-		button_bg_hover: gx.rgb(70, 70, 70)
-		button_bg_click: gx.rgb(50, 50, 50)
+		name:                 'Seven Dark'
+		text_color:           gx.rgb(230, 230, 230)
+		background:           gx.rgb(30, 30, 30)
+		button_bg_normal:     gx.rgb(10, 10, 10)
+		button_bg_hover:      gx.rgb(70, 70, 70)
+		button_bg_click:      gx.rgb(50, 50, 50)
 		button_border_normal: gx.rgb(130, 130, 130)
-		button_border_hover: gx.rgb(0, 120, 215)
-		button_border_click: gx.rgb(0, 84, 153)
-		menubar_background: gx.rgb(30, 30, 30)
-		menubar_border: gx.rgb(30, 30, 30)
-		dropdown_background: gx.rgb(20, 20, 20)
-		dropdown_border: gx.rgb(90, 90, 90)
-		textbox_background: gx.rgb(34, 39, 46)
-		textbox_border: gx.rgb(130, 130, 130)
-		checkbox_selected: gx.rgb(240, 99, 40)
-		checkbox_bg: gx.rgb(5, 5, 5)
-		progressbar_fill: gx.rgb(130, 130, 130)
-		scroll_track_color: gx.rgb(0, 0, 0)
-		scroll_bar_color: gx.rgb(170, 170, 170)
-		button_fill_fn: seven_dark_button_fill_fn
-		bar_fill_fn: seven_dark_bar_fill_fn
-		setup_fn: seven_dark_setup
-		menu_bar_fill_fn: seven_dark_menubar_fill_fn
+		button_border_hover:  gx.rgb(0, 120, 215)
+		button_border_click:  gx.rgb(0, 84, 153)
+		menubar_background:   gx.rgb(30, 30, 30)
+		menubar_border:       gx.rgb(30, 30, 30)
+		dropdown_background:  gx.rgb(20, 20, 20)
+		dropdown_border:      gx.rgb(90, 90, 90)
+		textbox_background:   gx.rgb(34, 39, 46)
+		textbox_border:       gx.rgb(130, 130, 130)
+		checkbox_selected:    gx.rgb(240, 99, 40)
+		checkbox_bg:          gx.rgb(5, 5, 5)
+		progressbar_fill:     gx.rgb(130, 130, 130)
+		scroll_track_color:   gx.rgb(0, 0, 0)
+		scroll_bar_color:     gx.rgb(170, 170, 170)
+		button_fill_fn:       seven_dark_button_fill_fn
+		bar_fill_fn:          seven_dark_bar_fill_fn
+		setup_fn:             seven_dark_setup
+		menu_bar_fill_fn:     seven_dark_menubar_fill_fn
 	}
 }
 

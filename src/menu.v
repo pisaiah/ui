@@ -110,7 +110,7 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 		}
 	}
 	ctx.draw_text(this.x + 7, y, this.text, ctx.font, gx.TextCfg{
-		size: ctx.win.font_size
+		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 	})
 }
@@ -237,7 +237,7 @@ fn (mut app Window) set_bar_tick(val int) {
 pub struct MenuItemConfig {
 pub:
 	text           string
-	icon           &Image = unsafe { nil }
+	icon           &Image                    = unsafe { nil }
 	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
 	children       []&MenuItem
 	click_fn       ?fn (voidptr)
@@ -245,8 +245,8 @@ pub:
 
 pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
 	mut item := &MenuItem{
-		text: c.text
-		icon: c.icon
+		text:           c.text
+		icon:           c.icon
 		click_event_fn: c.click_event_fn
 	}
 
@@ -301,8 +301,8 @@ fn open_about_modal(app &Window) &Modal {
 	p.add_child(lbl)
 
 	gh := link(
-		text: 'Github'
-		url: 'https://github.com/isaiahpatton/ui'
+		text:   'Github'
+		url:    'https://github.com/isaiahpatton/ui'
 		bounds: Bounds{
 			x: 0
 			y: 15

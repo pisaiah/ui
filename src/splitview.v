@@ -27,14 +27,14 @@ pub mut:
 
 pub fn SplitView.new(c SplitViewConfig) &SplitView {
 	return &SplitView{
-		x: c.bounds.x
-		y: c.bounds.y
-		width: c.bounds.width
-		height: c.bounds.height
-		children: [c.first, c.second]
+		x:           c.bounds.x
+		y:           c.bounds.y
+		width:       c.bounds.width
+		height:      c.bounds.height
+		children:    [c.first, c.second]
 		min_percent: c.min_percent
-		h1: c.h1
-		h2: c.h2
+		h1:          c.h1
+		h2:          c.h2
 	}
 }
 
@@ -119,7 +119,7 @@ fn (mut this SplitView) draw_splitbar(ctx &GraphicsContext, xp int, yp int) {
 	}
 
 	dl := gg.PenConfig{
-		color: color
+		color:     color
 		line_type: .dotted
 		thickness: 1
 	}

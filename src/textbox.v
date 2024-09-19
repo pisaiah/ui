@@ -46,7 +46,7 @@ pub fn Textbox.new(c TextboxConfig) &Textbox {
 pub fn text_box(lines []string) &Textbox {
 	return &Textbox{
 		lines: lines
-		sel: Selection{
+		sel:   Selection{
 			x0: -1
 		}
 	}
@@ -58,7 +58,7 @@ fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 	}
 
 	cfg := gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	}
 
@@ -95,10 +95,10 @@ fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 pub fn invoke_activeline_draw_event(com &Textbox, ctx &GraphicsContext, line int, x int, y int) {
 	ev := DrawTextlineEvent{
 		target: unsafe { com }
-		ctx: ctx
-		line: line
-		x: x
-		y: y
+		ctx:    ctx
+		line:   line
+		x:      x
+		y:      y
 	}
 	for f in com.events.event_map['current_line_draw'] {
 		f(ev)
@@ -126,7 +126,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 
 	cfg := gx.TextCfg{
 		color: ctx.theme.text_color
-		size: ctx.win.font_size + this.fs
+		size:  ctx.win.font_size + this.fs
 	}
 	ctx.gg.set_text_cfg(cfg)
 
@@ -297,7 +297,7 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &
 		if cfg.color != color {
 			cfg1 := gx.TextCfg{
 				color: color
-				size: cfg.size
+				size:  cfg.size
 			}
 			ctx.draw_text(xx, y + 2, str, ctx.font, cfg1)
 		} else {

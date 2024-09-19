@@ -44,7 +44,7 @@ pub fn make_match(in_col string, keys []string) []string {
 
 		group := Group{
 			start: indxx
-			end: indxx + keyy.len
+			end:   indxx + keyy.len
 		}
 
 		indx = indxx + keyy.len

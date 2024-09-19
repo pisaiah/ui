@@ -2,10 +2,10 @@ module dialogs
 
 import os
 
-# include "@VMODROOT/src/extra/dialogs/tinyfiledialogs.h"
+#include "@VMODROOT/src/extra/dialogs/tinyfiledialogs.h"
 #flag -I @VMODROOT/src/extra/dialogs/commdlg.h
 #flag -I @VMODROOT/src/extra/dialogs/
- #flag @VMODROOT/src/extra/dialogs/tinyfiledialogs.c
+#flag @VMODROOT/src/extra/dialogs/tinyfiledialogs.c
 
 #include "@VMODROOT/src/extra/dialogs/commdlg.h"
 
@@ -37,8 +37,6 @@ fn cstr(the_string string) &char {
 }
 */
 
-
-
 fn C.tinyfd_openFileDialog(a &char, b &char, c &char, d &char, e &char, f &char) &char
 
 fn C.tinyfd_saveFileDialog(a &char, b &char, c &char, d &char, e &char) &char
@@ -63,7 +61,6 @@ pub fn color_picker() string {
 fn cstr(the_string string) &char {
 	return &char(the_string.str)
 }
-
 
 pub fn open_dialog(title string) string {
 	temp := unsafe {

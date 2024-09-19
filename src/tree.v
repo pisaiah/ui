@@ -1,8 +1,8 @@
 module iui
 
+// import math
 import gg
 import gx
-// import math
 import os
 
 // Tree (https://codejava.net/java-se/swing/jtree-basic-tutorial-and-examples
@@ -54,15 +54,15 @@ fn (mut this TreeNode) draw_icon(ctx &GraphicsContext, x int, y int) {
 	if this.nodes.len > 0 {
 		h := y + (this.height / 2) - (13 / 2)
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: ctx.get_icon_sheet_id()
-			img_rect: gg.Rect{x, h, 16, 13}
+			img_id:    ctx.get_icon_sheet_id()
+			img_rect:  gg.Rect{x, h, 16, 13}
 			part_rect: gg.Rect{13, 3, 16, 13}
 		})
 	} else {
 		h := y + (this.height / 2) - (16 / 2)
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: ctx.get_icon_sheet_id()
-			img_rect: gg.Rect{x, h, 13, 16}
+			img_id:    ctx.get_icon_sheet_id()
+			img_rect:  gg.Rect{x, h, 13, 16}
 			part_rect: gg.Rect{0, 0, 13, 16}
 		})
 	}
@@ -71,7 +71,7 @@ fn (mut this TreeNode) draw_icon(ctx &GraphicsContext, x int, y int) {
 fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut tree Tree2) bool {
 	cfg := gx.TextCfg{
 		color: ctx.theme.text_color
-		size: ctx.font_size
+		size:  ctx.font_size
 	}
 
 	if y > tree.y + tree.height {
@@ -140,7 +140,7 @@ pub fn (this &Tree2) get_node_height(ctx &GraphicsContext) int {
 pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 	cfg := gx.TextCfg{
 		color: ctx.theme.text_color
-		size: ctx.font_size
+		size:  ctx.font_size
 	}
 
 	node_height := this.get_node_height(ctx)
@@ -148,8 +148,8 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 	if !this.no_icon {
 		h := this.y + (node_height / 2) - (13 / 2)
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id: ctx.get_icon_sheet_id()
-			img_rect: gg.Rect{this.x + 4, h, 16, 13}
+			img_id:    ctx.get_icon_sheet_id()
+			img_rect:  gg.Rect{this.x + 4, h, 16, 13}
 			part_rect: gg.Rect{13, 3, 16, 13}
 		})
 	}

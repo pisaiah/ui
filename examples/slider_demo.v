@@ -5,10 +5,10 @@ import iui as ui
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'My Window'
-		width: 520
+		title:  'My Window'
+		width:  520
 		height: 400
-		theme: ui.theme_default()
+		theme:  ui.theme_default()
 	)
 
 	mut p := ui.Panel.new()
@@ -32,9 +32,9 @@ fn main() {
 	p.add_child(slid2)
 
 	mut plr := &Player{
-		x: 0
-		y: 0
-		width: 320
+		x:      0
+		y:      0
+		width:  320
 		height: 240
 	}
 	p.add_child(plr)

@@ -28,12 +28,12 @@ pub:
 pub fn HBox.new(cfg HBoxConfig) &HBox {
 	return &HBox{
 		center_screen: cfg.center_screen
-		needs_pack: cfg.pack
+		needs_pack:    cfg.pack
 		overflow_full: cfg.overflow
-		x: cfg.bounds.x
-		y: cfg.bounds.y
-		width: cfg.bounds.width
-		height: cfg.bounds.height
+		x:             cfg.bounds.x
+		y:             cfg.bounds.y
+		width:         cfg.bounds.width
+		height:        cfg.bounds.height
 	}
 }
 

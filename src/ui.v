@@ -151,7 +151,7 @@ fn (win &Window) draw_tooltip(ctx &GraphicsContext) {
 
 	for line in lines {
 		ctx.draw_text(x, y, line, ctx.font, gx.TextCfg{
-			size: win.font_size
+			size:  win.font_size
 			color: ctx.theme.text_color
 		})
 		y += ctx.line_height
@@ -242,7 +242,8 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 
 	mut cfgg := gx.TextCfg{
 		...cfg
-		family: font_id // ctx.family
+		family: font_id
+		// ctx.family
 	}
 
 	ctx.gg.set_text_cfg(cfgg)
@@ -257,10 +258,10 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 
 fn new_graphics(win &Window) &GraphicsContext {
 	return &GraphicsContext{
-		gg: win.gg
-		theme: &win.theme
+		gg:        win.gg
+		theme:     &win.theme
 		font_size: win.font_size
-		win: win
+		win:       win
 	}
 }
 
@@ -309,11 +310,11 @@ pub fn (mut win Window) run() {
 
 pub fn Window.new(cfg &WindowConfig) &Window {
 	mut win := &Window{
-		gg: unsafe { nil }
-		theme: cfg.theme
-		bar: unsafe { nil }
-		config: cfg
-		font_size: cfg.font_size
+		gg:               unsafe { nil }
+		theme:            cfg.theme
+		bar:              unsafe { nil }
+		config:           cfg
+		font_size:        cfg.font_size
 		graphics_context: unsafe { nil }
 	}
 
@@ -326,19 +327,17 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 	}
 
 	win.gg = gg.new_context(
-		bg_color: win.theme.background
-		width: cfg.width
-		height: cfg.height
+		bg_color:      win.theme.background
+		width:         cfg.width
+		height:        cfg.height
 		create_window: true
-		window_title: txt
-		frame_fn: frame
-		event_fn: on_event
-		user_data: win
-		// TODO config.user_data
-		font_path: cfg.font_path
-		font_size: cfg.font_size
-		ui_mode: cfg.ui_mode
-		// sample_count: 2
+		window_title:  txt
+		frame_fn:      frame
+		event_fn:      on_event
+		user_data:     win
+		font_path:     cfg.font_path
+		font_size:     cfg.font_size
+		ui_mode:       cfg.ui_mode
 	)
 	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {
@@ -351,7 +350,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		}
 	}
 
-	// win.theme.setup_fn(mut win)
+	win.theme.setup_fn(mut win)
 	return win
 }
 

@@ -6,10 +6,10 @@ fn (mut app App) make_menu_bar() {
 	app.win.bar = ui.Menubar.new()
 
 	gi := ui.MenuItem.new(
-		text: 'Game'
+		text:     'Game'
 		children: [
 			ui.MenuItem.new(
-				text: 'New Game'
+				text:     'New Game'
 				click_fn: app.me_click
 			),
 		]
@@ -22,7 +22,7 @@ fn (mut app App) make_menu_bar() {
 	about_calc.subscribe_event('mouse_up', app.about_calc)
 
 	mut help := ui.MenuItem.new(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			about_calc,
 			ui.MenuItem.new(

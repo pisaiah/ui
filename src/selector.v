@@ -29,14 +29,14 @@ pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
 
 pub fn select_box(cfg SelectboxConfig) &Selectbox {
 	return &Selectbox{
-		text: cfg.text
-		app: unsafe { nil }
-		x: cfg.bounds.x
-		y: cfg.bounds.y
-		width: cfg.bounds.width
+		text:   cfg.text
+		app:    unsafe { nil }
+		x:      cfg.bounds.x
+		y:      cfg.bounds.y
+		width:  cfg.bounds.width
 		height: cfg.bounds.height
-		items: cfg.items
-		popup: unsafe { nil }
+		items:  cfg.items
+		popup:  unsafe { nil }
 	}
 }
 
@@ -67,8 +67,8 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 
 pub fn (mut this Selectbox) invoke_change_event(ctx &GraphicsContext, ov string, nv string) {
 	ev := ItemChangeEvent{
-		target: this
-		ctx: ctx
+		target:  this
+		ctx:     ctx
 		old_val: ov
 		new_val: nv
 	}
@@ -180,7 +180,7 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 
 	// Draw Button Text
 	ctx.draw_text(x + 5, y + (height / 2) - sizh, item.text, ctx.font, gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 

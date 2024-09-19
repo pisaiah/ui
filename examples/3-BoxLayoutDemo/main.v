@@ -4,8 +4,8 @@ import iui as ui
 
 fn main() {
 	mut win := ui.Window.new(
-		title: 'BoxLayoutDemo'
-		width: 450
+		title:  'BoxLayoutDemo'
+		width:  450
 		height: 295
 	)
 

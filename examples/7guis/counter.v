@@ -11,8 +11,8 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'Counter'
-		width: 230
+		title:  'Counter'
+		width:  230
 		height: 200
 	)
 
@@ -28,7 +28,7 @@ fn main() {
 
 	// Create Count Button
 	mut btn := ui.button(
-		text: 'Count'
+		text:        'Count'
 		should_pack: true
 	)
 

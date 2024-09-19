@@ -4,7 +4,7 @@
 bool need = true;
 
 static float SECC = 1000;
-static int FPS = (int)(((float)1000) / 120);
+static int FPS = (int)(((float)1000) / 60);
 
 float get_refresh_rate() {
     DEVMODE lpDevMode;
@@ -70,7 +70,7 @@ void _sapp_win32_run_2(const sapp_desc* desc) {
 		_sapp_d3d11_create_device_and_swapchain();
 		_sapp_d3d11_create_default_render_target();
 	#endif
-	#if defined(SOKOL_GLCORE33)
+	#if defined(SOKOL_GLCORE)
 		_sapp_wgl_init();
 		_sapp_wgl_load_extensions();
 		_sapp_wgl_create_context();
@@ -105,7 +105,7 @@ void _sapp_win32_run_2(const sapp_desc* desc) {
 			Sleep(500);
 		}
 
-		#if defined(SOKOL_GLCORE33)
+		#if defined(SOKOL_GLCORE)
 		   i_sleep(FPS);
 		   _sapp_wgl_swap_buffers();
 		   //Sleep(30);

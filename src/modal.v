@@ -33,11 +33,11 @@ pub fn Modal.new(c ModalConfig) &Modal {
 	return &Modal{
 		text: c.title
 		// window: unsafe { nil }
-		z_index: 500
+		z_index:    500
 		needs_init: true
-		in_width: 500
-		in_height: 300
-		close: unsafe { nil }
+		in_width:   500
+		in_height:  300
+		close:      unsafe { nil }
 	}
 }
 
@@ -72,7 +72,7 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 	ttop := m.top_off + (ctx.line_height / 2) - 1
 
 	ctx.gg.draw_text(m.xs + 6, ttop, m.text, gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 
@@ -106,7 +106,7 @@ pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
 
 pub fn (mut this Modal) make_close_btn(ce bool) &Button {
 	mut close := Button.new(
-		text: 'OK'
+		text:   'OK'
 		bounds: Bounds{200, this.in_height - 35, 100, 30}
 	)
 

@@ -12,8 +12,8 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'My Recipes'
-		width: 800
+		title:  'My Recipes'
+		width:  800
 		height: 550
 	)
 	window.set_theme(ui.theme_seven())
@@ -34,7 +34,7 @@ fn main() {
 	hbox.set_width_as_percent(true, 100)
 
 	mut sv := ui.scroll_view(
-		view: hbox
+		view:   hbox
 		bounds: ui.Bounds{0, 0, 600, 390}
 	)
 
@@ -50,14 +50,14 @@ fn (mut app App) make_recipes() []Recipe {
 	mut recipes := []Recipe{}
 
 	cbm := Recipe{
-		app: app
+		app:   app
 		title: 'Chocolate-Banana Milkshake'
 		image: ui.image_from_file('cbm.jpg')
 	}
 	recipes << cbm
 
 	por := Recipe{
-		app: app
+		app:   app
 		title: 'Puffy Omelet'
 		image: ui.image_from_file('po.jpg')
 	}
@@ -66,7 +66,7 @@ fn (mut app App) make_recipes() []Recipe {
 	img := ui.image_from_file('blank.jpg')
 	for i in 0 .. 109 {
 		recipes << Recipe{
-			app: app
+			app:   app
 			title: 'Test ${i}'
 			image: ui.image_from_file('blank.png')
 		}
@@ -101,8 +101,8 @@ fn (mut recipe Recipe) make_icon() &ui.VBox {
 	box.add_child(lbl)
 
 	mut btn := ui.button(
-		text: 'View'
-		bounds: ui.Bounds{10, 8, w - 20, 30}
+		text:      'View'
+		bounds:    ui.Bounds{10, 8, w - 20, 30}
 		user_data: &recipe
 	)
 	btn.subscribe_event('mouse_up', fn [mut recipe] (mut e ui.MouseEvent) {

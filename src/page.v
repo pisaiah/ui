@@ -20,7 +20,7 @@ pub mut:
 
 fn draw_cfg() gx.TextCfg {
 	return gx.TextCfg{
-		size: 36
+		size:  36
 		color: gx.white
 	}
 }
@@ -33,12 +33,12 @@ pub:
 
 pub fn Page.new(c PageCfg) &Page {
 	return &Page{
-		text: c.title
-		z_index: 500
+		text:       c.title
+		z_index:    500
 		needs_init: true
-		text_cfg: draw_cfg()
-		in_height: 300
-		close: unsafe { nil }
+		text_cfg:   draw_cfg()
+		in_height:  300
+		close:      unsafe { nil }
 	}
 }
 
@@ -60,7 +60,7 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	ctx.draw_text(56, 18, this.text, ctx.font, this.text_cfg)
 
 	ctx.gg.set_text_cfg(gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 

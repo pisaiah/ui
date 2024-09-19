@@ -20,7 +20,7 @@ pub fn open_dialog(title string) string {
 		C.win_open_file_dialog(cstr(title))
 	}
 	dump(temp)
-	
+
 	if temp != &char(0) {
 		return unsafe { temp.vstring() }
 	} else {

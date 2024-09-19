@@ -37,13 +37,13 @@ pub:
 
 pub fn Switch.new(cf SwitchConfig) &Switch {
 	return &Switch{
-		text: cf.text
-		x: cf.bounds.x
-		y: cf.bounds.y
-		width: cf.bounds.width
-		height: cf.bounds.height
+		text:        cf.text
+		x:           cf.bounds.x
+		y:           cf.bounds.y
+		width:       cf.bounds.width
+		height:      cf.bounds.height
 		is_selected: cf.selected
-		a: if cf.selected { -1 } else { 0 }
+		a:           if cf.selected { -1 } else { 0 }
 	}
 }
 
@@ -157,7 +157,7 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 
 	ctx.draw_text(this.x + left + 4, this.y + (this.height / 2) - sizh, this.text, ctx.font,
 		gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 }

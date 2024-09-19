@@ -11,7 +11,7 @@ pub mut:
 	file_list      &ui.VBox
 	file_name      &ui.HBox
 	ok_btn         &ui.Button
-	path_change_fn fn (voidptr, voidptr) = unsafe {nil}
+	path_change_fn fn (voidptr, voidptr) = unsafe { nil }
 }
 
 pub fn (this &FilePicker) get_full_path() string {
@@ -38,10 +38,10 @@ pub fn (this &FilePicker) get_file_name() string {
 
 @[parms]
 pub struct FilePickerConfig {
-pub: 
+pub:
 	in_modal       bool
-	path           string = os.home_dir()
-	path_change_fn fn (voidptr, voidptr) = unsafe {nil}
+	path           string                = os.home_dir()
+	path_change_fn fn (voidptr, voidptr) = unsafe { nil }
 	show_icons     bool
 }
 
@@ -49,8 +49,8 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	dir := os.dir(conf.path)
 	file_name := if os.is_dir(conf.path) { '' } else { os.base(conf.path) }
 
-	mut dir_input := ui.TextField.new(text:dir)
-	mut file_input := ui.TextField.new(text:file_name)
+	mut dir_input := ui.TextField.new(text: dir)
+	mut file_input := ui.TextField.new(text: file_name)
 
 	padding := if conf.in_modal { 10 } else { 30 }
 
@@ -72,7 +72,7 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 	hbox.set_bounds(0, 16, 0, 0)
 	hbox.pack()
 
-	mut lbl := ui.Label.new(text:'File name:')
+	mut lbl := ui.Label.new(text: 'File name:')
 	lbl.set_bounds(10, 4, 0, 0)
 	lbl.pack()
 	hbox.add_child(lbl)
@@ -88,8 +88,8 @@ pub fn create_file_picker(mut window ui.Window, conf FilePickerConfig) &FilePick
 }
 
 fn before_txt_change(winA voidptr, tbA voidptr) {
-	win := unsafe {&ui.Window(winA)}
-	tb := unsafe {&ui.TextField(tbA)}
+	win := unsafe { &ui.Window(winA) }
+	tb := unsafe { &ui.TextField(tbA) }
 	mut is_enter := tb.last_letter == 'enter'
 	if is_enter {
 		mut txt := tb.text
@@ -101,7 +101,7 @@ fn before_txt_change(winA voidptr, tbA voidptr) {
 }
 
 fn load_directory(win ui.Window, dir string, com voidptr) {
-	mut vbox := unsafe{&ui.VBox(com)}
+	mut vbox := unsafe { &ui.VBox(com) }
 	mut input := win.get[&ui.TextField]('dir-input')
 	real_dir := os.real_path(dir)
 	input.text = real_dir
@@ -129,15 +129,15 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	mut hbox := ui.HBox.new()
 	full_path := os.join_path(dir, file)
 
-	mut img := &gg.Image(unsafe{nil})
+	mut img := &gg.Image(unsafe { nil })
 	if os.is_dir(full_path) {
 		img_candidate := win.get[&gg.Image]('img_folder')
-		if !isnil(img_candidate){
+		if !isnil(img_candidate) {
 			img = img_candidate
 		}
 	} else {
 		img_candidate := win.get[&gg.Image]('img_blank')
-		if !isnil(img_candidate){
+		if !isnil(img_candidate) {
 			img = img_candidate
 		}
 	}
@@ -150,7 +150,7 @@ fn create_file_box(win &ui.Window, dir string, file string) &ui.HBox {
 	lbl.draw_event_fn = lbl_draw_ev
 
 	file_size := os.file_size(full_path)
-	mut size := ui.Label.new(text:format_size(file_size))
+	mut size := ui.Label.new(text: format_size(file_size))
 	size.draw_event_fn = lbl_draw_ev
 	size.set_bounds(5, 0, 130, 32)
 
@@ -248,7 +248,7 @@ fn vbtn_draw(mut win ui.Window, com &ui.Component) {
 	}
 }
 
-fn draw_bg(mut win ui.Window,this &ui.VBox) {
+fn draw_bg(mut win ui.Window, this &ui.VBox) {
 	x := if this.rx != 0 { this.rx } else { this.x }
 	y := if this.ry != 0 { this.ry } else { this.y }
 
@@ -274,10 +274,10 @@ pub fn draw_scrollbar(mut win ui.Window, mut com ui.VBox, cl int, spl_len int) {
 		wid := 16
 		wido := wid + 1
 
-		win.draw_bordered_rect(x + com.width - wido, y + 1, wid, com.height - 2, 2,
-			win.theme.scroll_track_color, win.theme.button_bg_hover)
-		win.draw_bordered_rect(x + com.width - wido, y + sth + 1, wid, enh - 2, 2,
-			win.theme.scroll_bar_color, win.theme.scroll_track_color)
+		win.draw_bordered_rect(x + com.width - wido, y + 1, wid, com.height - 2, 2, win.theme.scroll_track_color,
+			win.theme.button_bg_hover)
+		win.draw_bordered_rect(x + com.width - wido, y + sth + 1, wid, enh - 2, 2, win.theme.scroll_bar_color,
+			win.theme.scroll_track_color)
 	}
 }
 
@@ -286,8 +286,8 @@ pub struct FilePickerModalData {
 	user_data voidptr
 }
 
-pub fn open_file_picker(mut win &ui.Window, conf FilePickerConfig, user_data voidptr) &ui.Page {
-	mut modal := ui.Page.new(title:'Choose Folder & File')
+pub fn open_file_picker(mut win ui.Window, conf FilePickerConfig, user_data voidptr) &ui.Page {
+	mut modal := ui.Page.new(title: 'Choose Folder & File')
 	modal.set_id(mut win, 'file_picker_modal')
 
 	mut picker := create_file_picker(mut win, conf)
@@ -296,7 +296,7 @@ pub fn open_file_picker(mut win &ui.Window, conf FilePickerConfig, user_data voi
 	modal.add_child(picker.file_name)
 	picker_data := &FilePickerModalData{picker, user_data}
 
-	picker.ok_btn.subscribe_event('mouse_up',(fn [mut win, picker_data](a voidptr) {
+	picker.ok_btn.subscribe_event('mouse_up', (fn [mut win, picker_data] (a voidptr) {
 		picker_data.picker.path_change_fn(picker_data.picker, picker_data.user_data)
 
 		win.components = win.components.filter(it.id != 'file_picker_modal')

@@ -9,8 +9,8 @@ mut:
 
 fn main() {
 	mut win := ui.Window.new(
-		title: 'BorderLayoutDemo'
-		width: 450
+		title:  'BorderLayoutDemo'
+		width:  450
 		height: 295
 	)
 

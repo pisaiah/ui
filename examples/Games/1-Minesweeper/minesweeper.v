@@ -56,11 +56,11 @@ fn main() {
 	win_width := width + 2
 
 	mut win := ui.Window.new(
-		theme: ui.theme_default()
-		title: 'Minesweeper'
-		width: win_width
+		theme:     ui.theme_default()
+		title:     'Minesweeper'
+		width:     win_width
 		font_size: 14
-		height: width + 54 + 27
+		height:    width + 54 + 27
 	)
 
 	mut gp := ui.Panel.new(
@@ -72,9 +72,9 @@ fn main() {
 	)
 
 	mut app := &App{
-		win: win
+		win:      win
 		btn_size: btn_size
-		gp: gp
+		gp:       gp
 	}
 
 	app.setup_icons()

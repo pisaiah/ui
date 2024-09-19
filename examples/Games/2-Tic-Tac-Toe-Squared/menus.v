@@ -10,21 +10,21 @@ fn (mut app App) setup_menus() &ui.Menubar {
 	themes := ui.get_all_themes()
 	for theme2 in themes {
 		item := ui.MenuItem.new(
-			text: theme2.name
+			text:           theme2.name
 			click_event_fn: theme_click
 		)
 		theme_menu.add_child(item)
 	}
 
 	mut help := ui.MenuItem.new(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			ui.MenuItem.new(
-				text: 'How to Play'
+				text:     'How to Play'
 				click_fn: app.about_rules
 			),
 			ui.MenuItem.new(
-				text: 'About (TicTacToe)^2'
+				text:     'About (TicTacToe)^2'
 				click_fn: app.about_game
 			),
 			ui.MenuItem.new(
@@ -74,7 +74,7 @@ fn (mut app App) about_rules(mut e ui.MouseEvent) {
 
 	mut p := ui.Panel.new(
 		layout: ui.BoxLayout.new(
-			ori: 1
+			ori:  1
 			vgap: 0
 			hgap: 0
 		)

@@ -103,24 +103,24 @@ pub fn (mut wl WLabel) draw(ctx &GraphicsContext) {
 
 pub fn (mut l WLabel) init_sokol_image() {
 	mut img_desc := gfx.ImageDesc{
-		width: l.width
-		height: l.height
-		num_mipmaps: 0
-		label: ''.str
+		width:         l.width
+		height:        l.height
+		num_mipmaps:   0
+		label:         ''.str
 		d3d11_texture: 0
 	}
 
 	mut smp_desc := gfx.SamplerDesc{
 		min_filter: .linear
 		mag_filter: .linear
-		wrap_u: .clamp_to_edge
-		wrap_v: .clamp_to_edge
+		wrap_u:     .clamp_to_edge
+		wrap_v:     .clamp_to_edge
 	}
 	l.samp = gfx.make_sampler(&smp_desc)
 
 	img_size := usize(4 * l.width * l.height)
 	img_desc.data.subimage[0][0] = gfx.Range{
-		ptr: l.data
+		ptr:  l.data
 		size: img_size
 	}
 	l.simg = gfx.make_image(&img_desc)
@@ -136,7 +136,7 @@ pub fn (mut l WLabel) update_simg(ctx &GraphicsContext) {
 
 	img_size := usize(4 * l.width * l.height)
 	imd.subimage[0][0] = gfx.Range{
-		ptr: l.data
+		ptr:  l.data
 		size: img_size
 	}
 	gfx.update_image(l.simg, imd)

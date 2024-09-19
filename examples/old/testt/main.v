@@ -8,8 +8,8 @@ struct App {
 
 fn main() {
 	mut win := ui.make_window(
-		title: 'Button Demo'
-		width: 520
+		title:  'Button Demo'
+		width:  520
 		height: 400
 	)
 
@@ -26,17 +26,17 @@ fn main() {
 	button_bounds := ui.Bounds{5, 5, 100, 30}
 
 	mut left_button := ui.button(
-		text: 'Left Button'
+		text:   'Left Button'
 		bounds: button_bounds
 	)
 
 	mut mid_button := ui.button(
-		text: 'Middle Button'
+		text:   'Middle Button'
 		bounds: button_bounds
 	)
 
 	mut right_button := ui.button(
-		text: 'Right Button'
+		text:   'Right Button'
 		bounds: button_bounds
 	)
 
@@ -73,7 +73,7 @@ fn (mut app App) make_selectbox_section() &ui.Titlebox {
 
 	// app.pane.add_child(title_box)
 	mut btn := ui.button(
-		text: 'Hello'
+		text:   'Hello'
 		bounds: ui.Bounds{0, 70, 60, 40}
 	)
 	btn.subscribe_event('mouse_up', fn (mut e ui.MouseEvent) {
@@ -102,7 +102,7 @@ fn (mut app App) make_select_box_section() &ui.Titlebox {
 
 	// app.pane.add_child(title_box)
 	mut btn := ui.button(
-		text: 'Hello'
+		text:   'Hello'
 		bounds: ui.Bounds{0, 70, 60, 40}
 	)
 	btn.subscribe_event('mouse_up', fn (mut e ui.MouseEvent) {

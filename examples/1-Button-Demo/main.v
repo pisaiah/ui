@@ -4,8 +4,8 @@ import iui as ui
 
 fn main() {
 	mut win := ui.window(
-		title: 'Button Demo'
-		width: 520
+		title:  'Button Demo'
+		width:  520
 		height: 400
 	)
 
@@ -24,7 +24,7 @@ fn main() {
 	)
 
 	mut right_button := ui.Button.new(
-		text: 'Right Button'
+		text:   'Right Button'
 		bounds: button_bounds
 	)
 

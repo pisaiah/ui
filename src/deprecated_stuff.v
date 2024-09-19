@@ -18,8 +18,8 @@ pub fn button_with_icon(icon int, conf ButtonConfig) &Button {
 @[deprecated: 'Replaced with menu_item(MenuItemConfig)']
 pub fn menuitem(text string) &MenuItem {
 	return &MenuItem{
-		text: text
-		icon: unsafe { nil }
+		text:           text
+		icon:           unsafe { nil }
 		click_event_fn: fn (mut win Window, item MenuItem) {}
 	}
 }
@@ -37,7 +37,7 @@ pub fn page(app &Window, title string) &Page {
 @[deprecated: 'Use Progressbar.new']
 pub fn progressbar(val f32) &Progressbar {
 	return &Progressbar{
-		text: val.str()
+		text:     val.str()
 		bind_val: unsafe { nil }
 	}
 }

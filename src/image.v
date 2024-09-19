@@ -28,21 +28,21 @@ pub:
 // New Image
 pub fn Image.new(c ImgConfig) &Image {
 	return &Image{
-		text: c.file
+		text:      c.file
 		need_init: c.file.len > 0
 		need_pack: c.pack
-		img_id: c.id
-		img: c.img
-		rotate: c.rotate
+		img_id:    c.id
+		img:       c.img
+		rotate:    c.rotate
 	}
 }
 
 // [deprecated]
 pub fn image_from_byte_array_with_size(mut w Window, b []u8, width int, h int) &Image {
 	mut img := &Image{
-		text: ''
-		img: unsafe { nil }
-		width: width
+		text:   ''
+		img:    unsafe { nil }
+		width:  width
 		height: h
 	}
 	gg_im := w.gg.create_image_from_byte_array(b) or { panic(err) }
@@ -80,12 +80,12 @@ pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	}
 
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-		img: this.img
-		img_id: this.img_id
+		img:      this.img
+		img_id:   this.img_id
 		img_rect: gg.Rect{
-			x: this.x
-			y: this.y
-			width: this.width
+			x:      this.x
+			y:      this.y
+			width:  this.width
 			height: this.height
 		}
 		rotation: this.rotate

@@ -38,11 +38,11 @@ pub:
 
 pub fn InternalFrame.new(c FrameConfig) &InternalFrame {
 	return &InternalFrame{
-		text: c.text
-		x: c.bounds.x
-		y: c.bounds.y
-		width: c.bounds.width
-		height: c.bounds.height
+		text:     c.text
+		x:        c.bounds.x
+		y:        c.bounds.y
+		width:    c.bounds.width
+		height:   c.bounds.height
 		controls: Panel.new(layout: FlowLayout.new(hgap: 0, vgap: 2))
 	}
 }
@@ -103,7 +103,7 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	}
 
 	ctx.gg.draw_text(this.x + 6, ttop, this.text, gx.TextCfg{
-		size: ctx.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 

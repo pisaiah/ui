@@ -12,10 +12,10 @@ fn main() {
 	mut bar := ui.menubar(win, win.theme)
 
 	help_menu := ui.menu_item(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			ui.menu_item(
-				text: 'About Browser'
+				text:           'About Browser'
 				click_event_fn: about_click
 			),
 			ui.menu_item(
@@ -25,17 +25,17 @@ fn main() {
 	)
 
 	links_menu := ui.menu_item(
-		text: 'Links'
+		text:     'Links'
 		children: [
 			ui.menu_item(
-				text: 'Home'
+				text:           'Home'
 				click_event_fn: fn (mut win ui.Window, item ui.MenuItem) {
 					res_path := os.resource_abs_path('test.html')
 					load_url(mut win, 'file://' + res_path)
 				}
 			),
 			ui.menu_item(
-				text: 'google.com'
+				text:           'google.com'
 				click_event_fn: load_url_from_menu
 			),
 		]
@@ -72,7 +72,7 @@ fn menu_bar_status_theme(cur ui.Theme) ui.Theme {
 	return ui.Theme{
 		...cur
 		menubar_background: cur.button_bg_normal
-		menubar_border: cur.button_bg_normal
+		menubar_border:     cur.button_bg_normal
 	}
 }
 
