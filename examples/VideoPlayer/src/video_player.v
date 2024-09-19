@@ -4,7 +4,10 @@ import iui as ui
 import gx
 import os
 import math
-import dialog
+// import dialog
+
+// bug? should be "iui.extra.dialogs"?
+import iui.src.extra.file_dialog
 
 fn main() {
 	// Create Window
@@ -78,10 +81,10 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 		p.vmpv.free()
 	}
 
-	selected_file := dialog.file_dialog()
+	selected_file := file_dialog.open_dialog('') // '' // dialog.file_dialog()
 	dump(selected_file)
 
-	p.path = selected_file or { return }
+	p.path = selected_file // or { return }
 	p.setup(win.graphics_context)
 }
 
