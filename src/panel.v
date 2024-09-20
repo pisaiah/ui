@@ -5,6 +5,8 @@ import math
 
 const nill = unsafe { nil }
 
+const no_bg = gx.rgba(0, 0, 0, 0)
+
 // Layout
 // TODO: Add BorderLayout, Box Layout, Flow Layout, Grid Layout,
 interface Layout {
@@ -296,6 +298,7 @@ pub struct Panel {
 mut:
 	layout Layout
 	rh     int
+	bg     gx.Color = no_bg
 }
 
 @[params]
@@ -312,6 +315,11 @@ pub fn panel(cfg PanelConfig) &Panel {
 	return &Panel{
 		layout: cfg.layout
 	}
+}
+
+// Set background color of this Panel. Default=none
+pub fn (mut this Panel) set_background(bg gx.Color) {
+	this.bg = bg
 }
 
 fn (mut this Panel) draw(ctx &GraphicsContext) {
@@ -339,6 +347,11 @@ fn (mut this Panel) draw(ctx &GraphicsContext) {
 			kid.set_parent(this)
 		}
 	}
+
+	if this.bg != no_bg {
+		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, this.bg)
+	}
+
 	if ctx.win.debug_draw {
 		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.green)
 	}

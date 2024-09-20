@@ -54,51 +54,51 @@ fn main() {
 				click_event_fn: plr.open_click
 			),
 			ui.MenuItem.new(
-				text: 'Speed 2x'
+				text:           'Speed 2x'
 				click_event_fn: plr.speed_click
-			)
+			),
 		]
 	))
-	
+
 	mb.add_child(ui.MenuItem.new(
 		text:     'Playback'
 		children: [
 			ui.MenuItem.new(
-				text: 'Speed 1x'
+				text:           'Speed 1x'
 				click_event_fn: plr.speed_click
 			),
 			ui.MenuItem.new(
-				text: 'Speed 1.25x'
+				text:           'Speed 1.25x'
 				click_event_fn: plr.speed_click
 			),
 			ui.MenuItem.new(
-				text: 'Speed 1.5x'
+				text:           'Speed 1.5x'
 				click_event_fn: plr.speed_click
 			),
 			ui.MenuItem.new(
-				text: 'Speed 2x'
+				text:           'Speed 2x'
 				click_event_fn: plr.speed_click
-			)
+			),
 			ui.MenuItem.new(
-				text: 'Speed 3x'
+				text:           'Speed 3x'
 				click_event_fn: plr.speed_click
-			)
+			),
 		]
-	))	
-	
+	))
+
 	mb.add_child(ui.MenuItem.new(
 		text:     'Debug'
 		children: [
 			ui.MenuItem.new(
-				text: 'WinFps 12'
+				text:           'WinFps 12'
 				click_event_fn: plr.fps_click
 			),
 			ui.MenuItem.new(
-				text: 'WinFps 24'
+				text:           'WinFps 24'
 				click_event_fn: plr.fps_click
 			),
 			ui.MenuItem.new(
-				text: 'WinFps 60'
+				text:           'WinFps 60'
 				click_event_fn: plr.fps_click
 			),
 		]
@@ -133,7 +133,6 @@ fn (mut p Player) fps_click(mut win ui.Window, com ui.MenuItem) {
 	$if windows {
 		ui.set_window_fps(val)
 	}
-	
 }
 
 fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
@@ -145,16 +144,15 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 		}
 	}
 
-	
 	if com.text.contains('DVD') {
 		if isnil(p.vmpv) {
 			p.setup(win.graphics_context)
 		}
-		p.path = "dvd://"
+		p.path = 'dvd://'
 		p.cmd_async([&char('loadfile'.str), &char('dvd://'.str), &char(C.NULL)])
-		
-		//C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('loadfile'.str), &char(path.str), &char(0)].data)
-		
+
+		// C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('loadfile'.str), &char(path.str), &char(0)].data)
+
 		return
 	}
 
@@ -174,7 +172,6 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 		p.cmd_async([&char('loadfile'.str), &char(selected_file.str), &char(0)])
 		p.vmpv.is_pause = false
 	}
-
 }
 
 fn (mut p Player) slid_draw(mut e ui.DrawEvent) {
@@ -232,7 +229,7 @@ fn (mut this Player) draw(ctx &ui.GraphicsContext) {
 
 	if !this.init {
 		this.init = true
-		if os.exists(this.path) || this.path.contains("http") {
+		if os.exists(this.path) || this.path.contains('http') {
 			this.setup(ctx)
 		}
 		this.setup_controls(ctx)
@@ -385,7 +382,6 @@ fn (this &Player) change_speed(speed f32) int {
 		return -1
 	}
 
-	
 	return C.mpv_set_property_string(this.vmpv.i_mpv_handle, 'speed'.str, '${speed}'.str)
 }
 

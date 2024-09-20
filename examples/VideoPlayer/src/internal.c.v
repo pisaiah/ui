@@ -71,6 +71,5 @@ pub fn C.mpv_set_property_string(&MPVHandle, &char, &char) int
 
 pub fn C.mpv_set_property(&MPVHandle, &char, u64, &voidptr) int
 
-
 // MPV_EXPORT int mpv_set_property(mpv_handle *ctx, const char *name, mpv_format format, void *data);
 // MPV_EXPORT int mpv_set_property_string(mpv_handle *ctx, const char *name, const char *data);

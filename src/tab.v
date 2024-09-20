@@ -87,9 +87,8 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 		ctx.gg.draw_rect_empty(tb.x + mx, tb.y + my, tsize, theig, ctx.theme.button_border_normal)
 		ctx.gg.draw_rect_filled(tb.x + mx, tb.y + my + 1, tsize - 1, theig, tab_color)
 	} else {
-		xx := tb.x + mx + tsize
-		yy := tb.y + my
-
+		// xx := tb.x + mx + tsize
+		// yy := tb.y + my
 		// ctx.gg.draw_line(xx, yy, xx, yy + theig, ctx.theme.button_border_normal)
 	}
 

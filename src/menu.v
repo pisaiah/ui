@@ -89,6 +89,7 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 }
 
 fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
+	/*
 	$if windows {
 		// Native Text Rendering
 		if this.sub == 0 && ctx.theme.text_color == gx.black && !ctx.gg.native_rendering {
@@ -109,6 +110,7 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 			return
 		}
 	}
+	*/
 	ctx.draw_text(this.x + 7, y, this.text, ctx.font, gx.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
@@ -272,10 +274,10 @@ pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 
 fn open_about_modal(app &Window) &Modal {
 	mut about := Modal.new(title: 'About iUI')
-	about.in_height = 250
-	about.in_width = 350
+	about.in_height = 240
+	about.in_width = 1
 
-	mut p := panel(
+	mut p := Panel.new(
 		layout: BoxLayout{
 			ori: 1
 		}
@@ -289,6 +291,8 @@ fn open_about_modal(app &Window) &Modal {
 		about.in_width = ws.width - 10
 	}
 
+	about.pack()
+
 	mut title := Label.new(text: 'iUI ')
 	title.set_config(16, false, true)
 	title.pack()
@@ -301,19 +305,19 @@ fn open_about_modal(app &Window) &Modal {
 	p.add_child(lbl)
 
 	gh := link(
-		text:   'Github'
-		url:    'https://github.com/isaiahpatton/ui'
-		bounds: Bounds{
-			x: 0
-			y: 15
-		}
+		text: 'Github'
+		url:  'https://github.com/pisaiah/ui'
 		pack: true
 	)
 	p.add_child(gh)
 
-	mut copy := Label.new(text: 'Copyright © 2021-2023 Isaiah.')
-	copy.set_pos(0, 25)
+	mut blank := Label.new(text: '  ')
+	blank.pack()
+	p.add_child(blank)
+
+	mut copy := Label.new(text: 'Copyright © 2021-2024 Isaiah.')
 	copy.set_config(12, true, false)
+	copy.set_bounds(0, 0, 200, 15)
 	p.add_child(copy)
 	about.add_child(p)
 	return about

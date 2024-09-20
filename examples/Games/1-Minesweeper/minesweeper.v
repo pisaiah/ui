@@ -4,49 +4,37 @@ import iui as ui
 import gx
 import rand
 
+const text_colors = [gx.blue, gx.rgb(0, 128, 0), gx.red, gx.rgb(0, 0, 128),
+	gx.rgb(128, 0, 0), gx.rgb(0, 128, 128), gx.black, gx.gray]
+
+const dark_gray = gx.rgb(192, 192, 192)
+
+// Top border Panel
+fn top_panel() &ui.Panel {
+	mut p := ui.Panel.new()
+	p.set_bounds(0, 0, 100, 55)
+	p.set_background(gx.rgb(192, 192, 192))
+
+	return p
+}
+
+// Side border Panel
+fn (app &App) side_panel() &ui.Panel {
+	mut p := ui.Panel.new()
+	s := app.btn_size / 2
+	p.set_bounds(0, 0, s, s)
+	p.set_background(gx.rgb(192, 192, 192))
+
+	return p
+}
+
 @[heap]
 struct App {
 mut:
 	win      &ui.Window
-	icons    []int
 	btn_size int
 	gp       &ui.Panel
 	bombs    int
-}
-
-fn (mut app App) setup_icons() {
-	img_0_file := $embed_file('assets/empty.png')
-	app.icons << icon(app.win, img_0_file.to_bytes())
-
-	img_1_file := $embed_file('assets/1.png')
-	app.icons << icon(app.win, img_1_file.to_bytes())
-
-	img_2_file := $embed_file('assets/2.png')
-	app.icons << icon(app.win, img_2_file.to_bytes())
-
-	img_3_file := $embed_file('assets/3.png')
-	app.icons << icon(app.win, img_3_file.to_bytes())
-
-	img_4_file := $embed_file('assets/4.png')
-	app.icons << icon(app.win, img_4_file.to_bytes())
-
-	img_5_file := $embed_file('assets/5.png')
-	app.icons << icon(app.win, img_5_file.to_bytes())
-
-	img_6_file := $embed_file('assets/6.png')
-	app.icons << icon(app.win, img_6_file.to_bytes())
-
-	img_7_file := $embed_file('assets/7.png')
-	app.icons << icon(app.win, img_7_file.to_bytes())
-
-	img_8_file := $embed_file('assets/8.png')
-	app.icons << icon(app.win, img_8_file.to_bytes())
-
-	img_mine_file := $embed_file('assets/mine.png')
-	app.icons << icon(app.win, img_mine_file.to_bytes())
-
-	img_blank_file := $embed_file('assets/blank.png')
-	app.icons << icon(app.win, img_blank_file.to_bytes())
 }
 
 fn main() {
@@ -56,7 +44,6 @@ fn main() {
 	win_width := width + 2
 
 	mut win := ui.Window.new(
-		theme:     ui.theme_default()
 		title:     'Minesweeper'
 		width:     win_width
 		font_size: 14
@@ -77,19 +64,17 @@ fn main() {
 		gp:       gp
 	}
 
-	app.setup_icons()
 	app.make_menu_bar()
 
 	for yy in 0 .. 9 {
 		for xx in 0 .. 9 {
-			mut btn := ui.Button.new(
-				icon: app.icons[10]
-			)
+			mut btn := ui.Button.new()
 
 			btn.set_bounds(0, 0, btn_size, btn_size)
 
 			btn.id = '${yy},${xx}'
 			btn.subscribe_event('mouse_up', app.square_click)
+			btn.subscribe_event('after_draw', app.button_draw_fn)
 
 			gp.add_child(btn)
 		}
@@ -120,7 +105,6 @@ fn (mut app App) reset_mines() {
 	for mut btn in app.gp.children {
 		if mut btn is ui.Button {
 			btn.text = ''
-			btn.icon = app.icons[10]
 
 			randi := rand.intn(12) or { -1 }
 			if randi == 0 {
@@ -152,8 +136,7 @@ fn (mut app App) square_click_(mut target ui.Component) {
 	mut btn := target
 	if target.text == '   ' {
 		if mut btn is ui.Button {
-			ico := app.icons[9]
-			btn.icon = ico
+			btn.text = 'B'
 			btn.set_background(gx.red)
 			modal := game_over()
 			app.win.add_child(modal)
@@ -213,7 +196,9 @@ fn (mut app App) square_click_(mut target ui.Component) {
 	}
 
 	if mut btn is ui.Button {
-		btn.icon = app.icons[around]
+		btn.text = '${around}'
+
+		btn.icon = -1
 	}
 	app.check_win()
 }
@@ -230,4 +215,41 @@ fn (mut app App) check_win() bool {
 	mut m := win_modal()
 	app.win.add_child(m)
 	return true
+}
+
+// Draw button icon
+fn (mut app App) button_draw_fn(mut e ui.DrawEvent) {
+	mut btn := e.target
+	x2 := btn.x + 2
+
+	if btn.text.len == 0 || btn.text.len == 3 {
+		// Draw untouched square
+		e.ctx.gg.draw_rect_filled(btn.x, btn.y, btn.width, btn.height, gx.white)
+		e.ctx.gg.draw_rect_filled(x2, btn.y + 2, btn.width - 2, btn.height - 2, gx.gray)
+		e.ctx.gg.draw_rect_filled(x2, btn.y + 2, btn.width - 4, btn.height - 4, dark_gray)
+		return
+	}
+
+	val := btn.text.int()
+
+	if btn.text == '0' || val > 0 {
+		// Draw Empty background
+		e.ctx.gg.draw_rect_filled(btn.x, btn.y, btn.width, btn.height, gx.gray)
+		e.ctx.gg.draw_rect_filled(x2, btn.y + 2, btn.width - 2, btn.height - 2, dark_gray)
+	}
+
+	if val < 1 {
+		return
+	}
+
+	size := e.ctx.text_width(btn.text)
+	sizh := e.ctx.line_height
+
+	// Draw Colored Number
+	e.ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh,
+		btn.text, e.ctx.font, gx.TextCfg{
+		size:  e.ctx.win.font_size * 2
+		color: text_colors[btn.text.int() - 1]
+		bold:  true
+	})
 }

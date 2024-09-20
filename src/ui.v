@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023 Isaiah.
+// Copyright (c) 2021-2024 Isaiah.
 module iui
 
 import gg
@@ -7,7 +7,7 @@ import time
 import os
 import os.font
 
-pub const version = '0.0.21'
+pub const version = '0.0.22'
 
 pub fn default_font() string {
 	$if emscripten ? {

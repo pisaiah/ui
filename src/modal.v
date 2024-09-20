@@ -17,6 +17,7 @@ pub mut:
 	left_off  int
 	top_off   int = 50
 	xs        int
+	pack      bool
 }
 
 @[params]
@@ -39,6 +40,10 @@ pub fn Modal.new(c ModalConfig) &Modal {
 		in_height:  300
 		close:      unsafe { nil }
 	}
+}
+
+pub fn (mut this Modal) pack() {
+	this.pack = true
 }
 
 pub fn (mut this Modal) calc_resize(ctx &GraphicsContext, ws gg.Size) {
@@ -96,6 +101,14 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 		kid.draw_event_fn(mut app, kid)
 		kid.draw_with_offset(ctx, m.xs, y_off + 2)
 		kid.after_draw_event_fn(mut app, kid)
+
+		if m.pack {
+			if kid.width > m.in_width {
+				m.in_width = kid.width + (kid.x * 2)
+				m.close.x = m.in_width - 115
+				m.calc_resize(ctx, ws)
+			}
+		}
 	}
 }
 
