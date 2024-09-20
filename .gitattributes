@@ -1,3 +1,6 @@
 *.v linguist-language=V
 *.mod linguist-language=V
 src/extra/dialogs/*.c -linguist-detectable
+src/extra/dialogs2/*.c -linguist-detectable
+src/extra/dialogs2/*.h -linguist-detectable
+examples/VideoPlayer/include/mpv/*.h -linguist-detectable
