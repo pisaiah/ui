@@ -80,12 +80,21 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)
 
-	ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
+	ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 2, bg)
+	ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 2, ctx.theme.textbox_border)
 
-	if click || this.is_selected {
-		ctx.gg.draw_rect_filled(this.x, this.y + this.height - 1, this.width, 2, ctx.theme.button_border_click)
+	// Fluent Design
+	line_color := if click || this.is_selected {
+		ctx.theme.button_border_click
+	} else {
+		// TODO
+		ctx.theme.scroll_bar_color
 	}
+
+	line_height := if click || this.is_selected { 2 } else { 1 }
+
+	ctx.gg.draw_rect_filled(this.x, this.y + this.height - 1, this.width, line_height,
+		line_color)
 
 	// Detect Click
 	if this.is_mouse_rele {

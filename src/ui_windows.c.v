@@ -50,6 +50,13 @@ pub struct C.COLORREF {
 
 pub fn C.RGB(r u8, g u8, b u8) C.COLORREF
 
+pub fn C.i_set_fps(val int)
+
+// Set Window FPS
+pub fn set_window_fps(val int) {
+	C.i_set_fps(val)
+}
+
 pub fn winc(co gx.Color) C.COLORREF {
 	return C.RGB(co.r, co.g, co.b)
 }

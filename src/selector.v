@@ -174,9 +174,8 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 		}
 	}
 
-	// Draw Button Background & Border
+	// Draw Button Background
 	ctx.gg.draw_rect_filled(x, y, width, height, bg)
-	ctx.gg.draw_rect_empty(x, y, width, height, border)
 
 	// Draw Button Text
 	ctx.draw_text(x + 5, y + (height / 2) - sizh, item.text, ctx.font, gx.TextCfg{
@@ -184,8 +183,8 @@ pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
 		color: ctx.theme.text_color
 	})
 
-	ctx.theme.button_fill_fn(x + width - 25, y, 25, height, 1, bg, ctx)
-	ctx.gg.draw_rect_empty(x + width - 25, y, 25, height, border)
+	ctx.theme.button_fill_fn(x + width - 26, y, 25, height - 1, 1, bg, ctx)
+	ctx.gg.draw_rect_empty(x, y, width, height, border)
 
 	// Draw down arrow
 	char_height := 3

@@ -5,10 +5,8 @@
 // Note: TCC does not have timeapi.h
 #ifdef __V_GCC__
 #include <timeapi.h> 
-#endif
 
-// Declare the function pointer for NtSetTimerResolution
-//typedef NTSTATUS (NTAPI *NtSetTimerResolutionFunc)(ULONG DesiredResolution, BOOLEAN SetResolution, PULONG CurrentResolution);
+#endif
 
 int i_sleepy(int val) {
     timeBeginPeriod(val);
@@ -20,8 +18,6 @@ int i_sleepy(int val) {
 void fix_text_bg(HDC hdc) {
 	SetBkMode(hdc, TRANSPARENT);
 }
-
-
 
 // set the text color
 void iui_text_color(HDC hdc, COLORREF color) {

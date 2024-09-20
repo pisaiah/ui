@@ -78,7 +78,7 @@ pub fn theme_default() &Theme {
 		name:                 'Default'
 		text_color:           gx.black
 		background:           gx.rgb(248, 248, 248)
-		button_bg_normal:     gx.rgb(240, 240, 240)
+		button_bg_normal:     gx.rgb(255, 255, 255)
 		button_bg_hover:      gx.rgb(229, 241, 251)
 		button_bg_click:      gx.rgb(204, 228, 247)
 		button_border_normal: gx.rgb(190, 190, 190)
@@ -115,7 +115,7 @@ pub fn theme_dark() &Theme {
 		dropdown_background:  gx.rgb(10, 10, 10)
 		dropdown_border:      gx.rgb(0, 0, 0)
 		textbox_background:   gx.rgb(34, 39, 46)
-		textbox_border:       gx.rgb(130, 130, 130)
+		textbox_border:       gx.rgb(50, 50, 50)
 		checkbox_selected:    gx.rgb(240, 99, 40)
 		checkbox_bg:          gx.rgb(5, 5, 5)
 		progressbar_fill:     gx.rgb(130, 130, 130)

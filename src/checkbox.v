@@ -90,7 +90,7 @@ fn (com &Checkbox) draw_background(ctx &GraphicsContext) {
 	bg := com.get_background(is_hover, ctx)
 	border := com.get_border(is_hover, ctx)
 
-	ctx.win.draw_bordered_rect(com.x, com.y, com.height, com.height, 2, bg, border)
+	ctx.win.draw_bordered_rect(com.x, com.y, com.height, com.height, 8, bg, border)
 }
 
 // Draw the text of Checkbox
@@ -106,9 +106,10 @@ fn (this &Checkbox) draw_text(ctx &GraphicsContext) {
 
 // TODO: Better Checkmark
 fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
-	cut := 1
+	cut := 0
 	wid := com.height - (cut * 2)
-	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 2, ctx.theme.checkbox_selected)
+
+	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 8, ctx.theme.checkbox_selected)
 
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
 		img_id:   ctx.icon_cache['check_box']

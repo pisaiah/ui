@@ -17,7 +17,7 @@ fn main() {
 		width: 700
 		height: 480
 		theme: ui.get_system_theme()
-		ui_mode: true
+		ui_mode: false
 	)
 
 	mut pane := ui.Panel.new(
@@ -28,6 +28,8 @@ fn main() {
 		pane: pane
 		dp: ui.DesktopPane.new()
 	}
+	
+	ui.set_window_fps(60)
 
 	// Setup Menubar and items
 	window.bar = ui.menu_bar()

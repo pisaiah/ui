@@ -19,6 +19,7 @@ pub mut:
 	scroll_x    int
 	always_show bool
 	padding     int = 20
+	radius      int = 16
 }
 
 @[params]
@@ -153,10 +154,10 @@ fn (mut this ScrollView) clamp_scroll_x(total_width int) {
 
 fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
 	xx := if this.rx != 0 { this.rx } else { this.x }
-	y := if this.rx != 0 { this.ry } else { this.y }
+	y := if this.rx != 0 { this.ry } else { this.y } + 2
 
 	wid := this.xbar_width
-	height := this.height // - wid
+	height := this.height - (2 * 2) // - wid
 	x := xx + this.width - wid
 
 	// Scroll Bar
@@ -173,13 +174,13 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	// Draw Scroll
 	if requires_scrollbar {
-		ctx.win.gg.draw_rect_filled(x, y, wid, height, ctx.theme.scroll_track_color)
+		ctx.win.gg.draw_rounded_rect_filled(x, y, wid, height, this.radius, ctx.theme.scroll_track_color)
 		ctx.theme.bar_fill_fn(x + 2, y + 17 + sth, wid - 5, enh - 3, false, ctx)
 	} else {
 		return
 	}
 
-	ctx.gg.draw_rect_empty(x, y, wid, height, ctx.theme.textbox_border)
+	ctx.gg.draw_rounded_rect_empty(x, y, wid, height, this.radius, ctx.theme.textbox_border)
 
 	tx := x + (wid / 2) - 5
 	ctx.gg.draw_triangle_filled(tx, y + 10, tx + 5, y + 5, tx + 10, y + 10, ctx.theme.scroll_bar_color)
@@ -221,11 +222,11 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 }
 
 fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len int) {
-	x := if this.rx != 0 { this.rx } else { this.x }
+	x := if this.rx != 0 { this.rx } else { this.x } + 2
 	yy := if this.ry != 0 { this.ry } else { this.y }
 
 	wid := this.xbar_width
-	width := this.width - wid - 1
+	width := this.width - wid - 4
 
 	y := yy + this.height - wid
 
@@ -243,7 +244,7 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len i
 
 	// Draw Scroll
 	if requires_scrollbar {
-		ctx.win.gg.draw_rect_filled(x, y, width, wid, ctx.theme.scroll_track_color)
+		ctx.win.gg.draw_rounded_rect_filled(x, y, width, wid, this.radius, ctx.theme.scroll_track_color)
 		ctx.theme.bar_fill_fn(int(x + 17 + sth), y + 2, int(enh - 3), wid - 3, true, ctx)
 	} else {
 		return

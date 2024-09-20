@@ -67,7 +67,7 @@ pub fn (tb &Tabbox) get_tab_width(ctx &GraphicsContext, key string) int {
 	if tb.compact {
 		return ctx.text_width(key) + 15
 	}
-	return ctx.text_width(key) + 30
+	return ctx.text_width(key) + 20
 }
 
 // Draw tab
@@ -80,17 +80,17 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 	size := tb.get_tab_width(ctx, key)
 	sizh := ctx.gg.text_height(key) / 2
 
-	tsize := if tb.closable { size + 12 } else { size }
-	tab_color := tb.get_tab_color(ctx, is_active)
+	tsize := if tb.closable { size + 15 } else { size }
 
 	if tb.active_tab == key_ {
+		tab_color := tb.get_tab_color(ctx, is_active)
 		ctx.gg.draw_rect_empty(tb.x + mx, tb.y + my, tsize, theig, ctx.theme.button_border_normal)
 		ctx.gg.draw_rect_filled(tb.x + mx, tb.y + my + 1, tsize - 1, theig, tab_color)
 	} else {
 		xx := tb.x + mx + tsize
 		yy := tb.y + my
 
-		ctx.gg.draw_line(xx, yy, xx, yy + theig, ctx.theme.button_border_normal)
+		// ctx.gg.draw_line(xx, yy, xx, yy + theig, ctx.theme.button_border_normal)
 	}
 
 	// Draw Button Text
@@ -134,7 +134,9 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 		if tb.is_mouse_rele {
 			tb.is_mouse_rele = false
 			tb.kids.delete(key_)
-			tb.active_tab = tb.kids.keys()[tb.kids.len - 1]
+			if tb.kids.len > 0 {
+				tb.active_tab = tb.kids.keys()[tb.kids.len - 1]
+			}
 			return
 		}
 	}
@@ -171,6 +173,10 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 
 	tb_keys := tb.kids.keys()
 
+	if tb_keys.len == 0 {
+		return
+	}
+
 	if tb.active_tab !in tb_keys {
 		tb.active_tab = tb_keys[tb_keys.len - 1]
 	}
@@ -181,8 +187,8 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 		key := tb_keys[i]
 		mut val := tb.kids[key]
 		if val.len == 1 {
-			val[0].width = tb.width - val[0].x
-			val[0].height = tb.height - tb.get_active_tab_height(ctx) - val[0].y
+			val[0].width = tb.width - (val[0].x * 2)
+			val[0].height = tb.height - tb.get_active_tab_height(ctx) - (val[0].y * 2)
 		}
 		if mx + 30 > tb.width {
 			mx = 0
