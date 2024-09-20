@@ -28,8 +28,7 @@ fn main() {
 		pane: pane
 		dp: ui.DesktopPane.new()
 	}
-	
-	ui.set_window_fps(60)
+
 
 	// Setup Menubar and items
 	window.bar = ui.menu_bar()
