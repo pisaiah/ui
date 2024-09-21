@@ -1,4 +1,3 @@
-// わたしの未成年観測
 module main
 
 // C Header(s) to include

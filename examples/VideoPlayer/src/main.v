@@ -150,6 +150,6 @@ pub fn (mut mpv MPVPlayer) update_texture() {
 		}
 	}
 
-	ue := &u8(&mpv.i_pixels)
+	ue := unsafe { &u8(&mpv.i_pixels) }
 	mpv.ctx.update_pixel_data(mpv.i_text_id, ue)
 }

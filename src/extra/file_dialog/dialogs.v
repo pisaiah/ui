@@ -1,7 +1,5 @@
 module file_dialog
 
-import os
-
 #flag -I @VMODROOT/src/extra/file_dialog/
 
 // TODO

@@ -115,14 +115,6 @@ fn (mut app App) reset_mines() {
 	}
 }
 
-fn icon(win &ui.Window, data []u8) int {
-	mut ggg := win.gg
-	gg_im := ggg.create_image_from_byte_array(data) or { return -1 }
-	cim := ggg.cache_image(gg_im)
-
-	return cim
-}
-
 fn (mut app App) square_click(mut e ui.MouseEvent) {
 	app.square_click_(mut e.target)
 }
@@ -197,7 +189,6 @@ fn (mut app App) square_click_(mut target ui.Component) {
 
 	if mut btn is ui.Button {
 		btn.text = '${around}'
-
 		btn.icon = -1
 	}
 	app.check_win()
