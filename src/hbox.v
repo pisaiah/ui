@@ -5,15 +5,16 @@ import gx
 
 // HBox - implements Component interface
 @[heap]
-pub struct HBox {
+pub struct HBox implements Container {
 	Component_A
 pub mut:
-	needs_pack    bool
-	raw_width     int
-	is_width_per  bool
-	center_screen bool
-	min_height    int
-	overflow_full bool = true
+	needs_pack        bool
+	raw_width         int
+	is_width_per      bool
+	center_screen     bool
+	min_height        int
+	overflow_full     bool = true
+	container_pass_ev bool = true
 }
 
 @[params]

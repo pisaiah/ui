@@ -163,7 +163,7 @@ fn (mut this Menubar) draw(ctx &GraphicsContext) {
 	wid := if this.width > 0 { this.width } else { gg.window_size().width }
 
 	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26, ctx)
-	ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
+	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
 
 	mut x := this.x + 1
 	for mut item in this.children {

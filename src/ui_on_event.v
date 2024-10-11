@@ -169,8 +169,13 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 		}
 	}
 
-	if mut com is VBox || mut com is HBox || mut com is ScrollView || mut com is SplitView
-		|| mut com is Panel {
+	if mut com is Container {
+		if com.container_pass_ev {
+			return false
+		}
+	}
+
+	if mut com is ScrollView || mut com is SplitView || mut com is Panel {
 		return false
 	}
 
@@ -212,19 +217,25 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 				return true
 			}
 		}
-	} else {
-		for mut child in com.children {
-			if child.on_mouse_rele_component(app) {
-				if child.parent != unsafe { nil } {
-					return false
-				}
-				return true
+	}
+	// else {
+	for mut child in com.children {
+		if child.on_mouse_rele_component(app) {
+			if child.parent != unsafe { nil } {
+				return false
 			}
+			return true
+		}
+	}
+	//}
+
+	if mut com is Container {
+		if com.container_pass_ev {
+			return false
 		}
 	}
 
-	if mut com is VBox || mut com is HBox || mut com is ScrollView || mut com is SplitView
-		|| mut com is Panel {
+	if mut com is ScrollView || mut com is SplitView || mut com is Panel {
 		return false
 	}
 

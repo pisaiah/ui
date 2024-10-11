@@ -5,7 +5,6 @@
 // Note: TCC does not have timeapi.h
 #ifdef __V_GCC__
 #include <timeapi.h> 
-
 #endif
 
 int i_sleepy(int val) {
@@ -31,12 +30,10 @@ HFONT iui_win_font(int size) {
 
 SIZE iui_text_size(HDC hdc, char* txt, int len, int font_size) {
 	SIZE size;
-
 	HFONT font = iui_win_font(font_size);
 	SelectObject(hdc, font);
 	GetTextExtentPoint32(hdc, txt, len, &size);
 	DeleteObject(font);
-
 	return size;
 }
 

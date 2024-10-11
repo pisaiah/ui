@@ -4,12 +4,13 @@ import gg
 import gx
 
 // VBox - implements Component interface
-pub struct VBox {
+pub struct VBox implements Container {
 	Component_A
 pub mut:
-	needs_pack   bool
-	overflow     bool = true
-	update_width bool = true
+	needs_pack        bool
+	overflow          bool = true
+	update_width      bool = true
+	container_pass_ev bool = true
 }
 
 @[params]

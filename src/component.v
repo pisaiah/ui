@@ -26,6 +26,7 @@ mut:
 	id                  string
 	font                int
 	events              &EventManager
+	hidden bool
 	draw(&GraphicsContext)
 	invoke_draw_event(&GraphicsContext)
 }
@@ -56,6 +57,7 @@ pub mut:
 	id                  string
 	font                int
 	events              &EventManager = &EventManager{}
+	hidden              bool
 }
 
 pub struct EventManager {
@@ -81,6 +83,22 @@ pub fn (this &Component) get_font() int {
 
 pub fn (mut this Component) set_font(font int) {
 	this.font = font
+}
+
+pub fn (mut this Component) set_visible(val bool) {
+	this.hidden = !val
+}
+
+pub fn (mut this Component) set_hidden(val bool) {
+	this.hidden = val
+}
+
+pub fn (mut this Component_A) set_visible(val bool) {
+	this.hidden = !val
+}
+
+pub fn (mut this Component_A) set_hidden(val bool) {
+	this.hidden = val
 }
 
 pub fn (mut this Component_A) add_child(com &Component) {
@@ -115,6 +133,10 @@ pub fn (mut com Component_A) set_id(mut win Window, id string) {
 }
 
 pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off_y int) {
+	if com.hidden {
+		return
+	}
+
 	com.rx = com.x + off_x
 	com.ry = com.y + off_y
 
@@ -275,4 +297,8 @@ pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
 		f(ev)
 	}
 	return ev.cancel
+}
+
+pub interface Container {
+	container_pass_ev bool
 }
