@@ -66,3 +66,11 @@ pub struct TextChangeEvent {
 pub mut:
 	cancel bool
 }
+
+// Slider Change
+pub struct FloatValueChangeEvent {
+	ComponentEvent
+pub mut:
+	target &Slider
+	value  f32
+}

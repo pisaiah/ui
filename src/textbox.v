@@ -20,8 +20,8 @@ pub mut:
 	before_txtc_event_fn fn (mut Window, Textbox) bool = fn (mut a Window, b Textbox) bool {
 		return false
 	}
-	ctrl_down       bool
-	no_line_numbers bool
+	ctrl_down            bool
+	no_line_numbers      bool
 }
 
 // Text Selection

@@ -34,8 +34,8 @@ pub fn link(cfg HyperlinkConfig) &Hyperlink {
 		click_event_fn: fn (this &Hyperlink) {
 			open_url(this.url)
 		}
-		url:       cfg.url
-		need_pack: cfg.pack
+		url:            cfg.url
+		need_pack:      cfg.pack
 	}
 }
 

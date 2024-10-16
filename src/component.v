@@ -26,7 +26,7 @@ mut:
 	id                  string
 	font                int
 	events              &EventManager
-	hidden bool
+	hidden              bool
 	draw(&GraphicsContext)
 	invoke_draw_event(&GraphicsContext)
 }
@@ -301,4 +301,15 @@ pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
 
 pub interface Container {
 	container_pass_ev bool
+}
+
+pub fn invoke_slider_change(com &Slider, ctx &GraphicsContext, value f32) {
+	ev := FloatValueChangeEvent{
+		target: unsafe { com }
+		ctx:    ctx
+		value:  value
+	}
+	for f in com.events.event_map['value_change'] {
+		f(ev)
+	}
 }

@@ -49,7 +49,7 @@ fn (mut app FileChooserApp) make_top_panel() {
 	p.add_child(lbl)
 
 	mut cb := ui.select_box(
-		items: [
+		items:  [
 			'Desktop',
 			'Documents',
 			'Downloads',
