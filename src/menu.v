@@ -7,7 +7,18 @@ import v.util.version { full_v_version }
 pub struct Menubar {
 	Component_A
 pub mut:
-	tik int = 99
+	tik     int = 99
+	padding int
+	ai      int
+	animate bool
+}
+
+pub fn (mut this Menubar) set_animate(val bool) {
+	this.animate = val
+}
+
+pub fn (mut this Menubar) set_padding(pad int) {
+	this.padding = pad
 }
 
 pub struct MenuItem {
@@ -18,7 +29,7 @@ pub mut:
 	open_width     int
 	sub            u8
 	click_event_fn fn (mut Window, MenuItem) = unsafe { nil }
-	win_nat        voidptr
+	ah             int
 }
 
 fn (mut this MenuItem) draw(ctx &GraphicsContext) {
@@ -46,11 +57,13 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 			this.open = !this.open
 		} else {
 			// deprecated click_event_fn
-			mut win := ctx.win
-			this.click_event_fn(mut win, *this)
+			if !isnil(this.click_event_fn) {
+				mut win := ctx.win
+				this.click_event_fn(mut win, *this)
+			}
 			this.is_mouse_rele = false
 			if !isnil(this.parent) {
-				mut par := this.get_parent[&MenuItem]() //&MenuItem(this.parent)
+				mut par := this.get_parent[&MenuItem]()
 				par.open = false
 			}
 		}
@@ -85,6 +98,10 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 
 	if this.open {
 		this.draw_open_contents(ctx)
+	} else {
+		if this.get_parent[&Menubar]().animate {
+			this.ah = 20
+		}
 	}
 }
 
@@ -118,8 +135,14 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 }
 
 fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
-	mut cy := this.y + this.height
+	mut cy := this.y + this.height - this.ah
 	mut cx := this.x + 1
+
+	open_height := this.children.len * 26
+
+	if this.ah > 0 {
+		this.ah -= 4
+	}
 
 	if this.open && this.sub > 0 {
 		cy -= this.height
@@ -131,10 +154,16 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 	}
 
 	by := if this.open && this.sub > 0 { this.y } else { this.y + this.height }
-	ctx.gg.draw_rect_filled(cx, by, this.open_width, this.children.len * 26, ctx.theme.dropdown_background)
+
+	if this.ah > 0 {
+		ws := ctx.gg.window_size()
+		ctx.gg.scissor_rect(this.x, this.y + 26, ws.width, open_height)
+	}
+	ctx.gg.draw_rect_filled(cx, by, this.open_width, open_height - this.ah, ctx.theme.dropdown_background)
 
 	mut hei := 0
 	mut wi := 100
+
 	for mut item in this.children {
 		item.set_parent(this)
 		if mut item is MenuItem {
@@ -152,22 +181,32 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		cy += item.height
 		hei += item.height
 	}
+
+	if this.ah != 0 {
+		ws := ctx.gg.window_size()
+		ctx.gg.scissor_rect(0, 0, ws.width, ws.height)
+	}
+
 	for mut item in this.children {
 		item.width = wi
 	}
 	this.open_width = wi
-	ctx.gg.draw_rect_empty(cx, by, wi, hei, ctx.theme.dropdown_border)
+	ctx.gg.draw_rect_empty(cx, by, wi, hei - this.ah, ctx.theme.dropdown_border)
 }
 
 fn (mut this Menubar) draw(ctx &GraphicsContext) {
 	wid := if this.width > 0 { this.width } else { gg.window_size().width }
 
-	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26, ctx)
+	half_pad := this.padding / 2
+	this.height = 26 + this.padding
+
+	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26 + this.padding, ctx)
 	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
 
 	mut x := this.x + 1
 	for mut item in this.children {
-		item.draw_with_offset(ctx, x, this.y)
+		item.set_parent(this)
+		item.draw_with_offset(ctx, x + half_pad, this.y + half_pad)
 		x += item.width
 	}
 }
@@ -192,6 +231,10 @@ fn (mut this Menubar) check_mouse(win &Window, mx int, my int) bool {
 }
 
 fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
+	if !this.open {
+		return false
+	}
+
 	for mut item in this.children {
 		if is_in(item, mx, my) {
 			return true
@@ -217,6 +260,7 @@ pub struct MenubarConfig {
 	theme &Theme = unsafe { nil }
 }
 
+@[deprecated: 'Use Menubar.new']
 pub fn menu_bar(cfg MenubarConfig) &Menubar {
 	return &Menubar{}
 }
@@ -240,7 +284,7 @@ pub struct MenuItemConfig {
 pub:
 	text           string
 	icon           &Image                    = unsafe { nil }
-	click_event_fn fn (mut Window, MenuItem) = fn (mut win Window, item MenuItem) {}
+	click_event_fn fn (mut Window, MenuItem) = unsafe { nil }
 	children       []&MenuItem
 	click_fn       ?fn (voidptr)
 }
@@ -257,6 +301,17 @@ pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
 	if !isnil(fns) {
 		item.subscribe_event('mouse_up', fns)
 	}
+
+	/*
+	if !isnil(c.click_event_fn) {
+		item.subscribe_event('mouse_up', fn [c] (mut e MouseEvent) {
+			mut target := e.target
+			if mut target is MenuItem {
+				c.click_event_fn(mut e.ctx.win, target)
+			}
+		})
+	}
+	*/
 
 	for kid in c.children {
 		item.add_child(kid)

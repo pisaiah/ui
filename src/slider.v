@@ -17,6 +17,19 @@ pub mut:
 	thumb_color gg.Color
 }
 
+pub fn (mut s Slider) switch_dir() {
+	if s.dir == .vert {
+		s.dir = .hor
+	} else {
+		s.dir = .vert
+	}
+
+	w := s.width
+	h := s.height
+	s.width = h
+	s.height = w
+}
+
 pub fn (mut this Slider) set_custom_thumb_color(color gg.Color) {
 	this.thumb_color = color
 }
@@ -93,17 +106,18 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 fn (mut s Slider) on_mouse_down(g &GraphicsContext) {
 	if s.dir == .hor {
 		cx := math.clamp(g.win.mouse_x - s.x, 0, s.width)
-		s.cur = f32((cx * s.max) / s.width)
-	} else {
-		cx := math.clamp(g.win.mouse_y - s.y, 0, s.height)
-		new_val := f32((cx * s.max) / s.height)
-
+		new_val := f32((cx * s.max) / s.width)
 		if s.cur != new_val {
 			s.cur = new_val
 			invoke_slider_change(s, g, new_val)
 		}
-
-		s.cur = new_val
+	} else {
+		cx := math.clamp(g.win.mouse_y - s.y, 0, s.height)
+		new_val := f32((cx * s.max) / s.height)
+		if s.cur != new_val {
+			s.cur = new_val
+			invoke_slider_change(s, g, new_val)
+		}
 	}
 	s.scroll_i = int(s.cur)
 }

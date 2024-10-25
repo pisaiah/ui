@@ -7,7 +7,7 @@ import time
 import os
 import os.font
 
-pub const version = '0.0.22'
+pub const version = '0.0.23'
 
 pub fn default_font() string {
 	$if emscripten ? {
@@ -60,6 +60,14 @@ pub fn point_in_raw(mut com Component, px int, py int) bool {
 		if com.show_items {
 			list_height := (com.items.len * com.sub_height)
 			hei = list_height / 2
+		}
+	}
+
+	// Don't process if MenuItem is hidden.
+	if mut com is MenuItem {
+		par := &MenuItem(com.parent)
+		if com.sub == 1 && !par.open {
+			return false
 		}
 	}
 
@@ -444,8 +452,8 @@ fn (mut app Window) draw() {
 			if bar != unsafe { nil } {
 				hei := ws.height
 				if hei > 0 {
-					app.components[0].y = 27
-					app.components[0].height = ws.height - 27
+					app.components[0].y = app.bar.height // 27
+					app.components[0].height = ws.height - app.bar.height
 				}
 			} else {
 				app.components[0].height = ws.height
