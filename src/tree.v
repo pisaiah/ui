@@ -168,7 +168,9 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 	for mut node in this.children {
 		if mut node is TreeNode {
 			wid := this.width - x - 15
-			node.set_bounds(x, y + node_height, wid, node_height)
+
+			mut ptr := &node
+			ptr.set_bounds(x, y + node_height, wid, node_height)
 
 			node.draw(ctx)
 			change := node.draw_content(ctx, x, node.y, mut this)

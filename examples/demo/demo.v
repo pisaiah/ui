@@ -31,7 +31,7 @@ fn main() {
 
 
 	// Setup Menubar and items
-	window.bar = ui.menu_bar()
+	window.bar = ui.Menubar.new()
 	window.bar.add_child(ui.MenuItem.new(text: 'File'))
 	window.bar.add_child(ui.MenuItem.new(text: 'Edit'))
 	window.bar.add_child(create_help_menu())
@@ -297,7 +297,6 @@ fn (mut app App) make_button_section() {
 		text: 'Open Page'
 		bounds: ui.Bounds{0, 38, 130, 30}
 		should_pack: false
-		// click_event_fn: test_page
 	)
 	btn2.subscribe_event('mouse_up', test_page)
 
@@ -341,6 +340,7 @@ fn create_help_menu() &ui.MenuItem {
 		children: [
 			ui.menu_item(
 				text: 'Item 1'
+				uicon: '\ue946'
 			),
 			ui.menu_item(
 				text: 'Item 2'
@@ -348,6 +348,7 @@ fn create_help_menu() &ui.MenuItem {
 			),
 			ui.menu_item(
 				text: 'About iUI'
+				uicon: '\ue946'
 			),
 		]
 	)

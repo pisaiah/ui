@@ -115,4 +115,20 @@ fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
 		img_id:   ctx.icon_cache['check_box']
 		img_rect: gg.Rect{com.x + 2, com.y + 2, com.height - 5, com.height - 5}
 	})
+
+	// draw_checkmark(com.x, com.y, com.height, com.height, 4, gx.green, ctx)
+}
+
+fn draw_checkmark(x f32, y f32, width f32, height f32, check_padding f32, c gx.Color, ctx &GraphicsContext) {
+	// Calculate the coordinates for the checkmark
+	start_x := x + check_padding
+	start_y := y + (height / 2)
+	mid_x := x + (width / 3)
+	mid_y := y + height - check_padding
+	end_x := x + width - check_padding
+	end_y := y + check_padding
+
+	// Draw the checkmark lines
+	ctx.gg.draw_line(start_x, start_y, mid_x, mid_y, c)
+	ctx.gg.draw_line(mid_x, mid_y, end_x, end_y, c)
 }

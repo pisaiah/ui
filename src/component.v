@@ -4,7 +4,7 @@ import gx
 
 // Component Interface
 
-@[heap; minify]
+@[heap]
 pub interface Component {
 mut:
 	text                string
@@ -29,6 +29,7 @@ mut:
 	hidden              bool
 	draw(&GraphicsContext)
 	invoke_draw_event(&GraphicsContext)
+	set_bounds(int, int, int, int)
 }
 
 fn (com &Component) str() string {

@@ -5,6 +5,11 @@ bool need = true;
 
 static float SECC = 1000;
 static int FPS = (int)(((float)1000) / 60);
+static bool i_power_save = false;
+
+void i_set_power_save(bool value) {
+	i_power_save = value;
+}
 
 void i_set_fps(int new_value) {
 	FPS = (int)(((float)1000) / new_value);
@@ -33,6 +38,12 @@ int our_sleep(int period, int val) {
 }
 
 void i_sleep(int u) {
+	if (i_power_save) {
+		// Avoid using CPU-heavy Windows's Timer API
+		Sleep(1);
+		return;
+	}
+	
 	if (0 == frequency_set) {
 		QueryPerformanceFrequency(&frequency);
 		QueryPerformanceCounter(&t1);

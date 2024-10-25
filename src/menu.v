@@ -3,7 +3,17 @@ module iui
 import gg
 import gx
 import v.util.version { full_v_version }
+import os
 
+// WinUI3 Guidelines ControlCornerRadius
+const menu_item_radius = 4
+
+// Menubar - An implementation of a menu bar.
+//			You add MenuItem objects as children of the Menubar to construct a menu. When the
+//			user selects a MenuItem object, its associated MenuItem children are displayed.
+// Reference:
+// https://docs.oracle.com/javase/tutorial/uiswing/components/menu.html
+//
 pub struct Menubar {
 	Component_A
 pub mut:
@@ -25,6 +35,7 @@ pub struct MenuItem {
 	Component_A
 pub mut:
 	icon           &Image
+	uicon          ?string
 	open           bool
 	open_width     int
 	sub            u8
@@ -33,25 +44,31 @@ pub mut:
 }
 
 fn (mut this MenuItem) draw(ctx &GraphicsContext) {
+	ra := menu_item_radius
 	this.height = 26
 
 	if this.sub == 0 {
 		if !isnil(this.icon) {
 			this.width = this.icon.width + 14
 		} else {
-			size := ctx.text_width(this.text)
-			this.width = size + 14
+			if this.uicon != none {
+				size := 16 + ctx.text_width(this.text)
+				this.width = size + 14
+			} else {
+				size := ctx.text_width(this.text)
+				this.width = size + 14
+			}
 		}
 	}
 
 	bg := ctx.theme.button_bg_hover
 
 	if this.is_mouse_down || this.open {
-		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, ra, bg)
 	}
 
 	if this.is_mouse_rele {
-		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, bg)
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, ra, bg)
 		this.is_mouse_rele = false
 		if this.children.len > 0 {
 			this.open = !this.open
@@ -82,7 +99,8 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 	}
 
 	if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
-		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, ctx.theme.button_bg_hover)
+		// ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, ctx.theme.button_bg_hover)
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, ra, ctx.theme.button_bg_hover)
 	}
 
 	y := this.y + ((this.height / 2) - (ctx.line_height / 2))
@@ -128,6 +146,26 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 		}
 	}
 	*/
+
+	if this.uicon != none {
+		txt := this.uicon or { '' }
+		icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
+		// icon_font := 'C:\\users\\isaia\\Downloads\\FluentSystemIcons-Regular.ttf'
+
+		if os.exists(icon_font) {
+			ctx.draw_text(this.x + 7, y, txt, icon_font, gx.TextCfg{
+				size:  ctx.win.font_size
+				color: ctx.theme.text_color
+			})
+			wid := ctx.text_width(txt) + 14
+			ctx.draw_text(this.x + wid, y, this.text, ctx.font, gx.TextCfg{
+				size:  ctx.win.font_size
+				color: ctx.theme.text_color
+			})
+			return
+		}
+	}
+
 	ctx.draw_text(this.x + 7, y, this.text, ctx.font, gx.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
@@ -287,6 +325,7 @@ pub:
 	click_event_fn fn (mut Window, MenuItem) = unsafe { nil }
 	children       []&MenuItem
 	click_fn       ?fn (voidptr)
+	uicon          ?string
 }
 
 pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
@@ -294,6 +333,7 @@ pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
 		text:           c.text
 		icon:           c.icon
 		click_event_fn: c.click_event_fn
+		uicon:          c.uicon
 	}
 
 	fns := c.click_fn or { unsafe { nil } }
