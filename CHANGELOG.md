@@ -9,8 +9,23 @@ Planned TODO Features:
 - List (https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html)
 - Spinner (https://docs.oracle.com/javase/8/docs/api/javax/swing/JSpinner.html)
 
+## 0.0.23
+- add 'value_change' event to Slider
+- Add 'padding' field to Menubar
+- Add slide out animation to MenuItem
+- Add SettingsCard (reference: https://learn.microsoft.com/en-us/dotnet/communitytoolkit/windows/settingscontrols/settingscard)
+- Requires V 0.4.8 or higher
+
+## 0.0.22
+- Add video player example (requires user download mpv.dll)
+- Add Panel.set_background
+- Add Component.set_hidden
+
+## 0.0.21
+- Update dialogs
+- improve fluent design of text field
+
 ## 0.0.20
-*TODO*
 - Remove some deprecated functions
 - Improve SwapBuffers CPU usage on Windows
 - Tab overflow
