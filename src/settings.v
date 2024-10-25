@@ -8,13 +8,14 @@ import os
 // https://github.com/microsoft/WinUI-Gallery/blob/main/WinUIGallery/SettingsPage.xaml
 
 //
-pub struct SettingsCard {
+pub struct SettingsCard implements Container {
 	Component_A
 pub mut:
-	text    string
-	desc    string
-	uicon   ?string
-	stretch bool
+	text              string
+	desc              string
+	uicon             ?string
+	stretch           bool
+	container_pass_ev bool = true
 }
 
 @[params]

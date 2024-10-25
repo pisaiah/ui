@@ -76,7 +76,7 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			}
 		}
 	}
-	if mut a is ScrollView || mut a is Panel || mut a is DesktopPane {
+	if mut a is ScrollView || mut a is Panel || mut a is DesktopPane || mut a is Container {
 		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
 				return true
@@ -175,7 +175,7 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 		}
 	}
 
-	if mut com is ScrollView || mut com is SplitView || mut com is Panel {
+	if mut com is ScrollView || mut com is SplitView || mut com is Panel || com is SettingsCard {
 		return false
 	}
 
