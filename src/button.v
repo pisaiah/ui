@@ -73,7 +73,6 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	}
 
 	text := btn.text
-	size := ctx.text_width(text) / 2
 	sizh := ctx.line_height / 2 // ctx.text_height(text) / 2
 
 	// Handle click
@@ -105,11 +104,18 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 		return
 	}
 
+	// TODO: Better font detection
+	font := if btn.font == 0 { ctx.font } else { ctx.win.extra_map['icon_ttf'] }
+
+	cfgg := gx.TextCfg{
+		size:   ctx.win.font_size
+		color:  ctx.theme.text_color
+		family: font
+	}
+	ctx.gg.set_text_cfg(cfgg)
+	size := ctx.text_width(text) / 2
 	ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, text,
-		ctx.font, gx.TextCfg{
-		size:  ctx.win.font_size
-		color: ctx.theme.text_color
-	})
+		font, cfgg)
 }
 
 pub fn (mut btn Button) pack() {

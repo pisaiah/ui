@@ -221,6 +221,13 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 	ctx.win.extra_map['icon_ttf'] = file
 }
 
+pub fn (ctx &GraphicsContext) icon_ttf_exists() bool {
+	if 'icon_ttf' !in ctx.win.extra_map {
+		return false
+	}
+	return os.exists(ctx.win.extra_map['icon_ttf'])
+}
+
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
 	// cfg.family = ''
 	mut cfgg := gx.TextCfg{
@@ -234,10 +241,15 @@ pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
 			return
 		}
 	}
-
 	// ctx.gg.ft.fons.set_font(ctx.font)
-
 	// ctx.gg.ft.fons.set_font(ctx.gg.ft.fonts_map[ ctx.win.fonts.names[ctx.font] ])
+}
+
+pub fn (ctx &GraphicsContext) reset_text_font() {
+	cfg_reset := gx.TextCfg{
+		family: ctx.font
+	}
+	ctx.gg.set_text_cfg(cfg_reset)
 }
 
 pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id string, cfg gx.TextCfg) {
@@ -246,7 +258,6 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 			ctx.gg.draw_text(x, y, text_, cfg)
 			return
 		}
-
 		$if wintxt ? {
 			if text_.len > 0 {
 				ctx.draw_win32_text(x, y, text_, cfg)
@@ -270,6 +281,23 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 	/*$if windows {
 		win_draw_text(x, y, text_, cfg)
 	}*/
+}
+
+pub fn (ctx &GraphicsContext) draw_text_ofset(x int, y int, xo int, yo int, text string, cfg gx.TextCfg) {
+	$if windows {
+		if ctx.gg.native_rendering {
+			ctx.gg.draw_text(x, y, text, cfg)
+			return
+		}
+	}
+	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
+
+	ctx.gg.set_text_cfg(cfg)
+	ctx.gg.ft.fons.draw_text((x * scale) + (xo * scale), (y * scale) + (yo * scale), text)
+
+	if cfg.family != ctx.font {
+		ctx.reset_text_font()
+	}
 }
 
 fn new_graphics(win &Window) &GraphicsContext {

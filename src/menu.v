@@ -52,7 +52,7 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 			this.width = this.icon.width + 14
 		} else {
 			if this.uicon != none {
-				size := 16 + ctx.text_width(this.text)
+				size := 23 + ctx.text_width(this.text)
 				this.width = size + 14
 			} else {
 				size := ctx.text_width(this.text)
@@ -210,14 +210,15 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 			if item.sub != 1 {
 				item.sub = 1
 			}
+
+			pad := if item.uicon == none { 14 } else { 37 }
+			sizee := ctx.text_width(item.text) + pad
+			if wi < sizee {
+				wi = sizee
+			}
 		}
 
 		item.draw_with_offset(ctx, cx, cy)
-		sizee := ctx.text_width(item.text) + 14
-
-		if wi < sizee {
-			wi = sizee
-		}
 		cy += item.height
 		hei += item.height
 	}

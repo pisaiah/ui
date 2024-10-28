@@ -28,8 +28,7 @@ pub:
 
 pub fn Modal.new(c ModalConfig) &Modal {
 	return &Modal{
-		text: c.title
-		// window: unsafe { nil }
+		text:       c.title
 		z_index:    500
 		needs_init: true
 		in_width:   500

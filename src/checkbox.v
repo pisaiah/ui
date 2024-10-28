@@ -107,6 +107,21 @@ fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
 
 	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 8, ctx.theme.checkbox_selected)
 
+	// Use Checkmark SVG if icon set loaded
+	if ctx.icon_ttf_exists() {
+		h := com.height / 2
+		ctx.draw_text_ofset(com.x, com.y, h, h, '\uea11', gx.TextCfg{
+			size:           ctx.win.font_size
+			color:          gx.white
+			family:         ctx.win.extra_map['icon_ttf']
+			align:          .center
+			vertical_align: .middle
+		})
+		ctx.reset_text_font()
+
+		return
+	}
+
 	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
 		img_id:   ctx.icon_cache['check_box']
 		img_rect: gg.Rect{com.x + 2, com.y + 2, com.height - 5, com.height - 5}

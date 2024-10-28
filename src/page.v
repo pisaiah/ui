@@ -66,6 +66,11 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 	if this.needs_init {
 		this.create_close_btn(true)
+		if !ctx.icon_ttf_exists() {
+			// Fallback
+			this.close.text = '<'
+			this.close.font = 0
+		}
 		this.needs_init = false
 	}
 
@@ -94,7 +99,8 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 }
 
 pub fn (mut this Page) create_close_btn(ce bool) &Button {
-	mut close := Button.new(text: '<')
+	mut close := Button.new(text: '\uf053')
+	close.font = 1
 	y := 16
 	wid := this.top_off - (y * 2)
 	close.set_bounds(8, -this.top_off + y, 40, wid)
