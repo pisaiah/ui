@@ -17,10 +17,6 @@ pub:
 }
 
 pub fn Checkbox.new(conf CheckboxConfig) &Checkbox {
-	return check_box(conf)
-}
-
-pub fn check_box(conf CheckboxConfig) &Checkbox {
 	return &Checkbox{
 		text:        conf.text
 		x:           conf.bounds.x

@@ -40,12 +40,8 @@ pub:
 }
 
 pub fn Textbox.new(c TextboxConfig) &Textbox {
-	return text_box(c.lines)
-}
-
-pub fn text_box(lines []string) &Textbox {
 	return &Textbox{
-		lines: lines
+		lines: c.lines
 		sel:   Selection{
 			x0: -1
 		}

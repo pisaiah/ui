@@ -37,10 +37,11 @@ pub fn SettingsCard.new(c SettingsCardConfig) &SettingsCard {
 	}
 }
 
-// TODO: Cross-platform icon font
+// TODO: improve icons in .ttf
 pub fn (mut this SettingsCard) draw_uicon(ctx &GraphicsContext, y int) int {
 	txt := this.uicon or { return 0 }
-	icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
+	// icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
+	icon_font := ctx.win.extra_map['icon_ttf']
 
 	if os.exists(icon_font) {
 		ctx.draw_text(this.x + 12, y, txt, icon_font, gx.TextCfg{

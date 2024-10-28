@@ -62,11 +62,6 @@ pub fn Slider.new(c SliderConfig) &Slider {
 	}
 }
 
-@[deprecated: 'Use Slider.new']
-pub fn slider(cfg SliderConfig) &Slider {
-	return Slider.new(cfg)
-}
-
 // Draw this component
 pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 	if this.hide {

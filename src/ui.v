@@ -211,6 +211,14 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
 	ctx.icon_cache['icons_green'] = ctx.gg.cache_image(green_icons)
 	ctx.icon_cache['check_box'] = ctx.gg.cache_image(cb_icons)
+
+	// Icon Font File
+	mut font_file := $embed_file('assets/icons.ttf')
+	dir := os.join_path(os.data_dir(), '.iui')
+	os.mkdir(dir) or {}
+	file := os.join_path(dir, 'icons.ttf')
+	os.write_file_array(file, font_file.to_bytes()) or {}
+	ctx.win.extra_map['icon_ttf'] = file
 }
 
 pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {

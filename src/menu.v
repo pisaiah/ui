@@ -149,8 +149,10 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 
 	if this.uicon != none {
 		txt := this.uicon or { '' }
-		icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
+		// icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
 		// icon_font := 'C:\\users\\isaia\\Downloads\\FluentSystemIcons-Regular.ttf'
+		// icon_font := 'C:\\users\\isaia\\Downloads\\icomoon.ttf'
+		icon_font := ctx.win.extra_map['icon_ttf']
 
 		if os.exists(icon_font) {
 			ctx.draw_text(this.x + 7, y, txt, icon_font, gx.TextCfg{

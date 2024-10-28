@@ -65,27 +65,24 @@ pub fn (mut this ScrollView) set_border_painted(val bool) {
 }
 
 // Draw
-pub fn (mut this ScrollView) draw(ctx &GraphicsContext) {
-	x := this.x
-	y := this.y
-
-	if this.width < 0 {
+pub fn (mut sv ScrollView) draw(ctx &GraphicsContext) {
+	if sv.width < 0 {
 		return
 	}
 
 	// Set Scissor
-	ctx.gg.scissor_rect(x - 1, y - 1, this.width + 2, this.height + 1)
+	ctx.gg.scissor_rect(sv.x - 1, sv.y - 1, sv.width + 2, sv.height + 1)
 
-	total_height, total_width := this.draw_children(ctx)
+	total_height, total_width := sv.draw_children(ctx)
 
-	this.clamp_scroll_index(total_height + this.padding)
-	this.clamp_scroll_x(total_width + this.padding)
+	sv.clamp_scroll_index(total_height + sv.padding)
+	sv.clamp_scroll_x(total_width + sv.padding)
 
-	if !this.noborder {
-		ctx.gg.draw_rect_empty(x, y, this.width, this.height, ctx.theme.scroll_bar_color)
+	if !sv.noborder {
+		ctx.gg.draw_rect_empty(sv.x, sv.y, sv.width, sv.height, ctx.theme.textbox_border)
 	}
-	this.draw_scrollbar(ctx, this.height, total_height)
-	this.draw_scrollbar2(ctx, this.width, total_width)
+	sv.draw_scrollbar(ctx, sv.height, total_height)
+	sv.draw_scrollbar2(ctx, sv.width, total_width)
 
 	// Reset Scissor
 	ws := ctx.gg.window_size()
@@ -120,14 +117,11 @@ pub fn (mut this ScrollView) draw_children(ctx &GraphicsContext) (int, int) {
 	return total_height, total_width
 }
 
-fn (mut this ScrollView) clamp_scroll_index(total_height int) {
-	if total_height > this.height {
-		scroll := (this.scroll_i * this.increment)
-		current := this.height + scroll
-		max := total_height
-
-		if current > max {
-			a := total_height / this.increment
+fn (mut this ScrollView) clamp_scroll_index(total_height_max int) {
+	if total_height_max > this.height {
+		current := this.height + (this.scroll_i * this.increment)
+		if current > total_height_max {
+			a := total_height_max / this.increment
 			b := this.height / this.increment
 			this.scroll_i = a - b
 		}
@@ -136,14 +130,13 @@ fn (mut this ScrollView) clamp_scroll_index(total_height int) {
 	}
 }
 
-fn (mut this ScrollView) clamp_scroll_x(total_width int) {
-	if total_width > this.width {
+fn (mut this ScrollView) clamp_scroll_x(total_width_max int) {
+	if total_width_max > this.width {
 		scroll := (this.scroll_x * this.increment)
 		current := this.width + scroll
-		max := total_width
 
-		if current > max {
-			a := total_width / this.increment
+		if current > total_width_max {
+			a := total_width_max / this.increment
 			b := this.width / this.increment
 			this.scroll_x = a - b
 		}

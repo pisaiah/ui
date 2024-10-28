@@ -24,6 +24,10 @@ pub:
 	pack   bool
 }
 
+pub fn Hyperlink.new(c HyperlinkConfig) &Hyperlink {
+	return link(c)
+}
+
 pub fn link(cfg HyperlinkConfig) &Hyperlink {
 	return &Hyperlink{
 		text:           cfg.text

@@ -24,10 +24,6 @@ pub:
 }
 
 pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
-	return select_box(cfg)
-}
-
-pub fn select_box(cfg SelectboxConfig) &Selectbox {
 	return &Selectbox{
 		text:   cfg.text
 		app:    unsafe { nil }

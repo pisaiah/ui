@@ -26,10 +26,6 @@ pub:
 	title string
 }
 
-pub fn modal(app &Window, title string) &Modal {
-	return Modal.new(title: title)
-}
-
 pub fn Modal.new(c ModalConfig) &Modal {
 	return &Modal{
 		text: c.title

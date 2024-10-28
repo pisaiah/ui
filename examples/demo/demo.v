@@ -13,10 +13,10 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title: 'UI Demo'
-		width: 700
-		height: 480
-		theme: ui.get_system_theme()
+		title:   'UI Demo'
+		width:   700
+		height:  480
+		theme:   ui.get_system_theme()
 		ui_mode: false
 	)
 
@@ -24,14 +24,15 @@ fn main() {
 		layout: ui.FlowLayout.new(hgap: 10, vgap: 10)
 	)
 	mut app := &App{
-		win: window
+		win:  window
 		pane: pane
-		dp: ui.DesktopPane.new()
+		dp:   ui.DesktopPane.new()
 	}
-
 
 	// Setup Menubar and items
 	window.bar = ui.Menubar.new()
+	window.bar.set_padding(4)
+	window.bar.set_animate(true)
 	window.bar.add_child(ui.MenuItem.new(text: 'File'))
 	window.bar.add_child(ui.MenuItem.new(text: 'Edit'))
 	window.bar.add_child(create_help_menu())
@@ -171,7 +172,7 @@ fn create_theme_menu() &ui.MenuItem {
 	themes := ui.get_all_themes()
 	for theme in themes {
 		item := ui.menu_item(
-			text: theme.name
+			text:           theme.name
 			click_event_fn: theme_click
 		)
 		theme_menu.add_child(item)
@@ -201,21 +202,21 @@ fn (mut app App) make_hbox_section() {
 
 fn (mut app App) make_edits_section() {
 	tbox := ui.text_field(
-		text: 'This is a TextField'
+		text:   'This is a TextField'
 		bounds: ui.Bounds{2, 5, 175, 30}
 	)
 
-	mut code_box := ui.text_box(['module main', '', 'fn main() {', '}'])
+	mut code_box := ui.Textbox.new(lines: ['module main', '', 'fn main() {', '}'])
 	code_box.set_bounds(0, 0, 175, 100)
 
-	mut sv := ui.scroll_view(
-		view: code_box
-		bounds: ui.Bounds{2, 44, 175, 100}
+	mut sv := ui.ScrollView.new(
+		view:    code_box
+		bounds:  ui.Bounds{2, 44, 175, 100}
 		padding: 0
 	)
 
 	mut edits_title_box := ui.Titlebox.new(
-		text: 'TextField / TextBox'
+		text:     'TextField / TextBox'
 		children: [
 			tbox,
 			sv,
@@ -244,7 +245,7 @@ fn (mut app App) make_tree_section() {
 	mut tree := create_tree(app.win)
 	mut tree_view := ui.scroll_view(
 		bounds: ui.Bounds{0, 0, 170, 145}
-		view: tree
+		view:   tree
 	)
 
 	mut title_box := ui.Titlebox.new(text: 'Treeview', children: [tree_view])
@@ -255,18 +256,18 @@ fn (mut app App) make_tree_section() {
 
 fn (mut app App) make_checkbox_section() {
 	cbox := ui.Checkbox.new(
-		text: 'Check me!'
+		text:   'Check me!'
 		bounds: ui.Bounds{0, 0, 50, 25}
 	)
 
 	cbox2 := ui.Switch.new(
-		text: 'Switch'
-		bounds: ui.Bounds{0, 30, 50, 25}
+		text:     'Switch'
+		bounds:   ui.Bounds{0, 30, 50, 25}
 		selected: true
 	)
 
 	mut title_box := ui.Titlebox.new(
-		text: 'Checkbox/Switch'
+		text:     'Checkbox/Switch'
 		children: [cbox, cbox2]
 	)
 	title_box.set_bounds(0, 0, 130, 130)
@@ -275,7 +276,7 @@ fn (mut app App) make_checkbox_section() {
 }
 
 fn (mut app App) make_selectbox_section() {
-	mut sel := ui.select_box(text: 'Selectbox')
+	mut sel := ui.Selectbox.new(text: 'Selectbox')
 
 	for i in 0 .. 3 {
 		sel.items << (25 * (i + 1)).str() + '%'
@@ -289,13 +290,13 @@ fn (mut app App) make_selectbox_section() {
 
 fn (mut app App) make_button_section() {
 	mut btn := ui.Button.new(
-		text: 'Button'
+		text:   'Button'
 		bounds: ui.Bounds{0, 0, 80, 32}
 	)
 
 	mut btn2 := ui.Button.new(
-		text: 'Open Page'
-		bounds: ui.Bounds{0, 38, 130, 30}
+		text:        'Open Page'
+		bounds:      ui.Bounds{0, 38, 130, 30}
 		should_pack: false
 	)
 	btn2.subscribe_event('mouse_up', test_page)
@@ -336,10 +337,10 @@ fn (mut app App) make_tab_section() {
 // Make a 'Help' menu item
 fn create_help_menu() &ui.MenuItem {
 	help_menu := ui.menu_item(
-		text: 'Help'
+		text:     'Help'
 		children: [
 			ui.menu_item(
-				text: 'Item 1'
+				text:  'Item 1'
 				uicon: '\ue946'
 			),
 			ui.menu_item(
@@ -347,7 +348,7 @@ fn create_help_menu() &ui.MenuItem {
 				// click_event_fn: menu_click
 			),
 			ui.menu_item(
-				text: 'About iUI'
+				text:  'About iUI'
 				uicon: '\ue946'
 			),
 		]
@@ -364,8 +365,8 @@ fn create_tree(window &ui.Window) &ui.Tree2 {
 	tree.needs_pack = true
 
 	tree.add_child(&ui.TreeNode{
-		text: 'Veggies'
-		open: true
+		text:  'Veggies'
+		open:  true
 		nodes: [
 			&ui.TreeNode{
 				text: 'Carrot'
@@ -388,8 +389,8 @@ fn create_tree(window &ui.Window) &ui.Tree2 {
 		]
 	})
 	tree.add_child(&ui.TreeNode{
-		text: 'Fruits'
-		open: true
+		text:  'Fruits'
+		open:  true
 		nodes: [
 			&ui.TreeNode{
 				text: 'Apple'
