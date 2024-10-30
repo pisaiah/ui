@@ -20,7 +20,7 @@ pub mut:
 	tik     int = 99
 	padding int
 	ai      int
-	animate bool
+	animate bool = true
 }
 
 pub fn (mut this Menubar) set_animate(val bool) {
@@ -181,7 +181,7 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 	open_height := this.children.len * 26
 
 	if this.ah > 0 {
-		this.ah -= 4
+		this.ah -= (this.ah / 4)
 	}
 
 	if this.open && this.sub > 0 {

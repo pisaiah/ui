@@ -75,7 +75,7 @@ pub fn (mut this DesktopPane) add_child(frame &InternalFrame) {
 
 fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	if !this.init {
-		this.init_controls()
+		this.init_controls(ctx)
 	}
 
 	if this.width == 0 {
@@ -129,12 +129,21 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	}
 }
 
-fn (mut this InternalFrame) init_controls() {
+fn (mut this InternalFrame) init_controls(g &GraphicsContext) {
 	this.init = true
 
 	mut min := Button.new(text: '-')
 	mut max := Button.new(text: '□')
 	mut xxx := Button.new(text: 'x')
+
+	if g.icon_ttf_exists() {
+		min.text = ''
+		max.text = ''
+		xxx.text = ''
+		min.font = 1
+		max.font = 1
+		xxx.font = 1
+	}
 
 	min.set_area_filled(false)
 	max.set_area_filled(false)

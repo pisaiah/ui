@@ -56,12 +56,14 @@ pub fn point_in_raw(mut com Component, px int, py int) bool {
 	}
 
 	mut hei := com.height / 2
+	/*
 	if mut com is Selectbox {
 		if com.show_items {
 			list_height := (com.items.len * com.sub_height)
 			hei = list_height / 2
 		}
 	}
+	*/
 
 	// Don't process if MenuItem is hidden.
 	if mut com is MenuItem {

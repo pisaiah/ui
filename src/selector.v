@@ -6,13 +6,15 @@ import gx
 pub struct Selectbox {
 	Component_A
 pub mut:
-	app        &Window
 	text       string
 	items      []string
-	show_items bool
 	center     bool
 	sub_height int = 28
 	popup      &Popup
+}
+
+fn (box &Selectbox) is_open() bool {
+	return box.popup.shown
 }
 
 @[params]
@@ -26,7 +28,6 @@ pub:
 pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
 	return &Selectbox{
 		text:   cfg.text
-		app:    unsafe { nil }
 		x:      cfg.bounds.x
 		y:      cfg.bounds.y
 		width:  cfg.bounds.width
@@ -40,20 +41,23 @@ pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
 pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 	mut pop := if n { &Popup{} } else { this.popup }
 
+	// Set a dropdown animation
+	pop.set_animate(true)
+
 	if !n {
 		pop.children.clear()
 	}
 
 	for item in this.items {
-		mut subb := Button.new(text: item)
-		subb.set_area_filled(false)
-		subb.border_radius = 0
+		mut subb := SelectItem.new(text: item)
 		subb.subscribe_event('mouse_up', fn [mut this] (mut e MouseEvent) {
+			mut popup := &Popup(e.target.parent)
 			old_val := this.text
 			this.text = e.target.text
 			this.invoke_change_event(e.ctx, old_val, e.target.text)
+			popup.hide(e.ctx)
 		})
-		subb.set_bounds(0, 1, this.width, this.sub_height)
+		subb.set_bounds(0, 1, this.width - 1, this.sub_height)
 		pop.add_child(subb)
 	}
 	ph := (this.items.len * this.sub_height) + this.items.len
@@ -73,24 +77,12 @@ pub fn (mut this Selectbox) invoke_change_event(ctx &GraphicsContext, ov string,
 	}
 }
 
-pub fn (mut item Selectbox) draw_children(ctx &GraphicsContext) {
-	mut wid := 100
-
-	for mut sub in item.items {
-		sub_size := ctx.text_width(sub + '...')
-		if wid < sub_size {
-			wid = sub_size
-		}
-	}
-	if wid < item.width {
-		wid = item.width
-	}
-
-	if isnil(item.popup) {
-		item.setup_popup(ctx, true)
+pub fn (mut box Selectbox) draw_children(ctx &GraphicsContext) {
+	if isnil(box.popup) {
+		box.setup_popup(ctx, true)
 	} else {
-		if item.items.len != item.popup.children.len {
-			item.setup_popup(ctx, false)
+		if box.items.len != box.popup.children.len {
+			box.setup_popup(ctx, false)
 		}
 	}
 }
@@ -104,89 +96,128 @@ pub fn (mut sb Selectbox) do_pack(ctx &GraphicsContext) {
 	}
 }
 
-pub fn (mut item Selectbox) draw(ctx &GraphicsContext) {
-	if item.app == unsafe { nil } {
-		item.app = ctx.win
+pub fn (box &Selectbox) get_bg_bord(g &GraphicsContext) (gx.Color, gx.Color) {
+	if box.is_mouse_down {
+		return g.theme.button_bg_click, g.theme.button_border_normal
 	}
 
-	x := item.x
-	y := item.y
-	mut app := item.app
-	width := item.width
-	height := item.height
-	sizh := ctx.gg.text_height(item.text) / 2
-
-	item.do_pack(ctx)
-
-	mut bg := ctx.theme.button_bg_normal
-	mut border := ctx.theme.button_border_normal
-
-	midx := (x + (width / 2))
-	midy := (y + (height / 2))
-
-	// Detect Hover
-	if abs(midx - app.mouse_x) < (width / 2) && abs(midy - app.mouse_y) < (height / 2) {
-		bg = ctx.theme.button_bg_hover
-		border = ctx.theme.button_border_hover
+	if is_in(box, g.win.mouse_x, g.win.mouse_y) {
+		return g.theme.button_bg_hover, g.theme.button_border_hover
 	}
+	return g.theme.button_bg_normal, g.theme.button_border_normal
+}
 
-	// Detect Click
-	clicked := (abs(midx - app.click_x) < (width / 2) && abs(midy - app.click_y) < (height / 2))
+pub fn (mut box Selectbox) draw(ctx &GraphicsContext) {
+	box.do_pack(ctx)
+	box.draw_children(ctx)
 
-	if clicked && !item.show_items {
-		bg = ctx.theme.button_bg_click
-		border = ctx.theme.button_border_click
-		item.show_items = true
-	}
-
-	for mut subb in item.children {
-		subb.height = 0
-	}
-
-	if item.show_items && item.items.len > 0 {
-		bg = ctx.theme.button_bg_click
-		border = ctx.theme.button_border_normal
-		item.draw_children(ctx)
-		if !item.popup.shown {
-			item.popup.show(item, 0, item.height, ctx)
+	if box.is_mouse_down {
+		if !box.popup.shown {
+			box.popup.show(box, 0, box.height, ctx)
+		} else {
+			box.popup.hide(ctx)
 		}
-	} else {
-		if !isnil(item.popup) {
-			if item.popup.shown {
-				item.popup.shown = false
-			}
+		box.is_mouse_down = false
+	}
+
+	cx := ctx.win.click_x
+	cy := ctx.win.click_y
+
+	if !isnil(box.popup) && cx != -1 && cy != -1 {
+		if !is_in(box.popup, cx, cy) && !is_in(box, cx, cy) && !box.is_mouse_down {
+			box.popup.hide(ctx)
 		}
 	}
 
-	if item.show_items && app.click_x != -1 && app.click_y != -1 && !clicked {
-		item.show_items = false
-		if !isnil(item.popup) {
-			mid_y := (item.popup.y + (item.popup.height / 2))
-			clickedd := (abs(midx - app.click_x) < (width / 2)
-				&& abs(mid_y - app.click_y) < (item.popup.height / 2))
-			if !clickedd {
-				item.popup.hide(ctx)
-			}
-		}
-	}
+	box.draw_box(ctx, box.x, box.y)
+}
 
-	// Draw Button Background
-	ctx.gg.draw_rect_filled(x, y, width, height, bg)
+// Draw Box UI; bg, text, arrow
+pub fn (box &Selectbox) draw_box(ctx &GraphicsContext, x int, y int) {
+	bg, border := box.get_bg_bord(ctx)
+	sizh := ctx.gg.text_height(box.text) / 2
 
-	// Draw Button Text
-	ctx.draw_text(x + 5, y + (height / 2) - sizh, item.text, ctx.font, gx.TextCfg{
+	ctx.gg.draw_rect_filled(x, y, box.width, box.height, bg)
+
+	ctx.draw_text(x + 5, y + (box.height / 2) - sizh, box.text, ctx.font, gx.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 
-	ctx.theme.button_fill_fn(x + width - 26, y, 25, height - 1, 1, bg, ctx)
-	ctx.gg.draw_rect_empty(x, y, width, height, border)
+	ctx.theme.button_fill_fn(x + box.width - 26, y, 25, box.height - 1, 1, bg, ctx)
+	ctx.gg.draw_rect_empty(x, y, box.width, box.height, border)
 
-	// Draw down arrow
-	char_height := 3
+	box.draw_arrow(ctx, x, y, box.width, box.height)
+}
+
+// Draw down arrow
+fn (box &Selectbox) draw_arrow(ctx &GraphicsContext, x int, y int, w int, h int) {
+	char_h := 3
 	tx := 17
 
-	ctx.gg.draw_triangle_filled(x + width - tx, y + (height / 2) - char_height, x + width - (tx - 5),
-		y + (height / 2) + 5 - char_height, x + width - (tx - 10), y + (height / 2) - char_height,
-		ctx.theme.text_color)
+	ctx.gg.draw_triangle_filled(x + w - tx, y + (h / 2) - char_h, x + w - (tx - 5), y + (h / 2) + 5 - char_h,
+		x + w - (tx - 10), y + (h / 2) - char_h, ctx.theme.text_color)
+}
+
+// SelectItem
+pub struct SelectItem {
+	Component_A
+pub mut:
+	icon  &Image
+	uicon ?string
+}
+
+pub fn SelectItem.new(c MenuItemConfig) &SelectItem {
+	item := &SelectItem{
+		text:  c.text
+		icon:  c.icon
+		uicon: c.uicon
+	}
+	return item
+}
+
+fn (mut si SelectItem) draw(ctx &GraphicsContext) {
+	if is_in(si, ctx.win.mouse_x, ctx.win.mouse_y) {
+		ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2, ctx.theme.button_bg_hover)
+	}
+
+	if si.is_mouse_down || si.is_mouse_rele {
+		bg := ctx.theme.button_bg_click
+		ctx.gg.draw_rect_filled(si.x, si.y, si.width, si.height, bg)
+	}
+
+	if si.is_mouse_rele {
+		si.is_mouse_rele = false
+	}
+
+	// Draw Button Text
+	if !isnil(si.icon) {
+		image_y := si.y + ((si.height / 2) - (si.icon.height / 2))
+		si.icon.set_pos(si.x + (si.width / 2) - (si.icon.width / 2), image_y)
+		si.icon.draw(ctx)
+	} else {
+		y := si.y + ((si.height / 2) - (ctx.line_height / 2))
+		si.draw_text(ctx, y)
+	}
+}
+
+fn (mut si SelectItem) draw_text(ctx &GraphicsContext, y int) {
+	if si.uicon != none && ctx.icon_ttf_exists() {
+		txt := si.uicon or { '' }
+		ctx.draw_text(si.x + 7, y, txt, ctx.win.extra_map['icon_ttf'], gx.TextCfg{
+			size:  ctx.win.font_size
+			color: ctx.theme.text_color
+		})
+		wid := ctx.text_width(txt) + 14
+		ctx.draw_text(si.x + wid, y, si.text, ctx.font, gx.TextCfg{
+			size:  ctx.win.font_size
+			color: ctx.theme.text_color
+		})
+		return
+	}
+
+	ctx.draw_text(si.x + 7, y, si.text, ctx.font, gx.TextCfg{
+		size:  ctx.win.font_size
+		color: ctx.theme.text_color
+	})
 }

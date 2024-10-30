@@ -260,8 +260,10 @@ pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 
 	for mut pop in app.popups {
 		mut com := &Component(pop)
-		if com.on_mouse_down_component(app) {
-			return
+		if pop.container_pass_ev {
+			if com.on_mouse_down_component(app) {
+				return
+			}
 		}
 	}
 
@@ -294,9 +296,11 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 
 	for mut pop in app.popups {
 		mut com := &Component(pop)
-		if com.on_mouse_rele_component(app) {
-			pop.hide(app.graphics_context)
-			return
+		if pop.container_pass_ev {
+			if com.on_mouse_rele_component(app) {
+				pop.hide(app.graphics_context)
+				return
+			}
 		}
 	}
 
