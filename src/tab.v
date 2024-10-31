@@ -205,7 +205,7 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	for mut com in val {
 		com.draw_event_fn(mut tb.win, com)
 		com.draw_with_offset(ctx, tb.x, tb.y + my)
-		com.after_draw_event_fn(mut tb.win, com)
+		// com.after_draw_event_fn(mut tb.win, com)
 	}
 }
 

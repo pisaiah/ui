@@ -1,11 +1,6 @@
 module iui
 
 // deprecated stuff for removal
-@[deprecated: 'Use Window.new']
-pub fn make_window(c &WindowConfig) &Window {
-	return Window.new(c)
-}
-
 @[deprecated: 'Use Slider.new']
 pub fn slider(cfg SliderConfig) &Slider {
 	return Slider.new(cfg)

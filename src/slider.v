@@ -14,7 +14,8 @@ pub mut:
 	hide        bool
 	scroll      bool
 	thumb_wid   int
-	thumb_color gg.Color
+	thumb_color ?gg.Color
+	last_scroll int
 }
 
 pub fn (mut s Slider) switch_dir() {
@@ -34,6 +35,10 @@ pub fn (mut this Slider) set_custom_thumb_color(color gg.Color) {
 	this.thumb_color = color
 }
 
+pub fn (s &Slider) get_thumb_color() ?gg.Color {
+	return s.thumb_color
+}
+
 // Direction of the Slider
 pub enum Direction {
 	hor
@@ -47,7 +52,7 @@ pub:
 	min         int
 	max         int
 	dir         Direction
-	thumb_color gg.Color = gg.Color{0, 0, 0, 0}
+	thumb_color ?gg.Color
 }
 
 pub fn Slider.new(c SliderConfig) &Slider {
@@ -62,10 +67,30 @@ pub fn Slider.new(c SliderConfig) &Slider {
 	}
 }
 
+pub fn (mut s Slider) pack() {
+	s.width = 0
+	s.height = 0
+}
+
+pub fn (mut s Slider) pack_do(g &GraphicsContext) {
+	// Note: values taken from default JSlider size
+	if s.dir == .vert {
+		s.width = 16
+		s.height = 200
+	} else {
+		s.width = 200
+		s.height = 16
+	}
+}
+
 // Draw this component
 pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 	if this.hide {
 		return
+	}
+
+	if this.width == 0 && this.height == 0 {
+		this.pack_do(ctx)
 	}
 
 	if this.is_mouse_down {
@@ -77,24 +102,32 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 		this.is_mouse_rele = false
 	}
 
-	// TODO: Scroll for .hor
-	if this.dir == .vert && this.scroll {
-		diff := abs(this.scroll_i) + 1
-
-		this.cur = diff
-		this.cur = f32(math.clamp(this.cur, this.min, this.max))
+	// Scroll
+	if this.scroll {
+		diff := abs(this.scroll_i) // + 1
+		if this.last_scroll != diff {
+			new_val := f32(math.clamp(diff, this.min, this.max))
+			if this.cur != new_val {
+				this.cur = new_val
+				invoke_slider_change(this, ctx, new_val)
+			}
+			this.last_scroll = diff
+		} else {
+			this.scroll_i = int(this.cur)
+			this.last_scroll = int(this.cur)
+		}
 	}
 
-	mut per := this.cur / this.max
+	per := this.cur / this.max
 
-	thumb_color := if this.thumb_color.a > 0 { this.thumb_color } else { ctx.theme.scroll_bar_color }
+	thumb_color := this.thumb_color or { ctx.theme.scroll_bar_color }
 
 	if this.dir == .hor {
 		wid := (this.width * per) - per * this.thumb_wid
 		this.draw_hor(ctx, wid, thumb_color)
 	} else {
 		wid := (this.height * per) - per * this.thumb_wid
-		this.draw_vert(ctx, wid)
+		this.draw_vert(ctx, wid, thumb_color)
 	}
 }
 
@@ -123,8 +156,8 @@ fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
 	g.gg.draw_rounded_rect_filled(s.x + wid, s.y, s.thumb_wid, hei, 16, thumb_color)
 }
 
-fn (s &Slider) draw_vert(g &GraphicsContext, wid f32) {
+fn (s &Slider) draw_vert(g &GraphicsContext, wid f32, color gg.Color) {
 	g.draw_bordered_rect(s.x, s.y, s.width, s.height, g.theme.scroll_track_color, g.theme.button_border_normal)
-	g.gg.draw_rounded_rect_filled(s.x, s.y + wid, s.width, s.thumb_wid, 8, g.theme.scroll_bar_color)
+	g.gg.draw_rounded_rect_filled(s.x, s.y + wid, s.width, s.thumb_wid, 8, color)
 	g.gg.draw_rect_empty(s.x, s.y, s.width, s.height, g.theme.button_border_normal)
 }

@@ -95,7 +95,6 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 	for mut kid in m.children {
 		kid.draw_event_fn(mut app, kid)
 		kid.draw_with_offset(ctx, m.xs, y_off + 2)
-		kid.after_draw_event_fn(mut app, kid)
 
 		if m.pack {
 			if kid.width > m.in_width {
@@ -105,11 +104,6 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 			}
 		}
 	}
-}
-
-@[deprecated]
-pub fn (mut this Modal) create_close_btn(mut app Window, ce bool) &Button {
-	return this.make_close_btn(ce)
 }
 
 pub fn (mut this Modal) make_close_btn(ce bool) &Button {

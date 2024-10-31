@@ -4,16 +4,14 @@ import iui as ui
 
 fn main() {
 	mut win := ui.Window.new(
-		title:  'Button Demo'
+		title:  'Test'
 		width:  520
 		height: 400
 	)
 
-	mut hbox := ui.VBox.new()
+	mut hbox := ui.Panel.new()
 
-	// Set bounds for the button; If `bounds` is not
-	// set, then the button will pack to the text size.
-	mut sel := ui.select_box(
+	mut sel := ui.Selectbox.new(
 		text:  'Pick value'
 		items: [
 			'Apple',
@@ -23,18 +21,16 @@ fn main() {
 	)
 	sel.set_bounds(0, 0, 150, 30)
 
-	mut btn := ui.button(
+	mut btn := ui.Button.new(
 		text:   'Hello world'
 		bounds: ui.Bounds{99, 4, 99, 20}
 	)
 
-	// btn.set_area_filled(false)
 	sel.z_index = 4
 
 	hbox.add_child(sel)
 	hbox.add_child(btn)
 	hbox.set_pos(20, 20)
-	hbox.pack()
 
 	win.add_child(hbox)
 

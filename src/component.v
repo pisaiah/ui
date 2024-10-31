@@ -7,28 +7,26 @@ import gx
 @[heap]
 pub interface Component {
 mut:
-	text                string
-	x                   int
-	y                   int
-	rx                  int
-	ry                  int
-	width               int
-	height              int
-	is_selected         bool
-	z_index             int
-	scroll_i            int
-	is_mouse_down       bool
-	is_mouse_rele       bool
-	parent              &Component_A
-	draw_event_fn       fn (mut Window, &Component)
-	after_draw_event_fn fn (mut Window, &Component)
-	children            []Component
-	id                  string
-	font                int
-	events              &EventManager
-	hidden              bool
+	text          string
+	x             int
+	y             int
+	rx            int
+	ry            int
+	width         int
+	height        int
+	is_selected   bool
+	z_index       int
+	scroll_i      int
+	is_mouse_down bool
+	is_mouse_rele bool
+	parent        &Component_A
+	draw_event_fn fn (mut Window, &Component)
+	children      []Component
+	id            string
+	font          int
+	events        &EventManager
+	hidden        bool
 	draw(&GraphicsContext)
-	invoke_draw_event(&GraphicsContext)
 	set_bounds(int, int, int, int)
 }
 
@@ -39,26 +37,25 @@ fn (com &Component) str() string {
 @[heap]
 pub struct Component_A implements Component {
 pub mut:
-	text                string
-	x                   int
-	y                   int
-	rx                  int
-	ry                  int
-	width               int
-	height              int
-	is_selected         bool
-	z_index             int
-	scroll_i            int
-	is_mouse_down       bool
-	is_mouse_rele       bool
-	draw_event_fn       fn (mut Window, &Component) = blank_draw_event_fn
-	after_draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
-	parent              &Component_A                = unsafe { nil }
-	children            []Component
-	id                  string
-	font                int
-	events              &EventManager = &EventManager{}
-	hidden              bool
+	text          string
+	x             int
+	y             int
+	rx            int
+	ry            int
+	width         int
+	height        int
+	is_selected   bool
+	z_index       int
+	scroll_i      int
+	is_mouse_down bool
+	is_mouse_rele bool
+	draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
+	parent        &Component_A                = unsafe { nil }
+	children      []Component
+	id            string
+	font          int
+	events        &EventManager = &EventManager{}
+	hidden        bool
 }
 
 pub struct EventManager {
@@ -211,16 +208,6 @@ pub fn (mut com Component_A) set_y(y int) {
 		}
 	}
 	com.y = y
-}
-
-pub fn (com &Component_A) invoke_draw_event(ctx &GraphicsContext) {
-	ev := DrawEvent{
-		target: com
-		ctx:    ctx
-	}
-	for f in com.events.event_map['draw'] {
-		f(ev)
-	}
 }
 
 pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {

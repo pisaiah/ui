@@ -71,7 +71,7 @@ pub fn (mut this SplitView) draw(ctx &GraphicsContext) {
 
 		child.draw_event_fn(mut win, child)
 		child.draw_with_offset(ctx, x_pos, y_pos)
-		child.after_draw_event_fn(mut win, child)
+		// child.after_draw_event_fn(mut win, child)
 
 		y_pos += child.y + child.height
 

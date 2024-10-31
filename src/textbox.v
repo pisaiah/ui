@@ -22,6 +22,7 @@ pub mut:
 	}
 	ctrl_down            bool
 	no_line_numbers      bool
+	not_editable         bool
 }
 
 // Text Selection
@@ -439,6 +440,10 @@ pub fn (mut this Textbox) delete_current_line() {
 
 // Key Down stuff:
 fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textbox) {
+	if com.not_editable {
+		return
+	}
+
 	if !com.is_selected {
 		return
 	}

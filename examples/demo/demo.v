@@ -1,5 +1,9 @@
+module main
+
 import iui as ui { debug }
-import gx
+import os
+
+const img_file = $embed_file('v.png')
 
 @[heap]
 struct App {
@@ -83,59 +87,37 @@ fn main() {
 	mut frame_tab := app.make_frame_tab()
 	tb.add_child('Frames', frame_tab)
 
+	mut slider_tab := app.make_slider_tab()
+	tb.add_child('Slider', slider_tab)
+
+	mut selector_tab := app.make_selector_tab()
+	tb.add_child('Selector', selector_tab)
+
 	window.add_child(tb)
 
 	window.gg.run()
 }
 
-fn (mut app App) make_button_tab() &ui.Panel {
-	mut hbox := ui.Panel.new()
-	hbox.set_pos(12, 12)
+fn (mut app App) make_selector_tab() &ui.Panel {
+	mut p := ui.Panel.new()
 
-	mut btn := ui.Button.new(text: 'Button')
-
-	mut btn2 := ui.Button.new(
-		text: 'Round Button'
+	mut sel := ui.Selectbox.new(
+		text:  'Selectbox'
+		items: ['Item A', 'Item B']
 	)
-	btn2.border_radius = 100
 
-	mut sq_btn := ui.Button.new(
-		text: 'Square Button'
+	// Can either add items as string (above) or via new_item
+	mut item := sel.new_item(
+		uicon: '\ue949'
+		text:  'with uicon'
 	)
-	sq_btn.border_radius = 0
+	sel.add_child(item)
 
-	mut tbtn := ui.Button.new(
-		text: 'Button'
-	)
-	tbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
-	tbtn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
-		draw_custom_themed('ocean-btn', mut e)
-	})
+	mut title_box := ui.Titlebox.new(text: 'Selector', children: [sel])
 
-	mut sbtn := ui.Button.new(
-		text: 'Button'
-	)
-	sbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
-	sbtn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
-		draw_custom_themed('seven-btn', mut e)
-	})
-
-	img_file := $embed_file('v.png')
-	mut btn3 := app.icon_btn(img_file.to_bytes())
-	btn3.set_bounds(0, 0, 45, 32)
-	btn3.icon_width = 28
-	btn3.icon_height = 28
-
-	hbox.add_child(btn)
-	hbox.add_child(btn2)
-	hbox.add_child(sq_btn)
-	hbox.add_child(btn3)
-	hbox.add_child(tbtn)
-	hbox.add_child(sbtn)
-
-	// hbox.pack()
-	hbox.set_bounds(12, 12, 400, 500)
-	return hbox
+	title_box.set_bounds(0, 0, 120, 130)
+	p.add_child(title_box)
+	return p
 }
 
 fn draw_custom_themed(name string, mut e ui.DrawEvent) {
@@ -301,7 +283,6 @@ fn (mut app App) make_button_section() {
 	)
 	btn2.subscribe_event('mouse_up', test_page)
 
-	img_file := $embed_file('v.png')
 	mut btn3 := app.icon_btn(img_file.to_bytes())
 	btn3.set_bounds(85, 0, 45, 32)
 	btn3.icon_width = 28
@@ -427,4 +408,26 @@ fn test_page(mut e ui.MouseEvent) {
 
 fn btn_click(mut e ui.MouseEvent) {
 	debug('btn click')
+}
+
+// Code Textbox
+fn make_code_box(file_name string) &ui.ScrollView {
+	file := os.resource_abs_path(file_name)
+
+	lines := os.read_lines(file) or { ['// Error: Unable to read ${file}'] }
+
+	mut box := ui.Textbox.new(
+		lines: lines
+	)
+
+	box.set_bounds(0, 0, 450, 200)
+	box.not_editable = true
+	box.no_line_numbers = true
+
+	mut p := ui.ScrollView.new(
+		view:   box
+		bounds: ui.Bounds{0, 0, 250, 200}
+	)
+
+	return p
 }

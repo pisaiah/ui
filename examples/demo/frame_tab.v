@@ -28,6 +28,7 @@ fn (mut app App) make_frame_tab() &ui.Panel {
 	)
 
 	p.add_child_with_flag(app.dp, ui.borderlayout_center)
+	p.add_child_with_flag(make_code_box('frame_tab.v'), ui.borderlayout_east)
 
 	return p
 }

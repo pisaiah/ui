@@ -68,8 +68,7 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			app.check_box(key, e, mut comm)
 		}
 	}
-	if mut a is VBox || mut a is HBox || mut a is Titlebox || mut a is SplitView
-		|| mut a is InternalFrame {
+	if mut a is Titlebox || mut a is SplitView || mut a is InternalFrame {
 		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
 				return true
@@ -207,6 +206,7 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 		val.sort(a.z_index < b.z_index)
 	}
 
+	/*
 	if mut com is VBox {
 		if com.children.len < 0 || com.scroll_i < 0 {
 			return false
@@ -218,6 +218,8 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 			}
 		}
 	}
+	*/
+
 	// else {
 	for mut child in com.children {
 		if child.on_mouse_rele_component(app) {
@@ -260,10 +262,8 @@ pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 
 	for mut pop in app.popups {
 		mut com := &Component(pop)
-		if pop.container_pass_ev {
-			if com.on_mouse_down_component(app) {
-				return
-			}
+		if com.on_mouse_down_component(app) {
+			return
 		}
 	}
 
@@ -296,11 +296,9 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 
 	for mut pop in app.popups {
 		mut com := &Component(pop)
-		if pop.container_pass_ev {
-			if com.on_mouse_rele_component(app) {
-				pop.hide(app.graphics_context)
-				return
-			}
+		if com.on_mouse_rele_component(app) {
+			pop.hide(app.graphics_context)
+			return
 		}
 	}
 

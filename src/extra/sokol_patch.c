@@ -65,7 +65,7 @@ void i_sleep(int u) {
 // (Tested on N4020, We go from ~90% CPU to ~8% CPU, for the same 48 Hz)
 void _sapp_win32_run_2(const sapp_desc* desc) {
 	_sapp_init_state(desc);
-	_sapp.swap_interval = 0;
+	_sapp.swap_interval = 0; // iui: override swap_interval for performance
 	
 	_sapp_win32_init_console();
 	_sapp.win32.is_win10_or_greater = _sapp_win32_is_win10_or_greater();
@@ -87,7 +87,7 @@ void _sapp_win32_run_2(const sapp_desc* desc) {
 	_sapp.valid = true;
 
 	int rr = (int)(1000 / get_refresh_rate());
-	printf("%i RR\n", rr);
+	// printf("%i RR\n", rr);
 	bool done = false;
 	while (!(done || _sapp.quit_ordered)) {
 		_sapp_win32_timing_measure();

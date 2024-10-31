@@ -7,6 +7,7 @@ pub mut:
 	animate           bool
 	at                int
 	container_pass_ev bool = true
+	keep_alive        int
 }
 
 pub fn (mut p Popup) set_animate(val bool) {
@@ -27,10 +28,23 @@ fn (mut p Popup) animate_to(y int) {
 	}
 }
 
+fn (mut p Popup) note_keep_alive() {
+	p.keep_alive = 1
+}
+
 fn (mut p Popup) draw(ctx &GraphicsContext) {
 	if !p.container_pass_ev {
 		p.is_mouse_down = false
 		p.is_mouse_rele = false
+	}
+
+	if p.keep_alive > 10 {
+		// Timeout
+		p.hide(ctx)
+	}
+
+	if p.keep_alive > 0 {
+		p.keep_alive += 1
 	}
 
 	ws := ctx.gg.window_size()

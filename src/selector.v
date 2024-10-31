@@ -8,6 +8,7 @@ pub struct Selectbox {
 pub mut:
 	text       string
 	items      []string
+	kids       []voidptr
 	center     bool
 	sub_height int = 28
 	popup      &Popup
@@ -33,36 +34,59 @@ pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
 		width:  cfg.bounds.width
 		height: cfg.bounds.height
 		items:  cfg.items
-		popup:  unsafe { nil }
+		popup:  &Popup{}
 	}
 }
 
 // Items -> Children
 pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
-	mut pop := if n { &Popup{} } else { this.popup }
+	// mut pop := if n { &Popup{} } else { this.popup }
 
 	// Set a dropdown animation
-	pop.set_animate(true)
+	this.popup.set_animate(true)
 
 	if !n {
-		pop.children.clear()
+		this.popup.children.clear()
 	}
 
 	for item in this.items {
-		mut subb := SelectItem.new(text: item)
-		subb.subscribe_event('mouse_up', fn [mut this] (mut e MouseEvent) {
-			mut popup := &Popup(e.target.parent)
-			old_val := this.text
-			this.text = e.target.text
-			this.invoke_change_event(e.ctx, old_val, e.target.text)
-			popup.hide(e.ctx)
-		})
-		subb.set_bounds(0, 1, this.width - 1, this.sub_height)
-		pop.add_child(subb)
+		mut subb := this.new_item(text: item)
+		this.popup.add_child(subb)
 	}
-	ph := (this.items.len * this.sub_height) + this.items.len
-	pop.set_bounds(this.x, this.y + this.height, this.width, ph)
-	this.popup = pop
+
+	for mut kid in this.children {
+		if mut kid is SelectItem {
+			kid.set_bounds(0, 1, this.width - 1, this.sub_height)
+
+			kid.x = 0
+			kid.y = 1
+			kid.width = this.width - 1
+			kid.height = this.sub_height
+
+			this.popup.add_child(kid)
+		}
+	}
+
+	items_len := this.items.len + this.children.len
+	ph := (items_len * this.sub_height) + items_len
+	this.popup.set_bounds(this.x, this.y + this.height, this.width, ph)
+	// this.popup = pop
+}
+
+pub fn (mut this Selectbox) new_item(c MenuItemConfig) &SelectItem {
+	mut subb := SelectItem.new(c)
+	subb.subscribe_event('mouse_up', this.default_item_mouse_event)
+	subb.set_bounds(0, 1, this.width - 1, this.sub_height)
+	return subb
+}
+
+pub fn (mut this Selectbox) default_item_mouse_event(mut e MouseEvent) {
+	// mut popup := &Popup(e.target.parent)
+
+	old_val := this.text
+	this.text = e.target.text
+	this.invoke_change_event(e.ctx, old_val, e.target.text)
+	this.popup.hide(e.ctx)
 }
 
 pub fn (mut this Selectbox) invoke_change_event(ctx &GraphicsContext, ov string, nv string) {
@@ -81,7 +105,8 @@ pub fn (mut box Selectbox) draw_children(ctx &GraphicsContext) {
 	if isnil(box.popup) {
 		box.setup_popup(ctx, true)
 	} else {
-		if box.items.len != box.popup.children.len {
+		len := box.items.len + box.children.len
+		if len != box.popup.children.len {
 			box.setup_popup(ctx, false)
 		}
 	}
@@ -123,9 +148,21 @@ pub fn (mut box Selectbox) draw(ctx &GraphicsContext) {
 	cx := ctx.win.click_x
 	cy := ctx.win.click_y
 
-	if !isnil(box.popup) && cx != -1 && cy != -1 {
+	if cx != -1 && cy != -1 {
 		if !is_in(box.popup, cx, cy) && !is_in(box, cx, cy) && !box.is_mouse_down {
 			box.popup.hide(ctx)
+		}
+	}
+
+	if box.popup.x != box.x && box.popup.is_shown(ctx) {
+		box.popup.hide(ctx)
+		box.popup.show(box, 0, box.height, ctx)
+	}
+
+	mut win := ctx.win
+	for mut pop in win.popups {
+		if pop.x == box.x && pop.y == box.popup.y {
+			pop.note_keep_alive()
 		}
 	}
 

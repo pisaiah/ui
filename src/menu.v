@@ -182,6 +182,9 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 
 	if this.ah > 0 {
 		this.ah -= (this.ah / 4)
+		if this.ah < 4 {
+			this.ah -= 1
+		}
 	}
 
 	if this.open && this.sub > 0 {

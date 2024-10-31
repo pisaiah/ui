@@ -521,7 +521,6 @@ fn (mut app Window) draw() {
 		invoke_draw_event(com, app.graphics_context)
 		com.draw(app.graphics_context)
 		invoke_after_draw_event(com, app.graphics_context)
-		com.after_draw_event_fn(mut app, com)
 	}
 
 	// Draw Popups last
