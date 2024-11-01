@@ -134,11 +134,10 @@ pub fn seven_bar_fill_fn(x int, y f32, w int, h f32, hor bool, ctx &GraphicsCont
 		ctx.gg.draw_rect_filled(x, y + hh, w, hh, gx.rgb(214, 214, 214))
 		ctx.gg.draw_rect_empty(x, y, w, h, ctx.theme.scroll_bar_color)
 	} else {
-		xx := x - 1
 		ww := (w + 2) / 2
-		ctx.gg.draw_rect_filled(xx, y, w + 3, h, gx.rgb(238, 238, 238))
-		ctx.gg.draw_rect_filled(xx + ww, y, ww + 1, h, gx.rgb(214, 214, 214))
-		ctx.gg.draw_rect_empty(xx, y, w + 3, h, gx.rgb(99, 130, 191))
+		ctx.gg.draw_rect_filled(x, y, w + 2, h, gx.rgb(238, 238, 238))
+		ctx.gg.draw_rect_filled(x + ww, y, ww + 1, h, gx.rgb(214, 214, 214))
+		ctx.gg.draw_rect_empty(x, y, w + 2, h, ctx.theme.scroll_bar_color)
 	}
 }
 
@@ -187,8 +186,8 @@ pub fn seven_dark_setup(mut win Window) {
 	mut img0 := $embed_file('assets/theme/7d/btn.png')
 	cache_image('seven_dark-btn', mut ctx, img0.data(), img0.len)
 
-	mut img1 := $embed_file('assets/theme/7d/bar.png')
-	cache_image('seven_dark-bar', mut ctx, img1.data(), img1.len)
+	// mut img1 := $embed_file('assets/theme/7d/bar.png')
+	// cache_image('seven_dark-bar', mut ctx, img1.data(), img1.len)
 
 	mut img2 := $embed_file('assets/theme/7d/menu.png')
 	cache_image('seven_dark-menu', mut ctx, img2.data(), img2.len)
@@ -209,12 +208,14 @@ pub fn seven_dark_bar_fill_fn(x int, y f32, w int, h f32, hor bool, ctx &Graphic
 		ctx.gg.draw_rect_filled(x, y + hh, w, hh, gx.rgb(37, 37, 37))
 		ctx.gg.draw_rect_empty(x, y, w, h, ctx.theme.scroll_bar_color)
 	} else {
-		id := ctx.icon_cache['seven_dark-bar']
-		ctx.gg.draw_image_by_id(x - 2, y, w + 5, h, id)
-		ctx.gg.draw_rect_empty(x - 2, y, w + 5, h, ctx.theme.scroll_bar_color)
+		w2 := w + 2
+		ww := w2 / 2
+		ctx.gg.draw_rect_filled(x, y, ww, h, gx.rgb(80, 80, 80))
+		ctx.gg.draw_rect_filled(x + ww, y, ww, h, gx.rgb(37, 37, 37))
+		ctx.gg.draw_rect_empty(x, y, w2, h, ctx.theme.scroll_bar_color)
 	}
 }
 
-pub fn seven_dark_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext) {
-	ctx.gg.draw_image_by_id(x, y, w, h + 1, ctx.icon_cache['seven_dark-menu'])
+pub fn seven_dark_menubar_fill_fn(x1 int, y int, w int, h int, ctx &GraphicsContext) {
+	ctx.gg.draw_image_by_id(x1, y, w, h + 1, ctx.icon_cache['seven_dark-menu'])
 }

@@ -89,7 +89,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 		btn.need_pack = true
 	}
 
-	if btn.icon != -1 {
+	if btn.icon != -1 && btn.icon != -2 {
 		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }
 		hei := if btn.icon_height > 0 { btn.icon_height } else { btn.height }
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
@@ -102,6 +102,19 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 			}
 		})
 		return
+	}
+
+	if btn.icon == -2 {
+		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
+			img_id:    ctx.get_icon_sheet_id()
+			img_rect:  gg.Rect{
+				x:      btn.x + (btn.width / 2) - (btn.width / 2)
+				y:      btn.y + (btn.height / 2) - (btn.height / 2)
+				width:  btn.width
+				height: btn.height
+			}
+			part_rect: gg.Rect{32 * btn.icon_width, 32 * btn.icon_height, 32, 32}
+		})
 	}
 
 	// TODO: Better font detection

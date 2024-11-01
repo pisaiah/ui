@@ -7,7 +7,6 @@ import os
 pub struct Tabbox {
 	Component_A
 pub mut:
-	win                 &Window
 	text                string
 	kids                map[string][]Component
 	active_tab          string
@@ -27,7 +26,6 @@ pub:
 // Return new Tabbox
 pub fn Tabbox.new(c TabboxConfig) &Tabbox {
 	return &Tabbox{
-		win:     unsafe { nil }
 		compact: c.compact
 		text:    ''
 	}
@@ -96,7 +94,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 	tx := tb.x + mx + 8
 	ty := (theig / 2) - sizh
 	ctx.draw_text(tx, tb.y + my + ty, key, ctx.font, gx.TextCfg{
-		size:  tb.win.font_size
+		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 
@@ -104,10 +102,14 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 		tb.draw_close_btn(ctx, mx, my, tsize, theig, sizh, key_)
 	}
 
-	mid := (tb.x + mx + (tsize / 2))
-	midy := (tb.y + my + (theig / 2))
-	if abs(mid - tb.win.click_x) < (tsize / 2) && abs(midy - tb.win.click_y) < (theig / 2) {
-		tb.active_tab = key_
+	mid := tb.x + mx + (tsize / 2)
+	midy := tb.y + my + (theig / 2)
+
+	if abs(mid - ctx.win.click_x) < (tsize / 2) && abs(midy - ctx.win.click_y) < (theig / 2) {
+		if tb.is_mouse_rele || tb.is_mouse_down {
+			tb.active_tab = key_
+			tb.is_mouse_rele = false
+		}
 	}
 
 	if tb.active_tab == key_ {
@@ -129,7 +131,7 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 	mid := c_x + (c_s / 2)
 	midy := c_y + (csy / 2)
 
-	if abs(mid - tb.win.click_x) < c_s && abs(midy - tb.win.click_y) < csy {
+	if abs(mid - ctx.win.click_x) < c_s && abs(midy - ctx.win.click_y) < csy {
 		if tb.is_mouse_rele {
 			tb.is_mouse_rele = false
 			tb.kids.delete(key_)
@@ -140,7 +142,7 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 		}
 	}
 
-	hover := abs(mid - tb.win.mouse_x) < c_s && abs(midy - tb.win.mouse_y) < csy
+	hover := abs(mid - ctx.win.mouse_x) < c_s && abs(midy - ctx.win.mouse_y) < csy
 
 	if hover {
 		offset := 3
@@ -157,10 +159,6 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 
 // Draw this component
 pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
-	if isnil(tb.win) {
-		tb.win = ctx.win
-	}
-
 	t_heig := tb.get_active_tab_height(ctx)
 	ctx.gg.draw_rect_empty(tb.x, tb.y + t_heig, tb.width, tb.height - (t_heig - 1), ctx.theme.button_border_normal)
 	mut mx := 0
@@ -203,9 +201,11 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	mut val := tb.kids[tb.active_tab]
 	val.sort(a.z_index < b.z_index)
 	for mut com in val {
-		com.draw_event_fn(mut tb.win, com)
+		if !isnil(com.draw_event_fn) {
+			mut win := ctx.win
+			com.draw_event_fn(mut win, com)
+		}
 		com.draw_with_offset(ctx, tb.x, tb.y + my)
-		// com.after_draw_event_fn(mut tb.win, com)
 	}
 }
 

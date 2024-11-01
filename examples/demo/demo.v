@@ -276,6 +276,10 @@ fn (mut app App) make_button_section() {
 		bounds: ui.Bounds{0, 0, 80, 32}
 	)
 
+	// btn.icon = -2
+	// btn.icon_width = 0
+	// btn.icon_height = 1
+
 	mut btn2 := ui.Button.new(
 		text:        'Open Page'
 		bounds:      ui.Bounds{0, 38, 130, 30}

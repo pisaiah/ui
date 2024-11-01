@@ -110,7 +110,7 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	ctx.gg.draw_rect_filled(this.x + bord_wid, this.y + top, wid_2, hei - top - bord_wid,
 		ctx.theme.background)
 
-	this.controls.set_bounds(this.width - 99, -28, 99, 28)
+	this.controls.set_bounds(this.width - 85, -28, 85, 28)
 
 	this.children.sort(a.z_index < b.z_index)
 
@@ -132,11 +132,18 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 fn (mut this InternalFrame) init_controls(g &GraphicsContext) {
 	this.init = true
 
-	mut min := Button.new(text: '-')
-	mut max := Button.new(text: '□')
-	mut xxx := Button.new(text: 'x')
+	mut min := Button.new(icon: -2, text: ' ')
+	mut max := Button.new(icon: -2, text: ' ')
+	mut xxx := Button.new(icon: -2, text: ' ')
 
-	if g.icon_ttf_exists() {
+	min.icon_width = 0
+	min.icon_height = 1
+	max.icon_width = 1
+	max.icon_height = 1
+	xxx.icon_width = 2
+	xxx.icon_height = 1
+
+	if g.icon_ttf_exists() && false {
 		min.text = ''
 		max.text = ''
 		xxx.text = ''
@@ -149,9 +156,9 @@ fn (mut this InternalFrame) init_controls(g &GraphicsContext) {
 	max.set_area_filled(false)
 	xxx.set_area_filled(false)
 
-	min.set_bounds(0, 0, 27, 24)
-	max.set_bounds(2, 0, 27, 24)
-	xxx.set_bounds(8, 0, 27, 24)
+	min.set_bounds(0, 0, 24, 24)
+	max.set_bounds(2, 0, 24, 24)
+	xxx.set_bounds(4, 0, 24, 24)
 
 	max.subscribe_event('mouse_up', btn_max_click)
 
