@@ -27,6 +27,7 @@ fn main() {
 
 	if os.args.len < 2 {
 		eprintln('give path for the video.')
+
 		// exit(1)
 	}
 
@@ -152,7 +153,6 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 		p.cmd_async([&char('loadfile'.str), &char('dvd://'.str), &char(C.NULL)])
 
 		// C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('loadfile'.str), &char(path.str), &char(0)].data)
-
 		return
 	}
 
@@ -315,6 +315,7 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 
 	pbtn.subscribe_event('mouse_up', fn [mut this] (mut e ui.MouseEvent) {
 		this.cmd_async([&char('cycle'.str), &char('pause'.str), &char(0)])
+
 		// this.cmd_async([&char('set'.str), &char('video-speed-correction'.str), &char(2)])
 	})
 

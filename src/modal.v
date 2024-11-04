@@ -12,12 +12,13 @@ pub mut:
 	close      &Button
 	shown      bool
 
-	in_width  int
-	in_height int
-	left_off  int
-	top_off   int = 50
-	xs        int
-	pack      bool
+	in_width          int
+	in_height         int
+	left_off          int
+	top_off           int = 50
+	xs                int
+	pack              bool
+	container_pass_ev bool = true
 }
 
 @[params]

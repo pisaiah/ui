@@ -149,6 +149,7 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 
 	if this.uicon != none {
 		txt := this.uicon or { '' }
+
 		// icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
 		// icon_font := 'C:\\users\\isaia\\Downloads\\FluentSystemIcons-Regular.ttf'
 		// icon_font := 'C:\\users\\isaia\\Downloads\\icomoon.ttf'
@@ -245,8 +246,8 @@ fn (mut this Menubar) draw(ctx &GraphicsContext) {
 	this.height = 26 + this.padding
 
 	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26 + this.padding, ctx)
-	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
 
+	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
 	mut x := this.x + 1
 	for mut item in this.children {
 		item.set_parent(this)

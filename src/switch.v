@@ -176,6 +176,7 @@ pub struct SwitchEvent {
 pub fn invoke_switch(com &Switch, ctx &GraphicsContext) {
 	ev := SwitchEvent{
 		target: com
+
 		// unsafe { com }
 		ctx: ctx
 	}

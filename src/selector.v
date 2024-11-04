@@ -70,6 +70,7 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 	items_len := this.items.len + this.children.len
 	ph := (items_len * this.sub_height) + items_len
 	this.popup.set_bounds(this.x, this.y + this.height, this.width, ph)
+
 	// this.popup = pop
 }
 
@@ -82,7 +83,6 @@ pub fn (mut this Selectbox) new_item(c MenuItemConfig) &SelectItem {
 
 pub fn (mut this Selectbox) default_item_mouse_event(mut e MouseEvent) {
 	// mut popup := &Popup(e.target.parent)
-
 	old_val := this.text
 	this.text = e.target.text
 	this.invoke_change_event(e.ctx, old_val, e.target.text)

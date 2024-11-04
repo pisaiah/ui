@@ -40,6 +40,7 @@ pub fn SettingsCard.new(c SettingsCardConfig) &SettingsCard {
 // TODO: improve icons in .ttf
 pub fn (mut this SettingsCard) draw_uicon(ctx &GraphicsContext, y int) int {
 	txt := this.uicon or { return 0 }
+
 	// icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
 	icon_font := ctx.win.extra_map['icon_ttf']
 

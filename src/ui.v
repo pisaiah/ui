@@ -195,6 +195,9 @@ pub fn (ctx &GraphicsContext) get_icon_sheet_id() int {
 	if ctx.theme.name == 'Green Mono' {
 		return ctx.icon_cache['icons_green']
 	}
+	if ctx.theme.name == 'Ocean' {
+		return ctx.icon_cache['icons_ocean']
+	}
 	return ctx.icon_cache['tree_file']
 }
 
@@ -206,12 +209,18 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 	mut green_icons := win.gg.create_image_from_memory(green_file.data(), green_file.len) or {
 		panic(err)
 	}
+	
+	mut ocean_file := $embed_file('assets/icons_ocean.png')
+	mut ocean_icons := win.gg.create_image_from_memory(ocean_file.data(), ocean_file.len) or {
+		panic(err)
+	}
 
 	mut cb_file := $embed_file('assets/check.png')
 	mut cb_icons := win.gg.create_image_from_memory(cb_file.data(), cb_file.len) or { panic(err) }
 
 	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
 	ctx.icon_cache['icons_green'] = ctx.gg.cache_image(green_icons)
+	ctx.icon_cache['icons_ocean'] = ctx.gg.cache_image(ocean_icons)
 	ctx.icon_cache['check_box'] = ctx.gg.cache_image(cb_icons)
 
 	// Icon Font File

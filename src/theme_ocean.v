@@ -188,7 +188,6 @@ pub fn seven_dark_setup(mut win Window) {
 
 	// mut img1 := $embed_file('assets/theme/7d/bar.png')
 	// cache_image('seven_dark-bar', mut ctx, img1.data(), img1.len)
-
 	mut img2 := $embed_file('assets/theme/7d/menu.png')
 	cache_image('seven_dark-menu', mut ctx, img2.data(), img2.len)
 }
