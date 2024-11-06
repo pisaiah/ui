@@ -217,8 +217,7 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	// Check Children
 	for mut child in com.children {
 		if child.on_mouse_rele_component(app) {
-			// TODO: check if save to remove: if child.parent != unsafe { nil } { return false }
-			return true
+			return is_point_in
 		}
 	}
 

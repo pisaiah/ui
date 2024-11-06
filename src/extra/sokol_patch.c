@@ -86,8 +86,15 @@ void _sapp_win32_run_2(const sapp_desc* desc) {
 	#endif
 	_sapp.valid = true;
 
-	int rr = (int)(1000 / get_refresh_rate());
-	// printf("%i RR\n", rr);
+	float rate = get_refresh_rate();
+	// int rr = (int)(1000 / rate);
+
+	if (rate < 60) {
+		// If <60, ignore & use Sleep(1)
+		i_set_power_save(true);
+		i_set_fps(rate);
+	}
+	
 	bool done = false;
 	while (!(done || _sapp.quit_ordered)) {
 		_sapp_win32_timing_measure();
