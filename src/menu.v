@@ -186,6 +186,7 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		if this.ah < 4 {
 			this.ah -= 1
 		}
+		ctx.refresh_ui()
 	}
 
 	if this.open && this.sub > 0 {
@@ -381,29 +382,41 @@ fn open_about_modal(app &Window) &Modal {
 
 	mut p := Panel.new(
 		layout: BoxLayout{
-			ori: 1
+			ori:  1
+			vgap: 16
 		}
 	)
 
-	p.set_pos(15, 11)
+	p.set_pos(15, 0)
 
 	ws := app.gg.window_size()
 	if 370 > ws.width {
 		about.top_off = 20
 		about.in_width = ws.width - 10
 	}
-
 	about.pack()
 
-	mut title := Label.new(text: 'iUI ')
-	title.set_config(16, false, true)
-	title.pack()
-	p.add_child(title)
-
-	mut lbl := Label.new(
-		text: "Isaiah's UI Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}"
+	title := Label.new(
+		text:           'iUI '
+		pack:           true
+		em_size:        2
+		bold:           true
+		vertical_align: .middle
 	)
-	lbl.pack()
+
+	lbl := Label.new(
+		text: 'My UI Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}'
+		pack: true
+	)
+
+	mut copy := Label.new(
+		text:    'Copyright © 2021-2024 Isaiah.'
+		pack:    true
+		em_size: .8 // .75em = 12px
+	)
+	copy.set_bounds(0, 0, 200, 15)
+
+	p.add_child(title)
 	p.add_child(lbl)
 
 	gh := link(
@@ -412,15 +425,8 @@ fn open_about_modal(app &Window) &Modal {
 		pack: true
 	)
 	p.add_child(gh)
-
-	mut blank := Label.new(text: '  ')
-	blank.pack()
-	p.add_child(blank)
-
-	mut copy := Label.new(text: 'Copyright © 2021-2024 Isaiah.')
-	copy.set_config(12, true, false)
-	copy.set_bounds(0, 0, 200, 15)
 	p.add_child(copy)
+
 	about.add_child(p)
 	return about
 }
