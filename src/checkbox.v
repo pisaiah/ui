@@ -41,6 +41,7 @@ fn (this &Checkbox) get_border(is_hover bool, ctx &GraphicsContext) gx.Color {
 
 // Get background color
 fn (this &Checkbox) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
+	
 	if this.is_mouse_down {
 		return ctx.theme.button_bg_click
 	}
@@ -48,7 +49,7 @@ fn (this &Checkbox) get_background(is_hover bool, ctx &GraphicsContext) gx.Color
 	if is_hover {
 		return ctx.theme.button_bg_hover
 	}
-	return ctx.theme.checkbox_bg
+	return ctx.theme.background
 }
 
 // Draw checkbox
@@ -86,7 +87,7 @@ fn (com &Checkbox) draw_background(ctx &GraphicsContext) {
 	bg := com.get_background(is_hover, ctx)
 	border := com.get_border(is_hover, ctx)
 
-	ctx.win.draw_bordered_rect(com.x, com.y, com.height, com.height, 8, bg, border)
+	ctx.draw_rounded_bordered_rect(com.x, com.y, com.height, com.height, 8, bg, border)
 }
 
 // Draw the text of Checkbox
@@ -105,7 +106,7 @@ fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
 	cut := 0
 	wid := com.height - (cut * 2)
 
-	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 8, ctx.theme.checkbox_selected)
+	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 8, ctx.theme.accent_fill)
 
 	// Use Checkmark SVG if icon set loaded
 	if ctx.icon_ttf_exists() {

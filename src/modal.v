@@ -110,7 +110,7 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 pub fn (mut this Modal) make_close_btn(ce bool) &Button {
 	mut close := Button.new(
 		text:   'OK'
-		bounds: Bounds{200, this.in_height - 35, 100, 30}
+		bounds: Bounds{200, this.in_height - 40, 100, 30}
 	)
 
 	if 300 > this.in_width {
@@ -119,6 +119,9 @@ pub fn (mut this Modal) make_close_btn(ce bool) &Button {
 
 	if ce {
 		close.subscribe_event('mouse_up', default_modal_close_fn)
+	}
+	if ce && this.needs_init {
+		close.is_action = true
 	}
 
 	this.children << close

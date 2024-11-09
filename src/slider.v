@@ -152,7 +152,7 @@ fn (mut s Slider) on_mouse_down(g &GraphicsContext) {
 
 fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
 	hei := s.height
-	g.win.draw_bordered_rect(s.x, s.y, s.width, hei, 8, g.theme.scroll_track_color, g.theme.button_border_normal)
+	g.draw_rounded_bordered_rect(s.x, s.y, s.width, hei, 8, g.theme.scroll_track_color, g.theme.button_border_normal)
 	g.gg.draw_rounded_rect_filled(s.x + wid, s.y, s.thumb_wid, hei, 16, thumb_color)
 }
 

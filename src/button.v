@@ -18,8 +18,9 @@ pub mut:
 	override_bg_color gx.Color
 	icon_width        int
 	icon_height       int
-	border_radius     int
+	border_radius     int = 4
 	area_filled       bool = true
+	is_action         bool
 }
 
 @[params]
@@ -51,6 +52,11 @@ pub fn Button.new(cf ButtonConfig) &Button {
 		need_pack:    cf.should_pack
 		area_filled:  cf.area_filled
 	}
+}
+
+// Set to apply the action_fill as Button style
+pub fn (mut this Button) set_accent_filled(val bool) {
+	this.is_action = val
 }
 
 // https://docs.oracle.com/javase/7/docs/api/javax/swing/AbstractButton.html#setContentAreaFilled(boolean)
@@ -122,7 +128,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 
 	cfgg := gx.TextCfg{
 		size:   ctx.win.font_size
-		color:  ctx.theme.text_color
+		color:  if btn.is_action { ctx.theme.accent_text } else { ctx.theme.text_color }
 		family: font
 	}
 	ctx.gg.set_text_cfg(cfgg)
@@ -184,6 +190,16 @@ fn (this &Button) get_border(is_hover bool) gx.Color {
 fn (this &Button) get_bg(is_hover bool) gx.Color {
 	if this.override_bg {
 		return this.override_bg_color
+	}
+	
+	if this.is_action {
+		if this.is_mouse_down {
+			return this.app.graphics_context.theme.accent_fill_third
+		}
+		if is_hover {
+			return this.app.graphics_context.theme.accent_fill_second
+		}
+		return this.app.graphics_context.theme.accent_fill
 	}
 
 	should := true // this.app.bar == unsafe { nil } || this.app.bar.tik > 90

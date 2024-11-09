@@ -320,11 +320,6 @@ fn new_graphics(win &Window) &GraphicsContext {
 	}
 }
 
-@[deprecated: 'Use get[T](id)']
-pub fn (win &Window) get_from_id(id string) voidptr {
-	return unsafe { win.id_map[id] }
-}
-
 pub fn (win &Window) get[T](id string) T {
 	return win.id_map[id] or { panic('Component with ID "${id}" not found.') }
 }
@@ -438,14 +433,15 @@ fn frame(mut app Window) {
 fn (app &Window) display() {
 }
 
-pub fn (app &Window) draw_bordered_rect(x int, y int, w int, h int, a int, bg gx.Color, bord gx.Color) {
-	app.gg.draw_rounded_rect_filled(x, y, w, h, a, bg)
-	app.gg.draw_rounded_rect_empty(x, y, w, h, a, bord)
-}
 
 pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx.Color, bord gx.Color) {
 	g.gg.draw_rect_filled(x, y, w, h, bg)
 	g.gg.draw_rect_empty(x, y, w, h, bord)
+}
+
+pub fn (g &GraphicsContext) draw_rounded_bordered_rect(x int, y int, w int, h int, r int, bg gx.Color, bord gx.Color) {
+	g.gg.draw_rounded_rect_filled(x, y, w, h, r, bg)
+	g.gg.draw_rounded_rect_empty(x, y, w, h, r, bord)
 }
 
 // ui_mode: lower cpu usage
@@ -607,11 +603,6 @@ pub fn (ctx &GraphicsContext) refresh_ui() {
 
 pub fn (mut w Window) refresh_ui() {
 	w.gg.refresh_ui()
-}
-
-// Functions for GG
-pub fn text_height(win Window, text string) int {
-	return win.gg.text_height(text)
 }
 
 @[inline]

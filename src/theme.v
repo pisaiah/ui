@@ -8,10 +8,12 @@ pub fn get_system_theme() &Theme {
 	return theme_default()
 }
 
+const included_themes = [theme_default(), theme_dark(), theme_dark_red(),
+	theme_dark_green(), theme_minty(), theme_ocean(), theme_seven(),
+	theme_seven_dark()]
+
 pub fn get_all_themes() []&Theme {
-	return [theme_default(), theme_dark(), theme_dark_hc(), theme_black_red(),
-		theme_minty(), theme_black_green(), theme_ocean(), theme_seven(),
-		theme_seven_dark()]
+	return included_themes
 }
 
 pub fn theme_by_name(name string) &Theme {
@@ -22,9 +24,32 @@ pub fn theme_by_name(name string) &Theme {
 	return themes[0]
 }
 
-pub struct Theme {
-pub:
-	name       string
+// WinUI3 Design guidance (Light)
+const light_accent_text = gx.white
+const light_accent_fill = gx.rgb(0, 80, 158)
+const light_accent_fill_second = gx.rgb(25, 97, 167)
+const light_accent_fill_third = gx.rgb(50, 113, 175)
+
+// WinUI3 Design guidance (Dark)
+const dark_accent_text = gx.black
+const dark_accent_fill = gx.rgb(0, 120, 235)
+const dark_accent_fill_second = gx.rgb(0, 111, 214)
+const dark_accent_fill_third = gx.rgb(0, 102, 194)
+
+pub interface UITheme {
+	name        string
+	accent_fill gx.Color
+}
+
+pub struct Theme implements UITheme {
+pub mut:
+	name string
+
+	accent_text        gx.Color
+	accent_fill        gx.Color
+	accent_fill_second gx.Color
+	accent_fill_third  gx.Color
+
 	text_color gx.Color
 	background gx.Color
 
@@ -43,11 +68,7 @@ pub:
 	textbox_background gx.Color
 	textbox_border     gx.Color
 
-	checkbox_bg       gx.Color
-	checkbox_selected gx.Color
-
-	progressbar_fill gx.Color
-
+	// checkbox_bg gx.Color
 	scroll_track_color gx.Color
 	scroll_bar_color   gx.Color
 
@@ -75,7 +96,13 @@ pub fn default_menubar_fill_fn(x int, y int, w int, h int, ctx &GraphicsContext)
 //	Default Theme - Memics Windows
 pub fn theme_default() &Theme {
 	return &Theme{
-		name:                 'Default'
+		name: 'Default'
+
+		accent_text:        light_accent_text
+		accent_fill:        light_accent_fill
+		accent_fill_second: light_accent_fill_second
+		accent_fill_third:  light_accent_fill_third
+
 		text_color:           gx.black
 		background:           gx.rgb(248, 248, 248)
 		button_bg_normal:     gx.rgb(255, 255, 255)
@@ -90,9 +117,6 @@ pub fn theme_default() &Theme {
 		dropdown_border:      gx.rgb(224, 224, 224)
 		textbox_background:   gx.white
 		textbox_border:       gx.rgb(230, 230, 230)
-		checkbox_selected:    gx.rgb(37, 161, 218)
-		checkbox_bg:          gx.rgb(254, 254, 254)
-		progressbar_fill:     gx.rgb(37, 161, 218)
 		scroll_track_color:   gx.rgb(238, 238, 238)
 		scroll_bar_color:     gx.rgb(170, 170, 170)
 	}
@@ -101,13 +125,19 @@ pub fn theme_default() &Theme {
 //	Dark Theme
 pub fn theme_dark() &Theme {
 	return &Theme{
-		name:                 'Dark'
+		name: 'Dark'
+
+		accent_text:        dark_accent_text
+		accent_fill:        dark_accent_fill
+		accent_fill_second: dark_accent_fill_second
+		accent_fill_third:  dark_accent_fill_third
+
 		text_color:           gx.rgb(230, 230, 230)
 		background:           gx.rgb(30, 30, 30)
-		button_bg_normal:     gx.rgb(10, 10, 10)
+		button_bg_normal:     gx.rgb(50, 50, 50)
 		button_bg_hover:      gx.rgb(70, 70, 70)
 		button_bg_click:      gx.rgb(50, 50, 50)
-		button_border_normal: gx.rgb(130, 130, 130)
+		button_border_normal: gx.rgb(70, 70, 70)
 		button_border_hover:  gx.rgb(0, 120, 215)
 		button_border_click:  gx.rgb(0, 84, 153)
 		menubar_background:   gx.rgb(30, 30, 30)
@@ -116,68 +146,21 @@ pub fn theme_dark() &Theme {
 		dropdown_border:      gx.rgb(0, 0, 0)
 		textbox_background:   gx.rgb(34, 39, 46)
 		textbox_border:       gx.rgb(50, 50, 50)
-		checkbox_selected:    gx.rgb(240, 99, 40)
-		checkbox_bg:          gx.rgb(5, 5, 5)
-		progressbar_fill:     gx.rgb(130, 130, 130)
 		scroll_track_color:   gx.rgb(0, 0, 0)
 		scroll_bar_color:     gx.rgb(170, 170, 170)
-	}
-}
-
-//	Dark Theme - High Contrast
-pub fn theme_dark_hc() &Theme {
-	return &Theme{
-		name:                 'Dark Black'
-		text_color:           gx.white
-		background:           gx.rgb(0, 0, 0)
-		button_bg_normal:     gx.rgb(0, 0, 0)
-		button_bg_hover:      gx.rgb(70, 70, 70)
-		button_bg_click:      gx.rgb(50, 50, 50)
-		button_border_normal: gx.rgb(220, 220, 220)
-		button_border_hover:  gx.rgb(100, 220, 255)
-		button_border_click:  gx.rgb(10, 94, 163)
-		menubar_background:   gx.rgb(10, 10, 10)
-		menubar_border:       gx.rgb(99, 99, 99)
-		dropdown_background:  gx.rgb(10, 10, 10)
-		dropdown_border:      gx.rgb(190, 190, 190)
-		textbox_background:   gx.rgb(0, 0, 0)
-		textbox_border:       gx.rgb(200, 200, 200)
-		checkbox_selected:    gx.rgb(220, 220, 220)
-		checkbox_bg:          gx.rgb(0, 0, 0)
-		scroll_track_color:   gx.rgb(0, 0, 0)
-		scroll_bar_color:     gx.rgb(205, 205, 205)
-	}
-}
-
-//	Black Red
-pub fn theme_black_red() &Theme {
-	return &Theme{
-		name:                 'Black Red'
-		text_color:           gx.white
-		background:           gx.rgb(0, 0, 0)
-		button_bg_normal:     gx.rgb(0, 0, 0)
-		button_bg_hover:      gx.rgb(70, 0, 0)
-		button_bg_click:      gx.rgb(40, 0, 0)
-		button_border_normal: gx.rgb(255, 0, 0)
-		button_border_hover:  gx.rgb(230, 10, 15)
-		button_border_click:  gx.rgb(150, 0, 0)
-		menubar_background:   gx.rgb(10, 10, 10)
-		menubar_border:       gx.rgb(160, 0, 0)
-		dropdown_background:  gx.rgb(160, 0, 0)
-		dropdown_border:      gx.rgb(0, 0, 0)
-		textbox_background:   gx.rgb(0, 0, 0)
-		textbox_border:       gx.rgb(200, 0, 0)
-		checkbox_selected:    gx.rgb(255, 0, 0)
-		checkbox_bg:          gx.rgb(0, 0, 0)
-		scroll_track_color:   gx.rgb(0, 0, 0)
-		scroll_bar_color:     gx.rgb(240, 0, 0)
 	}
 }
 
 //	MintY - Memics LinuxMint's Default Theme
 pub fn theme_minty() &Theme {
 	return &Theme{
-		name:                 'Minty'
+		name: 'Minty'
+
+		accent_text:        light_accent_text
+		accent_fill:        gx.rgb(154, 184, 124)
+		accent_fill_second: gx.rgb(144, 174, 114)
+		accent_fill_third:  gx.rgb(134, 164, 104)
+
 		text_color:           gx.black
 		background:           gx.rgb(240, 240, 240)
 		button_bg_normal:     gx.rgb(245, 245, 245)
@@ -192,34 +175,120 @@ pub fn theme_minty() &Theme {
 		dropdown_border:      gx.rgb(204, 204, 204)
 		textbox_background:   gx.white
 		textbox_border:       gx.rgb(215, 215, 215)
-		checkbox_selected:    gx.rgb(154, 184, 124)
-		checkbox_bg:          gx.rgb(247, 247, 247)
 		scroll_track_color:   gx.rgb(238, 238, 238)
 		scroll_bar_color:     gx.rgb(181, 203, 158)
 	}
 }
 
-// Black Green
-pub fn theme_black_green() &Theme {
-	return &Theme{
-		name:                 'Green Mono'
-		text_color:           gx.rgb(200, 255, 200)
-		background:           gx.rgb(0, 0, 0)
-		button_bg_normal:     gx.rgb(0, 0, 0)
-		button_bg_hover:      gx.rgb(0, 70, 0)
-		button_bg_click:      gx.rgb(0, 40, 0)
-		button_border_normal: gx.rgb(0, 255, 0)
-		button_border_hover:  gx.rgb(10, 230, 15)
-		button_border_click:  gx.rgb(0, 150, 0)
-		menubar_background:   gx.rgb(10, 10, 10)
-		menubar_border:       gx.rgb(0, 160, 0)
-		dropdown_background:  gx.rgb(0, 160, 0)
-		dropdown_border:      gx.rgb(0, 0, 0)
-		textbox_background:   gx.rgb(0, 0, 0)
-		textbox_border:       gx.rgb(0, 200, 0)
-		checkbox_selected:    gx.rgb(0, 255, 0)
-		checkbox_bg:          gx.rgb(0, 0, 0)
-		scroll_track_color:   gx.rgb(0, 0, 0)
-		scroll_bar_color:     gx.rgb(0, 220, 0)
-	}
+// Dark
+pub fn theme_dark_red() &Theme {
+	mut th := theme_dark()
+	th.name = 'Dark (Red Accent)'
+	th.accent_text = gx.black
+	th.accent_fill = gx.rgb(250, 0, 0)
+	th.accent_fill_second = gx.rgb(200, 0, 0)
+	th.accent_fill_third = gx.rgb(150, 0, 0)
+	return th
 }
+
+// Dark
+pub fn theme_dark_green() &Theme {
+	mut th := theme_dark()
+	th.name = 'Dark (Green Accent)'
+	th.accent_text = gx.black
+	th.accent_fill = gx.rgb(0, 250, 0)
+	th.accent_fill_second = gx.rgb(0, 200, 0)
+	th.accent_fill_third = gx.rgb(0, 150, 0)
+	return th
+}
+
+// Dark RGB
+/*
+pub fn theme_dark_rgb() &Theme {
+	mut th := theme_dark()
+	th.name = 'Dark (RGB)'
+	th.accent_text = gx.black
+	th.accent_fill = gx.rgb(255, 0, 0)
+	th.accent_fill_second = gx.rgb(200, 0, 0)
+	th.accent_fill_third = gx.rgb(200, 0, 0)
+	// th.menu_bar_fill_fn = rgb_menu_bar_fill_fn
+	th.setup_fn = rgb_setup
+	
+	return th
+}
+
+pub fn rgb_menu_bar_fill_fn(x1 int, y int, w int, h int, ctx &GraphicsContext) {
+	ctx.gg.draw_image_by_id(x1, y, w, h + 1, ctx.icon_cache['seven_dark-menu'])
+	
+	mut theme := ctx.win.theme
+	
+	if theme.accent_fill.r < 255 {
+		theme.accent_fill.r += 1
+	}
+	
+}
+
+fn darker(c gx.Color, mut theme &Theme) {
+    f1 := .8
+	f2 := .6
+	theme.accent_fill_second.r = u8(f32(c.r) * f1)
+	theme.accent_fill_second.g = u8(f32(c.g) * f1)
+	theme.accent_fill_second.b =  u8(f32(c.b) * f1)
+	theme.accent_fill_third.r = u8(f32(c.r) * f2)
+	theme.accent_fill_third.g = u8(f32(c.g) * f2)
+	theme.accent_fill_third.b =  u8(f32(c.b) * f2)
+}
+
+pub fn rgb_setup(mut win Window) {
+	win.theme.accent_fill = gx.rgb(100, 0, 50)
+
+	go animate_colors(mut win)
+}
+
+fn animate_colors(mut win Window) {
+	mut th := win.graphics_context.theme
+	sleep := 10
+	
+    for {
+		if th.name != 'Dark (RGB)' {
+			break
+		}
+        // Transition from red to yellow
+        for th.accent_fill.g < 255 {
+			th.accent_fill.g++
+			darker(th.accent_fill, mut th)
+            time.sleep(sleep * time.millisecond)
+        }
+        // Transition from yellow to green
+        for th.accent_fill.r > 0 {
+            th.accent_fill.r--
+			darker(th.accent_fill, mut th)
+            time.sleep(sleep * time.millisecond)
+        }
+        // Transition from green to cyan
+        for th.accent_fill.b < 255 {
+            th.accent_fill.b++
+			darker(th.accent_fill, mut th)
+            time.sleep(sleep * time.millisecond)
+        }
+        // Transition from cyan to blue
+        for th.accent_fill.g > 0 {
+            th.accent_fill.g--
+			darker(th.accent_fill, mut th)
+            time.sleep(sleep * time.millisecond)
+        }
+        // Transition from blue to magenta
+        for th.accent_fill.r < 255 {
+            th.accent_fill.r++
+			darker(th.accent_fill, mut th)
+            time.sleep(sleep * time.millisecond)
+        }
+        // Transition from magenta to red
+        for th.accent_fill.b > 0 {
+            th.accent_fill.b--
+			darker(th.accent_fill, mut th)
+            time.sleep(sleep * time.millisecond)
+        }
+    }
+}
+*/

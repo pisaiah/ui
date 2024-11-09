@@ -99,7 +99,6 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 	}
 
 	if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
-		// ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, ctx.theme.button_bg_hover)
 		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, ra, ctx.theme.button_bg_hover)
 	}
 
@@ -124,35 +123,8 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 }
 
 fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
-	/*
-	$if windows {
-		// Native Text Rendering
-		if this.sub == 0 && ctx.theme.text_color == gx.black && !ctx.gg.native_rendering {
-			if isnil(this.win_nat) {
-				this.win_nat = &WLabel{
-					text: this.text
-				}
-			}
-			mut wl := unsafe { &WLabel(this.win_nat) }
-			if wl.text != this.text {
-				wl.text = this.text
-				wl.dirt = true
-			}
-			wl.x = this.x + 7
-			wl.y = y - 2
-			this.width = wl.width + 14
-			wl.draw(ctx)
-			return
-		}
-	}
-	*/
-
 	if this.uicon != none {
 		txt := this.uicon or { '' }
-
-		// icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
-		// icon_font := 'C:\\users\\isaia\\Downloads\\FluentSystemIcons-Regular.ttf'
-		// icon_font := 'C:\\users\\isaia\\Downloads\\icomoon.ttf'
 		icon_font := ctx.win.extra_map['icon_ttf']
 
 		if os.exists(icon_font) {
@@ -304,11 +276,6 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 @[params]
 pub struct MenubarConfig {
 	theme &Theme = unsafe { nil }
-}
-
-@[deprecated: 'Use Menubar.new']
-pub fn menu_bar(cfg MenubarConfig) &Menubar {
-	return &Menubar{}
 }
 
 pub fn Menubar.new(cfg MenubarConfig) &Menubar {

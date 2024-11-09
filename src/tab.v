@@ -114,7 +114,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 
 	if tb.active_tab == key_ {
 		line_x := if mx == 0 { tb.x + mx } else { tb.x + mx - 1 }
-		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 2, ctx.theme.checkbox_selected)
+		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 2, ctx.theme.accent_fill)
 	}
 
 	return tsize

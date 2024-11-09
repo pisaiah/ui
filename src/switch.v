@@ -66,14 +66,14 @@ fn (this &Switch) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
 	}
 
 	if this.is_selected {
-		return ctx.theme.checkbox_selected
+		return ctx.theme.accent_fill
 	}
 
 	if is_hover {
 		return ctx.theme.button_bg_hover
 	}
 
-	return ctx.theme.checkbox_bg
+	return ctx.theme.button_bg_normal
 }
 
 // Draw Switch
