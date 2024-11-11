@@ -10,7 +10,6 @@ pub struct Button {
 pub mut:
 	app               &Window
 	icon              int
-	old_click_fn      fn (voidptr, voidptr, voidptr) = unsafe { nil }
 	need_pack         bool
 	extra             string
 	user_data         voidptr
@@ -46,7 +45,6 @@ pub fn Button.new(cf ButtonConfig) &Button {
 		y:            cf.bounds.y
 		width:        cf.bounds.width
 		height:       cf.bounds.height
-		old_click_fn: unsafe { nil }
 		user_data:    cf.user_data
 		need_pack:    cf.should_pack
 		area_filled:  cf.area_filled
@@ -77,7 +75,6 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 
 	// Handle click
 	if btn.is_mouse_rele {
-		btn.handle_legacy_click()
 		btn.is_mouse_rele = false
 	}
 
@@ -199,15 +196,10 @@ fn (this &Button) get_bg(is_hover bool) gx.Color {
 // Deprecated functions:
 @[deprecated: 'use subscribe_event']
 pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
-	com.old_click_fn = b
 	com.user_data = extra_data
-}
-
-fn (mut btn Button) handle_legacy_click() {
-	mut win := btn.app
-	if win.bar == unsafe { nil } || win.bar.tik > 90 {
-		if !isnil(btn.old_click_fn) {
-			btn.old_click_fn(win, btn, btn.user_data)
-		}
-	}
+	
+	com.subscribe_event('mouse_up', fn [b, extra_data] (mut e MouseEvent) {
+		b(e.ctx.win, e.target, extra_data)
+	})
+	
 }

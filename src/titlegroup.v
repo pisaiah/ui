@@ -26,14 +26,6 @@ pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 	}
 }
 
-@[deprecated: 'Use Titlebox.new']
-pub fn title_box(text string, children []Component) &Titlebox {
-	return &Titlebox{
-		text:     text
-		children: children
-	}
-}
-
 // Draw this component
 pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	mut win := ctx.win

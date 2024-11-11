@@ -249,6 +249,8 @@ pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
 
 pub fn (ctx &GraphicsContext) reset_text_font() {
 	cfg_reset := gx.TextCfg{
+		color: ctx.theme.text_color
+		size: ctx.font_size
 		family: ctx.font
 	}
 	ctx.gg.set_text_cfg(cfg_reset)
@@ -384,6 +386,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		font_path:     cfg.font_path
 		font_size:     cfg.font_size
 		ui_mode:       cfg.ui_mode
+		scale: 2
 	)
 	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {

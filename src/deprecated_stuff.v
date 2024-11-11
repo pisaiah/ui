@@ -25,3 +25,11 @@ pub fn modal(app &Window, title string) &Modal {
 pub fn select_box(cfg SelectboxConfig) &Selectbox {
 	return Selectbox.new(cfg)
 }
+
+@[deprecated: 'Use Titlebox.new']
+pub fn title_box(text string, children []Component) &Titlebox {
+	return &Titlebox{
+		text:     text
+		children: children
+	}
+}

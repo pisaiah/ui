@@ -185,6 +185,8 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		if this.ah < 4 {
 			this.ah -= 1
 		}
+		mut win := ctx.win
+		win.refresh_ui()
 	}
 
 	if this.open && this.sub > 0 {
