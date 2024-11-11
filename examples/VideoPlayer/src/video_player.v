@@ -27,6 +27,7 @@ fn main() {
 
 	if os.args.len < 2 {
 		eprintln('give path for the video.')
+
 		// exit(1)
 	}
 
@@ -152,7 +153,6 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 		p.cmd_async([&char('loadfile'.str), &char('dvd://'.str), &char(C.NULL)])
 
 		// C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('loadfile'.str), &char(path.str), &char(0)].data)
-
 		return
 	}
 
@@ -299,6 +299,8 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 	mut pbtn := ui.Button.new(
 		text: 'Play'
 	)
+	
+	pbtn.font = 1
 
 	pbtn.subscribe_event('draw', fn [mut this, mut pbtn] (mut e ui.DrawEvent) {
 		if isnil(this.vmpv) {
@@ -306,15 +308,22 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 		}
 
 		if this.vmpv.is_pause {
-			e.target.text = ' Play  '
+
+			pbtn.text = ' \uea1d '
 		} else {
-			e.target.text = 'Pause'
+			pbtn.text = ' \uea1e '
 		}
-		pbtn.pack()
+		//pbtn.pack()
+		dump(pbtn.width)
+		if pbtn.width == 20 {
+			dump(pbtn)
+			pbtn.width = 32
+		}
 	})
 
 	pbtn.subscribe_event('mouse_up', fn [mut this] (mut e ui.MouseEvent) {
 		this.cmd_async([&char('cycle'.str), &char('pause'.str), &char(0)])
+
 		// this.cmd_async([&char('set'.str), &char('video-speed-correction'.str), &char(2)])
 	})
 

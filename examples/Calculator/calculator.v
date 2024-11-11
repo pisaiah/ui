@@ -3,10 +3,15 @@ module main
 import iui as ui
 import gx
 
+@[heap]
+struct App {
+mut:
+	res_box &ui.TextField
+}
+
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		theme:     theme_dark()
 		title:     'Calculator'
 		width:     280
 		height:    360
@@ -18,27 +23,30 @@ fn main() {
 	window.bar = make_menu_bar()
 
 	// Set content panel
-	mut cp := ui.panel(
+	mut cp := ui.Panel.new(
 		layout: ui.BoxLayout{
 			ori: 1
 		}
 	)
+	
+	mut app := &App{
+		res_box: ui.TextField.new(text: '')
+	}
 
-	mut res_box := ui.text_field(text: '')
-	res_box.set_bounds(5, 1, 260, 40)
-	res_box.set_id(mut window, 'res_box')
-	cp.add_child(res_box)
+	app.res_box.set_bounds(5, 1, 260, 40)
+	app.res_box.set_id(mut window, 'res_box')
+	cp.add_child(app.res_box)
 
-	mut pp := button_panel()
+	mut pp := app.button_panel()
 
-	cp.set_bounds(5, 35, 0, 0)
+	// cp.set_bounds(0, 35, 0, 0)
 	cp.add_child(pp)
 	window.add_child(cp)
 
 	window.gg.run()
 }
 
-fn button_panel() &ui.Panel {
+fn (mut app App) button_panel() &ui.Panel {
 	rows := [
 		[' % ', ' CE ', ' C ', ' ← '],
 		[' 1/x ', ' ^2 ', ' √ ', ' / '],
@@ -63,14 +71,12 @@ fn button_panel() &ui.Panel {
 
 	for row in rows {
 		for el in row {
-			mut num_btn := ui.button(text: el)
+			mut num_btn := ui.Button.new(text: el)
 
-			num_btn.subscribe_event('mouse_up', fn [mut num_btn] (mut e ui.MouseEvent) {
-				on_click_fn(num_btn, e.ctx.win)
-			})
+			num_btn.subscribe_event('mouse_up', app.on_click_fn)
 
 			if el == ' = ' {
-				num_btn.set_background(gx.rgb(30, 75, 145))
+				num_btn.set_accent_filled(true)
 			}
 			num_btn.border_radius = 4
 			pp.add_child(num_btn)
@@ -79,12 +85,11 @@ fn button_panel() &ui.Panel {
 	return pp
 }
 
-fn on_click_fn(btn &ui.Button, win &ui.Window) {
-	mut txt := btn.text
-	mut res_box := win.get[&ui.TextField]('res_box')
+fn (mut app App) on_click_fn(mut e ui.MouseEvent) {
+	mut txt := e.target.text
 
 	if txt == ' C ' || txt == ' CE ' {
-		res_box.text = ''
+		app.res_box.text = ''
 		return
 	}
 
@@ -97,58 +102,53 @@ fn on_click_fn(btn &ui.Button, win &ui.Window) {
 	}
 
 	if txt == ' ← ' {
-		line := res_box.text.trim_right(' ')
-		if res_box.carrot_left > 0 {
-			res_box.text = line.substr(0, line.len - 1).trim_right(' ')
+		line := app.res_box.text.trim_right(' ')
+		if app.res_box.carrot_left > 0 {
+			app.res_box.text = line.substr(0, line.len - 1).trim_right(' ')
 		}
 		return
 	}
 
 	if txt == ' = ' {
-		comput := compute_value(res_box.text).str()
+		comput := compute_value(app.res_box.text).str()
 
 		if comput.ends_with('.') {
-			res_box.text = comput.substr(0, comput.len - 1)
+			app.res_box.text = comput.substr(0, comput.len - 1)
 		} else {
-			res_box.text = comput
+			app.res_box.text = comput
 		}
 		return
 	}
 
-	res_box.text = res_box.text + txt
-	res_box.carrot_left = res_box.text.len
+	app.res_box.text = app.res_box.text + txt
+	app.res_box.carrot_left = app.res_box.text.len
 }
 
 fn theme_click(mut win ui.Window, com ui.MenuItem) {
-	if com.text == 'CalcDark' {
-		win.set_theme(theme_dark())
-		return
-	}
 	mut theme := ui.theme_by_name(com.text)
 	win.set_theme(theme)
 }
 
 // Setup Menubar and items
 fn make_menu_bar() &ui.Menubar {
-	mut bar := ui.menu_bar()
-	mut theme_menu := ui.menu_item(text: 'Theme')
+	mut bar := ui.Menubar.new()
+	mut theme_menu := ui.MenuItem.new(text: 'Theme')
 
 	mut themes := ui.get_all_themes()
-	themes.insert(0, theme_dark())
 	for theme2 in themes {
-		mut item := ui.menu_item(text: theme2.name)
+		mut item := ui.MenuItem.new(text: theme2.name)
 		item.set_click(theme_click)
 		theme_menu.add_child(item)
 	}
 
-	help_menu := ui.menu_item(
+	help_menu := ui.MenuItem.new(
 		text:     'Help'
 		children: [
-			ui.menu_item(
+			ui.MenuItem.new(
 				text:           'About Calculator'
 				click_event_fn: about_click
 			),
-			ui.menu_item(
+			ui.MenuItem.new(
 				text: 'About iUI'
 			),
 		]
@@ -160,7 +160,7 @@ fn make_menu_bar() &ui.Menubar {
 }
 
 fn about_click(mut win ui.Window, com ui.MenuItem) {
-	mut modal := ui.modal(win, 'About Calculator')
+	mut modal := ui.Modal.new(title: 'About Calculator')
 	modal.in_height = 200
 	modal.in_width = 240
 
@@ -183,30 +183,4 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	modal.add_child(label)
 	modal.add_child(can)
 	win.add_child(modal)
-}
-
-// Custom Dark Theme that memics Windows Calc colors
-pub fn theme_dark() &ui.Theme {
-	return &ui.Theme{
-		name:                 'CalcDark'
-		text_color:           gx.rgb(230, 230, 230)
-		background:           gx.rgb(30, 30, 30)
-		button_bg_normal:     gx.rgb(57, 57, 57)
-		button_bg_hover:      gx.rgb(75, 75, 75)
-		button_bg_click:      gx.rgb(30, 30, 30)
-		button_border_normal: gx.rgb(38, 38, 38)
-		button_border_hover:  gx.rgb(0, 140, 250)
-		button_border_click:  gx.rgb(0, 84, 153)
-		menubar_background:   gx.rgb(10, 10, 10)
-		menubar_border:       gx.rgb(30, 30, 30)
-		dropdown_background:  gx.rgb(10, 10, 10)
-		dropdown_border:      gx.rgb(0, 0, 0)
-		textbox_background:   gx.rgb(50, 50, 50)
-		textbox_border:       gx.rgb(40, 40, 40)
-		checkbox_selected:    gx.rgb(99, 99, 40)
-		checkbox_bg:          gx.rgb(0, 0, 0)
-		progressbar_fill:     gx.rgb(130, 130, 130)
-		scroll_track_color:   gx.rgb(0, 0, 0)
-		scroll_bar_color:     gx.rgb(170, 170, 170)
-	}
 }

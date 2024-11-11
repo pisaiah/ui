@@ -16,6 +16,15 @@ pub mut:
 	target &Component
 }
 
+pub fn (e &ComponentEvent) get_target[T]() &T {
+	mut tar := e.target
+
+	if mut tar is T {
+		return tar
+	}
+	return unsafe { nil }
+}
+
 // During on component draw
 pub struct DrawEvent {
 	ComponentEvent

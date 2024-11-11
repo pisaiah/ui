@@ -122,8 +122,8 @@ fn (mut app App) make_selector_tab() &ui.Panel {
 
 fn draw_custom_themed(name string, mut e ui.DrawEvent) {
 	if name !in e.ctx.icon_cache {
-		ui.ocean_setup(mut e.ctx.win)
-		ui.seven_setup(mut e.ctx.win)
+		// ui.ocean_setup(mut e.ctx.win)
+		// ui.seven_setup(mut e.ctx.win)
 	}
 	is_hover := ui.is_in(e.target, e.ctx.win.mouse_x, e.ctx.win.mouse_y)
 	mut btn := e.target

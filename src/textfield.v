@@ -85,7 +85,7 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 
 	// Fluent Design
 	line_color := if click || this.is_selected {
-		ctx.theme.button_border_click
+		ctx.theme.accent_fill
 	} else {
 		// TODO
 		ctx.theme.scroll_bar_color

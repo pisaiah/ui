@@ -152,9 +152,9 @@ fn (mut this InternalFrame) init_controls(g &GraphicsContext) {
 		xxx.font = 1
 	}
 
-	min.set_area_filled(false)
-	max.set_area_filled(false)
-	xxx.set_area_filled(false)
+	min.border_radius = -1
+	max.border_radius = -1
+	xxx.border_radius = -1
 
 	min.set_bounds(0, 0, 24, 24)
 	max.set_bounds(2, 0, 24, 24)

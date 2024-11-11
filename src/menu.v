@@ -99,7 +99,6 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 	}
 
 	if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
-		// ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, ctx.theme.button_bg_hover)
 		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, ra, ctx.theme.button_bg_hover)
 	}
 
@@ -124,34 +123,8 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 }
 
 fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
-	/*
-	$if windows {
-		// Native Text Rendering
-		if this.sub == 0 && ctx.theme.text_color == gx.black && !ctx.gg.native_rendering {
-			if isnil(this.win_nat) {
-				this.win_nat = &WLabel{
-					text: this.text
-				}
-			}
-			mut wl := unsafe { &WLabel(this.win_nat) }
-			if wl.text != this.text {
-				wl.text = this.text
-				wl.dirt = true
-			}
-			wl.x = this.x + 7
-			wl.y = y - 2
-			this.width = wl.width + 14
-			wl.draw(ctx)
-			return
-		}
-	}
-	*/
-
 	if this.uicon != none {
 		txt := this.uicon or { '' }
-		// icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
-		// icon_font := 'C:\\users\\isaia\\Downloads\\FluentSystemIcons-Regular.ttf'
-		// icon_font := 'C:\\users\\isaia\\Downloads\\icomoon.ttf'
 		icon_font := ctx.win.extra_map['icon_ttf']
 
 		if os.exists(icon_font) {
@@ -185,8 +158,7 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		if this.ah < 4 {
 			this.ah -= 1
 		}
-		mut win := ctx.win
-		win.refresh_ui()
+		ctx.refresh_ui()
 	}
 
 	if this.open && this.sub > 0 {
@@ -247,8 +219,8 @@ fn (mut this Menubar) draw(ctx &GraphicsContext) {
 	this.height = 26 + this.padding
 
 	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26 + this.padding, ctx)
-	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
 
+	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
 	mut x := this.x + 1
 	for mut item in this.children {
 		item.set_parent(this)
@@ -304,11 +276,6 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 @[params]
 pub struct MenubarConfig {
 	theme &Theme = unsafe { nil }
-}
-
-@[deprecated: 'Use Menubar.new']
-pub fn menu_bar(cfg MenubarConfig) &Menubar {
-	return &Menubar{}
 }
 
 pub fn Menubar.new(cfg MenubarConfig) &Menubar {
@@ -382,29 +349,41 @@ fn open_about_modal(app &Window) &Modal {
 
 	mut p := Panel.new(
 		layout: BoxLayout{
-			ori: 1
+			ori:  1
+			vgap: 16
 		}
 	)
 
-	p.set_pos(15, 11)
+	p.set_pos(15, 0)
 
 	ws := app.gg.window_size()
 	if 370 > ws.width {
 		about.top_off = 20
 		about.in_width = ws.width - 10
 	}
-
 	about.pack()
 
-	mut title := Label.new(text: 'iUI ')
-	title.set_config(16, false, true)
-	title.pack()
-	p.add_child(title)
-
-	mut lbl := Label.new(
-		text: "Isaiah's UI Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}"
+	title := Label.new(
+		text:           'iUI '
+		pack:           true
+		em_size:        2
+		bold:           true
+		vertical_align: .middle
 	)
-	lbl.pack()
+
+	lbl := Label.new(
+		text: 'My UI Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}'
+		pack: true
+	)
+
+	mut copy := Label.new(
+		text:    'Copyright © 2021-2024 Isaiah.'
+		pack:    true
+		em_size: .8 // .75em = 12px
+	)
+	copy.set_bounds(0, 0, 200, 15)
+
+	p.add_child(title)
 	p.add_child(lbl)
 
 	gh := link(
@@ -413,15 +392,8 @@ fn open_about_modal(app &Window) &Modal {
 		pack: true
 	)
 	p.add_child(gh)
-
-	mut blank := Label.new(text: '  ')
-	blank.pack()
-	p.add_child(blank)
-
-	mut copy := Label.new(text: 'Copyright © 2021-2024 Isaiah.')
-	copy.set_config(12, true, false)
-	copy.set_bounds(0, 0, 200, 15)
 	p.add_child(copy)
+
 	about.add_child(p)
 	return about
 }

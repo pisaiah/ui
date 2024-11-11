@@ -206,32 +206,24 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 		val.sort(a.z_index < b.z_index)
 	}
 
-	/*
-	if mut com is VBox {
-		if com.children.len < 0 || com.scroll_i < 0 {
+	if mut com is Container {
+		// If Container does not pass event,
+		// then return false. (Ex: Click Animation)
+		if !com.container_pass_ev {
 			return false
 		}
-		for i in com.scroll_i .. com.children.len {
-			mut child := com.children[i]
-			if child.on_mouse_rele_component(app) {
-				return true
-			}
-		}
 	}
-	*/
 
-	// else {
+	// Check Children
 	for mut child in com.children {
 		if child.on_mouse_rele_component(app) {
-			if child.parent != unsafe { nil } {
-				return false
-			}
-			return true
+			return is_point_in
 		}
 	}
-	//}
 
 	if mut com is Container {
+		// If Container passes the event to
+		// children then return false
 		if com.container_pass_ev {
 			return false
 		}

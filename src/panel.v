@@ -293,12 +293,13 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 }
 
 // Panel
-pub struct Panel {
+pub struct Panel implements Container {
 	Component_A
 mut:
-	layout Layout
-	rh     int
-	bg     gx.Color = no_bg
+	layout            Layout
+	rh                int
+	bg                gx.Color = no_bg
+	container_pass_ev bool     = true
 }
 
 @[params]

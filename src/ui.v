@@ -195,6 +195,9 @@ pub fn (ctx &GraphicsContext) get_icon_sheet_id() int {
 	if ctx.theme.name == 'Green Mono' {
 		return ctx.icon_cache['icons_green']
 	}
+	if ctx.theme.name == 'Ocean' {
+		return ctx.icon_cache['icons_ocean']
+	}
 	return ctx.icon_cache['tree_file']
 }
 
@@ -207,11 +210,17 @@ pub fn (mut ctx GraphicsContext) fill_icon_cache(mut win Window) {
 		panic(err)
 	}
 
+	mut ocean_file := $embed_file('assets/icons_ocean.png')
+	mut ocean_icons := win.gg.create_image_from_memory(ocean_file.data(), ocean_file.len) or {
+		panic(err)
+	}
+
 	mut cb_file := $embed_file('assets/check.png')
 	mut cb_icons := win.gg.create_image_from_memory(cb_file.data(), cb_file.len) or { panic(err) }
 
 	ctx.icon_cache['tree_file'] = ctx.gg.cache_image(tree_file)
 	ctx.icon_cache['icons_green'] = ctx.gg.cache_image(green_icons)
+	ctx.icon_cache['icons_ocean'] = ctx.gg.cache_image(ocean_icons)
 	ctx.icon_cache['check_box'] = ctx.gg.cache_image(cb_icons)
 
 	// Icon Font File
@@ -243,6 +252,7 @@ pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
 			return
 		}
 	}
+
 	// ctx.gg.ft.fons.set_font(ctx.font)
 	// ctx.gg.ft.fons.set_font(ctx.gg.ft.fonts_map[ ctx.win.fonts.names[ctx.font] ])
 }
@@ -271,10 +281,9 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 	}
 	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
 
-	mut cfgg := gx.TextCfg{
+	cfgg := gx.TextCfg{
 		...cfg
 		family: font_id
-		// ctx.family
 	}
 
 	ctx.gg.set_text_cfg(cfgg)
@@ -311,11 +320,6 @@ fn new_graphics(win &Window) &GraphicsContext {
 		font_size: win.font_size
 		win:       win
 	}
-}
-
-@[deprecated: 'Use get[T](id)']
-pub fn (win &Window) get_from_id(id string) voidptr {
-	return unsafe { win.id_map[id] }
 }
 
 pub fn (win &Window) get[T](id string) T {
@@ -432,14 +436,15 @@ fn frame(mut app Window) {
 fn (app &Window) display() {
 }
 
-pub fn (app &Window) draw_bordered_rect(x int, y int, w int, h int, a int, bg gx.Color, bord gx.Color) {
-	app.gg.draw_rounded_rect_filled(x, y, w, h, a, bg)
-	app.gg.draw_rounded_rect_empty(x, y, w, h, a, bord)
-}
 
 pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx.Color, bord gx.Color) {
 	g.gg.draw_rect_filled(x, y, w, h, bg)
 	g.gg.draw_rect_empty(x, y, w, h, bord)
+}
+
+pub fn (g &GraphicsContext) draw_rounded_bordered_rect(x int, y int, w int, h int, r int, bg gx.Color, bord gx.Color) {
+	g.gg.draw_rounded_rect_filled(x, y, w, h, r, bg)
+	g.gg.draw_rounded_rect_empty(x, y, w, h, r, bord)
 }
 
 // ui_mode: lower cpu usage
@@ -482,7 +487,7 @@ fn (mut app Window) draw() {
 	}
 
 	if app.components.len == 1 {
-		if app.components[0] is Panel || app.components[0] is ScrollView {
+		if app.components[0] is Container || app.components[0] is ScrollView {
 			// Content Pane
 			mut bar := app.get_bar()
 			ws := app.gg.window_size()
@@ -503,6 +508,43 @@ fn (mut app Window) draw() {
 	}
 
 	// Draw components
+	mut last := app.components.last()
+	if mut last is Page {
+		invoke_draw_event(last, app.graphics_context)
+		last.draw(app.graphics_context)
+		invoke_after_draw_event(last, app.graphics_context)
+	} else {
+		app.draw_children()
+	}
+
+	// Draw Popups last
+	for mut pop in app.popups {
+		pop.draw(app.graphics_context)
+	}
+
+	if app.tooltip.len != 0 {
+		app.draw_tooltip(app.graphics_context)
+
+		// app.tooltip = ''
+	}
+
+	if app.font_size != app.graphics_context.font_size {
+		app.graphics_context.font_size = app.font_size
+		app.graphics_context.calculate_line_height()
+	}
+
+	end := time.now().unix_milli()
+	if end - app.last_update > 500 {
+		app.last_update = end
+		app.second_pass += 1
+		app.tooltip = ''
+	} else {
+		app.second_pass = 0
+	}
+	app.frame_time = int(end - now)
+}
+
+fn (mut app Window) draw_children() {
 	mut bar_drawn := false
 	for mut com in app.components {
 		if !isnil(com.draw_event_fn) {
@@ -526,39 +568,12 @@ fn (mut app Window) draw() {
 		invoke_after_draw_event(com, app.graphics_context)
 	}
 
-	// Draw Popups last
-	for mut pop in app.popups {
-		pop.draw(app.graphics_context)
-	}
-
-	if app.tooltip.len != 0 {
-		app.draw_tooltip(app.graphics_context)
-
-		// app.tooltip = ''
-	}
-
-	// Draw Menubar last
 	if app.show_menu_bar && !bar_drawn {
 		mut bar := app.get_bar()
 		if bar != unsafe { nil } {
 			bar.draw(app.graphics_context)
 		}
 	}
-
-	if app.font_size != app.graphics_context.font_size {
-		app.graphics_context.font_size = app.font_size
-		app.graphics_context.calculate_line_height()
-	}
-
-	end := time.now().unix_milli()
-	if end - app.last_update > 500 {
-		app.last_update = end
-		app.second_pass += 1
-		app.tooltip = ''
-	} else {
-		app.second_pass = 0
-	}
-	app.frame_time = int(end - now)
 }
 
 pub fn (mut g GraphicsContext) calculate_line_height() {
@@ -584,13 +599,13 @@ pub fn (g &GraphicsContext) text_width(text string) int {
 	return int(adv / ctx.scale)
 }
 
-pub fn (mut w Window) refresh_ui() {
-	w.gg.refresh_ui()
+pub fn (ctx &GraphicsContext) refresh_ui() {
+	mut win := ctx.win
+	win.gg.refresh_ui()
 }
 
-// Functions for GG
-pub fn text_height(win Window, text string) int {
-	return win.gg.text_height(text)
+pub fn (mut w Window) refresh_ui() {
+	w.gg.refresh_ui()
 }
 
 @[inline]
