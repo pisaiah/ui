@@ -31,6 +31,10 @@ pub fn menu_bar(cfg MenubarConfig) &Menubar {
 	return &Menubar{}
 }
 
+@[deprecated: 'Use Button.new']
+pub fn button(cfg ButtonConfig) &Button {
+	return Button.new(cfg)
+}
 
 /*
 @[deprecated: 'Use get[T](id)']

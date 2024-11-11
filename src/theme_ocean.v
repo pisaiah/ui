@@ -165,16 +165,20 @@ pub fn seven_dark_menubar_fill_fn(x1 int, y int, w int, h int, ctx &GraphicsCont
 }
 
 fn (ctx &GraphicsContext) draw_linear_gradient_vert(x int, y int, width int, height int, start_color gx.Color, end_color gx.Color) {
-    for i in 0 .. height {
-        t := f32(i) / f32(height)
-        r := u8(lerp(f32(start_color.r), f32(end_color.r), t))
-        g := u8(lerp(f32(start_color.g), f32(end_color.g), t))
-        b := u8(lerp(f32(start_color.b), f32(end_color.b), t))
-        color := gx.Color{r: r, g: g, b: b}
-        ctx.gg.draw_rect_filled(x, y + i, width, 1, color)
-    }
+	for i in 0 .. height {
+		t := f32(i) / f32(height)
+		r := u8(lerp(f32(start_color.r), f32(end_color.r), t))
+		g := u8(lerp(f32(start_color.g), f32(end_color.g), t))
+		b := u8(lerp(f32(start_color.b), f32(end_color.b), t))
+		color := gx.Color{
+			r: r
+			g: g
+			b: b
+		}
+		ctx.gg.draw_rect_filled(x, y + i, width, 1, color)
+	}
 }
 
 fn lerp(a f32, b f32, t f32) f32 {
-    return a + t * (b - a)
+	return a + t * (b - a)
 }

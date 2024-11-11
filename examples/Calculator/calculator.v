@@ -28,7 +28,7 @@ fn main() {
 			ori: 1
 		}
 	)
-	
+
 	mut app := &App{
 		res_box: ui.TextField.new(text: '')
 	}

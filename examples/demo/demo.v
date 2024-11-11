@@ -2,6 +2,7 @@ module main
 
 import iui as ui { debug }
 import os
+import gx
 
 const img_file = $embed_file('v.png')
 
@@ -122,13 +123,14 @@ fn (mut app App) make_selector_tab() &ui.Panel {
 
 fn draw_custom_themed(name string, mut e ui.DrawEvent) {
 	if name !in e.ctx.icon_cache {
-		// ui.ocean_setup(mut e.ctx.win)
-		// ui.seven_setup(mut e.ctx.win)
+		ui.ocean_setup(mut e.ctx.win)
+		ui.seven_setup(mut e.ctx.win)
 	}
 	is_hover := ui.is_in(e.target, e.ctx.win.mouse_x, e.ctx.win.mouse_y)
 	mut btn := e.target
 	if mut btn is ui.Button {
-		btn.override_bg = !is_hover
+		// btn.override_bg = !is_hover
+		btn.override_bg_color = if is_hover { ui.blank_bg } else { gx.rgba(0, 0, 0, 1) }
 	}
 	if !is_hover {
 		e.ctx.gg.draw_image_by_id(btn.x, btn.y, btn.width, btn.height, e.ctx.icon_cache[name])

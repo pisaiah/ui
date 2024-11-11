@@ -12,7 +12,6 @@ pub mut:
 	text       string
 	needs_init bool
 	close      &Button
-	in_height  int
 	top_off    int = 75
 	xs         int
 	line_color gx.Color = gx.rgba(0, 0, 0, 90)
@@ -37,16 +36,14 @@ pub fn Page.new(c PageCfg) &Page {
 		z_index:    500
 		needs_init: true
 		text_cfg:   draw_cfg()
-		in_height:  300
 		close:      unsafe { nil }
 	}
 }
 
-fn (p &Page) draw_bg(ctx &GraphicsContext) {
-	bg := gx.rgb(51, 114, 153)
-	ctx.gg.draw_rect_filled(0, 0, p.width, p.height, ctx.theme.background)
-	ctx.gg.draw_rect_filled(0, 0, p.width, p.top_off, bg)
-	ctx.gg.draw_rect_filled(0, p.top_off - 5, p.width, 5, p.line_color)
+fn (p &Page) draw_bg(g &GraphicsContext) {
+	g.gg.draw_rect_filled(0, 0, p.width, p.height, g.theme.background)
+	g.gg.draw_rect_filled(0, 0, p.width, p.top_off, g.theme.accent_fill)
+	g.gg.draw_rect_filled(0, p.top_off - 5, p.width, 5, p.line_color)
 }
 
 pub fn (mut this Page) draw(ctx &GraphicsContext) {
@@ -66,6 +63,9 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 	if this.needs_init {
 		this.create_close_btn(true)
+		this.close.set_accent_filled(true)
+		this.close.border_radius = 16
+
 		if !ctx.icon_ttf_exists() {
 			// Fallback
 			this.close.text = '<'

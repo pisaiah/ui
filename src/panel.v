@@ -8,8 +8,7 @@ const nill = unsafe { nil }
 const no_bg = gx.rgba(0, 0, 0, 0)
 
 // Layout
-// TODO: Add BorderLayout, Box Layout, Flow Layout, Grid Layout,
-interface Layout {
+pub interface Layout {
 	draw_kids(mut Panel, &GraphicsContext)
 }
 
@@ -50,6 +49,12 @@ pub const borderlayout_west = 1
 pub const borderlayout_east = 2
 pub const borderlayout_south = 3
 pub const borderlayout_center = 4
+
+pub const pos_north = 0
+pub const pos_west = 1
+pub const pos_east = 2
+pub const pos_south = 3
+pub const pos_center = 4
 
 fn is_nil(a voidptr) bool {
 	return isnil(a)

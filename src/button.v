@@ -3,22 +3,21 @@ module iui
 import gg
 import gx
 
+pub const blank_bg = gx.rgba(0, 0, 1, 0)
+
 //
 // Button - implements Component interface
 pub struct Button {
 	Component_A
 pub mut:
-	app               &Window
 	icon              int
-	old_click_fn      fn (voidptr, voidptr, voidptr) = unsafe { nil }
 	need_pack         bool
 	extra             string
 	user_data         voidptr
-	override_bg       bool
-	override_bg_color gx.Color
+	override_bg_color gx.Color = blank_bg
 	icon_width        int
 	icon_height       int
-	border_radius     int = 4
+	border_radius     int  = 4
 	area_filled       bool = true
 	is_action         bool
 }
@@ -28,29 +27,24 @@ pub struct ButtonConfig {
 pub:
 	text        string
 	bounds      Bounds
+	pack        bool
 	should_pack bool
 	user_data   voidptr
 	area_filled bool = true
 	icon        int  = -1
 }
 
-pub fn button(cfg ButtonConfig) &Button {
-	return Button.new(cfg)
-}
-
-pub fn Button.new(cf ButtonConfig) &Button {
+pub fn Button.new(c ButtonConfig) &Button {
 	return &Button{
-		app:          unsafe { nil }
-		text:         cf.text
-		icon:         cf.icon
-		x:            cf.bounds.x
-		y:            cf.bounds.y
-		width:        cf.bounds.width
-		height:       cf.bounds.height
-		old_click_fn: unsafe { nil }
-		user_data:    cf.user_data
-		need_pack:    cf.should_pack
-		area_filled:  cf.area_filled
+		text:        c.text
+		icon:        c.icon
+		x:           c.bounds.x
+		y:           c.bounds.y
+		width:       c.bounds.width
+		height:      c.bounds.height
+		user_data:   c.user_data
+		need_pack:   c.should_pack || c.pack
+		area_filled: c.area_filled
 	}
 }
 
@@ -65,15 +59,10 @@ pub fn (mut this Button) set_area_filled(val bool) {
 }
 
 pub fn (mut this Button) set_background(color gx.Color) {
-	this.override_bg = true
 	this.override_bg_color = color
 }
 
 pub fn (mut btn Button) draw(ctx &GraphicsContext) {
-	if btn.app == unsafe { nil } {
-		btn.app = ctx.win
-	}
-
 	if btn.need_pack {
 		btn.pack_do(ctx)
 	}
@@ -83,7 +72,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 
 	// Handle click
 	if btn.is_mouse_rele {
-		btn.handle_legacy_click()
+		btn.handle_legacy_click(ctx)
 		btn.is_mouse_rele = false
 	}
 
@@ -152,78 +141,71 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 	mid_x := this.x + (this.width / 2)
 	mid_y := this.y + (this.height / 2)
 
-	mouse_x := this.app.mouse_x
-	mouse_y := this.app.mouse_y
+	mouse_x := ctx.win.mouse_x
+	mouse_y := ctx.win.mouse_y
 
 	mouse_in_x := abs(mid_x - mouse_x) < this.width / 2
 	mouse_in_y := abs(mid_y - mouse_y) < this.height / 2
 
 	mouse_in := mouse_in_x && mouse_in_y
 
-	bg := this.get_bg(mouse_in)
-	border := this.get_border(mouse_in)
+	bg := this.get_bg(ctx, mouse_in)
+	border := this.get_border(ctx, mouse_in)
 
 	if this.area_filled {
 		ctx.theme.button_fill_fn(this.x, this.y, this.width, this.height, this.border_radius,
 			bg, ctx)
 	}
 	if this.border_radius != -1 {
-		this.app.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
+		ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
 			border)
 	}
 	if this.extra.len != 0 && mouse_in {
-		mut win := this.app
+		mut win := ctx.win
 		win.tooltip = this.extra
 	}
 }
 
-fn (this &Button) get_border(is_hover bool) gx.Color {
-	if this.is_mouse_down {
-		return this.app.theme.button_border_click
+fn (b &Button) get_border(g &GraphicsContext, is_hover bool) gx.Color {
+	if b.is_mouse_down {
+		return g.theme.button_border_click
 	}
 	if is_hover {
-		return this.app.theme.button_border_hover
+		return g.theme.button_border_hover
 	}
-	return this.app.theme.button_border_normal
+	return g.theme.button_border_normal
 }
 
-fn (this &Button) get_bg(is_hover bool) gx.Color {
-	if this.override_bg {
-		return this.override_bg_color
-	}
-	
-	if this.is_action {
-		if this.is_mouse_down {
-			return this.app.graphics_context.theme.accent_fill_third
-		}
-		if is_hover {
-			return this.app.graphics_context.theme.accent_fill_second
-		}
-		return this.app.graphics_context.theme.accent_fill
+fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gx.Color {
+	if b.override_bg_color != blank_bg {
+		return b.override_bg_color
 	}
 
-	should := true // this.app.bar == unsafe { nil } || this.app.bar.tik > 90
-	if this.is_mouse_down && should {
-		return this.app.theme.button_bg_click
+	if b.is_action {
+		if b.is_mouse_down {
+			return g.theme.accent_fill_third
+		}
+		if is_hover {
+			return g.theme.accent_fill_second
+		}
+		return g.theme.accent_fill
+	}
+
+	should := true // b.app.bar == unsafe { nil } || b.app.bar.tik > 90
+	if b.is_mouse_down && should {
+		return g.theme.button_bg_click
 	}
 	if is_hover && should {
-		return this.app.theme.button_bg_hover
+		return g.theme.button_bg_hover
 	}
-	return this.app.theme.button_bg_normal
+	return g.theme.button_bg_normal
 }
 
 // Deprecated functions:
 @[deprecated: 'use subscribe_event']
-pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
-	com.old_click_fn = b
-	com.user_data = extra_data
+pub fn (mut b Button) set_click_fn(old fn (voidptr, voidptr, voidptr), extra_data voidptr) {
+	b.user_data = extra_data
 }
 
-fn (mut btn Button) handle_legacy_click() {
-	mut win := btn.app
-	if win.bar == unsafe { nil } || win.bar.tik > 90 {
-		if !isnil(btn.old_click_fn) {
-			btn.old_click_fn(win, btn, btn.user_data)
-		}
-	}
+fn (mut btn Button) handle_legacy_click(g &GraphicsContext) {
 }

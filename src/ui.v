@@ -192,7 +192,7 @@ pub mut:
 }
 
 pub fn (ctx &GraphicsContext) get_icon_sheet_id() int {
-	if ctx.theme.name == 'Green Mono' {
+	if ctx.theme.name == 'Dark (Green Accent)' {
 		return ctx.icon_cache['icons_green']
 	}
 	if ctx.theme.name == 'Ocean' {
@@ -432,7 +432,6 @@ fn frame(mut app Window) {
 
 fn (app &Window) display() {
 }
-
 
 pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx.Color, bord gx.Color) {
 	g.gg.draw_rect_filled(x, y, w, h, bg)
