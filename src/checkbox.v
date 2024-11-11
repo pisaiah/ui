@@ -41,7 +41,6 @@ fn (this &Checkbox) get_border(is_hover bool, ctx &GraphicsContext) gx.Color {
 
 // Get background color
 fn (this &Checkbox) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
-	
 	if this.is_mouse_down {
 		return ctx.theme.button_bg_click
 	}
