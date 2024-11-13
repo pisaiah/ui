@@ -354,7 +354,7 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 // Panel
 pub struct Panel implements Container {
 	Component_A
-mut:
+pub mut:
 	layout            Layout
 	rh                int
 	bg                gx.Color = no_bg

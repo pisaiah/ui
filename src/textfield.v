@@ -99,6 +99,7 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	// Detect Click
 	if this.is_mouse_rele {
 		this.is_selected = true
+		wasm_keyboard_show(true)
 
 		// this.click_event_fn(ctx.win, this)
 		this.is_mouse_rele = false
@@ -108,6 +109,17 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	if ctx.win.click_x > -1 && !(abs(mid - ctx.win.mouse_x) < this.width / 2
 		&& abs(midy - ctx.win.mouse_y) < this.height / 2) {
 		this.is_selected = false
+	}
+}
+
+fn wasm_cstr(the_string string) &char {
+	return &char(the_string.str)
+}
+
+fn wasm_keyboard_show(val bool) {
+	$if emscripten ? {
+		line := "var input = document.createElement('input'); input.type = 'text'; input.id = 'hiddenInput'; input.style.position = 'absolute'; input.style.left = '-1000px'; input.style.top = '-1000px'; document.body.appendChild(input); input.focus();"
+		C.emscripten_run_script(wasm_cstr(line))
 	}
 }
 
