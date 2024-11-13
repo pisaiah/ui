@@ -99,12 +99,11 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		else {}
 	}
 	for mut a in app.components {
-		app.check_box(key, e, mut a)
-
 		if mut a is Modal {
 			for mut child in a.children {
 				app.check_box(key, e, mut child)
 			}
+			return
 		}
 		if mut a is Page {
 			for mut child in a.children {
@@ -112,6 +111,8 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 			}
 			return
 		}
+
+		app.check_box(key, e, mut a)
 	}
 	app.key_down_event(mut app, key, e)
 }

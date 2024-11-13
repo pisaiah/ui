@@ -229,6 +229,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 		com.update_bind()
 		com.carrot_left -= 1
 		com.ctrl_down = false
+		invoke_text_change(com, w.graphics_context, 'text_change')
 		return
 	}
 
@@ -245,6 +246,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 		if bevnt || key == .up || key == .down {
 			return
 		}
+		invoke_text_change(com, w.graphics_context, 'text_change')
 		com.text_change_event_fn(w, com)
 		com.ctrl_down = false
 		return
@@ -269,6 +271,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 		if com.numeric {
 			if letter !in numbers_val {
 				com.last_letter = letter
+				invoke_text_change(com, w.graphics_context, 'text_change')
 				com.text_change_event_fn(w, com)
 				return
 			}
@@ -286,6 +289,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 	} else {
 		com.last_letter = letter
 	}
+	invoke_text_change(com, w.graphics_context, 'text_change')
 	com.text_change_event_fn(w, com)
 	com.ctrl_down = false
 	unsafe {
