@@ -36,18 +36,6 @@ pub:
 
 pub fn Button.new(c ButtonConfig) &Button {
 	return &Button{
-<<<<<<< HEAD
-		app:          unsafe { nil }
-		text:         cf.text
-		icon:         cf.icon
-		x:            cf.bounds.x
-		y:            cf.bounds.y
-		width:        cf.bounds.width
-		height:       cf.bounds.height
-		user_data:    cf.user_data
-		need_pack:    cf.should_pack
-		area_filled:  cf.area_filled
-=======
 		text:        c.text
 		icon:        c.icon
 		x:           c.bounds.x
@@ -57,7 +45,6 @@ pub fn Button.new(c ButtonConfig) &Button {
 		user_data:   c.user_data
 		need_pack:   c.should_pack || c.pack
 		area_filled: c.area_filled
->>>>>>> d1d73d10bc6daf4878687359f1db679e2b6ec7b6
 	}
 }
 
@@ -136,6 +123,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	size := ctx.text_width(text) / 2
 	ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, text,
 		font, cfgg)
+	ctx.reset_text_font()
 }
 
 pub fn (mut btn Button) pack() {
@@ -180,10 +168,12 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 
 fn (b &Button) get_border(g &GraphicsContext, is_hover bool) gx.Color {
 	if b.is_mouse_down {
-		return g.theme.button_border_click
+		// return g.theme.button_border_click
+		return g.theme.accent_fill_second
 	}
 	if is_hover {
-		return g.theme.button_border_hover
+		return g.theme.accent_fill
+		// return g.theme.button_border_hover
 	}
 	return g.theme.button_border_normal
 }
@@ -217,9 +207,8 @@ fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gx.Color {
 @[deprecated: 'use subscribe_event']
 pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
 	com.user_data = extra_data
-	
+
 	com.subscribe_event('mouse_up', fn [b, extra_data] (mut e MouseEvent) {
 		b(e.ctx.win, e.target, extra_data)
 	})
-
 }

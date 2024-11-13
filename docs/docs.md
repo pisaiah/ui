@@ -39,7 +39,7 @@ Components are the elements of the UI (buttons, inputs, containers, etc).
 
 ### Containers
 
-While every Component can have child Components; Container components are designed specifically to store children.
+Container components are designed specifically to store children.
 
 #### Panel
 

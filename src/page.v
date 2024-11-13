@@ -9,10 +9,11 @@ pub struct Page {
 pub:
 	text_cfg gx.TextCfg
 pub mut:
-	text       string
+	text string
+
 	// needs_init bool
 	close      &Button
-	top_off    int = 75
+	top_off    int      = 75
 	line_color gx.Color = gx.rgba(0, 0, 0, 90)
 }
 
@@ -31,11 +32,12 @@ pub:
 
 pub fn Page.new(c PageCfg) &Page {
 	return &Page{
-		text:       c.title
-		z_index:    500
+		text:    c.title
+		z_index: 500
+
 		// needs_init: true
-		text_cfg:   draw_cfg()
-		close:      unsafe { nil }
+		text_cfg: draw_cfg()
+		close:    unsafe { nil }
 	}
 }
 
@@ -54,10 +56,10 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 	this.draw_bg(ctx)
 
 	ctx.draw_text(56, 18, this.text, ctx.font, this.text_cfg)
-	
+
 	ctx.reset_text_font()
 
-	//if this.needs_init {
+	// if this.needs_init {
 	if isnil(this.close) {
 		this.create_close_btn(true)
 		this.close.set_accent_filled(true)
@@ -68,7 +70,8 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 			this.close.text = '<'
 			this.close.font = 0
 		}
-		//this.needs_init = false
+
+		// this.needs_init = false
 	}
 
 	y_off := this.y + this.top_off
@@ -104,11 +107,7 @@ pub fn (mut this Page) create_close_btn(ce bool) &Button {
 
 	if ce {
 		close.set_background(gx.rgba(230, 230, 230, 50))
-		close.subscribe_event('mouse_up', fn [mut this] (mut e MouseEvent) {
-			idx := e.ctx.win.components.index(this)
-			
-			dump(idx)
-		
+		close.subscribe_event('mouse_up', fn (mut e MouseEvent) {
 			e.ctx.win.components = e.ctx.win.components.filter(mut it !is Page)
 		})
 	}

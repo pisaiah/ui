@@ -379,7 +379,8 @@ fn open_about_modal(app &Window) &Modal {
 	mut copy := Label.new(
 		text:    'Copyright © 2021-2024 Isaiah.'
 		pack:    true
-		em_size: .8 // .75em = 12px
+		em_size: .8
+		// .75em = 12px
 	)
 	copy.set_bounds(0, 0, 200, 15)
 

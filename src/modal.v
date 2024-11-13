@@ -24,7 +24,11 @@ pub mut:
 @[params]
 pub struct ModalConfig {
 pub:
-	title string
+	title  string
+	width  int = 500
+	height int = 300
+	left   int
+	top    int
 }
 
 pub fn Modal.new(c ModalConfig) &Modal {
@@ -32,9 +36,11 @@ pub fn Modal.new(c ModalConfig) &Modal {
 		text:       c.title
 		z_index:    500
 		needs_init: true
-		in_width:   500
-		in_height:  300
+		in_width:   c.width
+		in_height:  c.height
 		close:      unsafe { nil }
+		left_off:   c.left
+		top_off:    c.top
 	}
 }
 

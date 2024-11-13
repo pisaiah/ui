@@ -99,7 +99,7 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	ctx.gg.draw_rounded_rect_filled(this.x, this.y, wid, hei, 8, bg)
 
 	if this.active {
-		ctx.gg.draw_rounded_rect_empty(this.x, this.y, wid, hei, 8, gx.blue)
+		ctx.gg.draw_rounded_rect_empty(this.x, this.y, wid, hei, 8, ctx.theme.accent_fill)
 	}
 
 	ctx.gg.draw_text(this.x + 6, ttop, this.text, gx.TextCfg{

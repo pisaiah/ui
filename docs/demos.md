@@ -30,7 +30,7 @@ mut p := ui.Panel.new()
 
 mut left_button := ui.Button.new(text: '1st Button')
 
-mut mid_button := ui.button(text: '2nt Button')
+mut mid_button := ui.Button.new(text: '2nt Button')
 
 mut right_button := ui.Button.new(text: '3rd Button')
 

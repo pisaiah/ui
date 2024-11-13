@@ -40,8 +40,6 @@ pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
 
 // Items -> Children
 pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
-	// mut pop := if n { &Popup{} } else { this.popup }
-
 	// Set a dropdown animation
 	this.popup.set_animate(true)
 
@@ -76,6 +74,7 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 
 pub fn (mut this Selectbox) new_item(c MenuItemConfig) &SelectItem {
 	mut subb := SelectItem.new(c)
+	subb.box = this
 	subb.subscribe_event('mouse_up', this.default_item_mouse_event)
 	subb.set_bounds(0, 1, this.width - 1, this.sub_height)
 	return subb
@@ -202,6 +201,7 @@ pub struct SelectItem {
 pub mut:
 	icon  &Image
 	uicon ?string
+	box   ?&Selectbox
 }
 
 pub fn SelectItem.new(c MenuItemConfig) &SelectItem {
@@ -227,6 +227,15 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 		si.is_mouse_rele = false
 	}
 
+	if si.box != none {
+		// dump('${si.text} ${si.box?.text}')
+		if si.box?.text == si.text {
+			ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2, ctx.theme.button_bg_hover)
+			ctx.gg.draw_rect_filled(si.x + 3, si.y + (si.height / 4), 3, (si.height / 2),
+				ctx.theme.accent_fill)
+		}
+	}
+
 	// Draw Button Text
 	if !isnil(si.icon) {
 		image_y := si.y + ((si.height / 2) - (si.icon.height / 2))
@@ -241,11 +250,11 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 fn (mut si SelectItem) draw_text(ctx &GraphicsContext, y int) {
 	if si.uicon != none && ctx.icon_ttf_exists() {
 		txt := si.uicon or { '' }
-		ctx.draw_text(si.x + 7, y, txt, ctx.win.extra_map['icon_ttf'], gx.TextCfg{
+		ctx.draw_text(si.x + 10, y, txt, ctx.win.extra_map['icon_ttf'], gx.TextCfg{
 			size:  ctx.win.font_size
 			color: ctx.theme.text_color
 		})
-		wid := ctx.text_width(txt) + 14
+		wid := ctx.text_width(txt) + 17
 		ctx.draw_text(si.x + wid, y, si.text, ctx.font, gx.TextCfg{
 			size:  ctx.win.font_size
 			color: ctx.theme.text_color
@@ -253,7 +262,7 @@ fn (mut si SelectItem) draw_text(ctx &GraphicsContext, y int) {
 		return
 	}
 
-	ctx.draw_text(si.x + 7, y, si.text, ctx.font, gx.TextCfg{
+	ctx.draw_text(si.x + 10, y, si.text, ctx.font, gx.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 	})

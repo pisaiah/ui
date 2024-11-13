@@ -3,11 +3,12 @@
 - TODO
 
 Planned TODO Features:
-- System L&F themes
-- Use in `java2v` to support translating swing
-- port JavaFx's charts
+- Better system themes
 - List (https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html)
-- Spinner (https://docs.oracle.com/javase/8/docs/api/javax/swing/JSpinner.html)
+
+# 0.0.24
+- Add accent to themes
+- Selectbox now shows accent color on selected item.
 
 ## 0.0.23
 - add 'value_change' event to Slider

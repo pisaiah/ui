@@ -299,7 +299,7 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 	mut pbtn := ui.Button.new(
 		text: 'Play'
 	)
-	
+
 	pbtn.font = 1
 
 	pbtn.subscribe_event('draw', fn [mut this, mut pbtn] (mut e ui.DrawEvent) {
@@ -308,17 +308,11 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 		}
 
 		if this.vmpv.is_pause {
-
-			pbtn.text = ' \uea1d '
+			pbtn.text = '   \uea1d   '
 		} else {
-			pbtn.text = ' \uea1e '
+			pbtn.text = '   \uea1e   '
 		}
-		//pbtn.pack()
-		dump(pbtn.width)
-		if pbtn.width == 20 {
-			dump(pbtn)
-			pbtn.width = 32
-		}
+		pbtn.pack()
 	})
 
 	pbtn.subscribe_event('mouse_up', fn [mut this] (mut e ui.MouseEvent) {

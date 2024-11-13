@@ -12,35 +12,44 @@ pub interface Layout {
 	draw_kids(mut Panel, &GraphicsContext)
 }
 
-// https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html
+/*
+	BorderLayout - A Layout with five areas. The Center gets a much of the
+	available Panel space as possible. The other areas expand only to their
+	respective size. It is possible to only use a few areas instead of all five.
+	(Ref: https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html)
+*/
 pub struct BorderLayout {
 mut:
 	// TODO
-	north  &Component
-	west   &Component
-	east   &Component
-	south  &Component
-	center &Component
+	north  ?&Component
+	west   ?&Component
+	east   ?&Component
+	south  ?&Component
+	center ?&Component
 	hgap   int = 2
 	vgap   int = 2
+	style  int
 }
 
+/*
+	Config for BorderLayout.new
+	hgap - The HGAP between Components
+	vgap - The VGAP between Components
+	style - (WIP) Layout style. (0 = NORTH/SOUTH First, 1 = Sides First)
+*/
 @[params]
 pub struct BorderLayoutConfig {
 pub:
-	hgap int = 5
-	vgap int = 5
+	hgap  int = 5
+	vgap  int = 5
+	style int
 }
 
 pub fn BorderLayout.new(c BorderLayoutConfig) BorderLayout {
 	return BorderLayout{
-		hgap:   c.hgap
-		vgap:   c.vgap
-		north:  unsafe { nil }
-		west:   unsafe { nil }
-		east:   unsafe { nil }
-		south:  unsafe { nil }
-		center: unsafe { nil }
+		hgap:  c.hgap
+		vgap:  c.vgap
+		style: c.style
 	}
 }
 
@@ -60,9 +69,90 @@ fn is_nil(a voidptr) bool {
 	return isnil(a)
 }
 
+// North
+fn (mut lay BorderLayout) draw_north(ctx &GraphicsContext, x int, y int, w int) int {
+	if lay.north != none {
+		mut north := lay.north or { unsafe { nil } }
+		north.width = w
+		north.draw_with_offset(ctx, x, y)
+		return north.height + lay.vgap
+	}
+	return 0
+}
+
+fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
+	mut x := panel.x + lay.hgap
+	mut y := panel.y + lay.vgap
+	mut cw := panel.width - (lay.hgap * 2)
+	mut ch := panel.height - (lay.vgap * 2)
+
+	if lay.style == 0 {
+		// North
+		if lay.north != none {
+			nh := lay.draw_north(ctx, x, y, cw)
+			y += nh
+			ch -= nh
+		}
+
+		// South
+		if lay.south != none {
+			mut south := lay.south or { unsafe { nil } }
+			south.width = cw
+			ch -= south.height
+			south.draw_with_offset(ctx, x, y + ch)
+			ch -= lay.vgap
+		}
+	}
+
+	// East
+	if lay.east != none {
+		mut east := lay.east or { unsafe { nil } }
+		east.height = ch
+		cw -= east.width
+		east.draw_with_offset(ctx, x + cw, y)
+		cw -= lay.hgap
+	}
+
+	// West
+	if lay.west != none {
+		mut west := lay.west or { unsafe { nil } }
+		west.height = ch
+		west.draw_with_offset(ctx, x, y)
+		x += west.width + lay.hgap
+		cw -= west.width + lay.hgap
+	}
+
+	if lay.style == 1 {
+		// North
+		if lay.north != none {
+			nh := lay.draw_north(ctx, x, y, cw)
+			y += nh
+			ch -= nh
+		}
+
+		// South
+		if lay.south != none {
+			mut south := lay.south or { unsafe { nil } }
+			south.width = cw
+			ch -= south.height
+			south.draw_with_offset(ctx, x, y + ch)
+			ch -= lay.vgap
+		}
+	}
+
+	// Center
+	if lay.center != none {
+		mut center := lay.center or { return }
+		center.height = ch
+		center.width = cw
+		center.draw_with_offset(ctx, x, y)
+		x += center.width + lay.hgap
+	}
+}
+
 fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
-	mut x := panel.x + this.hgap
-	mut y := panel.y + this.vgap
+	x := panel.x + this.hgap
+	y := panel.y + this.vgap
 	mut lay := panel.layout
 
 	if panel.rh == 0 {
@@ -73,46 +163,7 @@ fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	}
 
 	if mut lay is BorderLayout {
-		mut cw := panel.width - (lay.hgap * 2)
-		mut ch := panel.height - (lay.vgap * 2)
-
-		mut north := lay.north
-		mut south := lay.south
-		mut east := lay.east
-		mut west := lay.west
-
-		if mut north is Component {
-			north.width = panel.width - (this.hgap * 2)
-			lay.north.draw_with_offset(ctx, x, y)
-			y += north.height + lay.vgap
-			ch -= north.height + lay.vgap
-		}
-
-		if mut south is Component {
-			south.width = cw
-			ch -= south.height
-			lay.south.draw_with_offset(ctx, x, y + ch)
-			ch -= lay.vgap
-		}
-
-		if mut east is Component {
-			east.height = ch
-			cw -= east.width
-			lay.east.draw_with_offset(ctx, x + cw, y)
-			cw -= lay.hgap
-		}
-
-		if mut west is Component {
-			west.height = ch
-			lay.west.draw_with_offset(ctx, x, y)
-			x += west.width + lay.hgap
-			cw -= west.width + lay.hgap
-		}
-
-		lay.center.height = ch
-		lay.center.width = cw
-		lay.center.draw_with_offset(ctx, x, y)
-		x += lay.center.width + lay.hgap
+		lay.draw_layout(mut panel, ctx)
 	}
 
 	// if panel.width == 0 {
@@ -121,7 +172,10 @@ fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	//}
 }
 
-// https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html
+/*
+	BoxLayout - Layout Components in a horizontal or vertical row.
+	(Ref: https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html)
+*/
 pub struct BoxLayout {
 pub mut:
 	ori  int

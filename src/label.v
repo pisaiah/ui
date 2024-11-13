@@ -27,14 +27,17 @@ pub:
 	height         int
 	width          int
 	text           string
-	vertical_align gx.VerticalAlign // = .middle
-	bold           bool
-	em_size        f32
+	vertical_align gx.VerticalAlign
+	// = .middle
+	bold    bool
+	em_size f32
 }
 
 pub enum SizeUnit {
-	em // Em quadrat, (ex 1em)
-	px // Pixel Size, (ex 16px)
+	em
+	// Em quadrat, (ex 1em)
+	px
+	// Pixel Size, (ex 16px)
 }
 
 pub fn Label.new(c LabelConfig) &Label {
@@ -106,7 +109,8 @@ pub fn (mut this Label) pack() {
 pub fn (mut lbl Label) pack_do(ctx &GraphicsContext) {
 	// Set font size
 	ctx.set_cfg(gx.TextCfg{
-		size:  lbl.font_size(ctx) // ctx.win.font_size + lbl.size
+		size: lbl.font_size(ctx)
+		// ctx.win.font_size + lbl.size
 		color: ctx.win.theme.text_color
 		bold:  lbl.bold
 	})
