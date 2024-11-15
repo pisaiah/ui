@@ -99,7 +99,10 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	// Detect Click
 	if this.is_mouse_rele {
 		this.is_selected = true
-		wasm_keyboard_show(true)
+
+		if this.is_selected {
+			wasm_keyboard_show(true)
+		}
 
 		// this.click_event_fn(ctx.win, this)
 		this.is_mouse_rele = false
@@ -116,11 +119,19 @@ fn wasm_cstr(the_string string) &char {
 	return &char(the_string.str)
 }
 
+// TODO: Improve keyboard on WASM
 fn wasm_keyboard_show(val bool) {
+	/*
 	$if emscripten ? {
-		line := "var input = document.createElement('input'); input.type = 'text'; input.id = 'hiddenInput'; input.style.position = 'absolute'; input.style.left = '-1000px'; input.style.top = '-1000px'; document.body.appendChild(input); input.focus();"
-		C.emscripten_run_script(wasm_cstr(line))
+		if val {
+			line := "var input = document.createElement('input'); input.type = 'text'; input.id = 'hiddenInput'; input.style.position = 'absolute'; input.style.left = '-1000px'; input.style.top = '-1000px'; document.body.appendChild(input); input.focus(); setTimeout(function() {input.remove() }, 1000)"
+			C.emscripten_run_script(wasm_cstr(line))
+		} else {
+			line := "var input = document.getElementById('input'); if (input !== null) { input.remove() }"
+			C.emscripten_run_script(wasm_cstr(line))
+		}
 	}
+	*/
 }
 
 fn (mut this TextField) draw(ctx &GraphicsContext) {

@@ -299,7 +299,7 @@ pub:
 	icon           &Image                    = unsafe { nil }
 	click_event_fn fn (mut Window, MenuItem) = unsafe { nil }
 	children       []&MenuItem
-	click_fn       ?fn (voidptr)
+	click_fn       ?fn (mut MouseEvent)
 	uicon          ?string
 }
 
@@ -311,9 +311,8 @@ pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
 		uicon:          c.uicon
 	}
 
-	fns := c.click_fn or { unsafe { nil } }
-
-	if !isnil(fns) {
+	if c.click_fn != none {
+		fns := c.click_fn or { unsafe { nil } }
 		item.subscribe_event('mouse_up', fns)
 	}
 

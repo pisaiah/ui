@@ -28,7 +28,7 @@ pub:
 	width  int = 500
 	height int = 300
 	left   int
-	top    int
+	top    int = 50
 }
 
 pub fn Modal.new(c ModalConfig) &Modal {

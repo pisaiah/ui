@@ -331,6 +331,28 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		}
 	}
 
+	// Pack Panel
+	if panel.width == 0 && panel.height == 0 {
+		mut w := 0
+		mut h := 0
+		for mut child in panel.children {
+			child.draw_with_offset(ctx, x, y)
+			h += child.height
+			w += child.width
+		}
+
+		if this.cols > 0 {
+			w = w / this.cols
+		}
+
+		if this.rows > 0 {
+			h = h / this.rows
+		}
+
+		panel.width = w
+		panel.height = h
+	}
+
 	for mut child in panel.children {
 		child.draw_with_offset(ctx, x, y)
 

@@ -33,7 +33,16 @@ pub mut:
 }
 
 pub fn ScrollView.new(c ScrollViewConfig) &ScrollView {
-	return scroll_view(c)
+	return &ScrollView{
+		x:           c.bounds.x
+		y:           c.bounds.y
+		width:       c.bounds.width
+		height:      c.bounds.height
+		children:    [c.view]
+		increment:   c.increment
+		always_show: c.always_show
+		padding:     c.padding
+	}
 }
 
 pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
@@ -81,8 +90,8 @@ pub fn (mut sv ScrollView) draw(ctx &GraphicsContext) {
 	if !sv.noborder {
 		ctx.gg.draw_rect_empty(sv.x, sv.y, sv.width, sv.height, ctx.theme.textbox_border)
 	}
-	sv.draw_scrollbar(ctx, sv.height, total_height)
-	sv.draw_scrollbar2(ctx, sv.width, total_width)
+	sv.draw_scrollbar(ctx, sv.height, total_height + sv.padding)
+	sv.draw_scrollbar2(ctx, sv.width, total_width + sv.padding)
 
 	// Reset Scissor
 	ws := ctx.gg.window_size()
@@ -175,11 +184,17 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	ctx.gg.draw_rounded_rect_empty(x, y, wid, height, this.radius, ctx.theme.textbox_border)
 
+	triangle_color := if this.is_mouse_down {
+		ctx.theme.accent_fill_third
+	} else {
+		ctx.theme.scroll_bar_color
+	}
+
 	tx := x + (wid / 2) - 5
-	ctx.gg.draw_triangle_filled(tx, y + 10, tx + 5, y + 5, tx + 10, y + 10, ctx.theme.scroll_bar_color)
+	ctx.gg.draw_triangle_filled(tx, y + 10, tx + 5, y + 5, tx + 10, y + 10, triangle_color)
 
 	ty := y + height - 10
-	ctx.gg.draw_triangle_filled(tx, ty, tx + 5, ty + 5, tx + 10, ty, ctx.theme.scroll_bar_color)
+	ctx.gg.draw_triangle_filled(tx, ty, tx + 5, ty + 5, tx + 10, ty, triangle_color)
 
 	// Scroll Buttons
 	if this.is_mouse_rele {

@@ -146,7 +146,7 @@ pub fn theme_dark() &Theme {
 		dropdown_border:      gx.rgb(0, 0, 0)
 		textbox_background:   gx.rgb(34, 39, 46)
 		textbox_border:       gx.rgb(50, 50, 50)
-		scroll_track_color:   gx.rgb(0, 0, 0)
+		scroll_track_color:   gx.rgba(0, 0, 0, 200)
 		scroll_bar_color:     gx.rgb(170, 170, 170)
 	}
 }
@@ -188,6 +188,7 @@ pub fn theme_dark_red() &Theme {
 	th.accent_fill = gx.rgb(250, 0, 0)
 	th.accent_fill_second = gx.rgb(200, 0, 0)
 	th.accent_fill_third = gx.rgb(150, 0, 0)
+	th.scroll_bar_color = gx.rgb(150, 0, 0)
 	return th
 }
 
@@ -199,19 +200,24 @@ pub fn theme_dark_green() &Theme {
 	th.accent_fill = gx.rgb(0, 250, 0)
 	th.accent_fill_second = gx.rgb(0, 200, 0)
 	th.accent_fill_third = gx.rgb(0, 150, 0)
+	th.scroll_bar_color = gx.rgb(0, 150, 0)
 	return th
 }
 
 // Dark RGB
 /*
-pub fn theme_dark_rgb() &Theme {
+pub fn theme_dark_rgb() ?&Theme {
+
+	$if emscripten {
+		return none
+	}
+
 	mut th := theme_dark()
 	th.name = 'Dark (RGB)'
 	th.accent_text = gx.black
 	th.accent_fill = gx.rgb(255, 0, 0)
 	th.accent_fill_second = gx.rgb(200, 0, 0)
 	th.accent_fill_third = gx.rgb(200, 0, 0)
-	// th.menu_bar_fill_fn = rgb_menu_bar_fill_fn
 	th.setup_fn = rgb_setup
 	
 	return th
@@ -237,6 +243,10 @@ fn darker(c gx.Color, mut theme &Theme) {
 	theme.accent_fill_third.r = u8(f32(c.r) * f2)
 	theme.accent_fill_third.g = u8(f32(c.g) * f2)
 	theme.accent_fill_third.b =  u8(f32(c.b) * f2)
+	
+	theme.scroll_bar_color.r = u8(f32(c.r) * f2)
+	theme.scroll_bar_color.g = u8(f32(c.g) * f2)
+	theme.scroll_bar_color.b =  u8(f32(c.b) * f2)
 }
 
 pub fn rgb_setup(mut win Window) {
