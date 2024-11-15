@@ -323,6 +323,7 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
 	mut c := 0
+	mut a := 0
 
 	mut cols := this.cols
 	if this.cols == 0 {
@@ -331,14 +332,16 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		}
 	}
 
+	do_pack := panel.width == 0 && panel.height == 0
+
 	// Pack Panel
-	if panel.width == 0 && panel.height == 0 {
+	if do_pack {
 		mut w := 0
 		mut h := 0
 		for mut child in panel.children {
 			child.draw_with_offset(ctx, x, y)
 			h += child.height
-			w += child.width
+			w += child.width + this.hgap
 		}
 
 		if this.cols > 0 {
@@ -349,12 +352,18 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 			h = h / this.rows
 		}
 
-		panel.width = w
+		if panel.width < w {
+			panel.width = w
+		}
 		panel.height = h
 	}
 
 	for mut child in panel.children {
 		child.draw_with_offset(ctx, x, y)
+
+		if do_pack {
+			a += child.width + (this.hgap * 2)
+		}
 
 		child.width = ((panel.width - this.hgap) / cols) - this.hgap
 		if this.cols == 0 {
@@ -365,10 +374,15 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 
 		x += child.width + this.hgap
 		c += 1
+
 		if c >= cols {
+			if do_pack && panel.width < a {
+				panel.width = a
+			}
 			c = 0
 			x = panel.x + this.hgap
 			y += child.height + this.vgap
+			a = 0
 		}
 	}
 }
