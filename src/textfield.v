@@ -9,15 +9,14 @@ const numbers_val = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
 pub struct TextField {
 	Component_A
 pub mut:
-	carrot_left          int
-	ctrl_down            bool
-	last_letter          string
-	text_change_event_fn fn (voidptr, voidptr) = fn (a voidptr, b voidptr) {}
-	padding_x            int
-	center               bool
-	numeric              bool
-	blinked              bool
-	bind_val             &string = unsafe { nil }
+	carrot_left int
+	ctrl_down   bool
+	last_letter string
+	padding_x   int
+	center      bool
+	numeric     bool
+	blinked     bool
+	bind_val    &string = unsafe { nil }
 }
 
 pub fn (mut tf TextField) bind_to(val &string) {
@@ -36,8 +35,8 @@ pub fn (mut tf TextField) update_bind() {
 	}
 }
 
-pub fn (mut box TextField) set_text_change(b fn (a voidptr, b voidptr)) {
-	box.text_change_event_fn = b
+pub fn (mut box TextField) set_text_change_(b fn (a voidptr, b voidptr)) {
+	// box.text_change_event_fn = b
 }
 
 pub fn numeric_field(val int) &TextField {
@@ -270,7 +269,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 			return
 		}
 		invoke_text_change(com, w.graphics_context, 'text_change')
-		com.text_change_event_fn(w, com)
+		// com.text_change_event_fn(w, com)
 		com.ctrl_down = false
 		return
 	}
@@ -295,7 +294,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 			if letter !in numbers_val {
 				com.last_letter = letter
 				invoke_text_change(com, w.graphics_context, 'text_change')
-				com.text_change_event_fn(w, com)
+				// com.text_change_event_fn(w, com)
 				return
 			}
 		}
@@ -313,7 +312,7 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 		com.last_letter = letter
 	}
 	invoke_text_change(com, w.graphics_context, 'text_change')
-	com.text_change_event_fn(w, com)
+	// com.text_change_event_fn(w, com)
 	com.ctrl_down = false
 	unsafe {
 		resu.free()

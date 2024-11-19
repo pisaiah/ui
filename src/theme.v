@@ -32,9 +32,9 @@ const light_accent_fill_third = gx.rgb(50, 113, 175)
 
 // WinUI3 Design guidance (Dark)
 const dark_accent_text = gx.black
-const dark_accent_fill = gx.rgb(0, 120, 235)
-const dark_accent_fill_second = gx.rgb(0, 111, 214)
-const dark_accent_fill_third = gx.rgb(0, 102, 194)
+const dark_accent_fill = gx.rgb(64, 180, 255)
+const dark_accent_fill_second = gx.rgb(60, 170, 230)
+const dark_accent_fill_third = gx.rgb(57, 156, 210)
 
 pub interface UITheme {
 	name        string

@@ -12,12 +12,10 @@ pub interface Layout {
 	draw_kids(mut Panel, &GraphicsContext)
 }
 
-/*
-	BorderLayout - A Layout with five areas. The Center gets a much of the
-	available Panel space as possible. The other areas expand only to their
-	respective size. It is possible to only use a few areas instead of all five.
-	(Ref: https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html)
-*/
+//	BorderLayout - A Layout with five areas. The Center gets a much of the
+//	available Panel space as possible. The other areas expand only to their
+//	respective size. It is possible to only use a few areas instead of all five.
+//	(Ref: https://docs.oracle.com/javase/tutorial/uiswing/layout/border.html)
 pub struct BorderLayout {
 mut:
 	// TODO
@@ -31,12 +29,10 @@ mut:
 	style  int
 }
 
-/*
-	Config for BorderLayout.new
-	hgap - The HGAP between Components
-	vgap - The VGAP between Components
-	style - (WIP) Layout style. (0 = NORTH/SOUTH First, 1 = Sides First)
-*/
+//	Config for BorderLayout.new
+//	hgap - The HGAP between Components
+//	vgap - The VGAP between Components
+//	style - (WIP) Layout style. (0 = NORTH/SOUTH First, 1 = Sides First)
 @[params]
 pub struct BorderLayoutConfig {
 pub:

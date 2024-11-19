@@ -54,20 +54,24 @@ pub fn image_from_bytes(mut w Window, b []u8, width int, height int) &Image {
 	return image_from_byte_array_with_size(mut w, b, width, height)
 }
 
+fn (mut this Image) init(ctx &GraphicsContext) {
+	mut win := ctx.win
+	if os.exists(this.text) {
+		img := win.gg.create_image(this.text) or { panic(err) }
+		this.img = &img
+	} else {
+		abp := os.resource_abs_path(this.text)
+		if os.exists(abp) {
+			img := win.gg.create_image(abp) or { panic(err) }
+			mut ggg := ctx.gg
+			this.img_id = ggg.cache_image(img)
+		}
+	}
+}
+
 pub fn (mut this Image) draw(ctx &GraphicsContext) {
 	if this.need_init {
-		mut win := ctx.win
-		if os.exists(this.text) {
-			img := win.gg.create_image(this.text) or { panic(err) }
-			this.img = &img
-		} else {
-			abp := os.resource_abs_path(this.text)
-			if os.exists(abp) {
-				img := win.gg.create_image(abp) or { panic(err) }
-				mut ggg := ctx.gg
-				this.img_id = ggg.cache_image(img)
-			}
-		}
+		this.init(ctx)
 		this.need_init = false
 	}
 

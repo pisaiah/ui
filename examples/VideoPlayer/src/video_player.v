@@ -203,10 +203,8 @@ fn (mut p Player) slid_down(mut e ui.MouseEvent) {
 pub struct Player {
 	ui.Component_A
 mut:
-	init bool
-	vmpv &MPVPlayer
-
-	//= unsafe { nil }
+	init       bool
+	vmpv       &MPVPlayer
 	tik        int
 	path       string
 	logo       &ui.Image
@@ -297,7 +295,7 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 	})
 
 	mut pbtn := ui.Button.new(
-		text: 'Play'
+		text: '   \uea1d   '
 	)
 
 	pbtn.font = 1

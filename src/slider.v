@@ -75,11 +75,13 @@ pub fn (mut s Slider) pack() {
 pub fn (mut s Slider) pack_do(g &GraphicsContext) {
 	// Note: values taken from default JSlider size
 	if s.dir == .vert {
-		s.width = 16
+		s.width = 20
 		s.height = 200
+		s.thumb_wid = s.width
 	} else {
 		s.width = 200
-		s.height = 16
+		s.height = 20
+		s.thumb_wid = s.height
 	}
 }
 
@@ -150,14 +152,78 @@ fn (mut s Slider) on_mouse_down(g &GraphicsContext) {
 	s.scroll_i = int(s.cur)
 }
 
-fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
-	hei := s.height
-	g.draw_rounded_bordered_rect(s.x, s.y, s.width, hei, 8, g.theme.scroll_track_color,
-		g.theme.button_border_normal)
-	g.gg.draw_rounded_rect_filled(s.x + wid, s.y, s.thumb_wid, hei, 16, thumb_color)
+const slider_radius = 32
+
+fn (s &Slider) ocean_theme_test(g &GraphicsContext, x f32, y f32, ro int) {
+	g.gg.draw_image_with_config(gg.DrawImageConfig{
+		img_id:    g.get_icon_sheet_id()
+		img_rect:  gg.Rect{
+			x:      x
+			y:      y
+			width:  16
+			height: 16
+		}
+		rotation:  ro
+		part_rect: gg.Rect{32 * 1, 32 * 0, 16, 16}
+	})
 }
 
-fn (s &Slider) draw_vert(g &GraphicsContext, wid f32, color gg.Color) {
+fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
+	hei := s.height
+	color := s.thumb_color or { g.theme.accent_fill }
+	line_height := hei / 4
+	line_y := s.y + (s.height / 2) - (line_height / 2)
+
+	g.gg.draw_rounded_rect_filled(s.x, line_y, s.width, line_height, 8, g.theme.scroll_bar_color)
+	g.gg.draw_rounded_rect_filled(s.x, line_y, wid + 4, line_height, 8, color)
+
+	cut := if s.is_mouse_down {
+		5
+	} else if is_in(s, g.win.mouse_x, g.win.mouse_y) {
+		3
+	} else {
+		4
+	}
+
+	if g.theme.name == 'Ocean' {
+		s.ocean_theme_test(g, s.x + wid, s.y + 2, 0)
+		return
+	}
+
+	g.gg.draw_rounded_rect_filled(s.x + wid, s.y, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
+	g.gg.draw_rounded_rect_empty(s.x + wid, s.y, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(s.x + wid + cut, s.y + cut, s.thumb_wid - cut * 2, hei - cut * 2,
+		slider_radius, color)
+}
+
+fn (s &Slider) draw_vert(g &GraphicsContext, wid f32, thumb_color gg.Color) {
+	hei := s.width
+	color := s.thumb_color or { g.theme.accent_fill }
+	line_width := hei / 4
+	line_x := s.x + (s.width / 2) - (line_width / 2)
+
+	g.gg.draw_rounded_rect_filled(line_x, s.y, line_width, s.height, 8, g.theme.scroll_bar_color)
+	g.gg.draw_rounded_rect_filled(line_x, s.y, line_width, wid + 4, 8, color)
+
+	if g.theme.name == 'Ocean' {
+		s.ocean_theme_test(g, s.x + 2, s.y + wid, 90)
+		return
+	}
+
+	cut := if s.is_mouse_down {
+		5
+	} else if is_in(s, g.win.mouse_x, g.win.mouse_y) {
+		3
+	} else {
+		4
+	}
+	g.gg.draw_rounded_rect_filled(s.x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
+	g.gg.draw_rounded_rect_empty(s.x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(s.x + cut, s.y + wid + cut, s.thumb_wid - cut * 2, hei - cut * 2,
+		slider_radius, color)
+}
+
+fn (s &Slider) draw_vert_old(g &GraphicsContext, wid f32, color gg.Color) {
 	g.draw_bordered_rect(s.x, s.y, s.width, s.height, g.theme.scroll_track_color, g.theme.button_border_normal)
 	g.gg.draw_rounded_rect_filled(s.x, s.y + wid, s.width, s.thumb_wid, 8, color)
 	g.gg.draw_rect_empty(s.x, s.y, s.width, s.height, g.theme.button_border_normal)

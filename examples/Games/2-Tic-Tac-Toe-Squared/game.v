@@ -133,8 +133,10 @@ fn (mut app App) main_draw(mut e ui.DrawEvent) {
 			app.sq = -1
 			return
 		}
-		c := e.ctx.theme.button_bg_click
+		c := e.ctx.theme.button_bg_hover
 		e.ctx.gg.draw_rect_filled(sq.rx, sq.ry, sq.width, sq.height, c)
+		
+		e.ctx.gg.draw_rounded_rect_empty(sq.rx, sq.ry, sq.width, sq.height, 8, e.ctx.theme.accent_fill_second)
 	}
 
 	if app.comput && app.turn {

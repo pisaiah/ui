@@ -20,6 +20,22 @@ pub mut:
 	border_radius     int  = 4
 	area_filled       bool = true
 	is_action         bool
+	icon_info         ?ButtonIconInfo
+}
+
+pub struct ButtonIconInfo {
+pub:
+	id         string
+	atlas_size int
+	skip_text  bool
+	x          int
+	y          int
+	align      ButtonIconAlign
+}
+
+pub enum ButtonIconAlign {
+	left
+	center
 }
 
 @[params]
@@ -83,7 +99,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 		btn.need_pack = true
 	}
 
-	if btn.icon != -1 && btn.icon != -2 {
+	if btn.icon != -1 && btn.icon >= 0 {
 		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }
 		hei := if btn.icon_height > 0 { btn.icon_height } else { btn.height }
 		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
@@ -109,6 +125,28 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 			}
 			part_rect: gg.Rect{32 * btn.icon_width, 32 * btn.icon_height, 32, 32}
 		})
+	}
+
+	if btn.icon_info != none {
+		info := btn.icon_info or { return }
+
+		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }
+		hei := if btn.icon_height > 0 { btn.icon_height } else { btn.height }
+
+		ctx.gg.draw_image_with_config(gg.DrawImageConfig{
+			img_id:    ctx.icon_cache[info.id]
+			img_rect:  gg.Rect{
+				x:      btn.x + (btn.width / 2) - (wid / 2)
+				y:      btn.y + (btn.height / 2) - (hei / 2)
+				width:  wid
+				height: hei
+			}
+			part_rect: gg.Rect{info.atlas_size * info.x, info.atlas_size * info.y, info.atlas_size, info.atlas_size}
+		})
+
+		if info.skip_text {
+			return
+		}
 	}
 
 	// TODO: Better font detection

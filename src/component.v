@@ -215,6 +215,10 @@ pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
 		return
 	}
 
+	if com.events.event_map['draw'].len == 0 {
+		return
+	}
+
 	ev := DrawEvent{
 		target: unsafe { com }
 		ctx:    ctx
@@ -227,6 +231,10 @@ pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
 
 pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 	if isnil(com.events) {
+		return
+	}
+
+	if com.events.event_map['after_draw'].len == 0 {
 		return
 	}
 

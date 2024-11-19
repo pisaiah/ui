@@ -41,6 +41,16 @@ fn (this &Checkbox) get_border(is_hover bool, ctx &GraphicsContext) gx.Color {
 
 // Get background color
 fn (this &Checkbox) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
+	if this.is_selected {
+		if this.is_mouse_down {
+			return ctx.theme.accent_fill_third
+		}
+		if is_hover {
+			return ctx.theme.accent_fill_second
+		}
+		return ctx.theme.accent_fill
+	}
+
 	if this.is_mouse_down {
 		return ctx.theme.button_bg_click
 	}
@@ -48,6 +58,7 @@ fn (this &Checkbox) get_background(is_hover bool, ctx &GraphicsContext) gx.Color
 	if is_hover {
 		return ctx.theme.button_bg_hover
 	}
+
 	return ctx.theme.background
 }
 
@@ -102,10 +113,7 @@ fn (this &Checkbox) draw_text(ctx &GraphicsContext) {
 
 // TODO: Better Checkmark
 fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
-	cut := 0
-	wid := com.height - (cut * 2)
-
-	ctx.gg.draw_rounded_rect_filled(com.x + cut, com.y + cut, wid, wid, 8, ctx.theme.accent_fill)
+	// ctx.gg.draw_rounded_rect_filled(com.x, com.y, com.height, com.height, 8, ctx.theme.accent_fill)
 
 	// Use Checkmark SVG if icon set loaded
 	if ctx.icon_ttf_exists() {

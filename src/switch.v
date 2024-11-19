@@ -9,6 +9,7 @@ pub mut:
 	text     string
 	a        int
 	bind_val &bool = unsafe { nil }
+	cut      int   = 4
 }
 
 pub fn (mut s Switch) bind_to(val &bool) {
@@ -61,6 +62,16 @@ fn (this &Switch) get_border(is_hover bool, ctx &GraphicsContext) gx.Color {
 
 // Get background color
 fn (this &Switch) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
+	if this.is_selected {
+		if this.is_mouse_down {
+			return ctx.theme.accent_fill_third
+		}
+		if is_hover {
+			return ctx.theme.accent_fill_second
+		}
+		return ctx.theme.accent_fill
+	}
+
 	if this.is_mouse_down {
 		return ctx.theme.button_bg_click
 	}
@@ -103,25 +114,27 @@ pub fn (mut com Switch) draw(ctx &GraphicsContext) {
 
 	// Draw checkmark
 	if com.is_selected {
-		if com.a < com.height {
-			com.a += 5
+		max := com.height - (com.cut * 3)
+
+		if com.a < max {
+			com.a += 2
 			mut win := ctx.win
 			win.refresh_ui()
 		}
-		if com.a > com.height {
-			com.a = com.height
+		if com.a > max {
+			com.a = max
 		}
 		com.draw_circ(0, ctx)
 	} else {
 		if com.a > 0 {
-			com.a -= 5
+			com.a -= 2
 			mut win := ctx.win
 			win.refresh_ui()
 		}
 		if com.a < 0 {
 			com.a = 0
 		}
-		com.draw_circ(2, ctx)
+		com.draw_circ(com.cut, ctx)
 	}
 
 	// Draw text
@@ -146,8 +159,8 @@ fn (com &Switch) draw_background(ctx &GraphicsContext) {
 	bh := com.height * 2
 	h := com.height // - 6
 	y := com.y // + 3
-	ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 8, bg)
-	ctx.gg.draw_rounded_rect_empty(com.x, y, bh, h, 8, border)
+	ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 16, bg)
+	ctx.gg.draw_rounded_rect_empty(com.x, y, bh, h, 16, border)
 }
 
 // Draw the text of Switch
@@ -163,10 +176,10 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 }
 
 fn (com &Switch) draw_circ(o int, g &GraphicsContext) {
-	wid := com.height - 4
-	x := com.x + com.a + o
-	g.gg.draw_rounded_rect_filled(x, com.y + 2, wid, wid, 64, g.theme.button_bg_normal)
-	g.gg.draw_rounded_rect_empty(x, com.y + 2, wid, wid, 64, g.theme.button_border_normal)
+	wid := com.height - (com.cut * 2)
+	x := com.x + o + (com.a * 2)
+	g.gg.draw_rounded_rect_filled(x, com.y + com.cut, wid, wid, 64, g.theme.button_bg_normal)
+	g.gg.draw_rounded_rect_empty(x, com.y + com.cut, wid, wid, 64, g.theme.button_border_normal)
 }
 
 pub struct SwitchEvent {
@@ -176,9 +189,7 @@ pub struct SwitchEvent {
 pub fn invoke_switch(com &Switch, ctx &GraphicsContext) {
 	ev := SwitchEvent{
 		target: com
-
-		// unsafe { com }
-		ctx: ctx
+		ctx:    ctx
 	}
 	for f in com.events.event_map['change'] {
 		f(ev)

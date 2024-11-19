@@ -507,13 +507,15 @@ fn (mut app Window) draw() {
 	}
 
 	// Draw components
-	mut last := app.components.last()
-	if mut last is Page {
-		invoke_draw_event(last, app.graphics_context)
-		last.draw(app.graphics_context)
-		invoke_after_draw_event(last, app.graphics_context)
-	} else {
-		app.draw_children()
+	if app.components.len > 0 {
+		mut last := app.components.last()
+		if mut last is Page {
+			invoke_draw_event(last, app.graphics_context)
+			last.draw(app.graphics_context)
+			invoke_after_draw_event(last, app.graphics_context)
+		} else {
+			app.draw_children()
+		}
 	}
 
 	// Draw Popups last
@@ -626,4 +628,18 @@ pub fn open_url(url string) {
 
 pub fn min_h(ctx &GraphicsContext) int {
 	return ctx.line_height + 9
+}
+
+fn (g &GraphicsContext) draw_iconset_image(x f32, y f32, w f32, h f32, px int, py int, pw int, ph int, ro int) {
+	g.gg.draw_image_with_config(gg.DrawImageConfig{
+		img_id:    g.get_icon_sheet_id()
+		img_rect:  gg.Rect{
+			x:      x
+			y:      y
+			width:  w
+			height: h
+		}
+		rotation:  ro
+		part_rect: gg.Rect{px, py, pw, ph}
+	})
 }

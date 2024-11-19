@@ -52,6 +52,19 @@ for entry in all_entries2 {
 	entries << 'Games\\${entry}'
 }
 
+desk := join_path(home_dir(), 'Desktop')
+
+other := [
+	join_path(desk, 'paint'),
+	join_path(desk, 'vide2'),
+]
+
+for entry in other {
+	if is_dir(entry) {
+		entries << entry
+	}
+}
+
 chdir(examples_dir)!
 
 mut threads := []thread{}
