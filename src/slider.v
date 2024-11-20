@@ -62,7 +62,7 @@ pub fn Slider.new(c SliderConfig) &Slider {
 		max:         c.max
 		dir:         c.dir
 		scroll:      true
-		thumb_wid:   30
+		thumb_wid:   24
 		thumb_color: c.thumb_color
 	}
 }
@@ -93,6 +93,10 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 
 	if this.width == 0 && this.height == 0 {
 		this.pack_do(ctx)
+	}
+
+	if ctx.theme.name == 'Ocean' {
+		this.thumb_wid = 16
 	}
 
 	if this.is_mouse_down {
@@ -169,9 +173,9 @@ fn (s &Slider) ocean_theme_test(g &GraphicsContext, x f32, y f32, ro int) {
 }
 
 fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
-	hei := s.height
+	hei := s.thumb_wid
 	color := s.thumb_color or { g.theme.accent_fill }
-	line_height := hei / 4
+	line_height := s.height / 4
 	line_y := s.y + (s.height / 2) - (line_height / 2)
 
 	g.gg.draw_rounded_rect_filled(s.x, line_y, s.width, line_height, 8, g.theme.scroll_bar_color)
@@ -190,16 +194,17 @@ fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
 		return
 	}
 
-	g.gg.draw_rounded_rect_filled(s.x + wid, s.y, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
-	g.gg.draw_rounded_rect_empty(s.x + wid, s.y, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
-	g.gg.draw_rounded_rect_filled(s.x + wid + cut, s.y + cut, s.thumb_wid - cut * 2, hei - cut * 2,
+	y := s.y + (s.height / 2) - (s.thumb_wid / 2)
+	g.gg.draw_rounded_rect_filled(s.x + wid, y, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
+	g.gg.draw_rounded_rect_empty(s.x + wid, y, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(s.x + wid + cut, y + cut, s.thumb_wid - cut * 2, hei - cut * 2,
 		slider_radius, color)
 }
 
 fn (s &Slider) draw_vert(g &GraphicsContext, wid f32, thumb_color gg.Color) {
-	hei := s.width
+	hei := s.thumb_wid
 	color := s.thumb_color or { g.theme.accent_fill }
-	line_width := hei / 4
+	line_width := s.width / 4
 	line_x := s.x + (s.width / 2) - (line_width / 2)
 
 	g.gg.draw_rounded_rect_filled(line_x, s.y, line_width, s.height, 8, g.theme.scroll_bar_color)
@@ -217,9 +222,12 @@ fn (s &Slider) draw_vert(g &GraphicsContext, wid f32, thumb_color gg.Color) {
 	} else {
 		4
 	}
-	g.gg.draw_rounded_rect_filled(s.x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
-	g.gg.draw_rounded_rect_empty(s.x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
-	g.gg.draw_rounded_rect_filled(s.x + cut, s.y + wid + cut, s.thumb_wid - cut * 2, hei - cut * 2,
+
+	x := s.x + (s.width / 2) - (s.thumb_wid / 2)
+
+	g.gg.draw_rounded_rect_filled(x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
+	g.gg.draw_rounded_rect_empty(x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(x + cut, s.y + wid + cut, s.thumb_wid - cut * 2, hei - cut * 2,
 		slider_radius, color)
 }
 
