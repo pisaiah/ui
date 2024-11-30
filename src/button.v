@@ -190,14 +190,17 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 	bg := this.get_bg(ctx, mouse_in)
 	border := this.get_border(ctx, mouse_in)
 
-	if this.area_filled {
-		ctx.theme.button_fill_fn(this.x, this.y, this.width, this.height, this.border_radius,
-			bg, ctx)
-	}
 	if this.border_radius != -1 {
-		ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
+		// Draw as filled as rounded_rect_empty has issues with a radius
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, this.border_radius,
 			border)
 	}
+
+	if this.area_filled {
+		ctx.theme.button_fill_fn(this.x + 1, this.y + 1, this.width - 2, this.height - 2,
+			this.border_radius, bg, ctx)
+	}
+
 	if this.extra.len != 0 && mouse_in {
 		mut win := ctx.win
 		win.tooltip = this.extra
@@ -211,6 +214,7 @@ fn (b &Button) get_border(g &GraphicsContext, is_hover bool) gx.Color {
 	}
 	if is_hover {
 		return g.theme.accent_fill
+
 		// return g.theme.button_border_hover
 	}
 	return g.theme.button_border_normal
