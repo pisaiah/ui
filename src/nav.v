@@ -48,6 +48,8 @@ pub struct NavPaneItem {
 pub mut:
 	icon       string
 	lock_width bool
+	offset     int
+	open       bool
 }
 
 pub fn (mut item NavPaneItem) is_selected() bool {
@@ -88,6 +90,13 @@ pub fn (mut item NavPaneItem) pack_do(ctx &GraphicsContext) {
 	}
 }
 
+// Draw down arrow
+fn (box &NavPaneItem) draw_arrow(ctx &GraphicsContext, x int, y int, w int, h int) {
+	a := x + w - 24
+	b := y + (h / 2) - 3
+	ctx.gg.draw_triangle_filled(a, b, a + 5, b + 5, a + 10, b, ctx.theme.text_color)
+}
+
 // Draw this component
 pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	mut pp := item.get_parent[&NavPane]()
@@ -108,7 +117,17 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 
 	if item.is_mouse_rele {
 		if item.text != 'Collapse' {
+			already := pp.text == item.text || item.open
 			pp.text = item.text
+
+			if !already && item.children.len > 0 {
+				item.open = true
+			}
+
+			if already && item.children.len != 0 {
+				pp.text = ''
+				item.open = false
+			}
 		}
 		item.is_mouse_rele = false
 	}
@@ -116,8 +135,8 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	if item.is_selected() {
 		bg := if is_hover { ctx.theme.button_bg_click } else { ctx.theme.button_bg_hover }
 		ctx.gg.draw_rounded_rect_filled(item.x, item.y, item.width, item.height, 4, bg)
-		forth := item.height / 3
-		ctx.gg.draw_rect_filled(item.x, item.y + forth, 4, forth, ctx.theme.accent_fill)
+		ctx.gg.draw_rect_filled(item.x + item.offset, item.y + item.height / 4, 3, item.height / 2,
+			ctx.theme.accent_fill)
 	}
 
 	// Draw Icon
@@ -129,10 +148,30 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	}
 	ctx.gg.set_text_cfg(cfgg)
 	text := item.icon
-	size := (40 / 2) - ctx.text_width(text) / 2
+	size := item.offset + (40 / 2) - ctx.text_width(text) / 2
 	ctx.draw_text(item.x + size, item.y + (item.height / 2) - ctx.line_height / 2, text,
 		font, cfgg)
 	ctx.reset_text_font()
+
+	if item.children.len > 0 && !pp.collapsed {
+		item.draw_arrow(ctx, item.x, item.y, item.width, item.height)
+
+		if item.is_selected() || item.open {
+			mut y := item.y + item.height + 4
+			offset := item.offset + size + 16
+			for mut child in item.children {
+				if isnil(child.parent) {
+					child.set_parent(pp)
+				}
+
+				if mut child is NavPaneItem {
+					child.offset = offset
+				}
+				child.draw_with_offset(ctx, pp.x + offset, y)
+				y += child.height + 4
+			}
+		}
+	}
 
 	if (pp.collapsed || item.lock_width) && item.icon.len != 0 {
 		return

@@ -188,11 +188,9 @@ pub fn (box &Selectbox) draw_box(ctx &GraphicsContext, x int, y int) {
 
 // Draw down arrow
 fn (box &Selectbox) draw_arrow(ctx &GraphicsContext, x int, y int, w int, h int) {
-	char_h := 3
-	tx := 17
-
-	ctx.gg.draw_triangle_filled(x + w - tx, y + (h / 2) - char_h, x + w - (tx - 5), y + (h / 2) + 5 - char_h,
-		x + w - (tx - 10), y + (h / 2) - char_h, ctx.theme.text_color)
+	a := x + w - 17
+	b := y + (h / 2) - 3
+	ctx.gg.draw_triangle_filled(a, b, a + 5, b + 5, a + 10, b, ctx.theme.text_color)
 }
 
 // SelectItem
