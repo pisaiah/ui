@@ -53,7 +53,7 @@ import iui as ui
 | Label         | Panel       | Border Layout |
 | Panel         | Tabbox      | Box Layout    |
 | Textbox       | HBox        | Grid Layout   |
-| TextField     | VBox        |               | 
+| TextField     | VBox        | Card Layout   | 
 | Menubar       | Modal       |               |
 | MenuItem      | Page        |               |
 | Checkbox      | ButtonGroup |               |

@@ -10,7 +10,7 @@ fn main() {
 		height: 400
 		theme:  ui.theme_default()
 	)
-	
+
 	mut bar := ui.Menubar.new()
 	bar.set_padding(4)
 	bar.add_child(create_theme_menu())
@@ -21,15 +21,19 @@ fn main() {
 	)
 
 	mut icons := [
-		'\uE156'
-		'\uE12E'
-		'\uE167'
-		'\uE193'
+		'\uE156',
+		'\uE12E',
+		'\uE167',
+		'\uE193',
 	]
 
 	mut np := ui.NavPane.new(
-		pack: true
+		pack:      true
 		collapsed: true
+	)
+
+	mut card_panel := ui.Panel.new(
+		layout: ui.CardLayout.new()
 	)
 
 	for i in 0 .. icons.len {
@@ -37,29 +41,32 @@ fn main() {
 			text: 'Hello ${i}'
 			icon: icons[i]
 		)
+
+		item.subscribe_event('mouse_up', fn [mut card_panel] (e &ui.MouseEvent) {
+			mut layout := card_panel.get_layout()
+			id := '${e.target.text.split(' ')[1]}-card'
+			if mut layout is ui.CardLayout {
+				layout.selected = id
+			}
+		})
+
+		mut lbl := ui.Label.new(text: 'Label #${i}')
+		card_panel.add_child(lbl, value: '${i}-card')
+
 		np.add_child(item)
 	}
-	
-	mut center := ui.Panel.new()
-	
-	mut l := ui.Label.new(text: 'Hello world', pack: true)
-	mut b := ui.Button.new(text: 'Hello world', pack: true)
-	
-	center.add_child(l)
-	center.add_child(b)
-	
-	p.add_child_with_flag(np, ui.borderlayout_west)
-	p.add_child_with_flag(center, ui.borderlayout_center)
-	
+
+	p.add_child(np, value: ui.borderlayout_west)
+	p.add_child(card_panel, value: ui.borderlayout_center)
+
 	window.add_child(p)
 
 	// Start GG / Show Window
 	// window.run()
 	mut win := *window
-	
+
 	win.run()
 }
-
 
 // Make a 'Theme' menu item to select themes
 fn create_theme_menu() &ui.MenuItem {
