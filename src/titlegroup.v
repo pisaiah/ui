@@ -38,7 +38,6 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 		y := this.y + this.padding + text_height + 5
 		com.draw_with_offset(ctx, this.x + this.padding, y)
 
-		// com.after_draw_event_fn(mut win, com)
 		wid := com.x + com.width + (this.padding * 2)
 		if wid > this.width {
 			this.width = wid

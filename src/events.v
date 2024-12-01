@@ -38,7 +38,7 @@ pub struct MouseEvent {
 pub struct MouseEvent2[T] {
 	MouseEvent
 pub mut:
-	target &T
+	target &Component
 }
 
 // When user clicks a button, presses Enter in a text field, etc.

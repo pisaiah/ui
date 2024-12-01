@@ -253,6 +253,26 @@ pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 	}
 }
 
+pub fn (com &Button) invoke_mouse_down(ctx &GraphicsContext) {
+	ev := MouseEvent{
+		target: unsafe { com }
+		ctx:    ctx
+	}
+	for f in com.events.event_map['mouse_down'] {
+		f(ev)
+	}
+}
+
+pub fn (com &Component_A) invoke_mouse_down(ctx &GraphicsContext) {
+	ev := MouseEvent{
+		target: unsafe { com }
+		ctx:    ctx
+	}
+	for f in com.events.event_map['mouse_down'] {
+		f(ev)
+	}
+}
+
 pub fn invoke_mouse_down(com &Component, ctx &GraphicsContext) {
 	
 	com.invoke_mouse_down(ctx)

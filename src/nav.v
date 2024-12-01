@@ -26,6 +26,8 @@ pub fn NavPane.new(c NavPaneConfig) &NavPane {
 		collapsed: c.collapsed
 	}
 
+	np.width = np.get_target_width()
+
 	mut collapse_btn := NavPaneItem.new(
 		text:       'Collapse'
 		icon:       '\ue700'
@@ -71,11 +73,15 @@ pub mut:
 }
 
 pub fn NavPaneItem.new(c NavPaneItemConfig) &NavPaneItem {
-	return &NavPaneItem{
+	mut item := &NavPaneItem{
 		icon:       c.icon
 		lock_width: c.lock_width
 		text:       c.text
 	}
+
+	item.subscribe_event('mouse_up', item.set_selected_on_mouse_up)
+
+	return item
 }
 
 pub fn (mut item NavPaneItem) pack_do(ctx &GraphicsContext) {
@@ -97,6 +103,25 @@ fn (box &NavPaneItem) draw_arrow(ctx &GraphicsContext, x int, y int, w int, h in
 	ctx.gg.draw_triangle_filled(a, b, a + 5, b + 5, a + 10, b, ctx.theme.text_color)
 }
 
+// Default mouse up event
+pub fn (mut item NavPaneItem) set_selected_on_mouse_up(e &MouseEvent) {
+	mut pp := item.get_parent[&NavPane]()
+
+	if item.text != 'Collapse' {
+		already := pp.text == item.text || item.open
+		pp.text = item.text
+
+		if !already && item.children.len > 0 {
+			item.open = true
+		}
+
+		if already && item.children.len != 0 {
+			pp.text = ''
+			item.open = false
+		}
+	}
+}
+
 // Draw this component
 pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	mut pp := item.get_parent[&NavPane]()
@@ -116,19 +141,6 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	}
 
 	if item.is_mouse_rele {
-		if item.text != 'Collapse' {
-			already := pp.text == item.text || item.open
-			pp.text = item.text
-
-			if !already && item.children.len > 0 {
-				item.open = true
-			}
-
-			if already && item.children.len != 0 {
-				pp.text = ''
-				item.open = false
-			}
-		}
 		item.is_mouse_rele = false
 	}
 
@@ -244,7 +256,6 @@ pub fn (mut np NavPane) draw(ctx &GraphicsContext) {
 	np.pack_do_height(ctx)
 
 	ctx.gg.draw_rect_filled(np.x, np.y, np.width, np.height, ctx.theme.menubar_background)
-	// ctx.gg.draw_rect_empty(np.x, np.y, np.width, np.height, ctx.theme.accent_fill)
 
 	if np.is_mouse_rele {
 		np.is_mouse_rele = false
@@ -255,6 +266,13 @@ pub fn (mut np NavPane) draw(ctx &GraphicsContext) {
 		if isnil(child.parent) {
 			child.set_parent(np)
 		}
+
+		if child.text == 'Settings' {
+			fy := np.y + np.height - child.height - 4
+			child.draw_with_offset(ctx, np.x, fy)
+			continue
+		}
+
 		child.draw_with_offset(ctx, np.x, y)
 		y += child.height + 4
 	}
