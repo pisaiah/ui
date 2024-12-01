@@ -387,6 +387,51 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	}
 }
 
+// CardLayout - Layout Components in a horizontal or vertical row.
+// https://docs.oracle.com/javase/tutorial/uiswing/layout/card.html
+pub struct CardLayout {
+pub mut:
+	hgap     int = 5
+	vgap     int = 5
+	selected string
+}
+
+@[params]
+pub struct CardLayoutConfig {
+pub:
+	hgap int = 5
+	vgap int = 5
+}
+
+pub fn CardLayout.new(c CardLayoutConfig) CardLayout {
+	return CardLayout{
+		hgap: c.hgap
+		vgap: c.vgap
+	}
+}
+
+fn (this &CardLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
+	mut x := panel.x + this.hgap
+	mut y := panel.y + this.vgap
+
+	for mut child in panel.children {
+		if child.id == this.selected {
+			child.draw_with_offset(ctx, x, y)
+		}
+	}
+
+	if panel.height == 0 {
+		panel.height = y - panel.y + this.vgap
+	}
+	if panel.width == 0 {
+		panel.width = x - panel.x
+	}
+}
+
+pub fn (mut this CardLayout) show(p Panel, id string) {
+	this.selected = id
+}
+
 // Panel
 pub struct Panel implements Container {
 	Component_A
@@ -411,6 +456,14 @@ pub fn panel(cfg PanelConfig) &Panel {
 	return &Panel{
 		layout: cfg.layout
 	}
+}
+
+pub fn (mut p Panel) get_layout() Layout {
+	return p.layout
+}
+
+pub fn (mut p Panel) get_layout_as[T]() T {
+	return p.layout as T
 }
 
 // Set background color of this Panel. Default=none
@@ -458,11 +511,29 @@ pub fn (mut this Panel) set_layout(layout Layout) {
 	this.layout = layout
 }
 
-pub fn (mut this Panel) add_child_with_flag(com &Component, flag int) {
+@[params]
+pub struct Flag {
+pub:
+	value FlagValue
+}
+
+pub type FlagValue = int | string
+
+pub fn (mut this Panel) add_child(com &Component, flag ?Flag) {
+	if flag == none {
+		this.children << com
+		return
+	}
+	if flag != none {
+		this.add_child_with_flag(com, flag.value)
+	}
+}
+
+pub fn (mut this Panel) add_child_with_flag(com &Component, flag FlagValue) {
 	this.children << com
 	if mut this.layout is BorderLayout {
 		unsafe {
-			match flag {
+			match flag as int {
 				0 { this.layout.north = com }
 				1 { this.layout.west = com }
 				2 { this.layout.east = com }
@@ -470,6 +541,16 @@ pub fn (mut this Panel) add_child_with_flag(com &Component, flag int) {
 				4 { this.layout.center = com }
 				else {}
 			}
+		}
+	}
+
+	if mut this.layout is CardLayout {
+		unsafe {
+			// TODO
+			com.id = flag as string
+		}
+		if this.children.len == 1 {
+			this.layout.selected = flag as string
 		}
 	}
 }

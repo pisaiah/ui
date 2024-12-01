@@ -2,11 +2,11 @@
 
 # <img src="https://github.com/pisaiah/ui/assets/16439221/14ccf60b-cff4-4f49-884f-d6dc2cc796ef?s=200&v=4" align="" alt="Isaiah's UI" height="64">
 
-![0.0.20](https://img.shields.io/badge/version-0.0.20-white?style=flat)
+![0.0.20](https://img.shields.io/badge/version-0.0.24-white?style=flat)
 ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=flat)
-![vlang](http://img.shields.io/badge/V-0.4.2-%236d8fc5?style=flat)
+![vlang](http://img.shields.io/badge/V-0.4.8-%236d8fc5?style=flat)
 
-Isaiah's cross-platform GUI library for V. Inspired by the syntax of Java's Swing.
+Cross-platform GUI library for V. Inspired by the syntax of Java's Swing.
 
 Example: *([examples/demo/](examples/demo/demo.v))*
 
@@ -47,23 +47,25 @@ import iui as ui
 
 ## Components, Containers, & Layouts
 
-| Components  | Containers  | Panel Layouts |
-| ----------- | ----------  | ------------- |
-| Button      | Window      | Flow Layout   |
-| Label       | Panel       | Border Layout |
-| Panel       | Tabbox      | Box Layout    |
-| Textbox     | HBox        | Grid Layout   |
-| TextField   | VBox        |               | 
-| Menubar     | Modal       |               |
-| MenuItem    | Page        |               |
-| Checkbox    | ButtonGroup |               |
-| Selectbox   | ScrollView  |               |
-| Treeview    | Splitview   |               |
-| ProgressBar | TitleGroup  |               |
-| Hyperlink   | Popup       |               |
-| Image       |             |               |
-| Slider      |             |               |
-| Switch      |             |               |
+| Components    | Containers  | Panel Layouts |
+| ------------- | ----------- | ------------- |
+| Button        | Window      | Flow Layout   |
+| Label         | Panel       | Border Layout |
+| Panel         | Tabbox      | Box Layout    |
+| Textbox       | HBox        | Grid Layout   |
+| TextField     | VBox        | Card Layout   | 
+| Menubar       | Modal       |               |
+| MenuItem      | Page        |               |
+| Checkbox      | ButtonGroup |               |
+| Selectbox     | ScrollView  |               |
+| Treeview      | Splitview   |               |
+| ProgressBar   | TitleGroup  |               |
+| Hyperlink     | Popup       |               |
+| Image         | DesktopPane |               |
+| Slider        | NavPane     |               |
+| Switch        |             |               |
+| InternalFrame |             |               |
+| NavItem       |             |               |
 
 - Components are the elements of the UI (buttons, inputs, etc). 
 - Containers are components that can hold other components (known as children).
@@ -74,7 +76,7 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 ## Themes
 <table>
 <tr><td>Light:<br>- Default, Minty, Ocean, Seven.</td><td><img src="https://github.com/pisaiah/ui/assets/16439221/5b2c9550-d936-4397-8cf4-12a951201a71" height="75"></td></tr>
-<tr><td>Dark:<br>- Dark, Black (with White, Red, & Green accent colors), Seven Dark.</td><td><img src="https://github.com/pisaiah/ui/assets/16439221/33e1d24e-b24a-4cf4-91db-c9771a5b1fd4" height="75"></td></tr>
+<tr><td>Dark:<br>- Dark, Black (with Blue, Red, & Green accent colors), Seven Dark.</td><td><img src="https://github.com/pisaiah/ui/assets/16439221/33e1d24e-b24a-4cf4-91db-c9771a5b1fd4" height="75"></td></tr>
 </table>
 
 ## Included Examples
@@ -96,7 +98,6 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 		<td><a href="examples/Frames/">Internal Frames</a></td>
 	</tr>
 </table>
-
 
 <table>
 	<tr><th>Mines</th><th>(Tic Tac Toe)^2</th><th>Snake</th></tr>
