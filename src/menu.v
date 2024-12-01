@@ -124,15 +124,14 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 
 fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 	if this.uicon != none {
-		txt := this.uicon or { '' }
 		icon_font := ctx.win.extra_map['icon_ttf']
 
 		if os.exists(icon_font) {
-			ctx.draw_text(this.x + 7, y, txt, icon_font, gx.TextCfg{
+			ctx.draw_text(this.x + 7, y, this.uicon, icon_font, gx.TextCfg{
 				size:  ctx.win.font_size
 				color: ctx.theme.text_color
 			})
-			wid := ctx.text_width(txt) + 14
+			wid := ctx.text_width(this.uicon) + 14
 			ctx.draw_text(this.x + wid, y, this.text, ctx.font, gx.TextCfg{
 				size:  ctx.win.font_size
 				color: ctx.theme.text_color
@@ -312,8 +311,7 @@ pub fn MenuItem.new(c MenuItemConfig) &MenuItem {
 	}
 
 	if c.click_fn != none {
-		fns := c.click_fn or { unsafe { nil } }
-		item.subscribe_event('mouse_up', fns)
+		item.subscribe_event('mouse_up', c.click_fn)
 	}
 
 	/*

@@ -38,6 +38,23 @@ pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
 	}
 }
 
+pub fn (mut box Selectbox) popup_show(g &GraphicsContext) {
+	// box.popup.show(box, 0, box.height, g)
+	
+	items_len := box.items.len + box.children.len
+	ph := (items_len * box.sub_height) + items_len
+	
+	wh := g.gg.window_size().height
+	
+	if box.y + ph > wh {
+		box.popup.animate = false
+		box.popup.show(box, 0, -ph, g)
+		return
+	}
+	
+	box.popup.show(box, 0, box.height, g)
+}
+
 // Items -> Children
 pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 	// Set a dropdown animation
@@ -122,11 +139,11 @@ pub fn (mut sb Selectbox) do_pack(ctx &GraphicsContext) {
 
 pub fn (box &Selectbox) get_bg_bord(g &GraphicsContext) (gx.Color, gx.Color) {
 	if box.is_mouse_down {
-		return g.theme.button_bg_click, g.theme.button_border_normal
+		return g.theme.button_bg_click, g.theme.accent_fill_third
 	}
 
 	if is_in(box, g.win.mouse_x, g.win.mouse_y) {
-		return g.theme.button_bg_hover, g.theme.button_border_hover
+		return g.theme.button_bg_hover, g.theme.accent_fill_second
 	}
 	return g.theme.button_bg_normal, g.theme.button_border_normal
 }
@@ -137,7 +154,7 @@ pub fn (mut box Selectbox) draw(ctx &GraphicsContext) {
 
 	if box.is_mouse_down {
 		if !box.popup.shown {
-			box.popup.show(box, 0, box.height, ctx)
+			box.popup_show(ctx)
 		} else {
 			box.popup.hide(ctx)
 		}
@@ -155,7 +172,7 @@ pub fn (mut box Selectbox) draw(ctx &GraphicsContext) {
 
 	if box.popup.x != box.x && box.popup.is_shown(ctx) {
 		box.popup.hide(ctx)
-		box.popup.show(box, 0, box.height, ctx)
+		box.popup_show(ctx)
 	}
 
 	mut win := ctx.win
@@ -229,7 +246,7 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 
 	if si.box != none {
 		// dump('${si.text} ${si.box?.text}')
-		if si.box?.text == si.text {
+		if si.box.text == si.text {
 			ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2, ctx.theme.button_bg_hover)
 			ctx.gg.draw_rect_filled(si.x + 3, si.y + (si.height / 4), 3, (si.height / 2),
 				ctx.theme.accent_fill)
@@ -249,12 +266,11 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 
 fn (mut si SelectItem) draw_text(ctx &GraphicsContext, y int) {
 	if si.uicon != none && ctx.icon_ttf_exists() {
-		txt := si.uicon or { '' }
-		ctx.draw_text(si.x + 10, y, txt, ctx.win.extra_map['icon_ttf'], gx.TextCfg{
+		ctx.draw_text(si.x + 10, y, si.uicon, ctx.win.extra_map['icon_ttf'], gx.TextCfg{
 			size:  ctx.win.font_size
 			color: ctx.theme.text_color
 		})
-		wid := ctx.text_width(txt) + 17
+		wid := ctx.text_width(si.uicon) + 17
 		ctx.draw_text(si.x + wid, y, si.text, ctx.font, gx.TextCfg{
 			size:  ctx.win.font_size
 			color: ctx.theme.text_color

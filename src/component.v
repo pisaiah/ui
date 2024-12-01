@@ -6,6 +6,7 @@ import gx
 
 @[heap]
 pub interface Component {
+	invoke_mouse_down(g &GraphicsContext)
 mut:
 	text          string
 	x             int
@@ -30,7 +31,9 @@ mut:
 	set_bounds(int, int, int, int)
 }
 
-fn (com &Component) str() string {
+// pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
+
+pub fn (com &Component) str() string {
 	return com.type_name() // typeof(com)
 }
 
@@ -154,7 +157,7 @@ pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
 	if !ctx.win.debug_draw {
 		return
 	}
-	txt := com.str().replace('iui.', '')
+	txt := '${com.is_mouse_down} ${com.is_mouse_rele}' // com.str().replace('iui.', '')
 
 	tw := ctx.text_width(txt)
 	tx := com.x + (com.width / 2) - (tw / 2)
@@ -251,6 +254,13 @@ pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 }
 
 pub fn invoke_mouse_down(com &Component, ctx &GraphicsContext) {
+	
+	com.invoke_mouse_down(ctx)
+	
+	/*
+	dump(typeof(com))
+
+	
 	ev := MouseEvent{
 		target: unsafe { com }
 		ctx:    ctx
@@ -258,6 +268,7 @@ pub fn invoke_mouse_down(com &Component, ctx &GraphicsContext) {
 	for f in com.events.event_map['mouse_down'] {
 		f(ev)
 	}
+	*/
 }
 
 pub fn invoke_mouse_up(com &Component, ctx &GraphicsContext) {
@@ -297,6 +308,7 @@ pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
 
 pub interface Container {
 	container_pass_ev bool
+	children      []Component
 }
 
 pub fn invoke_slider_change(com &Slider, ctx &GraphicsContext, value f32) {

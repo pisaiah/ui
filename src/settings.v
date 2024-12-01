@@ -16,6 +16,7 @@ pub mut:
 	uicon             ?string
 	stretch           bool
 	container_pass_ev bool = true
+	padding           int = 16
 }
 
 @[params]
@@ -25,6 +26,7 @@ pub:
 	description string
 	uicon       ?string
 	stretch     bool
+	padding     int = 16
 }
 
 // TODO
@@ -34,14 +36,14 @@ pub fn SettingsCard.new(c SettingsCardConfig) &SettingsCard {
 		desc:    c.description
 		uicon:   c.uicon
 		stretch: c.stretch
+		padding: c.padding
 	}
 }
 
 // TODO: improve icons in .ttf
-pub fn (mut this SettingsCard) draw_uicon(ctx &GraphicsContext, y int) int {
+pub fn (this SettingsCard) draw_uicon(ctx &GraphicsContext, y int) int {
 	txt := this.uicon or { return 0 }
 
-	// icon_font := 'C:\\Windows\\Fonts\\SegoeIcons.ttf'
 	icon_font := ctx.win.extra_map['icon_ttf']
 
 	if os.exists(icon_font) {
@@ -57,7 +59,6 @@ pub fn (mut this SettingsCard) draw_uicon(ctx &GraphicsContext, y int) int {
 
 pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 	margin_side := 8
-	padding := 20
 
 	if this.width <= 0 || this.stretch {
 		nw := this.parent.width - (margin_side * 2)
@@ -69,8 +70,8 @@ pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 	ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 4, ctx.theme.button_bg_normal)
 	ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 4, ctx.theme.textbox_border)
 
-	mut y := this.y + padding
-	mut x := this.x + this.draw_uicon(ctx, y) + padding
+	mut y := this.y + this.padding
+	mut x := this.x + this.draw_uicon(ctx, y) + this.padding
 
 	// Draw Title
 	ctx.draw_text(x, y - 4, this.text, ctx.font, gx.TextCfg{
@@ -88,11 +89,11 @@ pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 	})
 
 	if this.height == 0 {
-		this.height = (padding * 2) + (ctx.line_height * 2)
+		this.height = (this.padding * 2) + (ctx.line_height * 2)
 	}
 
 	cx := this.x + this.width - margin_side
-	cy := this.y + padding
+	cy := this.y + this.padding
 
 	for mut child in this.children {
 		child.draw_with_offset(ctx, cx - child.width, cy)

@@ -35,6 +35,12 @@ pub struct MouseEvent {
 	ComponentEvent // TODO button type, down up, etc.
 }
 
+pub struct MouseEvent2[T] {
+	MouseEvent
+pub mut:
+	target &T
+}
+
 // When user clicks a button, presses Enter in a text field, etc.
 pub struct ActionEvent {
 	ComponentEvent

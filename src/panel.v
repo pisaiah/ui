@@ -67,16 +67,19 @@ fn is_nil(a voidptr) bool {
 
 // North
 fn (mut lay BorderLayout) draw_north(ctx &GraphicsContext, x int, y int, w int) int {
+	
+	mut north := lay.north or { return 0 }
+	
 	if lay.north != none {
-		mut north := lay.north or { unsafe { nil } }
-		north.width = w
-		north.draw_with_offset(ctx, x, y)
+		lay.north.width = w
+		lay.north.draw_with_offset(ctx, x, y)
 		return north.height + lay.vgap
 	}
 	return 0
 }
 
 fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
+	
 	mut x := panel.x + lay.hgap
 	mut y := panel.y + lay.vgap
 	mut cw := panel.width - (lay.hgap * 2)
@@ -92,7 +95,7 @@ fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
 
 		// South
 		if lay.south != none {
-			mut south := lay.south or { unsafe { nil } }
+			mut south := lay.south // or { unsafe { nil } }
 			south.width = cw
 			ch -= south.height
 			south.draw_with_offset(ctx, x, y + ch)
@@ -100,9 +103,10 @@ fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
 		}
 	}
 
+	
 	// East
 	if lay.east != none {
-		mut east := lay.east or { unsafe { nil } }
+		mut east := lay.east // or { unsafe { nil } }
 		east.height = ch
 		cw -= east.width
 		east.draw_with_offset(ctx, x + cw, y)
@@ -111,7 +115,7 @@ fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
 
 	// West
 	if lay.west != none {
-		mut west := lay.west or { unsafe { nil } }
+		mut west := lay.west // or { unsafe { nil } }
 		west.height = ch
 		west.draw_with_offset(ctx, x, y)
 		x += west.width + lay.hgap
@@ -128,7 +132,7 @@ fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
 
 		// South
 		if lay.south != none {
-			mut south := lay.south or { unsafe { nil } }
+			mut south := lay.south // or { unsafe { nil } }
 			south.width = cw
 			ch -= south.height
 			south.draw_with_offset(ctx, x, y + ch)
@@ -138,7 +142,7 @@ fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
 
 	// Center
 	if lay.center != none {
-		mut center := lay.center or { return }
+		mut center := lay.center // or { return }
 		center.height = ch
 		center.width = cw
 		center.draw_with_offset(ctx, x, y)

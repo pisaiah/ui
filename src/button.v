@@ -128,7 +128,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	}
 
 	if btn.icon_info != none {
-		info := btn.icon_info or { return }
+		info := btn.icon_info // or { return }
 
 		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }
 		hei := if btn.icon_height > 0 { btn.icon_height } else { btn.height }
