@@ -46,17 +46,7 @@ pub fn ScrollView.new(c ScrollViewConfig) &ScrollView {
 }
 
 pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
-	scroll_view := &ScrollView{
-		x:           cfg.bounds.x
-		y:           cfg.bounds.y
-		width:       cfg.bounds.width
-		height:      cfg.bounds.height
-		children:    [cfg.view]
-		increment:   cfg.increment
-		always_show: cfg.always_show
-		padding:     cfg.padding
-	}
-	return scroll_view
+	return ScrollView.new(cfg)
 }
 
 // Notes: https://bit.ly/javadoc-JScrollPane-setViewportView-Component
@@ -172,7 +162,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	sth := (scroll * bar_height) / spl_len
 	enh := (cl * bar_height) / spl_len
-	requires_scrollbar := this.always_show || (bar_height - enh) > 0
+	requires_scrollbar := this.always_show || (bar_height - enh - this.padding) > 0
 
 	// Draw Scroll
 	if requires_scrollbar {
@@ -184,11 +174,7 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 
 	ctx.gg.draw_rounded_rect_empty(x, y, wid, height, this.radius, ctx.theme.textbox_border)
 
-	triangle_color := if this.is_mouse_down {
-		ctx.theme.accent_fill_third
-	} else {
-		ctx.theme.scroll_bar_color
-	}
+	triangle_color := ctx.theme.scroll_bar_color
 
 	tx := x + (wid / 2) - 5
 	ctx.gg.draw_triangle_filled(tx, y + 10, tx + 5, y + 5, tx + 10, y + 10, triangle_color)
@@ -248,7 +234,7 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len i
 
 	sth := (scroll * bar_height) / spl_len
 	enh := (cl * bar_height) / spl_len
-	requires_scrollbar := this.always_show || (bar_height - enh) > 0
+	requires_scrollbar := this.always_show || (bar_height - enh - this.padding) > 0
 
 	// Draw Scroll
 	if requires_scrollbar {

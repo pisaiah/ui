@@ -7,6 +7,8 @@ import gx
 pub struct Textbox {
 	Component_A
 pub mut:
+	fg                   ?gx.Color
+	bg                   ?gx.Color
 	lines                []string
 	caret_x              int
 	caret_y              int
@@ -46,6 +48,7 @@ pub fn Textbox.new(c TextboxConfig) &Textbox {
 		sel:   Selection{
 			x0: -1
 		}
+		bg:    none
 	}
 }
 
@@ -56,7 +59,7 @@ fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 
 	cfg := gx.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: this.fg or { ctx.theme.text_color }
 	}
 
 	ctx.gg.set_text_cfg(cfg)
@@ -102,9 +105,11 @@ pub fn invoke_activeline_draw_event(com &Textbox, ctx &GraphicsContext, line int
 	}
 }
 
-fn (mut this Textbox) draw_bg(ctx &GraphicsContext) {
-	ctx.gg.draw_rect_filled(this.x, this.ry, this.width, this.height, ctx.theme.textbox_background)
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, ctx.theme.textbox_border)
+fn (mut box Textbox) draw_bg(ctx &GraphicsContext) {
+	bg := box.bg or { ctx.theme.textbox_background }
+
+	ctx.gg.draw_rect_filled(box.x, box.ry, box.width, box.height, bg)
+	ctx.gg.draw_rect_empty(box.x, box.y, box.width, box.height, ctx.theme.textbox_border)
 }
 
 fn (mut this Textbox) draw(ctx &GraphicsContext) {
@@ -122,7 +127,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	}
 
 	cfg := gx.TextCfg{
-		color: ctx.theme.text_color
+		color: this.fg or { ctx.theme.text_color }
 		size:  ctx.win.font_size + this.fs
 	}
 	ctx.gg.set_text_cfg(cfg)
@@ -166,7 +171,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 
 			wb := ctx.text_width(line[0..this.caret_x].replace('\t', tabr()))
 
-			tc := ctx.theme.text_color
+			tc := this.fg or { ctx.theme.text_color }
 			if this.is_selected {
 				color := if this.blink {
 					gx.rgba(tc.r, tc.g, tc.b, 70)

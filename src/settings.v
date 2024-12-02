@@ -16,7 +16,7 @@ pub mut:
 	uicon             ?string
 	stretch           bool
 	container_pass_ev bool = true
-	padding           int = 16
+	padding           int  = 16
 }
 
 @[params]

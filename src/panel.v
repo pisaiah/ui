@@ -67,9 +67,8 @@ fn is_nil(a voidptr) bool {
 
 // North
 fn (mut lay BorderLayout) draw_north(ctx &GraphicsContext, x int, y int, w int) int {
-	
 	mut north := lay.north or { return 0 }
-	
+
 	if lay.north != none {
 		lay.north.width = w
 		lay.north.draw_with_offset(ctx, x, y)
@@ -79,7 +78,6 @@ fn (mut lay BorderLayout) draw_north(ctx &GraphicsContext, x int, y int, w int) 
 }
 
 fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
-	
 	mut x := panel.x + lay.hgap
 	mut y := panel.y + lay.vgap
 	mut cw := panel.width - (lay.hgap * 2)
@@ -103,7 +101,6 @@ fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
 		}
 	}
 
-	
 	// East
 	if lay.east != none {
 		mut east := lay.east // or { unsafe { nil } }

@@ -40,18 +40,17 @@ pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
 
 pub fn (mut box Selectbox) popup_show(g &GraphicsContext) {
 	// box.popup.show(box, 0, box.height, g)
-	
 	items_len := box.items.len + box.children.len
 	ph := (items_len * box.sub_height) + items_len
-	
+
 	wh := g.gg.window_size().height
-	
+
 	if box.y + ph > wh {
 		box.popup.animate = false
 		box.popup.show(box, 0, -ph, g)
 		return
 	}
-	
+
 	box.popup.show(box, 0, box.height, g)
 }
 

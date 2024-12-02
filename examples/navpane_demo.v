@@ -55,22 +55,20 @@ fn main() {
 
 		np.add_child(item)
 	}
-	
+
 	mut item := ui.NavPaneItem.new(
 		text: 'Hello there!'
 		icon: '\ue713'
 	)
-	
+
 	mut subitem := ui.NavPaneItem.new(
 		text: 'A subitem!'
 		icon: '\ue167'
 	)
-	
+
 	item.add_child(subitem)
-	
+
 	np.add_child(item)
-	
-	
 
 	p.add_child(np, value: ui.borderlayout_west)
 	p.add_child(card_panel, value: ui.borderlayout_center)

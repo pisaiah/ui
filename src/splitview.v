@@ -11,7 +11,7 @@ pub mut:
 	min_percent int = 30
 	h1          int = 50
 	h2          int = 50
-	bar_size    int = 14
+	bar_size    int = 8
 }
 
 @[params]
@@ -85,22 +85,33 @@ pub fn (mut this SplitView) draw(ctx &GraphicsContext) {
 }
 
 fn (mut this SplitView) draw_splitbar(ctx &GraphicsContext, xp int, yp int) {
-	color := ctx.theme.scroll_bar_color
+	color := ctx.theme.button_border_normal
 	ss := this.bar_size
 	ctx.gg.draw_rect_filled(this.x, yp, this.width, ss, ctx.theme.button_bg_normal)
 
-	in_start := ctx.win.mouse_x > xp && ctx.win.mouse_y > yp - 4
-	in_enddd := ctx.win.mouse_x < xp + this.width && ctx.win.mouse_y < yp + ss + 4
+	extra := 5
+
+	in_start := ctx.win.mouse_x > xp && ctx.win.mouse_y >= yp - (extra * 2)
+	in_enddd := ctx.win.mouse_x < xp + this.width && ctx.win.mouse_y <= yp + ss + extra
+
+	mut mouse_down := this.is_mouse_down
+
+	for mut child in this.children {
+		if child.is_mouse_down {
+			mouse_down = true
+		}
+	}
 
 	if in_start && in_enddd {
 		ctx.gg.draw_rect_empty(xp, yp, this.width, ss, ctx.theme.button_border_hover)
-		if this.is_mouse_down {
+
+		if mouse_down {
 			this.is_scroll = true
 		}
 	} else {
 		ctx.gg.draw_rect_empty(xp, yp, this.width, ss, color)
 	}
-	if !this.is_mouse_down {
+	if !mouse_down {
 		this.is_scroll = false
 	}
 
@@ -124,8 +135,8 @@ fn (mut this SplitView) draw_splitbar(ctx &GraphicsContext, xp int, yp int) {
 		thickness: 1
 	}
 
-	ctx.gg.draw_line_with_config(xp, yp + 4, xp + this.width, yp + 4, dl)
-	ctx.gg.draw_line_with_config(xp + 2, yp + 7, xp + this.width, yp + 7, dl)
+	ctx.gg.draw_line_with_config(xp, yp + 2, xp + this.width, yp + 2, dl)
+	ctx.gg.draw_line_with_config(xp + 2, yp + 5, xp + this.width, yp + 5, dl)
 }
 
 fn (mut this SplitView) do_size(y_pos int, diff int) {

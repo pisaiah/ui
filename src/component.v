@@ -274,9 +274,8 @@ pub fn (com &Component_A) invoke_mouse_down(ctx &GraphicsContext) {
 }
 
 pub fn invoke_mouse_down(com &Component, ctx &GraphicsContext) {
-	
 	com.invoke_mouse_down(ctx)
-	
+
 	/*
 	dump(typeof(com))
 
@@ -328,7 +327,7 @@ pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
 
 pub interface Container {
 	container_pass_ev bool
-	children      []Component
+	children          []Component
 }
 
 pub fn invoke_slider_change(com &Slider, ctx &GraphicsContext, value f32) {

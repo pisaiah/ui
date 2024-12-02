@@ -129,7 +129,6 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 
 	if btn.icon_info != none {
 		info := btn.icon_info // or { return }
-
 		wid := if btn.icon_width > 0 { btn.icon_width } else { btn.width }
 		hei := if btn.icon_height > 0 { btn.icon_height } else { btn.height }
 
@@ -194,7 +193,6 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 
 	if has_border && (this.area_filled && bg.a > 200) {
 		// Draw as filled as rounded_rect_empty has issues with a radius
-
 		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, this.border_radius,
 			border)
 	}
@@ -203,7 +201,7 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 		ctx.theme.button_fill_fn(this.x + 1, this.y + 1, this.width - 2, this.height - 2,
 			this.border_radius, bg, ctx)
 	}
-	
+
 	if has_border && (!this.area_filled || bg.a < 200) {
 		ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
 			border)

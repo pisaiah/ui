@@ -126,7 +126,7 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	if app.bar != unsafe { nil } && app.bar.tik < 9 {
 		return true
 	}
-	
+
 	// dump(com.handle_mouse_down(app))
 
 	if mut com is ScrollView {
