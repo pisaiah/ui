@@ -266,7 +266,15 @@ fn (mut app App) make_selectbox_section() {
 		sel.items << (25 * (i + 1)).str() + '%'
 	}
 
-	mut title_box := ui.Titlebox.new(text: 'Selector', children: [sel])
+	mut slid := ui.Slider.new(
+		min: 0
+		max: 100
+		dir: .hor
+	)
+	slid.pack()
+	slid.set_bounds(0, 30, 90, 30)
+
+	mut title_box := ui.Titlebox.new(text: 'Selector/Slider', children: [sel, slid])
 
 	title_box.set_bounds(0, 0, 120, 130)
 	app.pane.add_child(title_box)
