@@ -287,7 +287,7 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 	logo.pack()
 	this.logo = logo
 
-	mut barp := ui.Panel.new(layout: ui.FlowLayout.new(vgap: 1))
+	mut barp := ui.Panel.new(layout: ui.FlowLayout.new(vgap: 4))
 
 	barp.subscribe_event('draw', fn (mut e ui.DrawEvent) {
 		e.target.width = e.target.parent.width

@@ -4,10 +4,10 @@ import gg
 import sync
 
 // import sokol.gfx
-const c_win_width = 1920 // 640 // 1280
-
-const c_win_height = 1080 // 360 // 720
-
+const c_win_width = 1920
+// 640 // 1280
+const c_win_height = 1080
+// 360 // 720
 const c_win_font_size = 30
 const resolution = [c_win_width, c_win_height]
 
@@ -30,7 +30,6 @@ mut:
 	i_video_position f64
 	is_pause         bool
 	rend_params      voidptr
-	//[]MPVRenderParameter
 pub mut:
 	ctx &gg.Context = unsafe { nil }
 
@@ -119,7 +118,7 @@ pub fn (mut mpv MPVPlayer) on_mpv_events() {
 			} else if unsafe { cstring_to_vstring(prop.name) } == 'pause' {
 				if prop.format == C.MPV_FORMAT_STRING {
 					vall := prop.data
-					vs := unsafe {cstring_to_vstring(*vall) }
+					vs := unsafe { cstring_to_vstring(*vall) }
 					mpv.is_pause = vs.contains('yes')
 				}
 			}

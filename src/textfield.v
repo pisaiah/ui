@@ -79,8 +79,8 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 	mid := this.x + (this.width / 2)
 	midy := this.y + (this.height / 2)
 
-	ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 2, bg)
-	ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 2, ctx.theme.textbox_border)
+	// ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 2, bg)
+	// ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 2, ctx.theme.textbox_border)
 
 	// Fluent Design
 	line_color := if click || this.is_selected {
@@ -92,8 +92,14 @@ fn (mut this TextField) draw_background(ctx &GraphicsContext) {
 
 	line_height := if click || this.is_selected { 2 } else { 1 }
 
-	ctx.gg.draw_rect_filled(this.x, this.y + this.height - 1, this.width, line_height,
-		line_color)
+	// ctx.gg.draw_rect_filled(this.x, this.y + this.height - 1, this.width, line_height,
+	//	line_color)
+
+	ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 2, ctx.theme.textbox_border)
+	ctx.gg.draw_rounded_rect_filled(this.x + 1, this.y + 1, this.width - 2, this.height,
+		4, line_color)
+	ctx.gg.draw_rounded_rect_filled(this.x + 1, this.y + 1, this.width - 2, this.height - line_height,
+		4, bg)
 
 	// Detect Click
 	if this.is_mouse_rele {

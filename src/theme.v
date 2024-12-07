@@ -117,7 +117,7 @@ pub fn theme_default() &Theme {
 		dropdown_border:      gx.rgb(224, 224, 224)
 		textbox_background:   gx.white
 		textbox_border:       gx.rgb(230, 230, 230)
-		scroll_track_color:   gx.rgb(238, 238, 238)
+		scroll_track_color:   gx.rgba(238, 238, 238, 230)
 		scroll_bar_color:     gx.rgb(170, 170, 170)
 	}
 }
@@ -146,7 +146,7 @@ pub fn theme_dark() &Theme {
 		dropdown_border:      gx.rgb(0, 0, 0)
 		textbox_background:   gx.rgb(34, 39, 46)
 		textbox_border:       gx.rgb(50, 50, 50)
-		scroll_track_color:   gx.rgba(0, 0, 0, 200)
+		scroll_track_color:   gx.rgba(0, 0, 0, 190)
 		scroll_bar_color:     gx.rgb(170, 170, 170)
 	}
 }

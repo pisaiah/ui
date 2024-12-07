@@ -144,6 +144,18 @@ fn (mut this ScrollView) clamp_scroll_x(total_width_max int) {
 	}
 }
 
+pub fn is_in_bar(com &ScrollView, px int, py int) bool {
+	x := if com.rx == 0 { com.x } else { com.rx }
+	y := if com.ry == 0 { com.y } else { com.ry }
+
+	xx := x + com.width - com.xbar_width
+
+	midx := xx + (com.xbar_width / 2)
+	midy := y + (com.height / 2)
+
+	return abs(midx - px) < (com.xbar_width / 2) && abs(midy - py) < (com.height / 2)
+}
+
 fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len int) {
 	xx := if this.rx != 0 { this.rx } else { this.x }
 	y := if this.rx != 0 { this.ry } else { this.y } + 2

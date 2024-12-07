@@ -78,16 +78,18 @@ fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut t
 		return false
 	}
 
-	if y >= tree.y {
-		ctx.draw_text(xoff + this.height, y + 1, os.base(this.text), ctx.font, cfg)
-		this.draw_icon(ctx, xoff, y)
-	}
-
 	wid := tree.width - (xoff - tree.x) - this.height
 	bounds := Bounds{xoff, y, wid, this.height}
 
 	if is_in_bounds(ctx.win.mouse_x, ctx.win.mouse_y, bounds) {
-		ctx.gg.draw_rect_empty(xoff, y, wid, this.height, ctx.theme.button_border_hover)
+		// ctx.gg.draw_rect_empty(xoff, y, wid, this.height, ctx.theme.button_border_hover)
+		ctx.gg.draw_rounded_rect_filled(tree.x + 4, y, tree.width - 8, this.height, 4,
+			ctx.theme.button_bg_hover)
+	}
+
+	if y >= tree.y {
+		ctx.draw_text(xoff + this.height, y + 1, os.base(this.text), ctx.font, cfg)
+		this.draw_icon(ctx, xoff, y)
 	}
 
 	if is_in_bounds(ctx.win.click_x, ctx.win.click_y, bounds) {

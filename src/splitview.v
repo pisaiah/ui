@@ -44,9 +44,9 @@ pub fn split_view(cfg SplitViewConfig) &SplitView {
 }
 
 // Set height of children in percentage
-pub fn (mut this SplitView) set_heights(h1 int, h2 int) {
-	this.h1 = h1
-	this.h2 = h2
+pub fn (mut sv SplitView) set_heights(h1 int, h2 int) {
+	sv.h1 = h1
+	sv.h2 = h2
 }
 
 // Draw
@@ -63,16 +63,13 @@ pub fn (mut this SplitView) draw(ctx &GraphicsContext) {
 		this.children[1].height = h2 - this.bar_size / 2
 	}
 
-	mut win := ctx.win
 	for mut child in this.children {
 		if child.parent == unsafe { nil } {
 			child.set_parent(this)
 		}
 
-		child.draw_event_fn(mut win, child)
 		child.draw_with_offset(ctx, x_pos, y_pos)
 
-		// child.after_draw_event_fn(mut win, child)
 		y_pos += child.y + child.height
 
 		if height == 0 {

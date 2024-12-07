@@ -159,8 +159,12 @@ fn (com &Switch) draw_background(ctx &GraphicsContext) {
 	bh := com.height * 2
 	h := com.height // - 6
 	y := com.y // + 3
-	ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 16, bg)
-	ctx.gg.draw_rounded_rect_empty(com.x, y, bh, h, 16, border)
+
+	// ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 16, bg)
+	// ctx.gg.draw_rounded_rect_empty(com.x, y, bh, h, 16, border)
+
+	ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 16, border)
+	ctx.gg.draw_rounded_rect_filled(com.x + 1, y + 1, bh - 2, h - 2, 16, bg)
 }
 
 // Draw the text of Switch
@@ -178,8 +182,11 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 fn (com &Switch) draw_circ(o int, g &GraphicsContext) {
 	wid := com.height - (com.cut * 2)
 	x := com.x + o + (com.a * 2)
-	g.gg.draw_rounded_rect_filled(x, com.y + com.cut, wid, wid, 64, g.theme.button_bg_normal)
-	g.gg.draw_rounded_rect_empty(x, com.y + com.cut, wid, wid, 64, g.theme.button_border_normal)
+	// g.gg.draw_rounded_rect_filled(x, com.y + com.cut, wid, wid, 64, g.theme.button_bg_normal)
+	// g.gg.draw_rounded_rect_empty(x, com.y + com.cut, wid, wid, 64, g.theme.button_border_normal)
+
+	g.gg.draw_rounded_rect_filled(x, com.y + com.cut, wid, wid, 64, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(x + 1, com.y + com.cut + 1, wid - 2, wid - 2, 64, g.theme.button_bg_normal)
 }
 
 pub struct SwitchEvent {

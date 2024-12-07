@@ -14,6 +14,7 @@ pub mut:
 	tab_height_active   int
 	tab_height_inactive int
 	compact             bool
+	stretch             bool
 	rows                int
 }
 
@@ -21,12 +22,14 @@ pub mut:
 pub struct TabboxConfig {
 pub:
 	compact bool
+	stretch bool
 }
 
 // Return new Tabbox
 pub fn Tabbox.new(c TabboxConfig) &Tabbox {
 	return &Tabbox{
 		compact: c.compact
+		stretch: c.stretch
 		text:    ''
 	}
 }
@@ -62,6 +65,9 @@ pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
 }
 
 pub fn (tb &Tabbox) get_tab_width(ctx &GraphicsContext, key string) int {
+	if tb.stretch {
+		return tb.width / tb.kids.len
+	}
 	if tb.compact {
 		return ctx.text_width(key) + 15
 	}
@@ -78,21 +84,21 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 	size := tb.get_tab_width(ctx, key)
 	sizh := ctx.gg.text_height(key) / 2
 
-	tsize := if tb.closable { size + 15 } else { size }
+	tsize := if tb.closable && !tb.stretch { size + 15 } else { size }
+
+	ty := (theig / 2) - sizh
 
 	if tb.active_tab == key_ {
 		tab_color := tb.get_tab_color(ctx, is_active)
-		ctx.gg.draw_rect_empty(tb.x + mx, tb.y + my, tsize, theig, ctx.theme.button_border_normal)
-		ctx.gg.draw_rect_filled(tb.x + mx, tb.y + my + 1, tsize - 1, theig, tab_color)
-	} else {
-		// xx := tb.x + mx + tsize
-		// yy := tb.y + my
-		// ctx.gg.draw_line(xx, yy, xx, yy + theig, ctx.theme.button_border_normal)
+		xx := tb.x + mx
+		r := 4
+		ctx.draw_rounded_rect_filled_top(xx - 1, tb.y + my, tsize, theig, r, ctx.theme.button_border_normal)
+		ctx.draw_rounded_rect_filled_top(xx, tb.y + my, tsize - 2, theig - 1, r, ctx.theme.accent_fill)
+		ctx.draw_rounded_rect_filled_top(xx, tb.y + my + 2, tsize - 2, theig - 2, r, tab_color)
 	}
 
 	// Draw Button Text
 	tx := tb.x + mx + 8
-	ty := (theig / 2) - sizh
 	ctx.draw_text(tx, tb.y + my + ty, key, ctx.font, gx.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
@@ -112,18 +118,13 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 		}
 	}
 
-	if tb.active_tab == key_ {
-		line_x := if mx == 0 { tb.x + mx } else { tb.x + mx - 1 }
-		ctx.gg.draw_rect_filled(line_x, tb.y + my, tsize, 2, ctx.theme.accent_fill)
-	}
-
 	return tsize
 }
 
 pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsize int, theig int, sizh int, key_ string) {
 	c_s := ctx.text_width('x')
 	csy := ctx.line_height
-	c_x := (tb.x + mx + tsize) - c_s - 4
+	c_x := (tb.x + mx + tsize) - c_s - 6
 	c_y := tb.y + my + (theig / 2) - (sizh / 2)
 
 	x_size := 6
@@ -147,11 +148,11 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 	if hover {
 		offset := 3
 		widhei := x_size + (offset * 2)
-		ctx.gg.draw_rect_filled(c_x - offset, c_y - offset, widhei, widhei, ctx.theme.button_border_hover)
-		ctx.gg.draw_rect_empty(c_x - offset, c_y - offset, widhei, widhei, gx.red)
+		ctx.draw_rounded_rect(c_x - offset, c_y - offset, widhei, widhei, 8, ctx.theme.accent_fill_third,
+			ctx.theme.accent_fill_second)
 	}
 
-	color := ctx.theme.text_color
+	color := if hover { ctx.theme.accent_text } else { ctx.theme.text_color }
 
 	ctx.gg.draw_line(c_x, c_y, c_x + x_size, c_y + x_size, color)
 	ctx.gg.draw_line(c_x, c_y + x_size, c_x + x_size, c_y, color)

@@ -149,13 +149,13 @@ fn (mut app App) icon_btn(data []u8) &ui.Button {
 
 // Make a 'Theme' menu item to select themes
 fn create_theme_menu() &ui.MenuItem {
-	mut theme_menu := ui.menu_item(
+	mut theme_menu := ui.MenuItem.new(
 		text: 'Themes'
 	)
 
 	themes := ui.get_all_themes()
 	for theme in themes {
-		item := ui.menu_item(
+		item := ui.MenuItem.new(
 			text:           theme.name
 			click_event_fn: theme_click
 		)
@@ -281,7 +281,6 @@ fn (mut app App) make_button_section() {
 	// btn.icon = -2
 	// btn.icon_width = 0
 	// btn.icon_height = 1
-
 	mut btn2 := ui.Button.new(
 		text:        'Open Page'
 		bounds:      ui.Bounds{0, 38, 130, 30}
@@ -301,7 +300,7 @@ fn (mut app App) make_button_section() {
 
 fn (mut app App) make_tab_section() {
 	mut tb := ui.Tabbox.new(
-		compact: true
+		stretch: true
 	)
 	tb.set_bounds(2, 2, 155, 140)
 
@@ -323,18 +322,17 @@ fn (mut app App) make_tab_section() {
 
 // Make a 'Help' menu item
 fn create_help_menu() &ui.MenuItem {
-	help_menu := ui.menu_item(
+	help_menu := ui.MenuItem.new(
 		text:     'Help'
 		children: [
-			ui.menu_item(
+			ui.MenuItem.new(
 				text:  'Item 1'
 				uicon: '\ue946'
 			),
-			ui.menu_item(
+			ui.MenuItem.new(
 				text: 'Item 2'
-				// click_event_fn: menu_click
 			),
-			ui.menu_item(
+			ui.MenuItem.new(
 				text:  'About iUI'
 				uicon: '\ue946'
 			),
@@ -342,6 +340,8 @@ fn create_help_menu() &ui.MenuItem {
 	)
 	return help_menu
 }
+
+// click_event_fn: menu_click
 
 // Create the tree demo
 fn create_tree(window &ui.Window) &ui.Tree2 {

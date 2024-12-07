@@ -43,8 +43,13 @@ pub fn (bar &Progressbar) get_val() f32 {
 pub fn (mut bar Progressbar) draw(ctx &GraphicsContext) {
 	val := bar.get_val()
 	wid := bar.width * (0.01 * val)
-	ctx.gg.draw_rect_filled(bar.x, bar.y, wid, bar.height, ctx.theme.accent_fill)
-	ctx.gg.draw_rect_empty(bar.x, bar.y, bar.width, bar.height, ctx.theme.button_border_normal)
+
+	// ctx.gg.draw_rect_filled(bar.x, bar.y, wid, bar.height, ctx.theme.accent_fill)
+	// ctx.gg.draw_rect_empty(bar.x, bar.y, bar.width, bar.height, ctx.theme.button_border_normal)
+
+	ctx.gg.draw_rounded_rect_filled(bar.x, bar.y, bar.width, bar.height, 4, ctx.theme.button_border_normal)
+	ctx.gg.draw_rounded_rect_filled(bar.x + 1, bar.y + 1, wid - 2, bar.height - 2, 4,
+		ctx.theme.accent_fill)
 
 	c := if wid > bar.width / 2 { ctx.theme.accent_text } else { ctx.theme.text_color }
 

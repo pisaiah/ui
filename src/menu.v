@@ -175,7 +175,8 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		ws := ctx.gg.window_size()
 		ctx.gg.scissor_rect(this.x, this.y + 26, ws.width, open_height)
 	}
-	ctx.gg.draw_rect_filled(cx, by, this.open_width, open_height - this.ah, ctx.theme.dropdown_background)
+	ctx.gg.draw_rounded_rect_filled(cx, by, this.open_width, open_height - this.ah, menu_item_radius,
+		ctx.theme.dropdown_background)
 
 	mut hei := 0
 	mut wi := 100
@@ -208,7 +209,7 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		item.width = wi
 	}
 	this.open_width = wi
-	ctx.gg.draw_rect_empty(cx, by, wi, hei - this.ah, ctx.theme.dropdown_border)
+	ctx.gg.draw_rounded_rect_empty(cx, by, wi, hei - this.ah, menu_item_radius, ctx.theme.dropdown_border)
 }
 
 fn (mut this Menubar) draw(ctx &GraphicsContext) {

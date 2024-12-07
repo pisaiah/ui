@@ -378,6 +378,8 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		cfg.title
 	}
 
+	sample_count := $if aa ? { 2 } $else { 0 }
+
 	win.gg = gg.new_context(
 		bg_color:      win.theme.background
 		width:         cfg.width
@@ -390,7 +392,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		font_path:     cfg.font_path
 		font_size:     cfg.font_size
 		ui_mode:       cfg.ui_mode
-		scale:         2
+		sample_count:  sample_count
 	)
 	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {

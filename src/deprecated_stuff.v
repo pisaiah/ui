@@ -1,5 +1,6 @@
 module iui
 
+/*
 // deprecated stuff for removal
 @[deprecated: 'Use Slider.new']
 pub fn slider(cfg SliderConfig) &Slider {
@@ -30,6 +31,7 @@ pub fn select_box(cfg SelectboxConfig) &Selectbox {
 pub fn menu_bar(cfg MenubarConfig) &Menubar {
 	return &Menubar{}
 }
+*/
 
 @[deprecated: 'Use Button.new']
 pub fn button(cfg ButtonConfig) &Button {
