@@ -2,10 +2,122 @@
 #include <stdio.h>
 #include <wingdi.h>
 
+#include <commctrl.h> // Include this header for DefSubclassProc
+
 // Note: TCC does not have timeapi.h
 #ifdef __V_GCC__
 #include <timeapi.h> 
 #endif
+
+//
+// Borderless Window API
+//
+static int borderless = 0;
+static WNDPROC originalWindowProc;
+static iui__Window* wind;
+
+
+#define BUTTON_CLOSE 1
+
+LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+	switch (uMsg) {
+		case WM_CREATE: {
+			CreateWindow("BUTTON", NULL, WS_VISIBLE | WS_CHILD, 760, 10, 30, 30, hwnd, (HMENU)BUTTON_CLOSE, NULL, NULL);
+			break;
+		}
+		case WM_PAINT: {
+			if (borderless == 0) {
+				CreateWindow("BUTTON", NULL, WS_VISIBLE | WS_CHILD, 760, 10, 30, 30, hwnd, (HMENU)BUTTON_CLOSE, NULL, NULL);
+			}
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hwnd, &ps); // Draw the close button
+			RECT rect = {760, 10, 790, 40}; 
+			DrawFrameControl(hdc, &rect, DFC_CAPTION, DFCS_CAPTIONCLOSE); // Draw the minimize button 
+			//rect.left = 720; rect.right = 750;
+			//DrawFrameControl(hdc, &rect, DFC_CAPTION, DFCS_CAPTIONMIN); // Draw the maximize button
+			//rect.left = 680; rect.right = 710; 
+			//DrawFrameControl(hdc, &rect, DFC_CAPTION, DFCS_CAPTIONMAX); 
+			EndPaint(hwnd, &ps);
+		}
+		case WM_NCHITTEST: {
+            LRESULT hit = originalWindowProc(hwnd, uMsg, wParam, lParam);
+            if (hit == HTCLIENT) {
+                POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+                ScreenToClient(hwnd, &pt);
+                
+				// TODO: Check for our menubar
+				if (pt.y < 30) { // Make the top 30 pixels draggable
+					if (iui_check_for_menuitem(wind, pt.x, pt.y)) {
+						break;
+					}
+                    return HTCAPTION;
+                }
+            }
+            return hit;
+        }
+		case WM_GETMINMAXINFO: {
+            MINMAXINFO* mmi = (MINMAXINFO*)lParam;
+            RECT workArea;
+            SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+           //  mmi->ptMaxPosition.x = workArea.left;
+            mmi->ptMaxPosition.y = workArea.top;
+            // mmi->ptMaxSize.x = workArea.right - workArea.left;
+            mmi->ptMaxSize.y = workArea.bottom - workArea.top + 6;
+            return 0;
+        }
+		case WM_NCRBUTTONUP: { // Display the system menu at the cursor position
+			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+			HMENU hMenu = GetSystemMenu(hwnd, FALSE);
+			if (hMenu) {
+				TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, NULL); 
+			}
+		}
+		case WM_SYSCOMMAND: {
+            // Handle system menu commands
+            if ((wParam & 0xFFF0) == SC_CLOSE) {
+                PostMessage(hwnd, WM_CLOSE, 0, 0);
+            } else if ((wParam & 0xFFF0) == SC_MINIMIZE) {
+                ShowWindow(hwnd, SW_MINIMIZE);
+            } else if ((wParam & 0xFFF0) == SC_MAXIMIZE) {
+                ShowWindow(hwnd, IsZoomed(hwnd) ? SW_RESTORE : SW_MAXIMIZE);
+            } else {
+                return DefWindowProc(hwnd, uMsg, wParam, lParam);
+            }
+        }
+		
+		case WM_NCCALCSIZE: {
+			if (wParam == TRUE) {
+				NCCALCSIZE_PARAMS* pncsp = (NCCALCSIZE_PARAMS*)lParam;
+				pncsp->rgrc[0].top -= 6; // Adjust the top border
+			}
+			break;
+		} 
+		default:
+			return originalWindowProc(hwnd, uMsg, wParam, lParam);
+	}
+	return originalWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+// Modify the window style to make it borderless
+void win_make_borderless(iui__Window* winn) {
+	if (borderless == 1) {
+		return;
+	}
+	
+	wind = winn;
+	HWND hwnd = (HWND)sapp_win32_get_hwnd();
+	LONG style = GetWindowLong(hwnd, GWL_STYLE);
+	style &= ~(WS_CAPTION | WS_THICKFRAME);
+	style |= WS_THICKFRAME;
+
+	SetWindowLong(hwnd, GWL_STYLE, style);
+	SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+	originalWindowProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR) CustomWindowProc);
+	SetWindowPos(hwnd, NULL, 0, 0, sapp_width() + 13, sapp_height() + 28, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+
+	borderless = 1;
+}
+// Borderless api end
 
 int i_sleepy(int val) {
     timeBeginPeriod(val);

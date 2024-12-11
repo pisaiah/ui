@@ -10,7 +10,7 @@ pub fn get_system_theme() &Theme {
 
 const included_themes = [theme_default(), theme_dark(), theme_dark_red(),
 	theme_dark_green(), theme_minty(), theme_ocean(), theme_seven(),
-	theme_seven_dark()]
+	theme_seven_dark(), theme_dark_rgb()]
 
 pub fn get_all_themes() []&Theme {
 	return included_themes
@@ -205,13 +205,7 @@ pub fn theme_dark_green() &Theme {
 }
 
 // Dark RGB
-/*
-pub fn theme_dark_rgb() ?&Theme {
-
-	$if emscripten {
-		return none
-	}
-
+pub fn theme_dark_rgb() &Theme {
 	mut th := theme_dark()
 	th.name = 'Dark (RGB)'
 	th.accent_text = gx.black
@@ -219,86 +213,46 @@ pub fn theme_dark_rgb() ?&Theme {
 	th.accent_fill_second = gx.rgb(200, 0, 0)
 	th.accent_fill_third = gx.rgb(200, 0, 0)
 	th.setup_fn = rgb_setup
-	
 	return th
 }
 
-pub fn rgb_menu_bar_fill_fn(x1 int, y int, w int, h int, ctx &GraphicsContext) {
-	ctx.gg.draw_image_by_id(x1, y, w, h + 1, ctx.icon_cache['seven_dark-menu'])
-	
-	mut theme := ctx.win.theme
-	
-	if theme.accent_fill.r < 255 {
-		theme.accent_fill.r += 1
-	}
-	
-}
-
 fn darker(c gx.Color, mut theme &Theme) {
-    f1 := .8
+	f1 := .8
 	f2 := .6
 	theme.accent_fill_second.r = u8(f32(c.r) * f1)
 	theme.accent_fill_second.g = u8(f32(c.g) * f1)
-	theme.accent_fill_second.b =  u8(f32(c.b) * f1)
+	theme.accent_fill_second.b = u8(f32(c.b) * f1)
 	theme.accent_fill_third.r = u8(f32(c.r) * f2)
 	theme.accent_fill_third.g = u8(f32(c.g) * f2)
-	theme.accent_fill_third.b =  u8(f32(c.b) * f2)
-	
+	theme.accent_fill_third.b = u8(f32(c.b) * f2)
 	theme.scroll_bar_color.r = u8(f32(c.r) * f2)
 	theme.scroll_bar_color.g = u8(f32(c.g) * f2)
-	theme.scroll_bar_color.b =  u8(f32(c.b) * f2)
+	theme.scroll_bar_color.b = u8(f32(c.b) * f2)
 }
 
 pub fn rgb_setup(mut win Window) {
-	win.theme.accent_fill = gx.rgb(100, 0, 50)
-
-	go animate_colors(mut win)
+	win.theme.accent_fill = gx.rgb(0, 0, 0)
+	win.subscribe_event('draw', rgb_animate_colors)
 }
 
-fn animate_colors(mut win Window) {
-	mut th := win.graphics_context.theme
-	sleep := 10
-	
-    for {
-		if th.name != 'Dark (RGB)' {
-			break
-		}
-        // Transition from red to yellow
-        for th.accent_fill.g < 255 {
-			th.accent_fill.g++
-			darker(th.accent_fill, mut th)
-            time.sleep(sleep * time.millisecond)
-        }
-        // Transition from yellow to green
-        for th.accent_fill.r > 0 {
-            th.accent_fill.r--
-			darker(th.accent_fill, mut th)
-            time.sleep(sleep * time.millisecond)
-        }
-        // Transition from green to cyan
-        for th.accent_fill.b < 255 {
-            th.accent_fill.b++
-			darker(th.accent_fill, mut th)
-            time.sleep(sleep * time.millisecond)
-        }
-        // Transition from cyan to blue
-        for th.accent_fill.g > 0 {
-            th.accent_fill.g--
-			darker(th.accent_fill, mut th)
-            time.sleep(sleep * time.millisecond)
-        }
-        // Transition from blue to magenta
-        for th.accent_fill.r < 255 {
-            th.accent_fill.r++
-			darker(th.accent_fill, mut th)
-            time.sleep(sleep * time.millisecond)
-        }
-        // Transition from magenta to red
-        for th.accent_fill.b > 0 {
-            th.accent_fill.b--
-			darker(th.accent_fill, mut th)
-            time.sleep(sleep * time.millisecond)
-        }
-    }
+fn rgb_animate_colors(mut e WindowDrawEvent) {
+	mut theme_pointer := e.win.graphics_context.theme
+	next_rgb_color(mut theme_pointer)
 }
-*/
+
+fn next_rgb_color(mut th Theme) {
+	if th.accent_fill.g < 255 && th.accent_fill.r == 255 && th.accent_fill.b == 0 {
+		th.accent_fill.g++
+	} else if th.accent_fill.g == 255 && th.accent_fill.r > 0 && th.accent_fill.b == 0 {
+		th.accent_fill.r--
+	} else if th.accent_fill.g == 255 && th.accent_fill.r == 0 && th.accent_fill.b < 255 {
+		th.accent_fill.b++
+	} else if th.accent_fill.g > 0 && th.accent_fill.r == 0 && th.accent_fill.b == 255 {
+		th.accent_fill.g--
+	} else if th.accent_fill.g == 0 && th.accent_fill.r < 255 && th.accent_fill.b == 255 {
+		th.accent_fill.r++
+	} else if th.accent_fill.g == 0 && th.accent_fill.r == 255 && th.accent_fill.b > 0 {
+		th.accent_fill.b--
+	}
+	darker(th.accent_fill, mut th)
+}

@@ -9,6 +9,20 @@ module iui
 pub struct Event {
 }
 
+pub struct WindowEvent {
+	Event
+pub:
+	win &Window
+}
+
+pub struct WindowThemeChangeEvent {
+	WindowEvent
+}
+
+pub struct WindowDrawEvent {
+	WindowEvent
+}
+
 pub struct ComponentEvent {
 	Event
 pub mut:

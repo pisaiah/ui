@@ -23,6 +23,25 @@ pub mut:
 	animate bool = true
 }
 
+// Function for Win32 Immersive Title bar
+@[export: 'iui_check_for_menuitem']
+fn (mut w Window) check_for_menuitem(x int, y int) bool {
+	if isnil(w.bar) {
+		return false
+	}
+
+	// TODO: process sokol event here
+	w.mouse_x = x
+	w.mouse_y = y
+
+	for child in w.bar.children {
+		if is_in(child, x, y) {
+			return true
+		}
+	}
+	return false
+}
+
 pub fn (mut this Menubar) set_animate(val bool) {
 	this.animate = val
 }

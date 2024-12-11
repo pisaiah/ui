@@ -141,6 +141,8 @@ pub mut:
 	sleep_if_no_evnt bool = true
 	second_pass      u8
 	tooltip          string
+	event_map        map[string][]fn (voidptr)
+	custom_titlebar  bool
 }
 
 fn (win &Window) draw_tooltip(ctx &GraphicsContext) {
@@ -202,14 +204,15 @@ pub fn window(c &WindowConfig) &Window {
 @[heap; params]
 pub struct WindowConfig {
 pub:
-	font_path string = default_font()
-	font_size int    = 16
-	ui_mode   bool
-	user_data voidptr
-	title     string
-	width     int
-	height    int
-	theme     &Theme = theme_default()
+	font_path       string = default_font()
+	font_size       int    = 16
+	ui_mode         bool
+	user_data       voidptr
+	title           string
+	width           int
+	height          int
+	theme           &Theme = theme_default()
+	custom_titlebar bool
 }
 
 pub fn (mut win Window) run() {
@@ -224,9 +227,10 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		config:           cfg
 		font_size:        cfg.font_size
 		graphics_context: unsafe { nil }
+		custom_titlebar:  cfg.custom_titlebar
 	}
 
-	blank_draw_event_fn(mut win, &Component_A{})
+	// blank_draw_event_fn(mut win, &Component_A{})
 
 	txt := $if emscripten ? {
 		'canvas'
@@ -274,6 +278,42 @@ pub fn (mut win Window) set_theme(theme Theme) {
 	theme.setup_fn(mut win)
 
 	win.gg.set_bg_color(theme.background)
+	win.invoke_theme_change_event()
+}
+
+pub fn (win &Window) invoke_theme_change_event() {
+	ev := WindowThemeChangeEvent{
+		win: win
+	}
+	for f in win.event_map['theme_change'] {
+		f(ev)
+	}
+}
+
+fn C.win_make_borderless(w &Window)
+
+// Borderless Window support
+pub fn (win &Window) win32_make_borderless() {
+	$if windows {
+		C.win_make_borderless(win)
+	}
+}
+
+pub fn (win &Window) invoke_draw_event() {
+	if win.event_map['draw'].len == 0 {
+		return
+	}
+
+	ev := WindowDrawEvent{
+		win: win
+	}
+	for f in win.event_map['draw'] {
+		f(ev)
+	}
+}
+
+pub fn (mut com Window) subscribe_event(val string, f fn (voidptr)) {
+	com.event_map[val] << f
 }
 
 // GG does not init_sokol_image for images loaded after gg_init_sokol_window
@@ -333,6 +373,11 @@ fn (mut app Window) draw() {
 		app.graphics_context.calculate_line_height()
 	}
 
+	if app.custom_titlebar {
+		// Testing
+		app.win32_make_borderless()
+	}
+
 	if app.components.len == 1 {
 		if app.components[0] is Container || app.components[0] is ScrollView {
 			// Content Pane
@@ -353,6 +398,8 @@ fn (mut app Window) draw() {
 			}
 		}
 	}
+
+	app.invoke_draw_event()
 
 	// Draw components
 	if app.components.len > 0 {
