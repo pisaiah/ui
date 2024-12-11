@@ -11,7 +11,7 @@ fn main() {
 		width:  240
 		height: 280
 	)
-	win.set_theme(ui.theme_seven_dark())
+	win.set_theme(ui.theme_dark())
 
 	mut top := ui.Panel.new()
 

@@ -16,6 +16,13 @@ pub mut:
 	target &Component
 }
 
+pub struct ComponentEventGeneric[T] {
+	Event
+pub mut:
+	ctx    &GraphicsContext
+	target &T
+}
+
 pub fn (e &ComponentEvent) get_target[T]() &T {
 	mut tar := e.target
 

@@ -70,8 +70,9 @@ fn (mut this TreeNode) draw_icon(ctx &GraphicsContext, x int, y int) {
 
 fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut tree Tree2) bool {
 	cfg := gx.TextCfg{
-		color: ctx.theme.text_color
-		size:  ctx.font_size
+		color:          ctx.theme.text_color
+		size:           ctx.font_size
+		vertical_align: .middle
 	}
 
 	if y > tree.y + tree.height {
@@ -88,7 +89,9 @@ fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut t
 	}
 
 	if y >= tree.y {
-		ctx.draw_text(xoff + this.height, y + 1, os.base(this.text), ctx.font, cfg)
+		ctx.draw_text_ofset(xoff + this.height, y, 0, this.height / 2, os.base(this.text),
+			cfg)
+
 		this.draw_icon(ctx, xoff, y)
 	}
 

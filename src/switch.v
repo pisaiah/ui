@@ -7,9 +7,23 @@ pub struct Switch {
 	Component_A
 pub mut:
 	text     string
-	a        int
 	bind_val &bool = unsafe { nil }
 	cut      int   = 4
+	thumb_x  int
+}
+
+pub fn (mut s Switch) get_thumb_x(g &GraphicsContext) int {
+	if s.is_selected && s.thumb_x < s.height + s.cut {
+		s.thumb_x += 2
+		g.refresh_ui()
+	}
+
+	if !s.is_selected && s.thumb_x > s.cut {
+		s.thumb_x -= 2
+		g.refresh_ui()
+	}
+
+	return s.x + s.thumb_x
 }
 
 pub fn (mut s Switch) bind_to(val &bool) {
@@ -44,7 +58,7 @@ pub fn Switch.new(cf SwitchConfig) &Switch {
 		width:       cf.bounds.width
 		height:      cf.bounds.height
 		is_selected: cf.selected
-		a:           if cf.selected { -1 } else { 0 }
+		thumb_x:     0
 	}
 }
 
@@ -108,63 +122,33 @@ pub fn (mut com Switch) draw(ctx &GraphicsContext) {
 		}
 	}
 
-	if com.a == -1 {
-		com.a = com.height
+	if com.thumb_x == 0 {
+		com.thumb_x = if com.is_selected { com.height + com.cut } else { com.cut }
 	}
 
-	// Draw checkmark
-	if com.is_selected {
-		max := com.height - (com.cut * 3)
-
-		if com.a < max {
-			com.a += 2
-			mut win := ctx.win
-			win.refresh_ui()
-		}
-		if com.a > max {
-			com.a = max
-		}
-		com.draw_circ(0, ctx)
-	} else {
-		if com.a > 0 {
-			com.a -= 2
-			mut win := ctx.win
-			win.refresh_ui()
-		}
-		if com.a < 0 {
-			com.a = 0
-		}
-		com.draw_circ(com.cut, ctx)
-	}
+	// Draw thumb/handle
+	tx := com.get_thumb_x(ctx)
+	wid := com.height - com.cut * 2
+	ctx.gg.draw_rounded_rect_filled(tx, com.y + com.cut, wid, wid, 64, ctx.theme.button_border_normal)
+	ctx.gg.draw_rounded_rect_filled(tx + 1, com.y + com.cut + 1, wid - 2, wid - 2, 64,
+		ctx.theme.button_bg_normal)
 
 	// Draw text
 	com.draw_text(ctx)
 }
 
 // Draw background & border of Switch
-fn (com &Switch) draw_background(ctx &GraphicsContext) {
-	half_wid := com.width / 2
-	half_hei := com.height / 2
+fn (sw &Switch) draw_background(ctx &GraphicsContext) {
+	is_hover := is_in(sw, ctx.win.mouse_x, ctx.win.mouse_y)
 
-	mid := com.x + half_wid
-	midy := com.y + half_hei
+	bg := sw.get_background(is_hover, ctx)
+	border := sw.get_border(is_hover, ctx)
 
-	is_hover_x := abs(mid - ctx.win.mouse_x) < half_wid
-	is_hover_y := abs(midy - ctx.win.mouse_y) < half_hei
-	is_hover := is_hover_x && is_hover_y
+	bh := sw.height * 2
+	h := sw.height
 
-	bg := com.get_background(is_hover, ctx)
-	border := com.get_border(is_hover, ctx)
-
-	bh := com.height * 2
-	h := com.height // - 6
-	y := com.y // + 3
-
-	// ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 16, bg)
-	// ctx.gg.draw_rounded_rect_empty(com.x, y, bh, h, 16, border)
-
-	ctx.gg.draw_rounded_rect_filled(com.x, y, bh, h, 16, border)
-	ctx.gg.draw_rounded_rect_filled(com.x + 1, y + 1, bh - 2, h - 2, 16, bg)
+	ctx.gg.draw_rounded_rect_filled(sw.x, sw.y, bh, h, 16, border)
+	ctx.gg.draw_rounded_rect_filled(sw.x + 1, sw.y + 1, bh - 2, h - 2, 16, bg)
 }
 
 // Draw the text of Switch
@@ -179,26 +163,20 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 	})
 }
 
-fn (com &Switch) draw_circ(o int, g &GraphicsContext) {
-	wid := com.height - (com.cut * 2)
-	x := com.x + o + (com.a * 2)
-	// g.gg.draw_rounded_rect_filled(x, com.y + com.cut, wid, wid, 64, g.theme.button_bg_normal)
-	// g.gg.draw_rounded_rect_empty(x, com.y + com.cut, wid, wid, 64, g.theme.button_border_normal)
-
-	g.gg.draw_rounded_rect_filled(x, com.y + com.cut, wid, wid, 64, g.theme.button_border_normal)
-	g.gg.draw_rounded_rect_filled(x + 1, com.y + com.cut + 1, wid - 2, wid - 2, 64, g.theme.button_bg_normal)
+fn (sw &Switch) draw_circ(o int, g &GraphicsContext) {
 }
 
 pub struct SwitchEvent {
-	ComponentEvent
+	ComponentEventGeneric[Switch]
 }
 
-pub fn invoke_switch(com &Switch, ctx &GraphicsContext) {
+pub fn invoke_switch(sw &Switch, ctx &GraphicsContext) {
 	ev := SwitchEvent{
-		target: com
+		target: sw
 		ctx:    ctx
 	}
-	for f in com.events.event_map['change'] {
+
+	for f in sw.events.event_map['change'] {
 		f(ev)
 	}
 }
