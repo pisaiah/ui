@@ -17,10 +17,19 @@ const menu_item_radius = 4
 pub struct Menubar {
 	Component_A
 pub mut:
-	tik     int = 99
-	padding int
-	ai      int
-	animate bool = true
+	tik        int = 99
+	padding    int
+	margin_top int
+	ai         int
+	animate    bool = true
+}
+
+fn (bar &Menubar) get_items_width() int {
+	mut x := bar.padding / 2
+	for item in bar.children {
+		x += item.width
+	}
+	return x
 }
 
 // Function for Win32 Immersive Title bar
@@ -34,11 +43,22 @@ fn (mut w Window) check_for_menuitem(x int, y int) bool {
 	w.mouse_x = x
 	w.mouse_y = y
 
+	w.click_x = x
+	w.click_y = y
+
 	for child in w.bar.children {
 		if is_in(child, x, y) {
 			return true
 		}
 	}
+
+	if w.custom_controls != none {
+		if is_in(w.custom_controls.p, x, y) {
+			w.custom_controls.p.is_mouse_down = true
+			return true
+		}
+	}
+
 	return false
 }
 
@@ -235,15 +255,16 @@ fn (mut this Menubar) draw(ctx &GraphicsContext) {
 	wid := if this.width > 0 { this.width } else { gg.window_size().width }
 
 	half_pad := this.padding / 2
-	this.height = 26 + this.padding
+	this.height = 26 + this.padding + this.margin_top
 
-	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26 + this.padding, ctx)
+	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26 + this.padding + this.margin_top,
+		ctx)
 
 	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
 	mut x := this.x + 1
 	for mut item in this.children {
 		item.set_parent(this)
-		item.draw_with_offset(ctx, x + half_pad, this.y + half_pad)
+		item.draw_with_offset(ctx, x + half_pad, this.y + half_pad + this.margin_top)
 		x += item.width
 	}
 }

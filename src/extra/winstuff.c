@@ -22,22 +22,22 @@ static iui__Window* wind;
 LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
 	switch (uMsg) {
 		case WM_CREATE: {
-			CreateWindow("BUTTON", NULL, WS_VISIBLE | WS_CHILD, 760, 10, 30, 30, hwnd, (HMENU)BUTTON_CLOSE, NULL, NULL);
+			//CreateWindow("BUTTON", NULL, WS_VISIBLE | WS_CHILD, 760, 10, 30, 30, hwnd, (HMENU)BUTTON_CLOSE, NULL, NULL);
 			break;
 		}
 		case WM_PAINT: {
-			if (borderless == 0) {
-				CreateWindow("BUTTON", NULL, WS_VISIBLE | WS_CHILD, 760, 10, 30, 30, hwnd, (HMENU)BUTTON_CLOSE, NULL, NULL);
-			}
-			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hwnd, &ps); // Draw the close button
-			RECT rect = {760, 10, 790, 40}; 
-			DrawFrameControl(hdc, &rect, DFC_CAPTION, DFCS_CAPTIONCLOSE); // Draw the minimize button 
+			//if (borderless == 0) {
+			//	CreateWindow("BUTTON", NULL, WS_VISIBLE | WS_CHILD, 760, 10, 30, 30, hwnd, (HMENU)BUTTON_CLOSE, NULL, NULL);
+			//}
+			//PAINTSTRUCT ps;
+			//HDC hdc = BeginPaint(hwnd, &ps); // Draw the close button
+			//RECT rect = {760, 10, 790, 40}; 
+			//DrawFrameControl(hdc, &rect, DFC_CAPTION, DFCS_CAPTIONCLOSE); // Draw the minimize button 
 			//rect.left = 720; rect.right = 750;
 			//DrawFrameControl(hdc, &rect, DFC_CAPTION, DFCS_CAPTIONMIN); // Draw the maximize button
 			//rect.left = 680; rect.right = 710; 
 			//DrawFrameControl(hdc, &rect, DFC_CAPTION, DFCS_CAPTIONMAX); 
-			EndPaint(hwnd, &ps);
+			//EndPaint(hwnd, &ps);
 		}
 		case WM_NCHITTEST: {
             LRESULT hit = originalWindowProc(hwnd, uMsg, wParam, lParam);
@@ -96,6 +96,18 @@ LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			return originalWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 	return originalWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+void win_post_control_message(int val) {
+	HWND hwnd = (HWND)sapp_win32_get_hwnd();
+	if (val == 0) {
+		PostMessage(hwnd, WM_CLOSE, 0, 0);
+	} else if (val == 1) {
+		ShowWindow(hwnd, SW_MINIMIZE);
+	} else if (val == 2) {
+		ShowWindow(hwnd, IsZoomed(hwnd) ? SW_RESTORE : SW_MAXIMIZE);
+	} else {
+	}
 }
 
 // Modify the window style to make it borderless

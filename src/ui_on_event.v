@@ -262,6 +262,13 @@ pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 		}
 	}
 
+	if app.custom_controls != none {
+		mut com := &Component(app.custom_controls.p)
+		if com.on_mouse_down_component(app) {
+			return
+		}
+	}
+
 	// Sort by Z-index
 	app.components.sort(a.z_index > b.z_index)
 
@@ -293,6 +300,13 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 		mut com := &Component(pop)
 		if com.on_mouse_rele_component(app) {
 			pop.hide(app.graphics_context)
+			return
+		}
+	}
+
+	if app.custom_controls != none {
+		mut com := &Component(app.custom_controls.p)
+		if com.on_mouse_rele_component(app) {
 			return
 		}
 	}

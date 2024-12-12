@@ -42,7 +42,7 @@ fn main() {
 	window.bar.add_child(ui.MenuItem.new(text: 'Edit'))
 	window.bar.add_child(create_help_menu())
 	window.bar.add_child(create_theme_menu())
-	window.add_child(window.bar)
+	// window.add_child(window.bar)
 
 	app.make_button_section()
 	app.make_checkbox_section()
@@ -71,7 +71,7 @@ fn main() {
 	})
 
 	mut tb := ui.Tabbox.new()
-	tb.set_pos(2, 30)
+	// tb.set_pos(2, 30)
 	tb.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
 		ws := win.gg.window_size()
 		com.width = ws.width - 4

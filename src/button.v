@@ -21,6 +21,7 @@ pub mut:
 	area_filled       bool = true
 	is_action         bool
 	icon_info         ?ButtonIconInfo
+	font_size         ?int
 }
 
 pub struct ButtonIconInfo {
@@ -48,6 +49,7 @@ pub:
 	user_data   voidptr
 	area_filled bool = true
 	icon        int  = -1
+	font_size   ?int
 }
 
 pub fn Button.new(c ButtonConfig) &Button {
@@ -61,6 +63,7 @@ pub fn Button.new(c ButtonConfig) &Button {
 		user_data:   c.user_data
 		need_pack:   c.should_pack || c.pack
 		area_filled: c.area_filled
+		font_size:   c.font_size
 	}
 }
 
@@ -84,7 +87,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	}
 
 	text := btn.text
-	sizh := ctx.line_height / 2 // ctx.text_height(text) / 2
+	// sizh := ctx.line_height / 2 // ctx.text_height(text) / 2
 
 	// Handle click
 	if btn.is_mouse_rele {
@@ -150,13 +153,22 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 
 	// TODO: Better font detection
 	font := if btn.font == 0 { ctx.font } else { ctx.win.extra_map['icon_ttf'] }
+	font_size := if btn.font_size != none { btn.font_size } else { ctx.win.font_size }
 
+	// sizh := ctx.line_height / 2 // ctx.text_height(text) / 2
 	cfgg := gx.TextCfg{
-		size:   ctx.win.font_size
+		size:   font_size
 		color:  if btn.is_action { ctx.theme.accent_text } else { ctx.theme.text_color }
 		family: font
 	}
 	ctx.gg.set_text_cfg(cfgg)
+
+	sizh := if btn.font_size != none {
+		ctx.gg.text_height(text) / 2
+	} else {
+		ctx.line_height / 2
+	}
+
 	size := ctx.text_width(text) / 2
 	ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, text,
 		font, cfgg)
@@ -198,8 +210,9 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 	}
 
 	if this.area_filled {
+		border_radius := if has_border { this.border_radius } else { 1 }
 		ctx.theme.button_fill_fn(this.x + 1, this.y + 1, this.width - 2, this.height - 2,
-			this.border_radius, bg, ctx)
+			border_radius, bg, ctx)
 	}
 
 	if has_border && (!this.area_filled || bg.a < 200) {

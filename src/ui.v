@@ -143,6 +143,12 @@ pub mut:
 	tooltip          string
 	event_map        map[string][]fn (voidptr)
 	custom_titlebar  bool
+	custom_controls  ?WindowControls
+}
+
+struct WindowControls {
+mut:
+	p &Panel
 }
 
 fn (win &Window) draw_tooltip(ctx &GraphicsContext) {
@@ -292,11 +298,97 @@ pub fn (win &Window) invoke_theme_change_event() {
 
 fn C.win_make_borderless(w &Window)
 
+fn C.win_post_control_message(val int)
+
 // Borderless Window support
 pub fn (win &Window) win32_make_borderless() {
 	$if windows {
 		C.win_make_borderless(win)
 	}
+}
+
+pub fn (mut win Window) draw_window_controls() {
+	g := win.graphics_context
+
+	if win.custom_controls == none {
+		mut p := Panel.new(layout: FlowLayout.new(hgap: 0, vgap: 0))
+		// mut min := Button.new(icon: -2, text: ' ')
+		// mut max := Button.new(icon: -2, text: ' ')
+		// mut xxx := Button.new(icon: -2, text: ' ')
+
+		mut min := Button.new(icon: -1, text: '\uE937', font_size: 10)
+		mut max := Button.new(icon: -1, text: '\uE938', font_size: 10)
+		mut xxx := Button.new(icon: -1, text: '\uE8BB', font_size: 10)
+
+		min.border_radius = -1
+		max.border_radius = -1
+		xxx.border_radius = -1
+
+		min.font = -1
+		max.font = -1
+		xxx.font = -1
+
+		min.subscribe_event('mouse_up', fn (e &MouseEvent) {
+			C.win_post_control_message(1)
+		})
+
+		max.subscribe_event('mouse_up', fn (e &MouseEvent) {
+			C.win_post_control_message(2)
+		})
+
+		xxx.subscribe_event('mouse_up', fn (e &MouseEvent) {
+			C.win_post_control_message(0)
+		})
+
+		min.icon_width = 0
+		min.icon_height = 1
+		max.icon_width = 1
+		max.icon_height = 1
+		xxx.icon_width = 2
+		xxx.icon_height = 1
+
+		min.set_bounds(0, 0, 40, 30)
+		max.set_bounds(0, 0, 40, 30)
+		xxx.set_bounds(0, 0, 40, 30)
+
+		p.add_child(min)
+		p.add_child(max)
+		p.add_child(xxx)
+		p.z_index = 900
+		p.set_bounds(g.gg.window_size().width - 121, win.bar.padding / 4, 121, 30)
+
+		if !isnil(win.bar) {
+			win.bar.margin_top = 2
+		}
+		win.custom_controls = WindowControls{
+			p: p
+		}
+	}
+
+	if win.custom_controls != none {
+		win.custom_controls.p.x = g.gg.window_size().width - 121
+		win.custom_controls.p.draw(g)
+	}
+
+	txt := win.config.title
+	tw := g.text_width(txt)
+	tc := g.theme.text_color
+	title_color := gx.rgba(tc.r, tc.g, tc.b, 100)
+
+	bw := win.bar.get_items_width()
+
+	w := (win.get_size().width / 2) - tw / 2
+	h := (win.bar.height / 2) - g.line_height / 2
+	nw := if w < bw { bw + 4 } else { w }
+
+	g.draw_text_ofset(0, 0, nw, h, txt, gx.TextCfg{
+		size:  g.font_size
+		color: title_color
+	})
+}
+
+pub fn (win &Window) get_size() gg.Size {
+	return win.gg.window_size()
 }
 
 pub fn (win &Window) invoke_draw_event() {
@@ -373,13 +465,21 @@ fn (mut app Window) draw() {
 		app.graphics_context.calculate_line_height()
 	}
 
+	$if customtitlebar ? {
+		app.custom_titlebar = true
+	}
+
 	if app.custom_titlebar {
 		// Testing
+		if !isnil(app.bar) {
+			// app.bar.padding = 12
+		}
 		app.win32_make_borderless()
 	}
 
 	if app.components.len == 1 {
-		if app.components[0] is Container || app.components[0] is ScrollView {
+		if app.components[0] is Container || app.components[0] is ScrollView
+			|| app.components[0] is Tabbox {
 			// Content Pane
 			mut bar := app.get_bar()
 			ws := app.gg.window_size()
@@ -416,6 +516,10 @@ fn (mut app Window) draw() {
 	// Draw Popups last
 	for mut pop in app.popups {
 		pop.draw(app.graphics_context)
+	}
+
+	if app.custom_titlebar {
+		app.draw_window_controls()
 	}
 
 	if app.tooltip.len != 0 {
