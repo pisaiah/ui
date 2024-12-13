@@ -52,26 +52,25 @@ import iui as ui
 | Components    | Containers  | Panel Layouts |
 | ------------- | ----------- | ------------- |
 | Button        | Window      | Flow Layout   |
-| Label         | Panel       | Border Layout |
-| Panel         | Tabbox      | Box Layout    |
-| Textbox       | HBox        | Grid Layout   |
-| TextField     | VBox        | Card Layout   | 
-| Menubar       | Modal       |               |
-| MenuItem      | Page        |               |
-| Checkbox      | ButtonGroup |               |
-| Selectbox     | ScrollView  |               |
-| Treeview      | Splitview   |               |
-| ProgressBar   | TitleGroup  |               |
-| Hyperlink     | Popup       |               |
-| Image         | DesktopPane |               |
+| Checkbox      | Panel       | Border Layout |
+| Hyperlink     | Tabbox      | Box Layout    |
+| Image         | Modal       | Grid Layout   |
+| InternalFrame | Page        | Card Layout   | 
+| Label         | ButtonGroup |               |
+| Menubar       | ScrollView  |               |
+| MenuItem      | Splitview   |               |
+| NavPaneItem   | TitleGroup  |               |
+| ProgressBar   | Popup       |               |
+| Selectbox     | DesktopPane |               |
 | Slider        | NavPane     |               |
 | Switch        |             |               |
-| InternalFrame |             |               |
-| NavItem       |             |               |
+| Textbox       |             |               |
+| TextField     |             |               |
+| Treeview      |             |               |
 
 - Components are the elements of the UI (buttons, inputs, etc). 
-- Containers are components that can hold other components (known as children).
-- Layouts define how the panel positions it's children.
+- Containers are components that are designed to contain other components (known as children).
+- Layouts define how the Panel container positions it's children.
 
 More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com](https://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html)
 
@@ -84,24 +83,31 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 ## Included Examples
 
 <table>
-	<tr><th>Notepad</th><th>Calculator</th><th>BorderLayout Demo</th><th>Clock</th><th>Internal Frames</th><th>Navigation Pane</th><th>Video Player</th></tr>
+	<tr><th>BorderLayout Demo</th><th>Internal Frames</th><th>Navigation Pane</th></tr>
+	<tr>
+		<td><img src="https://github.com/pisaiah/ui/assets/16439221/0b058466-6775-4edc-a571-7d77870827fd" height="170"></td>
+		<td><img src="https://github.com/pisaiah/ui/assets/16439221/bc14ec6c-4318-40d7-bcdd-6e2cf6a270be" height="170"></td>
+  		<td><img src="https://github.com/user-attachments/assets/4335c983-03d8-43e3-8ea8-3b4986e92d62" height="170"></td>	</tr>
+	<tr>
+		<td><a href="examples/2-BorderLayoutDemo/">Border Layout Demo</a></td>
+		<td><a href="examples/Frames/">Internal Frames</a></td>
+		<td><a href="examples/navpane_demo.v">Navigation Pane</a></td>
+	</tr>
+</table>
+
+<table>
+	<tr><th>Notepad</th><th>Calculator</th><th>Clock</th><th>Video Player</th></tr>
 	<tr>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/b606df32-382d-4977-a06c-7d8d8d2fb042" align="left" height="130"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/1a42c4dd-351d-4c28-8edd-b85905ea9b1f" height="170"></td>
-		<td><img src="https://github.com/pisaiah/ui/assets/16439221/0b058466-6775-4edc-a571-7d77870827fd" height="170"></td>
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/23a2e490-2aa6-4a3b-b606-3a611eccdb52" height="170"></td>
-		<td><img src="https://github.com/pisaiah/ui/assets/16439221/bc14ec6c-4318-40d7-bcdd-6e2cf6a270be" height="170"></td>
-  		<td><img src="https://github.com/user-attachments/assets/4335c983-03d8-43e3-8ea8-3b4986e92d62" height="170"></td>
 		<td><img src="https://github.com/user-attachments/assets/3b38578c-1dea-44a3-92cc-3b025d9dae1d" height="170"></td>
 	</tr>
 	<tr>
 		<td>See: <a href="examples/Notepad/">Notepad</a></td>
 		<td><a href="examples/Notepad/">Calculator</a></td>
-		<td><a href="examples/2-BorderLayoutDemo/">Border Layout Demo</a></td>
 		<td><a href="examples/Clock/">Clock</a></td>
-		<td><a href="examples/Frames/">Internal Frames</a></td>
-		<td><a href="examples/navpane_demo.v">Navigation Pane</a></td>
-		<td><a href="examples/VideoPlayer">VideoPlayer</a></td>
+		<td><a href="examples/VideoPlayer">Video Player</a> <i>(requires libmpv)</i></td>
 	</tr>
 </table>
 
@@ -113,8 +119,8 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 		<td><img src="https://github.com/pisaiah/ui/assets/16439221/3f25af12-67c7-4808-a96c-9ca8d4a80ba4" height="170"></td>
 	</tr>
 	<tr>
-		<td><a href="examples/Games/1-Minesweeper">1-Minesweeper</a></td>
-		<td><a href="examples/Games/2-Tic-Tac-Toe-Squared">2-Tic-Tac-Toe-Squared</a></td>
+		<td>Code: <a href="examples/Games/1-Minesweeper">1-Minesweeper</a><br>Demo: <a href="https://pisaiah.com/showcase/app/mines/index.html"><i>Play online (via WASM)</i></a></td>
+		<td><a href="examples/Games/2-Tic-Tac-Toe-Squared">2-Tic-Tac-Toe-Squared</a><br><a href="https://pisaiah.com/showcase/app/tictactoe/index.html"><i>Play online (WASM)</i></a></td>
 		<td><a href="examples/Games/3-Snake">3-Snake</a></td>
 	</tr>
 </table>
@@ -124,7 +130,8 @@ More details about Layout: [A Visual Guide to Layout Managers - docs.oracle.com]
 - [Verminal](https://github.com/pisaiah/verminal)
 - [vPaint](https://github.com/pisaiah/vpaint) - Demo: [https://vpaint.app](https://vpaint.app)
 
-![image](https://user-images.githubusercontent.com/16439221/200155263-493d09e2-46d7-4319-b230-679dc1386326.png)
+![image](https://github.com/user-attachments/assets/82a395ce-1c4b-4d4a-a2db-44009f3ed009)
+
 
 ## License
 This project is licensed under MIT OR Boost.
