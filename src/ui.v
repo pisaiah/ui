@@ -300,6 +300,21 @@ fn C.win_make_borderless(w &Window)
 
 fn C.win_post_control_message(val int)
 
+// v-native-render
+fn C.get_hwnd() C.HWND
+fn C.sapp_win32_get_hwnd() C.HWND
+
+@[export: 'iui_get_hwnd_2']
+fn (win &Window) get_hwnd_2() voidptr {
+	$if windows {
+		if win.gg.native_rendering {
+			return C.get_hwnd()
+		}
+	}
+
+	return C.sapp_win32_get_hwnd()
+}
+
 // Borderless Window support
 pub fn (win &Window) win32_make_borderless() {
 	$if windows {

@@ -149,6 +149,16 @@ fn (this &Label) get_color(ctx &GraphicsContext) gx.Color {
 }
 
 fn (this &Label) draw_label(ctx &GraphicsContext) {
+	// Avoid sending draw instructions if our parent's parent is out of bounds
+	if !isnil(this.parent) {
+		if !isnil(this.parent.parent) {
+			ph := this.parent.parent.y + this.parent.parent.height
+			if this.y > ph {
+				return
+			}
+		}
+	}
+
 	size := this.font_size(ctx)
 
 	cfg := gx.TextCfg{
@@ -167,9 +177,15 @@ fn (this &Label) draw_label(ctx &GraphicsContext) {
 	mut my := 0
 	for spl in lines {
 		yp := if this.vertical_align == .middle { this.y + sizh + my } else { this.y + my }
+		my += if size != ctx.font_size { ctx.gg.text_height(spl) } else { ctx.line_height }
+
+		if !isnil(this.parent) {
+			if yp < 0 {
+				continue
+			}
+		}
 
 		ctx.draw_text(this.x, yp, spl.replace('\t', '  '.repeat(8)), ctx.font, cfg)
-		my += if size != ctx.font_size { ctx.gg.text_height(spl) } else { ctx.line_height }
 	}
 
 	reset_text_config(ctx)

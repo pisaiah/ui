@@ -2,11 +2,17 @@
 #include <stdio.h>
 #include <wingdi.h>
 
-#include <commctrl.h> // Include this header for DefSubclassProc
+// #include <commctrl.h> // Include this header for DefSubclassProc
 
 // Note: TCC does not have timeapi.h
 #ifdef __V_GCC__
 #include <timeapi.h> 
+#endif
+
+#ifndef get_hwnd
+HWND get_hwnd() {
+	return NULL;
+}
 #endif
 
 //
@@ -15,6 +21,8 @@
 static int borderless = 0;
 static WNDPROC originalWindowProc;
 static iui__Window* wind;
+
+static int not_sokol = 0;
 
 
 #define BUTTON_CLOSE 1
@@ -99,7 +107,8 @@ LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 }
 
 void win_post_control_message(int val) {
-	HWND hwnd = (HWND)sapp_win32_get_hwnd();
+	//HWND hwnd = (HWND)sapp_win32_get_hwnd();
+	HWND hwnd = iui_get_hwnd_2(wind);
 	if (val == 0) {
 		PostMessage(hwnd, WM_CLOSE, 0, 0);
 	} else if (val == 1) {
@@ -115,9 +124,11 @@ void win_make_borderless(iui__Window* winn) {
 	if (borderless == 1) {
 		return;
 	}
+
 	
 	wind = winn;
-	HWND hwnd = (HWND)sapp_win32_get_hwnd();
+	//HWND hwnd = (HWND)sapp_win32_get_hwnd();
+	HWND hwnd = iui_get_hwnd_2(winn);
 	LONG style = GetWindowLong(hwnd, GWL_STYLE);
 	style &= ~(WS_CAPTION | WS_THICKFRAME);
 	style |= WS_THICKFRAME;
@@ -125,7 +136,18 @@ void win_make_borderless(iui__Window* winn) {
 	SetWindowLong(hwnd, GWL_STYLE, style);
 	SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 	originalWindowProc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR) CustomWindowProc);
-	SetWindowPos(hwnd, NULL, 0, 0, sapp_width() + 13, sapp_height() + 28, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	// SetWindowPos(hwnd, NULL, 0, 0, sapp_width() + 13, sapp_height() + 28, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+	
+	int width = 100;
+	int height = 100;
+	
+	RECT rect;
+	if (GetWindowRect(hwnd, &rect)) {
+		width = rect.right - rect.left;
+		height = rect.bottom - rect.top;
+	}
+	
+	SetWindowPos(hwnd, NULL, 0, 0, width + 13, height + 28, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 
 	borderless = 1;
 }

@@ -25,6 +25,7 @@ pub mut:
 	ctrl_down            bool
 	no_line_numbers      bool
 	not_editable         bool
+	pack                 bool
 }
 
 // Text Selection
@@ -39,16 +40,20 @@ pub mut:
 @[params]
 pub struct TextboxConfig {
 pub:
-	lines []string
+	lines        []string
+	pack         bool
+	not_editable bool
 }
 
 pub fn Textbox.new(c TextboxConfig) &Textbox {
 	return &Textbox{
-		lines: c.lines
-		sel:   Selection{
+		lines:        c.lines
+		sel:          Selection{
 			x0: -1
 		}
-		bg:    none
+		bg:           none
+		pack:         c.pack
+		not_editable: c.not_editable
 	}
 }
 
@@ -194,12 +199,16 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		}
 	}
 
+	/*
 	for i, _ in this.lines {
 		if i == this.caret_y {
 			ly := this.y + (th * i)
 			invoke_activeline_draw_event(this, ctx, i, x, ly)
 		}
 	}
+	*/
+	ly := this.y + (th * this.caret_y)
+	invoke_activeline_draw_event(this, ctx, this.caret_y, x, ly)
 
 	if this.is_mouse_down && !this.is_mouse_rele {
 		if this.reset_sel {
@@ -306,6 +315,11 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &
 			ctx.draw_text(xx, y + 2, str, ctx.font, cfg)
 		}
 		xx += ctx.text_width(str)
+	}
+
+	tw := ctx.text_width(line) + this.px + 8
+	if this.pack && this.width < tw {
+		this.width = tw
 	}
 }
 

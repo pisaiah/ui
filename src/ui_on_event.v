@@ -189,6 +189,12 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	com.is_mouse_rele = is_point_in
 	com.is_mouse_down = false
 
+	if mut com is ScrollView {
+		if app.mouse_y < com.ry {
+			return false
+		}
+	}
+
 	if is_point_in {
 		invoke_mouse_up(com, app.graphics_context)
 	}

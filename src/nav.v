@@ -2,13 +2,19 @@ module iui
 
 import gx
 
+pub interface VariableHeight {
+mut:
+	get_height() int
+}
+
 // NavPane - A navigation pane
-pub struct NavPane {
+pub struct NavPane implements Container {
 	Component_A
 pub mut:
-	pack      bool
-	collapsed bool
-	animate   bool = true
+	pack              bool
+	collapsed         bool
+	animate           bool = true
+	container_pass_ev bool = true
 }
 
 // TODO: check default WinUI3 value for collapsed.
@@ -17,6 +23,33 @@ pub struct NavPaneConfig {
 pub mut:
 	pack      bool
 	collapsed bool
+}
+
+pub fn (mut com NavPane) add_child(c &Component) {
+	if com.children.len == 0 || c.text == 'Settings' {
+		com.children << c
+		return
+	}
+
+	if isnil(c.parent) {
+		unsafe {
+			c.set_parent(com)
+		}
+	}
+
+	if com.children.len == 1 {
+		// mut p := Panel.new(layout: BoxLayout.new(ori: 1, hgap: 0, vgap: 0))
+		mut sv := ScrollView.new(
+			view: unsafe { c }
+		)
+		// sv.children << c
+		sv.noborder = true
+		com.children << sv
+		return
+	}
+
+	com.children[1].children << c
+	// com.children << c
 }
 
 // Return new Progressbar
@@ -44,8 +77,15 @@ pub fn NavPane.new(c NavPaneConfig) &NavPane {
 	return np
 }
 
+// Note: check why V isn't matching substructs with 'is'
+pub interface INavPaneItem {
+mut:
+	offset int
+	open   bool
+}
+
 // NavPaneItem
-pub struct NavPaneItem {
+pub struct NavPaneItem implements VariableHeight, INavPaneItem {
 	Component_A
 pub mut:
 	icon       string
@@ -122,6 +162,17 @@ pub fn (mut item NavPaneItem) set_selected_on_mouse_up(e &MouseEvent) {
 	}
 }
 
+pub fn (mut item NavPaneItem) get_height() int {
+	if item.is_selected() || item.open {
+		mut h := item.height + 4
+		for mut child in item.children {
+			h += child.height + 4
+		}
+		return h
+	}
+	return item.height + 4
+}
+
 // Draw this component
 pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	mut pp := item.get_parent[&NavPane]()
@@ -176,9 +227,10 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 					child.set_parent(pp)
 				}
 
-				if mut child is NavPaneItem {
+				if mut child is INavPaneItem {
 					child.offset = offset
 				}
+
 				child.draw_with_offset(ctx, pp.x + offset, y)
 				y += child.height + 4
 			}
@@ -261,21 +313,16 @@ pub fn (mut np NavPane) draw(ctx &GraphicsContext) {
 		np.is_mouse_rele = false
 	}
 
-	mut y := np.y + 4
-	for mut child in np.children {
-		if isnil(child.parent) {
-			child.set_parent(np)
-		}
+	mut y := np.y + np.draw_child(ctx, 0, np.y)
 
-		if child.text == 'Settings' {
-			fy := np.y + np.height - child.height - 4
-			child.draw_with_offset(ctx, np.x, fy)
-			continue
-		}
+	// ctx.gg.scissor_rect(np.x, y, np.width, np.height)
 
-		child.draw_with_offset(ctx, np.x, y)
-		y += child.height + 4
+	for i in 1 .. np.children.len {
+		y += np.draw_child(ctx, i, y)
 	}
+
+	// size := ctx.win.get_size()
+	// ctx.gg.scissor_rect(0, 0, size.width, size.height)
 
 	// testing:
 	// winui3 layout design:
@@ -284,4 +331,34 @@ pub fn (mut np NavPane) draw(ctx &GraphicsContext) {
 	// [Search box (optional)]
 	// [Items]
 	// [Items - Footer]
+}
+
+pub fn (mut np NavPane) draw_child(ctx &GraphicsContext, i int, y int) int {
+	mut child := np.children[i]
+
+	if mut child is ScrollView {
+		w := np.get_target_width()
+		mut h := np.height - (y / 2) - 4
+		if np.children.last().text == 'Settings' {
+			h -= np.children.last().height + 8
+		}
+		np.children[1].set_bounds(0, 0, w, h)
+	}
+
+	if isnil(child.parent) {
+		child.set_parent(np)
+	}
+
+	if child.text == 'Settings' {
+		fy := np.y + np.height - child.height - 4
+		child.draw_with_offset(ctx, np.x, fy)
+		return child.height + 4
+	}
+
+	child.draw_with_offset(ctx, np.x, y)
+
+	if mut child is NavPaneItem {
+		return child.get_height()
+	}
+	return child.height + 4
 }

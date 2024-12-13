@@ -39,12 +39,13 @@ fn (mut w Window) check_for_menuitem(x int, y int) bool {
 		return false
 	}
 
+	if y < 0 {
+		return false
+	}
+
 	// TODO: process sokol event here
 	w.mouse_x = x
 	w.mouse_y = y
-
-	w.click_x = x
-	w.click_y = y
 
 	for child in w.bar.children {
 		if is_in(child, x, y) {
