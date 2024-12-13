@@ -342,6 +342,9 @@ pub fn (mut np NavPane) draw_child(ctx &GraphicsContext, i int, y int) int {
 		if np.children.last().text == 'Settings' {
 			h -= np.children.last().height + 8
 		}
+		if h < 0 {
+			h = 0
+		}
 		np.children[1].set_bounds(0, 0, w, h)
 	}
 
