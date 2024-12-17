@@ -1,5 +1,7 @@
 module iui
 
+import gg
+
 // TODO:
 // List of events:
 //	Action      - https://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionEvent.html
@@ -14,6 +16,15 @@ pub struct WindowEvent {
 pub:
 	win &Window
 }
+
+pub struct WindowKeyEvent {
+	WindowEvent
+pub:
+	key gg.KeyCode
+	ev  &gg.Event
+}
+
+// key gg.KeyCode, e &gg.Event
 
 pub struct WindowThemeChangeEvent {
 	WindowEvent

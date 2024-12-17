@@ -125,7 +125,7 @@ pub mut:
 	theme            Theme
 	bar              &Menubar
 	components       []Component
-	popups           []Popup
+	popups           []&Popup
 	show_menu_bar    bool = true
 	shift_pressed    bool
 	key_down_event   fn (mut Window, gg.KeyCode, &gg.Event) = fn (mut win Window, key gg.KeyCode, e &gg.Event) {}
@@ -245,6 +245,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 	}
 
 	sample_count := $if aa ? { 2 } $else { 0 }
+	swap_interval := $if si2 ? { 2 } $else { 1 }
 
 	win.gg = gg.new_context(
 		bg_color:      win.theme.background
@@ -259,6 +260,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		font_size:     cfg.font_size
 		ui_mode:       cfg.ui_mode
 		sample_count:  sample_count
+		swap_interval: swap_interval
 	)
 	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {
@@ -285,6 +287,17 @@ pub fn (mut win Window) set_theme(theme Theme) {
 
 	win.gg.set_bg_color(theme.background)
 	win.invoke_theme_change_event()
+}
+
+pub fn (win &Window) invoke_key_event(key gg.KeyCode, gg_ev &gg.Event, typ string) {
+	ev := WindowKeyEvent{
+		win: win
+		key: key
+		ev:  unsafe { gg_ev }
+	}
+	for f in win.event_map[typ] {
+		f(ev)
+	}
 }
 
 pub fn (win &Window) invoke_theme_change_event() {
@@ -362,9 +375,17 @@ pub fn (mut win Window) draw_window_controls() {
 		xxx.icon_width = 2
 		xxx.icon_height = 1
 
+		min.set_area_filled_state(false, .normal)
+		max.set_area_filled_state(false, .normal)
+		xxx.set_area_filled_state(false, .normal)
+
 		min.set_bounds(0, 0, 40, 30)
 		max.set_bounds(0, 0, 40, 30)
 		xxx.set_bounds(0, 0, 40, 30)
+
+		if isnil(win.bar) {
+			win.bar = Menubar.new()
+		}
 
 		p.add_child(min)
 		p.add_child(max)
@@ -561,6 +582,11 @@ fn (mut app Window) draw() {
 
 fn (mut app Window) draw_children() {
 	mut bar_drawn := false
+
+	if !isnil(app.bar) {
+		app.bar.width = gg.window_size().width
+	}
+
 	for mut com in app.components {
 		if !isnil(com.draw_event_fn) {
 			com.draw_event_fn(mut app, com)

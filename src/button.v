@@ -17,11 +17,33 @@ pub mut:
 	override_bg_color gx.Color = blank_bg
 	icon_width        int
 	icon_height       int
-	border_radius     int  = 4
-	area_filled       bool = true
-	is_action         bool
-	icon_info         ?ButtonIconInfo
-	font_size         ?int
+	border_radius     int = 4
+	// area_filled       bool = true
+	is_action   bool
+	icon_info   ?ButtonIconInfo
+	font_size   ?int
+	area_filled AreafilledConfig
+}
+
+pub struct AreafilledConfig {
+mut:
+	normal bool = true
+	hover  bool = true
+	down   bool = true
+}
+
+pub fn (this AreafilledConfig) is_filled(hover bool, down bool) bool {
+	if hover {
+		return this.hover
+	}
+	if down {
+		return this.down
+	}
+	return this.normal
+}
+
+pub fn (this &Button) is_area_filled(hover bool) bool {
+	return this.area_filled.is_filled(hover, this.is_mouse_down)
 }
 
 pub struct ButtonIconInfo {
@@ -62,7 +84,11 @@ pub fn Button.new(c ButtonConfig) &Button {
 		height:      c.bounds.height
 		user_data:   c.user_data
 		need_pack:   c.should_pack || c.pack
-		area_filled: c.area_filled
+		area_filled: AreafilledConfig{
+			normal: c.area_filled
+			hover:  c.area_filled
+			down:   c.area_filled
+		}
 		font_size:   c.font_size
 	}
 }
@@ -74,7 +100,29 @@ pub fn (mut this Button) set_accent_filled(val bool) {
 
 // https://docs.oracle.com/javase/7/docs/api/javax/swing/AbstractButton.html#setContentAreaFilled(boolean)
 pub fn (mut this Button) set_area_filled(val bool) {
-	this.area_filled = val
+	this.area_filled.normal = val
+	this.area_filled.hover = val
+	this.area_filled.down = val
+}
+
+pub enum AreaFilledState {
+	normal
+	hover
+	down
+}
+
+pub fn (mut this Button) set_area_filled_state(val bool, state AreaFilledState) {
+	match state {
+		.normal {
+			this.area_filled.normal = val
+		}
+		.hover {
+			this.area_filled.hover = val
+		}
+		.down {
+			this.area_filled.down = val
+		}
+	}
 }
 
 pub fn (mut this Button) set_background(color gx.Color) {
@@ -202,20 +250,21 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 	border := this.get_border(ctx, mouse_in)
 
 	has_border := this.border_radius != -1
+	area_filled := this.is_area_filled(mouse_in)
 
-	if has_border && (this.area_filled && bg.a > 200) {
+	if has_border && (area_filled && bg.a > 200) {
 		// Draw as filled as rounded_rect_empty has issues with a radius
 		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, this.border_radius,
 			border)
 	}
 
-	if this.area_filled {
+	if area_filled {
 		border_radius := if has_border { this.border_radius } else { 1 }
 		ctx.theme.button_fill_fn(this.x + 1, this.y + 1, this.width - 2, this.height - 2,
 			border_radius, bg, ctx)
 	}
 
-	if has_border && (!this.area_filled || bg.a < 200) {
+	if has_border && (!area_filled || bg.a < 200) {
 		ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, this.border_radius,
 			border)
 	}

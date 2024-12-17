@@ -90,7 +90,7 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 
 	// Do component draw event again to fix z-index
 	if !isnil(m.draw_event_fn) {
-		m.draw_event_fn(mut app, &Component(m))
+		// m.draw_event_fn(mut app, &Component(m))
 	}
 
 	if m.needs_init {

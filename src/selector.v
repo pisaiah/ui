@@ -189,15 +189,17 @@ pub fn (box &Selectbox) draw_box(ctx &GraphicsContext, x int, y int) {
 	bg, border := box.get_bg_bord(ctx)
 	sizh := ctx.gg.text_height(box.text) / 2
 
-	ctx.gg.draw_rect_filled(x, y, box.width, box.height, bg)
+	ctx.theme.button_fill_fn(x + box.width - 26, y, 25, box.height - 1, 1, bg, ctx)
+	ctx.draw_corner_rect(x, y, box.width, box.height, border, bg)
+
+	// ctx.gg.draw_rect_filled(x, y, box.width, box.height, bg)
 
 	ctx.draw_text(x + 5, y + (box.height / 2) - sizh, box.text, ctx.font, gx.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 
-	ctx.theme.button_fill_fn(x + box.width - 26, y, 25, box.height - 1, 1, bg, ctx)
-	ctx.gg.draw_rect_empty(x, y, box.width, box.height, border)
+	// ctx.gg.draw_rect_empty(x, y, box.width, box.height, border)
 
 	box.draw_arrow(ctx, x, y, box.width, box.height)
 }

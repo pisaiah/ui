@@ -10,6 +10,13 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		app.has_event = true
 	}*/
 
+	$if event_debug ? {
+		dump(e.typ)
+		if e.typ == .resized || e.typ == .quit_requested {
+			dump(e)
+		}
+	}
+
 	app.has_event = true
 
 	if e.typ == .mouse_move {
@@ -44,6 +51,7 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		if letter == 'left_shift' || letter == 'right_shift' {
 			app.shift_pressed = false
 		}
+		app.invoke_key_event(e.key_code, e, 'key_up')
 	}
 
 	if e.typ == .mouse_scroll {
@@ -115,10 +123,41 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		app.check_box(key, e, mut a)
 	}
 	app.key_down_event(mut app, key, e)
+	app.invoke_key_event(key, e, 'key_down')
+}
+
+pub fn (mut com Popup) on_mouse_down_component(app &Window) bool {
+	is_point_in := point_in_raw(mut com, app.click_x, app.click_y)
+
+	$if event_debug ? {
+		println('on_mouse_down_component: ${is_point_in} Popup ${com.x} ${com.y} ${com.width} ${com.height}')
+	}
+
+	if !is_point_in {
+		return false
+	}
+
+	for mut child in com.children {
+		if child.on_mouse_down_component(app) {
+			return true
+		}
+	}
+
+	com.is_mouse_down = is_point_in
+	if is_point_in {
+		invoke_mouse_down(com, app.graphics_context)
+	}
+
+	return true
 }
 
 pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	is_point_in := point_in_raw(mut com, app.click_x, app.click_y)
+
+	$if event_debug ? {
+		println('on_mouse_down_component: ${is_point_in} ${com.type_name()} ${com.x} ${com.y} ${com.width} ${com.height}')
+	}
+
 	if !is_point_in {
 		return false
 	}
@@ -182,6 +221,98 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	}
 
 	return true
+}
+
+pub fn (mut com Popup) on_mouse_rele_component(app &Window) bool {
+	is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
+	com.is_mouse_rele = is_point_in
+	com.is_mouse_down = false
+
+	if is_point_in {
+		invoke_mouse_up(com, app.graphics_context)
+	}
+
+	if !com.container_pass_ev {
+		return false
+	}
+
+	// Check Children
+	for mut child in com.children {
+		if child.on_mouse_rele_component(app) {
+			return is_point_in
+		}
+	}
+
+	if com.container_pass_ev {
+		return false
+	}
+
+	return is_point_in
+}
+
+pub fn on_mouse_rele_generic[T](mut com T, app &Window) bool {
+	is_point_in := point_in(mut com, app.mouse_x, app.mouse_y)
+	com.is_mouse_rele = is_point_in
+	com.is_mouse_down = false
+
+	$if event_debug ? {
+		dump('${com.str()} ${com.x} ${com.y} ${com.width} ${com.height}')
+	}
+
+	$if T is ScrollView {
+		if app.mouse_y < com.ry {
+			return false
+		}
+	}
+
+	if is_point_in {
+		invoke_mouse_up(com, app.graphics_context)
+	}
+
+	$if T is Tabbox {
+		mut val := com.kids[com.active_tab]
+		val.sort(a.z_index > b.z_index)
+		for mut comm in val {
+			comm.is_mouse_down = false
+			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
+				comm.is_mouse_rele = is_point_in
+				if comm.on_mouse_rele_component(app) {
+					val.sort(a.z_index < b.z_index)
+					return true
+				}
+			}
+		}
+		val.sort(a.z_index < b.z_index)
+	}
+
+	$if T is Container {
+		// If Container does not pass event,
+		// then return false. (Ex: Click Animation)
+		if !com.container_pass_ev {
+			return false
+		}
+	}
+
+	// Check Children
+	for mut child in com.children {
+		if child.on_mouse_rele_component(app) {
+			return is_point_in
+		}
+	}
+
+	$if T is Container {
+		// If Container passes the event to
+		// children then return false
+		if com.container_pass_ev {
+			return false
+		}
+	}
+
+	$if T is ScrollView || T is SplitView || T is Panel {
+		return false
+	}
+
+	return is_point_in
 }
 
 pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
@@ -262,8 +393,12 @@ pub fn on_mouse_down_event(e &gg.Event, mut app Window) {
 	}
 
 	for mut pop in app.popups {
-		mut com := &Component(pop)
-		if com.on_mouse_down_component(app) {
+		$if event_debug ? {
+			dump('Popup on mouse down')
+		}
+
+		// mut com := &Component(pop)
+		if pop.on_mouse_down_component(app) {
 			return
 		}
 	}
@@ -293,8 +428,7 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	app.click_y = -1
 
 	if !isnil(app.bar) {
-		mut bar := &Component(app.bar)
-		bar.on_mouse_rele_component(app)
+		on_mouse_rele_generic[Menubar](mut app.bar, app)
 	}
 
 	res := app.bar.check_mouse(app, app.mouse_x, app.mouse_y)
@@ -303,14 +437,16 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 	}
 
 	for mut pop in app.popups {
-		mut com := &Component(pop)
-		if com.on_mouse_rele_component(app) {
+		// mut com := &Component(pop)
+		if pop.on_mouse_rele_component(app) {
 			pop.hide(app.graphics_context)
 			return
 		}
 	}
 
 	if app.custom_controls != none {
+		// on_mouse_rele_generic
+
 		mut com := &Component(app.custom_controls.p)
 		if com.on_mouse_rele_component(app) {
 			return

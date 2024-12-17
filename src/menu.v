@@ -258,7 +258,7 @@ fn (mut this Menubar) draw(ctx &GraphicsContext) {
 	half_pad := this.padding / 2
 	this.height = 26 + this.padding + this.margin_top
 
-	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid - 1, 26 + this.padding + this.margin_top,
+	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid, 26 + this.padding + this.margin_top,
 		ctx)
 
 	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)

@@ -290,6 +290,10 @@ pub fn (g &GraphicsContext) draw_rounded_rect_filled_top(x f32, y f32, w f32, h 
 	sgl.end()
 }
 
+pub fn (g &GraphicsContext) draw_corner_rect(x f32, y f32, w f32, h f32, bord gx.Color, bg gx.Color) {
+	g.draw_rounded_rect(x, y, w, h, control_corner_radius, bord, bg)
+}
+
 pub fn (g &GraphicsContext) draw_rounded_rect(x f32, y f32, w f32, h f32, r f32, bord gx.Color, bg gx.Color) {
 	g.gg.draw_rounded_rect_filled(x, y, w, h, r, bord)
 	g.gg.draw_rounded_rect_filled(x + 1, y + 1, w - 2, h - 2, r, bg)

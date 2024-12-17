@@ -18,11 +18,12 @@ mut:
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title:   'UI Demo'
-		width:   700
-		height:  480
-		theme:   ui.get_system_theme()
-		ui_mode: false
+		title:           'UI Demo'
+		width:           700
+		height:          480
+		theme:           ui.get_system_theme()
+		ui_mode:         false
+		custom_titlebar: true
 	)
 
 	mut pane := ui.Panel.new(

@@ -3,6 +3,9 @@ module iui
 
 import gx
 
+// WinUI3 value
+const control_corner_radius = 4
+
 // Default Theme
 pub fn get_system_theme() &Theme {
 	return theme_default()
