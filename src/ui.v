@@ -271,6 +271,12 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		if win.gg.native_rendering {
 			win.gg.ui_mode = false
 		}
+
+		// "UI Mode"
+		if cfg.ui_mode {
+			set_power_save(true)
+			set_window_fps(40)
+		}
 	}
 
 	win.theme.setup_fn(mut win)
@@ -340,9 +346,6 @@ pub fn (mut win Window) draw_window_controls() {
 
 	if win.custom_controls == none {
 		mut p := Panel.new(layout: FlowLayout.new(hgap: 0, vgap: 0))
-		// mut min := Button.new(icon: -2, text: ' ')
-		// mut max := Button.new(icon: -2, text: ' ')
-		// mut xxx := Button.new(icon: -2, text: ' ')
 
 		mut min := Button.new(icon: -1, text: '\uE937', font_size: 10)
 		mut max := Button.new(icon: -1, text: '\uE938', font_size: 10)

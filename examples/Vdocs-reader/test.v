@@ -165,6 +165,11 @@ fn (mut app App) setup_navbar() {
 
 	// Get item tags
 	tags := app.doc.get_tags_by_class_name('items')
+
+	if tags.len == 0 {
+		return
+	}
+
 	item_tag := tags[0]
 
 	mut last_main := &DocNavItem(unsafe { nil })

@@ -27,6 +27,8 @@ mut:
 	max      bool
 	rem      bool
 	active   bool
+	ctrl_img u8
+	ctrl_sty u8
 }
 
 @[params]
@@ -110,7 +112,21 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	ctx.gg.draw_rect_filled(this.x + bord_wid, this.y + top, wid_2, hei - top - bord_wid,
 		ctx.theme.background)
 
-	this.controls.set_bounds(this.width - 85, -28, 85, 28)
+	this.controls.set_bounds(this.width - 82, -28, 82, 28)
+
+	if ctx.theme.name == 'Ocean' {
+		if this.ctrl_img == 0 {
+			this.change_controls_style(ctx, true)
+			this.ctrl_img = 1
+		}
+	} else if this.ctrl_img == 1 && this.ctrl_sty != 1 {
+		this.change_controls_style(ctx, false)
+		this.ctrl_img = 0
+	}
+
+	if this.ctrl_sty != 0 && this.ctrl_img != this.ctrl_sty {
+		this.change_controls_style(ctx, this.ctrl_sty == 2)
+	}
 
 	this.children.sort(a.z_index < b.z_index)
 
@@ -129,27 +145,60 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	}
 }
 
+enum FrameControlStyle as u8 {
+	auto = 0
+	text = 1
+	icon = 2
+}
+
+fn (mut this InternalFrame) set_controls_style(filled bool, s FrameControlStyle) {
+	this.ctrl_sty = u8(s)
+}
+
+fn (mut this InternalFrame) change_controls_style(g &GraphicsContext, filled bool) {
+	txts := ['\uE937', '\uE938', '\uE8BB']
+	for i, mut com in this.controls.children {
+		if mut com is Button {
+			if filled {
+				com.text = ' '
+				com.icon = -2
+				com.icon_width = i
+				com.icon_height = 1
+			} else {
+				com.text = txts[i]
+				com.font = 1
+				com.icon = -1
+				com.set_area_filled_state(false, .normal)
+			}
+		}
+	}
+}
+
 fn (mut this InternalFrame) init_controls(g &GraphicsContext) {
 	this.init = true
 
-	mut min := Button.new(icon: -2, text: ' ')
-	mut max := Button.new(icon: -2, text: ' ')
-	mut xxx := Button.new(icon: -2, text: ' ')
+	mut min := Button.new(icon: -2, text: ' ', font_size: 9)
+	mut max := Button.new(icon: -2, text: ' ', font_size: 9)
+	mut xxx := Button.new(icon: -2, text: ' ', font_size: 9)
 
-	min.icon_width = 0
-	min.icon_height = 1
-	max.icon_width = 1
-	max.icon_height = 1
-	xxx.icon_width = 2
-	xxx.icon_height = 1
+	if g.icon_ttf_exists() && true {
+		min.text = '\uE937'
+		max.text = '\uE938'
+		xxx.text = '\uE8BB'
+		mut btns := [min, max, xxx]
 
-	if g.icon_ttf_exists() && false {
-		min.text = ''
-		max.text = ''
-		xxx.text = ''
-		min.font = 1
-		max.font = 1
-		xxx.font = 1
+		for mut btn in btns {
+			btn.font = 1
+			btn.icon = -1
+			btn.set_area_filled_state(false, .normal)
+		}
+	} else {
+		min.icon_width = 0
+		min.icon_height = 1
+		max.icon_width = 1
+		max.icon_height = 1
+		xxx.icon_width = 2
+		xxx.icon_height = 1
 	}
 
 	min.border_radius = -1
@@ -157,8 +206,8 @@ fn (mut this InternalFrame) init_controls(g &GraphicsContext) {
 	xxx.border_radius = -1
 
 	min.set_bounds(0, 0, 24, 24)
-	max.set_bounds(2, 0, 24, 24)
-	xxx.set_bounds(4, 0, 24, 24)
+	max.set_bounds(0, 0, 26, 24)
+	xxx.set_bounds(0, 0, 25, 24)
 
 	max.subscribe_event('mouse_up', btn_max_click)
 

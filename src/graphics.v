@@ -181,6 +181,9 @@ pub fn (g &GraphicsContext) text_width(text string) int {
 pub fn (ctx &GraphicsContext) refresh_ui() {
 	mut win := ctx.win
 	win.gg.refresh_ui()
+	$if windows {
+		i_refresh_ui()
+	}
 }
 
 pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx.Color, bord gx.Color) {

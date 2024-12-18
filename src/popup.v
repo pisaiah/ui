@@ -51,9 +51,8 @@ fn (mut p Popup) draw(ctx &GraphicsContext) {
 	mut y := p.y - p.at
 
 	ctx.gg.scissor_rect(0, p.y, ws.width, ws.height)
-
-	ctx.gg.draw_rect_filled(p.x, y, p.width, p.height, ctx.theme.button_bg_normal)
-	ctx.gg.draw_rect_empty(p.x, y, p.width, p.height, ctx.theme.button_border_normal)
+	ctx.draw_rounded_rect(p.x, y, p.width, p.height, 1, ctx.theme.button_border_normal,
+		ctx.theme.button_bg_normal)
 
 	if p.at > 0 {
 		p.container_pass_ev = false
@@ -61,6 +60,7 @@ fn (mut p Popup) draw(ctx &GraphicsContext) {
 		if p.at < 4 {
 			p.at -= 1
 		}
+		ctx.refresh_ui()
 	} else {
 		p.container_pass_ev = true
 	}

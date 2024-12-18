@@ -54,6 +54,12 @@ pub fn C.i_set_fps(val int)
 
 pub fn C.i_set_power_save(val bool)
 
+pub fn C.i_refresh_ui()
+
+pub fn i_refresh_ui() {
+	C.i_refresh_ui()
+}
+
 // Set Window FPS
 pub fn set_window_fps(val int) {
 	C.i_set_fps(val)

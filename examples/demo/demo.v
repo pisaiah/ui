@@ -22,7 +22,7 @@ fn main() {
 		width:           700
 		height:          480
 		theme:           ui.get_system_theme()
-		ui_mode:         false
+		ui_mode:         true
 		custom_titlebar: true
 	)
 
@@ -71,28 +71,19 @@ fn main() {
 		e.target.height = ws.height
 	})
 
-	mut tb := ui.Tabbox.new()
-	// tb.set_pos(2, 30)
-	tb.draw_event_fn = fn (mut win ui.Window, mut com ui.Component) {
-		ws := win.gg.window_size()
-		com.width = ws.width - 4
-		com.height = ws.height - 32
-	}
+	mut tb := ui.Tabbox.new(
+		closable: false
+	)
 
-	tb.closable = false
+	button_tab := app.make_button_tab()
+	frame_tab := app.make_frame_tab()
+	slider_tab := app.make_slider_tab()
+	selector_tab := app.make_selector_tab()
 
 	tb.add_child('Overview', pane)
-
-	mut button_tab := app.make_button_tab()
 	tb.add_child('Buttons', button_tab)
-
-	mut frame_tab := app.make_frame_tab()
 	tb.add_child('Frames', frame_tab)
-
-	mut slider_tab := app.make_slider_tab()
 	tb.add_child('Slider', slider_tab)
-
-	mut selector_tab := app.make_selector_tab()
 	tb.add_child('Selector', selector_tab)
 
 	window.add_child(tb)
@@ -130,7 +121,6 @@ fn draw_custom_themed(name string, mut e ui.DrawEvent) {
 	is_hover := ui.is_in(e.target, e.ctx.win.mouse_x, e.ctx.win.mouse_y)
 	mut btn := e.target
 	if mut btn is ui.Button {
-		// btn.override_bg = !is_hover
 		btn.override_bg_color = if is_hover { ui.blank_bg } else { gx.rgba(0, 0, 0, 1) }
 	}
 	if !is_hover {
@@ -157,8 +147,8 @@ fn create_theme_menu() &ui.MenuItem {
 	themes := ui.get_all_themes()
 	for theme in themes {
 		item := ui.MenuItem.new(
-			text:           theme.name
-			click_event_fn: theme_click
+			text:     theme.name
+			click_fn: theme_click
 		)
 		theme_menu.add_child(item)
 	}
@@ -408,10 +398,10 @@ fn on_click(mut win ui.Window, com ui.Button) {
 }
 
 // MenuItem in the Theme section click event
-fn theme_click(mut win ui.Window, com ui.MenuItem) {
-	text := com.text
+fn theme_click(mut e ui.MouseEvent) {
+	text := e.target.text
 	theme := ui.theme_by_name(text)
-	win.set_theme(theme)
+	e.ctx.win.set_theme(theme)
 }
 
 fn test_page(mut e ui.MouseEvent) {

@@ -5,7 +5,9 @@ bool need = true;
 
 static float SECC = 1000;
 static int FPS = (int)(((float)1000) / 60);
-static bool i_power_save = false;
+static int FPS2 = 60;
+static bool i_power_save = true;
+static int refresh = 0;
 
 void i_set_power_save(bool value) {
 	i_power_save = value;
@@ -13,6 +15,7 @@ void i_set_power_save(bool value) {
 
 void i_set_fps(int new_value) {
 	FPS = (int)(((float)1000) / new_value);
+	FPS2 = new_value;
 }
 
 float get_refresh_rate() {
@@ -37,10 +40,24 @@ int our_sleep(int period, int val) {
 	timeEndPeriod(period);
 }
 
+void i_refresh_ui() {
+	refresh = 4;
+}
+
 void i_sleep(int u) {
 	if (i_power_save) {
 		// Avoid using CPU-heavy Windows's Timer API
 		Sleep(1);
+		
+		// "UI Mode"
+		if (FPS2 < 32) {
+			if (refresh <= 0) {
+				Sleep(FPS - 15);
+			} else {
+				// printf("%i\n", refresh);
+				refresh -= 1;
+			}
+		}
 		return;
 	}
 	

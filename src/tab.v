@@ -21,16 +21,18 @@ pub mut:
 @[params]
 pub struct TabboxConfig {
 pub:
-	compact bool
-	stretch bool
+	compact  bool
+	stretch  bool
+	closable bool = true
 }
 
 // Return new Tabbox
 pub fn Tabbox.new(c TabboxConfig) &Tabbox {
 	return &Tabbox{
-		compact: c.compact
-		stretch: c.stretch
-		text:    ''
+		compact:  c.compact
+		stretch:  c.stretch
+		closable: c.closable
+		text:     ''
 	}
 }
 
