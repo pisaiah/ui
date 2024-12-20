@@ -30,7 +30,6 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		app.mouse_y = int(e.touches[0].pos_y / app.gg.scale)
 	}
 
-	// debug: app.id_map['cggevent'] = e
 	if e.typ == .mouse_down || e.typ == .touches_began {
 		on_mouse_down_event(e, mut app)
 	}

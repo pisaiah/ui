@@ -28,13 +28,15 @@ pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 
 // Draw this component
 pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
-	mut win := ctx.win
 	text_height := ctx.line_height / 2
 
 	for mut com in this.children {
 		if !isnil(com.draw_event_fn) {
+			// deprecated old event
+			mut win := ctx.win
 			com.draw_event_fn(mut win, com)
 		}
+
 		y := this.y + this.padding + text_height + 5
 		com.draw_with_offset(ctx, this.x + this.padding, y)
 

@@ -319,7 +319,14 @@ fn C.win_make_borderless(w &Window)
 
 fn C.win_post_control_message(val int)
 
+fn win_post_control_message(val int) {
+	$if windows {
+		C.win_post_control_message(val)
+	}
+}
+
 // v-native-render
+/*
 fn C.get_hwnd() C.HWND
 fn C.sapp_win32_get_hwnd() C.HWND
 
@@ -333,6 +340,7 @@ fn (win &Window) get_hwnd_2() voidptr {
 
 	return C.sapp_win32_get_hwnd()
 }
+*/
 
 // Borderless Window support
 pub fn (win &Window) win32_make_borderless() {
@@ -360,15 +368,15 @@ pub fn (mut win Window) draw_window_controls() {
 		xxx.font = -1
 
 		min.subscribe_event('mouse_up', fn (e &MouseEvent) {
-			C.win_post_control_message(1)
+			win_post_control_message(1)
 		})
 
 		max.subscribe_event('mouse_up', fn (e &MouseEvent) {
-			C.win_post_control_message(2)
+			win_post_control_message(2)
 		})
 
 		xxx.subscribe_event('mouse_up', fn (e &MouseEvent) {
-			C.win_post_control_message(0)
+			win_post_control_message(0)
 		})
 
 		min.icon_width = 0

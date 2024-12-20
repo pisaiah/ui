@@ -9,11 +9,25 @@
 #include <timeapi.h> 
 #endif
 
-#ifndef get_hwnd
-HWND get_hwnd() {
-	return NULL;
+HWND get_hwnd();
+
+// #ifndef get_hwnd
+//HWND get_hwnd();
+
+HWND get_hwnd_2() {
+	if (!_sapp.valid) {
+		// return get_hwnd();
+	}
+	
+	return (HWND)sapp_win32_get_hwnd();
 }
-#endif
+// #else 
+/*
+HWND get_hwnd_2() {
+	return get_hwnd();
+}
+*/
+// #endif
 
 //
 // Borderless Window API
@@ -24,9 +38,14 @@ static iui__Window* wind;
 
 static int not_sokol = 0;
 
+// have these here so gcc don't complain
+VV_EXPORTED_SYMBOL bool iui_check_for_menuitem(iui__Window* w, int x, int y);
+// VV_EXPORTED_SYMBOL voidptr iui_get_hwnd_2(iui__Window* win);
 
 #define BUTTON_CLOSE 1
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
 LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
 	switch (uMsg) {
 		case WM_CREATE: {
@@ -108,7 +127,7 @@ LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 void win_post_control_message(int val) {
 	//HWND hwnd = (HWND)sapp_win32_get_hwnd();
-	HWND hwnd = iui_get_hwnd_2(wind);
+	HWND hwnd = get_hwnd_2(wind);
 	if (val == 0) {
 		PostMessage(hwnd, WM_CLOSE, 0, 0);
 	} else if (val == 1) {
@@ -118,6 +137,7 @@ void win_post_control_message(int val) {
 	} else {
 	}
 }
+#pragma GCC diagnostic pop
 
 // Modify the window style to make it borderless
 void win_make_borderless(iui__Window* winn) {
@@ -128,7 +148,7 @@ void win_make_borderless(iui__Window* winn) {
 	
 	wind = winn;
 	//HWND hwnd = (HWND)sapp_win32_get_hwnd();
-	HWND hwnd = iui_get_hwnd_2(winn);
+	HWND hwnd = get_hwnd_2(winn);
 	LONG style = GetWindowLong(hwnd, GWL_STYLE);
 	style &= ~(WS_CAPTION | WS_THICKFRAME);
 	style |= WS_THICKFRAME;
