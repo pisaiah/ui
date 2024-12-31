@@ -4,6 +4,7 @@ import iui as ui
 import gx
 import time
 import math
+import gg
 
 struct App {
 mut:
@@ -11,6 +12,102 @@ mut:
 	frames f32
 	ls     f32
 	lp     int
+	angle  f32
+}
+
+struct CubeComponent {
+	ui.Component_A
+mut:
+	angle f32
+	rotat f32
+}
+
+fn (mut cube CubeComponent) draw(g &ui.GraphicsContext) {
+	cube.angle += 0.01
+	cube.rotat += 1
+	// }
+
+	//  fn (app &App) draw_cube() {
+	size := 100.0
+	points := [
+		[-size, -size, -size],
+		[size, -size, -size],
+		[size, size, -size],
+		[-size, size, -size],
+		[-size, -size, size],
+		[size, -size, size],
+		[size, size, size],
+		[-size, size, size],
+	]
+
+	mut transformed_points := []f32{}
+	for point in points {
+		x := point[0]
+		y := point[1]
+		z := point[2]
+
+		// Rotate around Y axis
+		new_x := x * math.cos(cube.angle) - z * math.sin(cube.angle)
+		mut new_z := x * math.sin(cube.angle) + z * math.cos(cube.angle)
+
+		// Rotate around X axis
+		new_y := y * math.cos(cube.angle) - new_z * math.sin(cube.angle)
+		new_z = y * math.sin(cube.angle) + new_z * math.cos(cube.angle)
+
+		transformed_points << f32(new_x)
+		transformed_points << f32(new_y)
+		transformed_points << f32(new_z)
+	}
+
+	// Draw edges
+	edges := [
+		[0, 1],
+		[1, 2],
+		[2, 3],
+		[3, 0],
+		[4, 5],
+		[5, 6],
+		[6, 7],
+		[7, 4],
+		[0, 4],
+		[1, 5],
+		[2, 6],
+		[3, 7],
+	]
+
+	ws := g.win.get_size()
+
+	for edge in edges {
+		p1 := edge[0] * 3
+		p2 := edge[1] * 3
+		g.gg.draw_line(transformed_points[p1] + ws.width / 2, transformed_points[p1 + 1] +
+			ws.height / 2, transformed_points[p2] + ws.width / 2, transformed_points[p2 + 1] +
+			ws.height / 2, g.theme.accent_fill)
+	}
+
+	// Draw filled faces
+	/*
+    faces := [
+        [0, 1, 2, 3], [4, 5, 6, 7], // Front and back faces
+        [0, 1, 5, 4], [2, 3, 7, 6], // Top and bottom faces
+        [0, 3, 7, 4], [1, 2, 6, 5], // Left and right faces
+    ]
+
+    for face in faces {
+        p1 := face[0] * 3
+        p2 := face[1] * 3
+        p3 := face[2] * 3
+        p4 := face[3] * 3
+        g.gg.draw_polygon_filled([
+            transformed_points[p1] + ws.width / 2, transformed_points[p1 + 1] + ws.height / 2,
+            transformed_points[p2] + ws.width / 2, transformed_points[p2 + 1] + ws.height / 2,
+            transformed_points[p3] + ws.width / 2, transformed_points[p3 + 1] + ws.height / 2,
+            transformed_points[p4] + ws.width / 2, transformed_points[p4 + 1] + ws.height / 2,
+        ], gx.black)
+    }
+	*/
+
+	g.gg.draw_polygon_filled(ws.width / 2, ws.height / 2, 32, 4, cube.rotat, gx.black)
 }
 
 fn main() {
@@ -19,7 +116,7 @@ fn main() {
 		width:  240
 		height: 280
 	)
-	win.set_theme(ui.theme_seven_dark())
+	win.set_theme(ui.theme_dark_rgb())
 
 	mut top := ui.Panel.new()
 
@@ -44,7 +141,9 @@ fn main() {
 		clock.smooth = e.target.is_selected
 	})
 
-	p.add_child_with_flag(clock, ui.borderlayout_center)
+	mut cube := &CubeComponent{}
+
+	p.add_child_with_flag(cube, ui.borderlayout_center)
 	p.add_child_with_flag(top, ui.borderlayout_south)
 
 	win.add_child(p)

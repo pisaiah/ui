@@ -18,9 +18,22 @@ fn main() {
 	mut switch := ui.Switch.new(
 		text: 'Smooth'
 	)
-	switch.set_bounds(0, 0, 200, 20)
-	top.set_bounds(0, 0, 200, 30)
+
+	mut select_box := ui.Selectbox.new(
+		text:  'Arabic'
+		items: [
+			'Arabic',
+			'Roman',
+			'Binary',
+		]
+	)
+
+	switch.set_bounds(0, 0, 0, 20)
+	select_box.set_bounds(0, 0, 0, 20)
+
+	top.set_bounds(0, 0, 500, 30)
 	top.add_child(switch)
+	top.add_child(select_box)
 
 	mut p := ui.Panel.new(
 		layout: ui.BorderLayout.new()
@@ -30,25 +43,63 @@ fn main() {
 		x: 0
 	}
 	switch.bind_to(&clock.smooth)
+	select_box.subscribe_event('item_change', clock.box_change_fn)
 
 	switch.subscribe_event('change', fn [mut clock] (mut e ui.SwitchEvent) {
 		clock.smooth = e.target.is_selected
 	})
 
-	p.add_child_with_flag(clock, ui.borderlayout_center)
-	p.add_child_with_flag(top, ui.borderlayout_south)
+	p.add_child(clock, value: ui.borderlayout_center)
+	p.add_child(top, value: ui.borderlayout_south)
 
 	win.add_child(p)
 
 	win.gg.run()
 }
 
+fn (mut this ClockComponent) box_change_fn(mut e ui.ItemChangeEvent) {
+	num := NumberType.from_string(e.target.text.to_lower())
+
+	if num != none {
+		this.number_type = num
+	}
+}
+
+enum NumberType {
+	arabic
+	roman
+	binary
+}
+
 // Our custom component
+@[heap]
 struct ClockComponent {
 	ui.Component_A
 mut:
-	size   int  = 100
-	smooth bool = true
+	size        int = 100
+	number_type NumberType
+	smooth      bool = true
+}
+
+const roman = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI']
+const binary = ['1100', '001', '0010', '0011', '0100', '0101', '0110', '0111', '1000', '1001',
+	'1010', '1011']
+
+fn (mut this ClockComponent) get_num(i int) string {
+	match this.number_type {
+		.arabic {
+			if i == 0 {
+				return '12'
+			}
+			return '${i}'
+		}
+		.roman {
+			return roman[i]
+		}
+		.binary {
+			return binary[i]
+		}
+	}
 }
 
 fn (mut this ClockComponent) draw_nums(ctx &ui.GraphicsContext, i int) {
@@ -59,7 +110,7 @@ fn (mut this ClockComponent) draw_nums(ctx &ui.GraphicsContext, i int) {
 	x := this.x + (this.width / 2)
 	y := this.y + (this.height / 2)
 
-	txt := '${i}'
+	txt := this.get_num(i)
 	tw := ctx.text_width(txt)
 
 	ctx.draw_text(x + lx - (tw / 2), y - ly - (ctx.line_height / 2), txt, ctx.font, gx.TextCfg{

@@ -1,7 +1,6 @@
 module main
 
 import iui as ui
-import gx
 
 @[heap]
 struct App {
@@ -17,6 +16,7 @@ fn main() {
 		height:    360
 		ui_mode:   true
 		font_size: 18
+		theme:     ui.theme_dark()
 	)
 
 	// Setup Menubar and items
@@ -25,7 +25,8 @@ fn main() {
 	// Set content panel
 	mut cp := ui.Panel.new(
 		layout: ui.BoxLayout{
-			ori: 1
+			ori:  1
+			vgap: 5
 		}
 	)
 
@@ -33,8 +34,11 @@ fn main() {
 		res_box: ui.TextField.new(text: '')
 	}
 
-	app.res_box.set_bounds(5, 1, 260, 40)
+	app.res_box.set_bounds(5, 10, 260, 30)
 	app.res_box.set_id(mut window, 'res_box')
+	app.res_box.subscribe_event('draw', fn (mut e ui.DrawEvent) {
+		e.target.width = e.ctx.win.get_size().width - (e.target.x * 2)
+	})
 	cp.add_child(app.res_box)
 
 	mut pp := app.button_panel()
@@ -171,10 +175,11 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	label.set_pos(15, 20)
 	label.pack()
 
-	mut can := ui.button(
+	mut can := ui.Button.new(
 		text:   'OK'
 		bounds: ui.Bounds{15, 150, 210, 35}
 	)
+	can.set_accent_filled(true)
 	can.subscribe_event('mouse_up', fn (mut e ui.MouseEvent) {
 		e.ctx.win.components = e.ctx.win.components.filter(mut it !is ui.Modal)
 	})

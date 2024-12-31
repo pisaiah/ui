@@ -6,6 +6,7 @@ import gx
 pub struct Switch {
 	Component_A
 pub mut:
+	pack     bool
 	text     string
 	bind_val &bool = unsafe { nil }
 	cut      int   = 4
@@ -59,6 +60,7 @@ pub fn Switch.new(cf SwitchConfig) &Switch {
 		height:      cf.bounds.height
 		is_selected: cf.selected
 		thumb_x:     0
+		pack:        true
 	}
 }
 
@@ -102,39 +104,50 @@ fn (this &Switch) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
 }
 
 // Draw Switch
-pub fn (mut com Switch) draw(ctx &GraphicsContext) {
+pub fn (mut sw Switch) draw(g &GraphicsContext) {
 	// Draw Background & Border
-	com.draw_background(ctx)
+	sw.draw_background(g)
 
 	// Detect click
-	if com.is_mouse_rele {
-		com.is_mouse_rele = false
-		com.is_selected = !com.is_selected
-		invoke_switch(com, ctx)
-		com.update_bind()
+	if sw.is_mouse_rele {
+		sw.is_mouse_rele = false
+		sw.is_selected = !sw.is_selected
+		invoke_switch(sw, g)
+		sw.update_bind()
 	}
 
-	if !isnil(com.bind_val) {
-	}
-	if !isnil(com.bind_val) {
-		if com.is_selected != com.bind_val {
-			com.is_selected = com.bind_val
+	if !isnil(sw.bind_val) {
+		if sw.is_selected != sw.bind_val {
+			sw.is_selected = sw.bind_val
 		}
 	}
 
-	if com.thumb_x == 0 {
-		com.thumb_x = if com.is_selected { com.height + com.cut } else { com.cut }
+	if sw.pack && sw.height == 0 {
+		// WinUI3 design
+		sw.width = g.text_width(sw.text) + 48
+		sw.height = 20
+	}
+
+	// Pack width
+	if sw.width == 0 && sw.height > 0 {
+		sw.width = (sw.height * 2) + g.text_width(sw.text) + 8
+	}
+
+	if sw.thumb_x == 0 {
+		sw.thumb_x = if sw.is_selected { sw.height + sw.cut } else { sw.cut }
 	}
 
 	// Draw thumb/handle
-	tx := com.get_thumb_x(ctx)
-	wid := com.height - com.cut * 2
-	ctx.gg.draw_rounded_rect_filled(tx, com.y + com.cut, wid, wid, 64, ctx.theme.button_border_normal)
-	ctx.gg.draw_rounded_rect_filled(tx + 1, com.y + com.cut + 1, wid - 2, wid - 2, 64,
-		ctx.theme.button_bg_normal)
+	tx := sw.get_thumb_x(g)
+	wid := sw.height - sw.cut * 2
+
+	fill_color := if sw.is_selected { g.theme.button_bg_normal } else { g.theme.text_color }
+
+	g.gg.draw_rounded_rect_filled(tx, sw.y + sw.cut, wid, wid, 64, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(tx + 1, sw.y + sw.cut + 1, wid - 2, wid - 2, 64, fill_color)
 
 	// Draw text
-	com.draw_text(ctx)
+	sw.draw_text(g)
 }
 
 // Draw background & border of Switch

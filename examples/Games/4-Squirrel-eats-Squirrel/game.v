@@ -103,6 +103,7 @@ mut:
 	bounce  int
 	health  int
 	rect    Rect
+	rbounce bool
 }
 
 // Our Squirrels
@@ -119,6 +120,15 @@ mut:
 	bouncerate   int
 	bounceheight int
 	rect         Rect
+}
+
+fn (mut plr Player) cheat_size() {
+	general_size := rand.int_in_range(5, 25) or { 0 }
+	multiplier := rand.int_in_range(1, 3) or { 1 }
+	width := (general_size + rand.int_in_range(0, 10) or { 0 }) * multiplier
+	height := (general_size + rand.int_in_range(0, 10) or { 0 }) * multiplier
+
+	plr.size += int(math.sqrt(math.pow(f64(width * height), 0.2))) + 1
 }
 
 fn Squirrel.new(camerax int, cameray int) Squirrel {
@@ -291,11 +301,11 @@ pub fn (mut app App) iicon(mut win ui.Window, b []u8, w int, h int) &ui.Image {
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
-		title:           'Squirrel eat Squirrel'
-		width:           winwidth
-		height:          winheight
-		theme:           ui.theme_dark()
-		custom_titlebar: true
+		title:  'Squirrel eat Squirrel'
+		width:  winwidth
+		height: winheight
+		theme:  ui.theme_dark()
+		// custom_titlebar: true
 	)
 
 	// ui.set_window_fps(30)
@@ -341,6 +351,13 @@ fn main() {
 fn (mut app App) key_down_event(mut e ui.WindowKeyEvent) {
 	dump(e.key)
 
+	if e.key == .p {
+		// for _ in 0 .. 10 {
+		app.player_obj.size = 340
+		// app.player_obj.cheat_size()
+		//}
+	}
+
 	if e.key in [.up, .w] {
 		app.move_down = false
 		app.move_up = true
@@ -361,7 +378,7 @@ fn (mut app App) key_down_event(mut e ui.WindowKeyEvent) {
 		app.move_right = true
 	}
 
-	app.move_player()
+	// app.move_player()
 }
 
 fn (mut app App) key_up_event(mut e ui.WindowKeyEvent) {
@@ -391,8 +408,6 @@ fn (mut app App) win_draw_evnt(e &ui.DrawEvent) {
 fn (mut app App) run_game() {
 	// Placeholder for game text surfaces
 	game_over_surf := 'Game Over'
-	win_surf := 'You have achieved OMEGA SQUIRREL!'
-	win_surf2 := '(Press "r" to restart.)'
 
 	// Create player
 	mut player_obj := Player{
@@ -445,11 +460,24 @@ fn (mut app App) move_player() {
 
 	if (app.move_left || app.move_right || app.move_up || app.move_down)
 		|| app.player_obj.bounce != 0 {
-		app.player_obj.bounce += 1
+		if app.player_obj.rbounce {
+		} else {
+			app.player_obj.bounce += 1
+		}
 	}
 
-	if app.player_obj.bounce > bouncerate {
-		app.player_obj.bounce = 0 // reset bounce amount
+	// Smoother
+	if app.player_obj.rbounce {
+		app.player_obj.bounce -= 1
+		if app.player_obj.bounce <= 0 {
+			app.player_obj.rbounce = false
+		}
+	}
+
+	if app.player_obj.bounce > bouncerate * 3 {
+		app.player_obj.rbounce = true
+
+		app.player_obj.bounce -= 1
 	}
 }
 
@@ -548,7 +576,7 @@ fn (mut app App) game_tick(g &ui.GraphicsContext) {
 
 	if !app.game_over_mode && !(app.invulnerable_mode && flash_on) {
 		app.player_obj.rect = Rect{app.player_obj.x - app.camerax, app.player_obj.y - app.cameray - get_bounce_amount(app.player_obj.bounce,
-			bouncerate, bounceheight), app.player_obj.size, app.player_obj.size}
+			bouncerate * 16, bounceheight), app.player_obj.size, app.player_obj.size}
 
 		draw_image(g, app.imgs[0], app.player_obj.rect.x, app.player_obj.rect.y, app.player_obj.rect.width,
 			app.player_obj.rect.height)
@@ -606,7 +634,22 @@ fn (mut app App) game_tick(g &ui.GraphicsContext) {
 
 	// check if the player has won.
 	if app.win_mode {
+		dump(app.player_obj.size)
+
+		// dump(g.theme)
+
+		cfg := gx.TextCfg{
+			color:          gx.red // g.theme.text_color
+			size:           g.font_size
+			vertical_align: .middle
+			family:         g.font
+		}
+
+		win_surf := 'You have achieved OMEGA SQUIRREL!'
+		win_surf2 := '(Press "r" to restart.)'
 		// Placeholder for drawing win text
+		g.draw_text_ofset(0, 0, winwidth, winheight, 'You have achieved OMEGA SQUIRREL!',
+			cfg)
 		// draw_text(win_surf, win_rect)
 		// draw_text(win_surf2, win_rect2)
 	}

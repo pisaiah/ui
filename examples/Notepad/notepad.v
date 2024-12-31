@@ -19,12 +19,13 @@ fn main() {
 
 	// Setup Menubar and items
 	window.bar = ui.Menubar.new()
+	window.bar.set_padding(5)
 
 	mut theme_menu := ui.MenuItem.new(text: 'Theme')
 
 	themes := ui.get_all_themes()
 	for theme2 in themes {
-		item := ui.menu_item(
+		item := ui.MenuItem.new(
 			text:           theme2.name
 			click_event_fn: theme_click
 		)
@@ -32,10 +33,10 @@ fn main() {
 		theme_menu.add_child(item)
 	}
 
-	file_menu := ui.menu_item(
+	file_menu := ui.MenuItem.new(
 		text:     'File'
 		children: [
-			ui.menu_item(
+			ui.MenuItem.new(
 				text: 'Save'
 				// click_event_fn: save_as_click
 			),
@@ -155,15 +156,17 @@ fn about_click(mut win ui.Window, com ui.MenuItem) {
 	mut modal := ui.Page.new(title: 'About Notepad')
 
 	mut title := ui.Label.new(text: 'Notepad')
-	title.set_config(28, true, true)
+
+	title.set_size_em(1.75)
+	title.set_bold(true)
+
 	title.pack()
 
-	mut label := ui.Label.new(
+	label := ui.Label.new(
 		text: 'Small Notepad made in the V Programming Language.\n\nVersion: 0.1' +
 			'\nUI Version: ${ui.version}'
+		pack: true
 	)
-
-	label.pack()
 
 	mut p := ui.Panel.new(layout: ui.BoxLayout.new(ori: 1))
 	p.set_pos(24, 18)

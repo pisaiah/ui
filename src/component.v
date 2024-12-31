@@ -157,7 +157,7 @@ pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
 	if !ctx.win.debug_draw {
 		return
 	}
-	txt := '${com.is_mouse_down} ${com.is_mouse_rele}' // com.str().replace('iui.', '')
+	txt := com.str().replace('iui.', '').trim_space() // '${com.is_mouse_down} ${com.is_mouse_rele}'
 
 	tw := ctx.text_width(txt)
 	tx := com.x + (com.width / 2) - (tw / 2)
@@ -168,6 +168,8 @@ pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
 
 	ctx.gg.draw_line(com.x, com.y, x2, y2, gx.green)
 	ctx.gg.draw_line(x2, com.y, com.x, y2, gx.green)
+
+	ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gx.red)
 
 	ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gx.rgba(250, 0, 0, 150))
 	ctx.draw_text(tx, ty, txt, ctx.font)

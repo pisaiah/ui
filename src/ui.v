@@ -428,6 +428,14 @@ pub fn (mut win Window) draw_window_controls() {
 	h := (win.bar.height / 2) - g.line_height / 2
 	nw := if w < bw { bw + 4 } else { w }
 
+	if bw == 0 {
+		g.draw_text_ofset(0, 0, 8, h, txt, gx.TextCfg{
+			size:  g.font_size
+			color: title_color
+		})
+		return
+	}
+
 	g.draw_text_ofset(0, 0, nw, h, txt, gx.TextCfg{
 		size:  g.font_size
 		color: title_color

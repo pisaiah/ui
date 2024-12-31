@@ -18,6 +18,7 @@ fn main() {
 	)
 
 	mut mb := ui.Menubar.new()
+	mb.set_padding(5)
 
 	// window.set_theme(ui.theme_seven_dark())
 	mut p := ui.Panel.new(
