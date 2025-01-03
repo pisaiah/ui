@@ -62,7 +62,7 @@ pub fn Slider.new(c SliderConfig) &Slider {
 		max:         c.max
 		dir:         c.dir
 		scroll:      true
-		thumb_wid:   24
+		thumb_wid:   20
 		thumb_color: c.thumb_color
 	}
 }
@@ -77,11 +77,11 @@ pub fn (mut s Slider) pack_do(g &GraphicsContext) {
 	if s.dir == .vert {
 		s.width = 20
 		s.height = 200
-		s.thumb_wid = s.width
+		s.thumb_wid = 20
 	} else {
 		s.width = 200
 		s.height = 20
-		s.thumb_wid = s.height
+		s.thumb_wid = 20
 	}
 }
 
@@ -96,7 +96,7 @@ pub fn (mut this Slider) draw(ctx &GraphicsContext) {
 	}
 
 	if ctx.theme.name == 'Ocean' {
-		this.thumb_wid = 16
+		// this.thumb_wid = 16
 	}
 
 	if this.is_mouse_down {

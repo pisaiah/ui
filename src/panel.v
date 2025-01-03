@@ -69,12 +69,21 @@ fn is_nil(a voidptr) bool {
 fn (mut lay BorderLayout) draw_north(ctx &GraphicsContext, x int, y int, w int) int {
 	mut north := lay.north or { return 0 }
 
+	// Note: Options are broken in V, again.
+
+	/*
 	if lay.north != none {
 		lay.north.width = w
 		lay.north.draw_with_offset(ctx, x, y)
 		return north.height + lay.vgap
 	}
-	return 0
+	*/
+
+	north.width = w
+	north.draw_with_offset(ctx, x, y)
+	return north.height + lay.vgap
+
+	// return 0
 }
 
 fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
