@@ -156,7 +156,8 @@ pub fn min_h(ctx &GraphicsContext) int {
 }
 
 pub fn (mut g GraphicsContext) calculate_line_height() {
-	g.line_height = g.gg.text_height('A1!{}j;') + 2
+	line_height := (g.gg.text_height('A1!{}j;') + 2) * g.gg.scale
+	g.line_height = int(line_height) // + 2
 
 	if g.line_height < g.font_size {
 		// Fix for wasm
