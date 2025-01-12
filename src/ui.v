@@ -349,7 +349,18 @@ pub fn (win &Window) win32_make_borderless() {
 	}
 }
 
+pub fn is_custom_titlebar_supported() bool {
+	$if windows {
+		return true
+	}
+	return false
+}
+
 pub fn (mut win Window) draw_window_controls() {
+	if !is_custom_titlebar_supported() {
+		return
+	}
+
 	g := win.graphics_context
 
 	if win.custom_controls == none {

@@ -18,10 +18,10 @@ pub mut:
 }
 
 // Return new Progressbar
-pub fn Progressbar.new(conf ProgressbarConfig) &Progressbar {
+pub fn Progressbar.new(c ProgressbarConfig) &Progressbar {
 	return &Progressbar{
-		text:     conf.val.str()
-		bind_val: conf.bind or { unsafe { nil } }
+		text:     c.val.str()
+		bind_val: c.bind or { unsafe { nil } }
 	}
 }
 
@@ -40,30 +40,29 @@ pub fn (bar &Progressbar) get_val() f32 {
 }
 
 // Draw this component
-pub fn (mut bar Progressbar) draw(ctx &GraphicsContext) {
+pub fn (mut bar Progressbar) draw(g &GraphicsContext) {
 	val := bar.get_val()
 	wid := bar.width * (0.01 * val)
 
 	// ctx.gg.draw_rect_filled(bar.x, bar.y, wid, bar.height, ctx.theme.accent_fill)
 	// ctx.gg.draw_rect_empty(bar.x, bar.y, bar.width, bar.height, ctx.theme.button_border_normal)
 
-	ctx.gg.draw_rounded_rect_filled(bar.x, bar.y, bar.width, bar.height, 4, ctx.theme.button_border_normal)
-	ctx.gg.draw_rounded_rect_filled(bar.x + 1, bar.y + 1, wid - 2, bar.height - 2, 4,
-		ctx.theme.accent_fill)
+	g.gg.draw_rounded_rect_filled(bar.x, bar.y, bar.width, bar.height, 4, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(bar.x + 1, bar.y + 1, wid - 2, bar.height - 2, 4, g.theme.accent_fill)
 
-	c := if wid > bar.width / 2 { ctx.theme.accent_text } else { ctx.theme.text_color }
+	c := if wid > bar.width / 2 { g.theme.accent_text } else { g.theme.text_color }
 
-	bar.draw_text(ctx, val, c)
+	bar.draw_text(g, val, c)
 }
 
-fn (bar &Progressbar) draw_text(ctx &GraphicsContext, val f32, c gx.Color) {
+fn (bar &Progressbar) draw_text(g &GraphicsContext, val f32, c gx.Color) {
 	text := '${val}%'
-	size := ctx.gg.text_width(text) / 2
-	sizh := ctx.line_height / 2
+	size := g.gg.text_width(text) / 2
+	sizh := g.line_height / 2
 
-	ctx.draw_text((bar.x + (bar.width / 2)) - size, bar.y + (bar.height / 2) - sizh, text,
-		ctx.font, gx.TextCfg{
-		size:  ctx.font_size
+	g.draw_text((bar.x + (bar.width / 2)) - size, bar.y + (bar.height / 2) - sizh, text,
+		g.font, gx.TextCfg{
+		size:  g.font_size
 		color: c
 	})
 }

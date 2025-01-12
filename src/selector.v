@@ -245,13 +245,13 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 
 	if si.box != none {
 		// dump('${si.text} ${si.box?.text}')
-		
+
 		// :(
 		// Options in V are broken again (V 0.4.9 60dfdbf)
 		// :(
-		
+
 		box := si.box
-		
+
 		if box.text == si.text {
 			ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2, ctx.theme.button_bg_hover)
 			ctx.gg.draw_rect_filled(si.x + 3, si.y + (si.height / 4), 3, (si.height / 2),

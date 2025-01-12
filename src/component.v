@@ -310,6 +310,10 @@ pub fn invoke_scroll_event(com &Component, ctx &GraphicsContext, delta int) {
 		dir:    0
 	}
 
+	if 'scroll_wheel' !in com.events.event_map {
+		return
+	}
+
 	for f in com.events.event_map['scroll_wheel'] {
 		f(ev)
 	}

@@ -16,139 +16,143 @@ pub:
 	text     string
 }
 
-pub fn Checkbox.new(conf CheckboxConfig) &Checkbox {
+pub fn Checkbox.new(c CheckboxConfig) &Checkbox {
 	return &Checkbox{
-		text:        conf.text
-		x:           conf.bounds.x
-		y:           conf.bounds.y
-		width:       conf.bounds.width
-		height:      conf.bounds.height
-		is_selected: conf.selected
+		text:        c.text
+		x:           c.bounds.x
+		y:           c.bounds.y
+		width:       c.bounds.width
+		height:      c.bounds.height
+		is_selected: c.selected
 	}
 }
 
 // Get border color
-fn (this &Checkbox) get_border(is_hover bool, ctx &GraphicsContext) gx.Color {
-	if this.is_mouse_down {
-		return ctx.theme.button_border_click
+fn (cb &Checkbox) get_border(is_hover bool, g &GraphicsContext) gx.Color {
+	if cb.is_mouse_down {
+		return g.theme.accent_fill_third
+	}
+
+	if cb.is_selected {
+		if is_hover {
+			return g.theme.accent_fill_third
+		}
+		return g.theme.accent_fill
 	}
 
 	if is_hover {
-		return ctx.theme.button_border_hover
+		return g.theme.accent_fill_second
 	}
-	return ctx.theme.button_border_normal
+
+	return g.theme.button_border_normal
 }
 
 // Get background color
-fn (this &Checkbox) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
-	if this.is_selected {
-		if this.is_mouse_down {
-			return ctx.theme.accent_fill_third
+fn (cb &Checkbox) get_background(is_hover bool, g &GraphicsContext) gx.Color {
+	if cb.is_selected {
+		if cb.is_mouse_down {
+			return g.theme.accent_fill_third
 		}
 		if is_hover {
-			return ctx.theme.accent_fill_second
+			return g.theme.accent_fill_second
 		}
-		return ctx.theme.accent_fill
+		return g.theme.accent_fill
 	}
 
-	if this.is_mouse_down {
-		return ctx.theme.button_bg_click
+	if cb.is_mouse_down {
+		return g.theme.button_bg_click
 	}
 
 	if is_hover {
-		return ctx.theme.button_bg_hover
+		return g.theme.button_bg_hover
 	}
 
-	return ctx.theme.background
+	return g.theme.background
 }
 
 // Draw checkbox
-pub fn (mut com Checkbox) draw(ctx &GraphicsContext) {
+pub fn (mut cb Checkbox) draw(g &GraphicsContext) {
 	// Draw Background & Border
-	com.draw_background(ctx)
+	cb.draw_background(g)
 
 	// Detect click
-	if com.is_mouse_rele {
-		com.is_mouse_rele = false
-		com.is_selected = !com.is_selected
+	if cb.is_mouse_rele {
+		cb.is_mouse_rele = false
+		cb.is_selected = !cb.is_selected
 	}
 
 	// Draw checkmark
-	if com.is_selected {
-		com.draw_checkmark(ctx)
+	if cb.is_selected {
+		cb.draw_checkmark(g)
 	}
 
 	// Draw text
-	com.draw_text(ctx)
+	cb.draw_text(g)
 }
 
 // Draw background & border of Checkbox
-fn (com &Checkbox) draw_background(ctx &GraphicsContext) {
-	half_wid := com.width / 2
-	half_hei := com.height / 2
+fn (cb &Checkbox) draw_background(g &GraphicsContext) {
+	half_wid := cb.width / 2
+	half_hei := cb.height / 2
 
-	mid := com.x + half_wid
-	midy := com.y + half_hei
+	mid := cb.x + half_wid
+	midy := cb.y + half_hei
 
-	is_hover_x := abs(mid - ctx.win.mouse_x) < half_wid
-	is_hover_y := abs(midy - ctx.win.mouse_y) < half_hei
+	is_hover_x := abs(mid - g.win.mouse_x) < half_wid
+	is_hover_y := abs(midy - g.win.mouse_y) < half_hei
 	is_hover := is_hover_x && is_hover_y
 
-	bg := com.get_background(is_hover, ctx)
-	border := com.get_border(is_hover, ctx)
+	bg := cb.get_background(is_hover, g)
+	border := cb.get_border(is_hover, g)
 
-	ctx.draw_rounded_rect(com.x, com.y, com.height, com.height, control_corner_radius,
-		border, bg)
+	g.draw_rounded_rect(cb.x, cb.y, cb.height, cb.height, control_corner_radius, border,
+		bg)
 }
 
 // Draw the text of Checkbox
-fn (this &Checkbox) draw_text(ctx &GraphicsContext) {
-	sizh := ctx.gg.text_height(this.text) / 2
+fn (cb &Checkbox) draw_text(g &GraphicsContext) {
+	sizh := g.gg.text_height(cb.text) / 2
 
-	ctx.draw_text(this.x + this.height + 4, this.y + (this.height / 2) - sizh, this.text,
-		ctx.font, gx.TextCfg{
-		size:  ctx.font_size
-		color: ctx.theme.text_color
+	g.draw_text(cb.x + cb.height + 4, cb.y + (cb.height / 2) - sizh, cb.text, g.font,
+		gx.TextCfg{
+		size:  g.font_size
+		color: g.theme.text_color
 	})
 }
 
 // TODO: Better Checkmark
-fn (com &Checkbox) draw_checkmark(ctx &GraphicsContext) {
-	// ctx.gg.draw_rounded_rect_filled(com.x, com.y, com.height, com.height, 8, ctx.theme.accent_fill)
-
+fn (cb &Checkbox) draw_checkmark(g &GraphicsContext) {
 	// Use Checkmark SVG if icon set loaded
-	if ctx.icon_ttf_exists() {
-		h := com.height / 2
-		ctx.draw_text_ofset(com.x, com.y, h, h, '\uea11', gx.TextCfg{
-			size:           ctx.win.font_size
+	if g.icon_ttf_exists() {
+		h := cb.height / 2
+		g.draw_text_ofset(cb.x, cb.y, h, h, '\uea11', gx.TextCfg{
+			size:           g.win.font_size
 			color:          gx.white
-			family:         ctx.win.extra_map['icon_ttf']
+			family:         g.win.extra_map['icon_ttf']
 			align:          .center
 			vertical_align: .middle
 		})
-		ctx.reset_text_font()
+		g.reset_text_font()
 
 		return
 	}
 
-	ctx.gg.draw_image_with_config(gg.DrawImageConfig{
-		img_id:   ctx.icon_cache['check_box']
-		img_rect: gg.Rect{com.x + 2, com.y + 2, com.height - 5, com.height - 5}
+	g.gg.draw_image_with_config(gg.DrawImageConfig{
+		img_id:   g.icon_cache['check_box']
+		img_rect: gg.Rect{cb.x + 2, cb.y + 2, cb.height - 5, cb.height - 5}
 	})
-
-	// draw_checkmark(com.x, com.y, com.height, com.height, 4, gx.green, ctx)
 }
 
-fn draw_checkmark(x f32, y f32, width f32, height f32, check_padding f32, c gx.Color, ctx &GraphicsContext) {
+fn draw_checkmark(x f32, y f32, w f32, h f32, check_padding f32, c gx.Color, g &GraphicsContext) {
 	// Calculate the coordinates for the checkmark
 	start_x := x + check_padding
-	start_y := y + (height / 2)
-	mid_x := x + (width / 3)
-	mid_y := y + height - check_padding
-	end_x := x + width - check_padding
+	start_y := y + (h / 2)
+	mid_x := x + (w / 3)
+	mid_y := y + h - check_padding
+	end_x := x + w - check_padding
 	end_y := y + check_padding
 
 	// Draw the checkmark lines
-	ctx.gg.draw_line(start_x, start_y, mid_x, mid_y, c)
-	ctx.gg.draw_line(mid_x, mid_y, end_x, end_y, c)
+	g.gg.draw_line(start_x, start_y, mid_x, mid_y, c)
+	g.gg.draw_line(mid_x, mid_y, end_x, end_y, c)
 }

@@ -92,8 +92,11 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 			this.width = this.icon.width + 14
 		} else {
 			if this.uicon != none {
-				size := 23 + ctx.text_width(this.text)
-				this.width = size + 14
+				if this.text.len == 0 {
+					this.width = ctx.text_width(this.uicon) + 23
+				} else {
+					this.width = ctx.text_width(this.text) + 14 + 23
+				}
 			} else {
 				size := ctx.text_width(this.text)
 				this.width = size + 14
@@ -188,7 +191,7 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 
 fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 	mut cy := this.y + this.height - this.ah
-	mut cx := this.x + 1
+	mut cx := this.x
 
 	open_height := this.children.len * 26
 
@@ -215,10 +218,12 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		ws := ctx.gg.window_size()
 		ctx.gg.scissor_rect(this.x, this.y + 26, ws.width, open_height)
 	}
-	ctx.gg.draw_rounded_rect_filled(cx, by, this.open_width, open_height - this.ah, menu_item_radius,
-		ctx.theme.dropdown_background)
 
-	mut hei := 0
+	// Draw BG
+	ctx.draw_rounded_rect(cx, by, this.open_width, open_height - this.ah, menu_item_radius,
+		ctx.theme.button_border_normal, ctx.theme.dropdown_background)
+
+	// mut hei := 0
 	mut wi := 100
 
 	for mut item in this.children {
@@ -237,7 +242,7 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 
 		item.draw_with_offset(ctx, cx, cy)
 		cy += item.height
-		hei += item.height
+		// hei += item.height
 	}
 
 	if this.ah != 0 {
@@ -249,33 +254,31 @@ fn (mut this MenuItem) draw_open_contents(ctx &GraphicsContext) {
 		item.width = wi
 	}
 	this.open_width = wi
-	ctx.gg.draw_rounded_rect_empty(cx, by, wi, hei - this.ah, menu_item_radius, ctx.theme.dropdown_border)
+	// ctx.gg.draw_rounded_rect_empty(cx, by, wi, hei - this.ah, menu_item_radius, ctx.theme.dropdown_border)
 }
 
-fn (mut this Menubar) draw(ctx &GraphicsContext) {
-	wid := if this.width > 0 { this.width } else { gg.window_size().width }
+fn (mut bar Menubar) draw(g &GraphicsContext) {
+	wid := if bar.width > 0 { bar.width } else { gg.window_size().width }
 
-	half_pad := this.padding / 2
-	this.height = 26 + this.padding + this.margin_top
+	half_pad := bar.padding / 2
+	bar.height = 26 + bar.padding + bar.margin_top
 
-	ctx.theme.menu_bar_fill_fn(this.x, this.y, wid, 26 + this.padding + this.margin_top,
-		ctx)
+	g.theme.menu_bar_fill_fn(bar.x, bar.y, wid, 26 + bar.padding + bar.margin_top, g)
 
-	// ctx.gg.draw_rect_empty(this.x, this.y, wid, 26, ctx.theme.menubar_border)
-	mut x := this.x + 1
-	for mut item in this.children {
-		item.set_parent(this)
-		item.draw_with_offset(ctx, x + half_pad, this.y + half_pad + this.margin_top)
-		x += item.width
+	mut x := bar.x + 1
+	for mut item in bar.children {
+		item.set_parent(bar)
+		item.draw_with_offset(g, x + half_pad, bar.y + half_pad + bar.margin_top)
+		x += item.width + 1
 	}
 }
 
-fn (mut this Menubar) check_mouse(win &Window, mx int, my int) bool {
+fn (mut bar Menubar) check_mouse(win &Window, mx int, my int) bool {
 	if isnil(win.bar) {
 		return false
 	}
 
-	for mut item in this.children {
+	for mut item in bar.children {
 		if mut item is MenuItem {
 			if !item.open {
 				continue
@@ -316,7 +319,6 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 
 @[params]
 pub struct MenubarConfig {
-	theme &Theme = unsafe { nil }
 }
 
 pub fn Menubar.new(cfg MenubarConfig) &Menubar {
@@ -377,6 +379,7 @@ pub fn menu_item(cfg MenuItemConfig) &MenuItem {
 	return MenuItem.new(cfg)
 }
 
+// @[deprecated: 'Use click_fn']
 pub fn (mut com MenuItem) set_click(b fn (mut Window, MenuItem)) {
 	com.click_event_fn = b
 }
@@ -416,7 +419,7 @@ fn open_about_modal(app &Window) &Modal {
 	)
 
 	mut copy := Label.new(
-		text:    'Copyright © 2021-2024 Isaiah.'
+		text:    'Copyright © 2021-2025 Isaiah.'
 		pack:    true
 		em_size: .8
 		// .75em = 12px

@@ -9,9 +9,7 @@ pub struct Page {
 pub:
 	text_cfg gx.TextCfg
 pub mut:
-	text string
-
-	// needs_init bool
+	text       string
 	close      &Button
 	top_off    int      = 75
 	line_color gx.Color = gx.rgba(0, 0, 0, 90)
@@ -55,23 +53,23 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 	this.draw_bg(ctx)
 
-	ctx.draw_text(56, 18, this.text, ctx.font, this.text_cfg)
+	// ctx.set_cfg(this.text_cfg)
+	// th := ctx.gg.text_height(this.text)
+	ctx.draw_text(56, 20, this.text, ctx.font, this.text_cfg)
 
 	ctx.reset_text_font()
 
 	// if this.needs_init {
 	if isnil(this.close) {
 		this.create_close_btn(true)
-		this.close.set_accent_filled(true)
-		this.close.border_radius = 16
+		this.close.set_area_filled_state(false, .normal)
+		this.close.border_radius = -1
 
 		if !ctx.icon_ttf_exists() {
 			// Fallback
 			this.close.text = '<'
 			this.close.font = 0
 		}
-
-		// this.needs_init = false
 	}
 
 	y_off := this.y + this.top_off
@@ -106,7 +104,6 @@ pub fn (mut this Page) create_close_btn(ce bool) &Button {
 	close.set_bounds(8, -this.top_off + y, 40, wid)
 
 	if ce {
-		close.set_background(gx.rgba(230, 230, 230, 50))
 		close.subscribe_event('mouse_up', fn (mut e MouseEvent) {
 			e.ctx.win.components = e.ctx.win.components.filter(mut it !is Page)
 		})
@@ -117,6 +114,7 @@ pub fn (mut this Page) create_close_btn(ce bool) &Button {
 	return close
 }
 
+@[deprecated]
 pub fn default_page_close_fn(mut win Window, btn Button) {
 	win.components = win.components.filter(mut it !is Page)
 }

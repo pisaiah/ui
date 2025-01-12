@@ -490,10 +490,29 @@ pub fn (mut com Component) on_scroll_component(app &Window, e &gg.Event) {
 pub fn (mut com Component) scroll_y_by(e &gg.Event, ctx &GraphicsContext) {
 	scroll_y := int(e.scroll_y)
 	com.scroll_i -= scroll_y
+
+	if mut com is Popup {
+		popup_invoke_scroll_event(com, ctx, -scroll_y)
+		return
+	}
+
 	invoke_scroll_event(com, ctx, -scroll_y)
 
 	if com.scroll_i < 0 {
 		com.scroll_i = 0
+	}
+}
+
+pub fn popup_invoke_scroll_event(com &Popup, ctx &GraphicsContext, delta int) {
+	ev := ScrollEvent{
+		target: unsafe { com }
+		ctx:    ctx
+		delta:  delta
+		dir:    0
+	}
+
+	for f in com.events.event_map['scroll_wheel'] {
+		f(ev)
 	}
 }
 

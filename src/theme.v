@@ -219,7 +219,7 @@ pub fn theme_dark_rgb() &Theme {
 	return th
 }
 
-fn darker(c gx.Color, mut theme &Theme) {
+fn darker(c gx.Color, mut theme Theme) {
 	f1 := .8
 	f2 := .6
 	theme.accent_fill_second.r = u8(f32(c.r) * f1)

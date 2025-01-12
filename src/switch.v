@@ -65,42 +65,42 @@ pub fn Switch.new(cf SwitchConfig) &Switch {
 }
 
 // Get border color
-fn (this &Switch) get_border(is_hover bool, ctx &GraphicsContext) gx.Color {
+fn (this &Switch) get_border(is_hover bool, g &GraphicsContext) gx.Color {
 	if this.is_mouse_down {
-		return ctx.theme.button_border_click
+		return g.theme.accent_fill_third
 	}
 
 	if is_hover {
-		return ctx.theme.button_border_hover
+		return g.theme.accent_fill_second
 	}
-	return ctx.theme.button_border_normal
+	return g.theme.button_border_normal
 }
 
 // Get background color
-fn (this &Switch) get_background(is_hover bool, ctx &GraphicsContext) gx.Color {
+fn (this &Switch) get_background(is_hover bool, g &GraphicsContext) gx.Color {
 	if this.is_selected {
 		if this.is_mouse_down {
-			return ctx.theme.accent_fill_third
+			return g.theme.accent_fill_third
 		}
 		if is_hover {
-			return ctx.theme.accent_fill_second
+			return g.theme.accent_fill_second
 		}
-		return ctx.theme.accent_fill
+		return g.theme.accent_fill
 	}
 
 	if this.is_mouse_down {
-		return ctx.theme.button_bg_click
+		return g.theme.button_bg_click
 	}
 
 	if this.is_selected {
-		return ctx.theme.accent_fill
+		return g.theme.accent_fill
 	}
 
 	if is_hover {
-		return ctx.theme.button_bg_hover
+		return g.theme.button_bg_hover
 	}
 
-	return ctx.theme.button_bg_normal
+	return g.theme.button_bg_normal
 }
 
 // Draw Switch
@@ -151,17 +151,17 @@ pub fn (mut sw Switch) draw(g &GraphicsContext) {
 }
 
 // Draw background & border of Switch
-fn (sw &Switch) draw_background(ctx &GraphicsContext) {
-	is_hover := is_in(sw, ctx.win.mouse_x, ctx.win.mouse_y)
+fn (sw &Switch) draw_background(g &GraphicsContext) {
+	is_hover := is_in(sw, g.win.mouse_x, g.win.mouse_y)
 
-	bg := sw.get_background(is_hover, ctx)
-	border := sw.get_border(is_hover, ctx)
+	bg := sw.get_background(is_hover, g)
+	border := sw.get_border(is_hover, g)
 
 	bh := sw.height * 2
 	h := sw.height
 
-	ctx.gg.draw_rounded_rect_filled(sw.x, sw.y, bh, h, 16, border)
-	ctx.gg.draw_rounded_rect_filled(sw.x + 1, sw.y + 1, bh - 2, h - 2, 16, bg)
+	g.gg.draw_rounded_rect_filled(sw.x, sw.y, bh, h, 16, border)
+	g.gg.draw_rounded_rect_filled(sw.x + 1, sw.y + 1, bh - 2, h - 2, 16, bg)
 }
 
 // Draw the text of Switch

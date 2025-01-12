@@ -114,7 +114,7 @@ fn (mut box Textbox) draw_bg(ctx &GraphicsContext) {
 	bg := box.bg or { ctx.theme.textbox_background }
 
 	ctx.gg.draw_rect_filled(box.x, box.ry, box.width, box.height, bg)
-	ctx.gg.draw_rect_empty(box.x, box.y, box.width, box.height, ctx.theme.textbox_border)
+	ctx.gg.draw_rect_empty(box.x, box.y, box.width, box.height, ctx.theme.button_border_normal)
 }
 
 fn (mut this Textbox) draw(ctx &GraphicsContext) {
@@ -137,7 +137,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	}
 	ctx.gg.set_text_cfg(cfg)
 
-	th := ctx.gg.text_height('A1!|{}j;') + 4
+	th := ctx.line_height + 4
 	ctx.gg.scissor_rect(this.x, this.y, this.width, this.height)
 
 	if this.caret_x < 0 {
@@ -323,8 +323,11 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &
 	}
 }
 
+const tab_string = ' '.repeat(4)
+
 fn tabr() string {
-	return ' '.repeat(8)
+	// return ' '.repeat(4)
+	return tab_string
 }
 
 fn (mut this Textbox) do_mouse_down(ctx &GraphicsContext, th int) {
