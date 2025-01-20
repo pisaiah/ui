@@ -230,7 +230,7 @@ pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
 	}
 
 	for f in com.events.event_map['draw'] {
-		f(ev)
+		f(&ev)
 	}
 }
 
@@ -248,7 +248,7 @@ pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 		ctx:    ctx
 	}
 	for f in com.events.event_map['after_draw'] {
-		f(ev)
+		f(&ev)
 	}
 	if ctx.win.debug_draw {
 		ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gx.red)
@@ -261,7 +261,7 @@ pub fn (com &Button) invoke_mouse_down(ctx &GraphicsContext) {
 		ctx:    ctx
 	}
 	for f in com.events.event_map['mouse_down'] {
-		f(ev)
+		f(&ev)
 	}
 }
 
@@ -271,7 +271,7 @@ pub fn (com &Component_A) invoke_mouse_down(ctx &GraphicsContext) {
 		ctx:    ctx
 	}
 	for f in com.events.event_map['mouse_down'] {
-		f(ev)
+		f(&ev)
 	}
 }
 
@@ -298,7 +298,7 @@ pub fn invoke_mouse_up(com &Component, ctx &GraphicsContext) {
 		ctx:    ctx
 	}
 	for f in com.events.event_map['mouse_up'] {
-		f(ev)
+		f(&ev)
 	}
 }
 
@@ -315,7 +315,7 @@ pub fn invoke_scroll_event(com &Component, ctx &GraphicsContext, delta int) {
 	}
 
 	for f in com.events.event_map['scroll_wheel'] {
-		f(ev)
+		f(&ev)
 	}
 }
 
@@ -326,7 +326,7 @@ pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
 	}
 
 	for f in com.events.event_map[n] {
-		f(ev)
+		f(&ev)
 	}
 	return ev.cancel
 }
@@ -343,6 +343,6 @@ pub fn invoke_slider_change(com &Slider, ctx &GraphicsContext, value f32) {
 		value:  value
 	}
 	for f in com.events.event_map['value_change'] {
-		f(ev)
+		f(&ev)
 	}
 }

@@ -302,7 +302,7 @@ pub fn (win &Window) invoke_key_event(key gg.KeyCode, gg_ev &gg.Event, typ strin
 		ev:  unsafe { gg_ev }
 	}
 	for f in win.event_map[typ] {
-		f(ev)
+		f(&ev)
 	}
 }
 
@@ -311,7 +311,7 @@ pub fn (win &Window) invoke_theme_change_event() {
 		win: win
 	}
 	for f in win.event_map['theme_change'] {
-		f(ev)
+		f(&ev)
 	}
 }
 
@@ -466,7 +466,7 @@ pub fn (win &Window) invoke_draw_event() {
 		win: win
 	}
 	for f in win.event_map['draw'] {
-		f(ev)
+		f(&ev)
 	}
 }
 

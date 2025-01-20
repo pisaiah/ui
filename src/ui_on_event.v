@@ -512,7 +512,7 @@ pub fn popup_invoke_scroll_event(com &Popup, ctx &GraphicsContext, delta int) {
 	}
 
 	for f in com.events.event_map['scroll_wheel'] {
-		f(ev)
+		f(&ev)
 	}
 }
 
