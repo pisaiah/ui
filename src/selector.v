@@ -112,7 +112,7 @@ pub fn (mut this Selectbox) invoke_change_event(ctx &GraphicsContext, ov string,
 		new_val: nv
 	}
 	for f in this.events.event_map['item_change'] {
-		f(ev)
+		f(&ev)
 	}
 }
 

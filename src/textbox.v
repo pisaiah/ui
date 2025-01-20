@@ -106,7 +106,7 @@ pub fn invoke_activeline_draw_event(com &Textbox, ctx &GraphicsContext, line int
 		y:      y
 	}
 	for f in com.events.event_map['current_line_draw'] {
-		f(ev)
+		f(&ev)
 	}
 }
 

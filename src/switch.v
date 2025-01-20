@@ -190,6 +190,6 @@ pub fn invoke_switch(sw &Switch, ctx &GraphicsContext) {
 	}
 
 	for f in sw.events.event_map['change'] {
-		f(ev)
+		f(&ev)
 	}
 }
