@@ -4,15 +4,15 @@ import gx
 
 // Ocean - A Cross Platform Theme
 pub fn theme_ocean() &Theme {
-	mut light := theme_default()
-	light.name = 'Ocean'
-	light.accent_fill = gx.rgb(143, 184, 218)
-	light.button_fill_fn = ocean_button_fill_fn
-	light.bar_fill_fn = ocean_bar_fill_fn
-	light.setup_fn = ocean_setup
-	light.menu_bar_fill_fn = ocean_menubar_fill_fn
+	mut th := theme_default()
+	th.name = 'Ocean'
+	th.accent_fill = gx.rgb(143, 184, 218)
+	th.button_fill_fn = ocean_button_fill_fn
+	th.bar_fill_fn = ocean_bar_fill_fn
+	th.setup_fn = ocean_setup
+	th.menu_bar_fill_fn = ocean_menubar_fill_fn
 
-	return light
+	return th
 }
 
 fn cache_image(id string, mut g GraphicsContext, buf &u8, bufsize int) int {
@@ -56,26 +56,26 @@ pub fn ocean_menubar_fill_fn(x int, y int, w int, h int, g &GraphicsContext) {
 
 // Seven
 pub fn theme_seven() &Theme {
-	mut light := theme_default()
-	light.name = 'Seven'
-	light.accent_fill = gx.rgb(143, 184, 218)
-	light.button_fill_fn = seven_button_fill_fn
-	light.bar_fill_fn = seven_bar_fill_fn
-	light.setup_fn = seven_setup
-	light.menu_bar_fill_fn = seven_menubar_fill_fn
-	return light
+	mut th := theme_default()
+	th.name = 'Seven'
+	th.accent_fill = gx.rgb(143, 184, 218)
+	th.button_fill_fn = seven_button_fill_fn
+	th.bar_fill_fn = seven_bar_fill_fn
+	th.setup_fn = seven_setup
+	th.menu_bar_fill_fn = seven_menubar_fill_fn
+	return th
 }
 
 // Seven Dark
 pub fn theme_seven_dark() &Theme {
-	mut light := theme_dark()
-	light.name = 'Seven Dark'
-	light.accent_fill = gx.rgb(143, 184, 218)
-	light.button_fill_fn = seven_dark_button_fill_fn
-	light.bar_fill_fn = seven_dark_bar_fill_fn
-	light.setup_fn = seven_dark_setup
-	light.menu_bar_fill_fn = seven_dark_menubar_fill_fn
-	return light
+	mut th := theme_dark()
+	th.name = 'Seven Dark'
+	th.accent_fill = gx.rgb(143, 184, 218)
+	th.button_fill_fn = seven_dark_button_fill_fn
+	th.bar_fill_fn = seven_dark_bar_fill_fn
+	th.setup_fn = seven_dark_setup
+	th.menu_bar_fill_fn = seven_dark_menubar_fill_fn
+	return th
 }
 
 pub fn seven_setup(mut win Window) {
@@ -94,18 +94,7 @@ pub fn seven_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, g &G
 }
 
 pub fn seven_bar_fill_fn(x int, y f32, w int, h f32, hor bool, g &GraphicsContext) {
-	hh := if hor { h / 2 } else { h }
-	ww := if hor { w } else { w / 2 }
-
-	g.gg.draw_rect_filled(x, y, w, hh, gx.rgb(238, 238, 238))
-
-	if hor {
-		g.gg.draw_rect_filled(x, y + hh, ww, hh, gx.rgb(214, 214, 214))
-	} else {
-		g.gg.draw_rect_filled(x + ww, y, ww, hh, gx.rgb(214, 214, 214))
-	}
-
-	g.gg.draw_rect_empty(x, y, w + 1, h, g.theme.scroll_bar_color)
+	half_bar_fill(x, y, w, h, hor, 238, 214, g)
 }
 
 pub fn seven_menubar_fill_fn(x int, y int, w int, h int, g &GraphicsContext) {
@@ -136,15 +125,19 @@ pub fn seven_dark_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color,
 }
 
 pub fn seven_dark_bar_fill_fn(x int, y f32, w int, h f32, hor bool, g &GraphicsContext) {
+	half_bar_fill(x, y, w, h, hor, 80, 37, g)
+}
+
+pub fn half_bar_fill(x int, y f32, w int, h f32, hor bool, a u8, b u8, g &GraphicsContext) {
 	hh := if hor { h / 2 } else { h }
 	ww := if hor { w } else { w / 2 }
 
-	g.gg.draw_rect_filled(x, y, w, hh, gx.rgb(80, 80, 80))
+	g.gg.draw_rect_filled(x, y, w, hh, gx.rgb(a, a, a))
 
 	if hor {
-		g.gg.draw_rect_filled(x, y + hh, ww, hh, gx.rgb(37, 37, 37))
+		g.gg.draw_rect_filled(x, y + hh, ww, hh, gx.rgb(b, b, b))
 	} else {
-		g.gg.draw_rect_filled(x + ww, y, ww, hh, gx.rgb(37, 37, 37))
+		g.gg.draw_rect_filled(x + ww, y, ww, hh, gx.rgb(b, b, b))
 	}
 
 	g.gg.draw_rect_empty(x, y, w, h, g.theme.scroll_bar_color)

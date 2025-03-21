@@ -238,10 +238,6 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 		return
 	}
 	mod := ev.modifiers
-	if mod == 8 {
-		// Windows Key
-		return
-	}
 	if mod == 2 {
 		com.ctrl_down = true
 	}
@@ -252,6 +248,11 @@ fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {
 		com.carrot_left -= 1
 		com.ctrl_down = false
 		invoke_text_change(com, w.graphics_context, 'text_change')
+		return
+	}
+
+	if mod == 8 {
+		// Windows Key
 		return
 	}
 

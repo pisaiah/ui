@@ -32,7 +32,6 @@ mut:
 }
 
 // pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
-
 pub fn (com &Component) str() string {
 	return com.type_name() // typeof(com)
 }
@@ -158,7 +157,6 @@ pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
 		return
 	}
 	txt := com.str().replace('iui.', '').trim_space() // '${com.is_mouse_down} ${com.is_mouse_rele}'
-
 	tw := ctx.text_width(txt)
 	tx := com.x + (com.width / 2) - (tw / 2)
 	ty := com.y + (com.height / 2) - (ctx.line_height / 2)

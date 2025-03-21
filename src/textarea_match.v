@@ -63,7 +63,7 @@ pub fn get_nearest_match(keys []string, input string, start int) (int, string) {
 
 	for key in keys {
 		indx := input.index_after(key, start)
-		if indx != -1 {
+		if indx != none {
 			if indx < low_indx {
 				low_indx = indx
 				low_key = key

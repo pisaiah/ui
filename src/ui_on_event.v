@@ -166,7 +166,6 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	}
 
 	// dump(com.handle_mouse_down(app))
-
 	if mut com is ScrollView {
 		com.is_mouse_down = true
 
@@ -445,7 +444,6 @@ pub fn on_mouse_up_event(e &gg.Event, mut app Window) {
 
 	if app.custom_controls != none {
 		// on_mouse_rele_generic
-
 		mut com := &Component(app.custom_controls.p)
 		if com.on_mouse_rele_component(app) {
 			return

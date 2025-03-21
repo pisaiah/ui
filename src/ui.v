@@ -237,7 +237,6 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 	}
 
 	// blank_draw_event_fn(mut win, &Component_A{})
-
 	txt := $if emscripten ? {
 		'canvas'
 	} $else {

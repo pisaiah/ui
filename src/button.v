@@ -301,6 +301,11 @@ fn (b &Button) get_border(g &GraphicsContext, is_hover bool) gx.Color {
 
 		// return g.theme.button_border_hover
 	}
+
+	if b.is_action {
+		return g.theme.accent_fill
+	}
+
 	return g.theme.button_border_normal
 }
 

@@ -193,14 +193,12 @@ pub fn (box &Selectbox) draw_box(ctx &GraphicsContext, x int, y int) {
 	ctx.draw_corner_rect(x, y, box.width, box.height, border, bg)
 
 	// ctx.gg.draw_rect_filled(x, y, box.width, box.height, bg)
-
 	ctx.draw_text(x + 5, y + (box.height / 2) - sizh, box.text, ctx.font, gx.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
 
 	// ctx.gg.draw_rect_empty(x, y, box.width, box.height, border)
-
 	box.draw_arrow(ctx, x, y, box.width, box.height)
 }
 
@@ -249,7 +247,6 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 		// :(
 		// Options in V are broken again (V 0.4.9 60dfdbf)
 		// :(
-
 		box := si.box
 
 		if box.text == si.text {

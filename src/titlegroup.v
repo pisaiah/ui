@@ -7,7 +7,7 @@ import gx
 pub struct Titlebox {
 	Component_A
 pub mut:
-	padding int = 10
+	padding int = 8
 }
 
 @[params]
@@ -15,7 +15,7 @@ pub struct TitleboxConfig {
 pub:
 	text     string
 	children []Component
-	padding  int = 10
+	padding  int = 8
 }
 
 pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
@@ -30,22 +30,16 @@ pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	text_height := ctx.line_height / 2
 
-	for mut com in this.children {
-		if !isnil(com.draw_event_fn) {
-			// deprecated old event
-			mut win := ctx.win
-			com.draw_event_fn(mut win, com)
-		}
-
+	for mut kid in this.children {
 		y := this.y + this.padding + text_height + 5
-		com.draw_with_offset(ctx, this.x + this.padding, y)
+		kid.draw_with_offset(ctx, this.x + this.padding, y)
 
-		wid := com.x + com.width + (this.padding * 2)
+		wid := kid.x + kid.width + (this.padding * 2)
 		if wid > this.width {
 			this.width = wid
 		}
 
-		hei := com.y + com.height + (this.padding * 2) + text_height + 5
+		hei := kid.y + kid.height + (this.padding * 2) + text_height + 5
 		if hei > this.height {
 			this.height = hei
 		}

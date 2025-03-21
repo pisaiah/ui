@@ -142,7 +142,8 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 	}
 
 	if is_in(this, ctx.win.mouse_x, ctx.win.mouse_y) {
-		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, ra, ctx.theme.button_bg_hover)
+		ctx.gg.draw_rounded_rect_filled(this.x + 1, this.y + 1, this.width - 2, this.height - 2,
+			ra, ctx.theme.button_bg_hover)
 	}
 
 	y := this.y + ((this.height / 2) - (ctx.line_height / 2))
@@ -325,13 +326,13 @@ pub fn Menubar.new(cfg MenubarConfig) &Menubar {
 	return &Menubar{}
 }
 
-fn (mut app Window) get_bar() &Menubar {
-	return app.bar
+fn (mut win Window) get_bar() &Menubar {
+	return win.bar
 }
 
-fn (mut app Window) set_bar_tick(val int) {
-	if app.bar != unsafe { nil } {
-		app.bar.tik = val
+fn (mut win Window) set_bar_tick(val int) {
+	if win.bar != unsafe { nil } {
+		win.bar.tik = val
 	}
 }
 
