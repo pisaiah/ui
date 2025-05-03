@@ -1,6 +1,7 @@
 module main
 
 import iui as ui { debug }
+import iui.themes
 import os
 import gx
 
@@ -42,7 +43,10 @@ fn main() {
 	window.bar.add_child(ui.MenuItem.new(text: 'File'))
 	window.bar.add_child(ui.MenuItem.new(text: 'Edit'))
 	window.bar.add_child(create_help_menu())
-	window.bar.add_child(create_theme_menu())
+
+	mut theme_menu := window.make_theme_menu()
+
+	window.bar.add_child(theme_menu)
 	// window.add_child(window.bar)
 
 	app.make_button_section()
@@ -88,7 +92,13 @@ fn main() {
 
 	window.add_child(tb)
 
-	window.gg.run()
+	// Add Extra Themes
+	window.add_theme(themes.theme_dark_rgb())
+	window.add_theme(themes.theme_seven())
+	window.add_theme(themes.theme_seven_dark())
+
+	// Run/Show The Window
+	window.run()
 }
 
 fn (mut app App) make_selector_tab() &ui.Panel {
@@ -116,7 +126,7 @@ fn (mut app App) make_selector_tab() &ui.Panel {
 fn draw_custom_themed(name string, mut e ui.DrawEvent) {
 	if name !in e.ctx.icon_cache {
 		ui.ocean_setup(mut e.ctx.win)
-		ui.seven_setup(mut e.ctx.win)
+		// ui.seven_setup(mut e.ctx.win)
 	}
 	is_hover := ui.is_in(e.target, e.ctx.win.mouse_x, e.ctx.win.mouse_y)
 	mut btn := e.target
@@ -139,20 +149,8 @@ fn (mut app App) icon_btn(data []u8) &ui.Button {
 }
 
 // Make a 'Theme' menu item to select themes
-fn create_theme_menu() &ui.MenuItem {
-	mut theme_menu := ui.MenuItem.new(
-		text: 'Themes'
-	)
-
-	themes := ui.get_all_themes()
-	for theme in themes {
-		item := ui.MenuItem.new(
-			text:     theme.name
-			click_fn: theme_click
-		)
-		theme_menu.add_child(item)
-	}
-	return theme_menu
+@[deprecated: 'Replaced by ui thememanager']
+fn create_theme_menu() {
 }
 
 fn (mut app App) make_hbox_section() {
@@ -398,11 +396,13 @@ fn on_click(mut win ui.Window, com ui.Button) {
 }
 
 // MenuItem in the Theme section click event
+/*
 fn theme_click(mut e ui.MouseEvent) {
 	text := e.target.text
 	theme := ui.theme_by_name(text)
 	e.ctx.win.set_theme(theme)
 }
+*/
 
 fn test_page(mut e ui.MouseEvent) {
 	mut page := ui.Page.new(title: 'Page 1')

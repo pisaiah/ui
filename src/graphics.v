@@ -13,6 +13,7 @@ pub struct GraphicsContext {
 pub mut:
 	gg          &gg.Context
 	theme       &Theme
+	themes      &ThemeManager
 	font        string
 	font_size   int = 16
 	line_height int
@@ -26,6 +27,7 @@ fn new_graphics(win &Window) &GraphicsContext {
 		theme:     &win.theme
 		font_size: win.font_size
 		win:       win
+		themes:    ThemeManager.new()
 	}
 }
 

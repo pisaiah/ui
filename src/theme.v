@@ -1,24 +1,97 @@
-// Copyright (c) 2021-2023 Isaiah.
+// Copyright (c) 2021-2025 Isaiah.
 module iui
 
 import gx
 
-// WinUI3 value
+// Fluenty/WinUI3 values
 const control_corner_radius = 4
+
+// Fluenty/WinUI3 Design (Light)
+const light_accent_text = gx.white
+const light_accent_fill = gx.rgb(0, 80, 158)
+const light_accent_fill_second = gx.rgb(25, 97, 167)
+const light_accent_fill_third = gx.rgb(50, 113, 175)
+
+// Fluenty/WinUI3 Design (Dark)
+const dark_accent_text = gx.black
+const dark_accent_fill = gx.rgb(64, 180, 255)
+const dark_accent_fill_second = gx.rgb(60, 170, 230)
+const dark_accent_fill_third = gx.rgb(57, 156, 210)
+
+const included_themes = [theme_default(), theme_dark(), theme_dark_red(),
+	theme_dark_green(), theme_minty(), theme_ocean()]
+
+// Theme Manager
+pub struct ThemeManager {
+mut:
+	all_themes []&Theme
+}
+
+pub fn ThemeManager.new() &ThemeManager {
+	return &ThemeManager{
+		all_themes: unsafe { included_themes }
+	}
+}
+
+pub fn (mut man ThemeManager) add_theme(theme &Theme) {
+	man.all_themes << theme
+}
+
+pub fn (man &ThemeManager) get_theme(name string) &Theme {
+	themes := man.all_themes.filter(it.name == name)
+	if themes.len == 0 {
+		return get_system_theme()
+	}
+	return themes[0]
+}
+
+pub fn (man &ThemeManager) get_themes() []&Theme {
+	return man.all_themes
+}
+
+// MenuItem in the Theme section click event
+fn theme_click(mut e MouseEvent) {
+	text := e.target.text
+	theme := e.ctx.themes.get_theme(text)
+	e.ctx.win.set_theme(theme)
+}
+
+pub fn (mut win Window) make_theme_menu() &MenuItem {
+	return create_theme_menu(mut win)
+}
+
+// Make a 'Theme' menu item to select themes
+pub fn create_theme_menu(mut win Window) &MenuItem {
+	mut theme_menu := MenuItem.new(
+		text: 'Themes'
+	)
+
+	// TODO: Add events for Theme add/change
+	win.subscribe_event('window_create', fn [mut theme_menu] (mut e WindowEvent) {
+		themes := e.win.graphics_context.themes.get_themes()
+		for theme in themes {
+			item := MenuItem.new(
+				text:     theme.name
+				click_fn: theme_click
+			)
+			theme_menu.add_child(item)
+		}
+	})
+
+	return theme_menu
+}
 
 // Default Theme
 pub fn get_system_theme() &Theme {
 	return theme_default()
 }
 
-const included_themes = [theme_default(), theme_dark(), theme_dark_red(),
-	theme_dark_green(), theme_minty(), theme_ocean(), theme_seven(),
-	theme_seven_dark(), theme_dark_rgb()]
-
+@[deprecated: 'Use ThemeManager']
 pub fn get_all_themes() []&Theme {
 	return included_themes
 }
 
+@[deprecated: 'Use ThemeManager']
 pub fn theme_by_name(name string) &Theme {
 	themes := get_all_themes().filter(it.name == name)
 	if themes.len == 0 {
@@ -26,18 +99,6 @@ pub fn theme_by_name(name string) &Theme {
 	}
 	return themes[0]
 }
-
-// WinUI3 Design guidance (Light)
-const light_accent_text = gx.white
-const light_accent_fill = gx.rgb(0, 80, 158)
-const light_accent_fill_second = gx.rgb(25, 97, 167)
-const light_accent_fill_third = gx.rgb(50, 113, 175)
-
-// WinUI3 Design guidance (Dark)
-const dark_accent_text = gx.black
-const dark_accent_fill = gx.rgb(64, 180, 255)
-const dark_accent_fill_second = gx.rgb(60, 170, 230)
-const dark_accent_fill_third = gx.rgb(57, 156, 210)
 
 pub interface UITheme {
 	name        string
@@ -205,57 +266,4 @@ pub fn theme_dark_green() &Theme {
 	th.accent_fill_third = gx.rgb(0, 150, 0)
 	th.scroll_bar_color = gx.rgb(0, 150, 0)
 	return th
-}
-
-// Dark RGB
-pub fn theme_dark_rgb() &Theme {
-	mut th := theme_dark()
-	th.name = 'Dark (RGB)'
-	th.accent_text = gx.black
-	th.accent_fill = gx.rgb(255, 0, 0)
-	th.accent_fill_second = gx.rgb(200, 0, 0)
-	th.accent_fill_third = gx.rgb(200, 0, 0)
-	th.setup_fn = rgb_setup
-	return th
-}
-
-fn darker(c gx.Color, mut theme Theme) {
-	f1 := .8
-	f2 := .6
-	theme.accent_fill_second.r = u8(f32(c.r) * f1)
-	theme.accent_fill_second.g = u8(f32(c.g) * f1)
-	theme.accent_fill_second.b = u8(f32(c.b) * f1)
-	theme.accent_fill_third.r = u8(f32(c.r) * f2)
-	theme.accent_fill_third.g = u8(f32(c.g) * f2)
-	theme.accent_fill_third.b = u8(f32(c.b) * f2)
-	theme.scroll_bar_color.r = u8(f32(c.r) * f2)
-	theme.scroll_bar_color.g = u8(f32(c.g) * f2)
-	theme.scroll_bar_color.b = u8(f32(c.b) * f2)
-}
-
-pub fn rgb_setup(mut win Window) {
-	win.theme.accent_fill = gx.rgb(0, 0, 0)
-	win.subscribe_event('draw', rgb_animate_colors)
-}
-
-fn rgb_animate_colors(mut e WindowDrawEvent) {
-	mut theme_pointer := e.win.graphics_context.theme
-	next_rgb_color(mut theme_pointer)
-}
-
-fn next_rgb_color(mut th Theme) {
-	if th.accent_fill.g < 255 && th.accent_fill.r == 255 && th.accent_fill.b == 0 {
-		th.accent_fill.g++
-	} else if th.accent_fill.g == 255 && th.accent_fill.r > 0 && th.accent_fill.b == 0 {
-		th.accent_fill.r--
-	} else if th.accent_fill.g == 255 && th.accent_fill.r == 0 && th.accent_fill.b < 255 {
-		th.accent_fill.b++
-	} else if th.accent_fill.g > 0 && th.accent_fill.r == 0 && th.accent_fill.b == 255 {
-		th.accent_fill.g--
-	} else if th.accent_fill.g == 0 && th.accent_fill.r < 255 && th.accent_fill.b == 255 {
-		th.accent_fill.r++
-	} else if th.accent_fill.g == 0 && th.accent_fill.r == 255 && th.accent_fill.b > 0 {
-		th.accent_fill.b--
-	}
-	darker(th.accent_fill, mut th)
 }

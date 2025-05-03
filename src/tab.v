@@ -94,9 +94,10 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 		tab_color := tb.get_tab_color(ctx, is_active)
 		xx := tb.x + mx
 		r := 4
-		ctx.draw_rounded_rect_filled_top(xx - 1, tb.y + my, tsize, theig, r, ctx.theme.button_border_normal)
-		ctx.draw_rounded_rect_filled_top(xx, tb.y + my, tsize - 2, theig - 1, r, ctx.theme.accent_fill)
-		ctx.draw_rounded_rect_filled_top(xx, tb.y + my + 2, tsize - 2, theig - 1, r, tab_color)
+		ctx.draw_rounded_rect_filled_top(xx, tb.y + my, tsize, theig, r, ctx.theme.button_border_normal)
+		ctx.draw_rounded_rect_filled_top(xx + 1, tb.y + my, tsize - 2, theig - 1, r, ctx.theme.accent_fill)
+		ctx.draw_rounded_rect_filled_top(xx + 1, tb.y + my + 2, tsize - 2, theig - 1,
+			r, tab_color)
 	}
 
 	// Draw Button Text

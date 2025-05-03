@@ -222,6 +222,7 @@ pub:
 }
 
 pub fn (mut win Window) run() {
+	win.invoke_window_create()
 	win.gg.run()
 }
 
@@ -280,6 +281,19 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 
 	win.theme.setup_fn(mut win)
 	return win
+}
+
+pub fn (win &Window) invoke_window_create() {
+	ev := &WindowEvent{
+		win: win
+	}
+	for f in win.event_map['window_create'] {
+		f(ev)
+	}
+}
+
+pub fn (mut win Window) add_theme(theme &Theme) {
+	win.graphics_context.themes.add_theme(theme)
 }
 
 pub fn (mut win Window) set_theme(theme Theme) {

@@ -1,6 +1,7 @@
 module main
 
 import iui as ui
+import iui.themes
 import gx
 import time
 import math
@@ -116,7 +117,7 @@ fn main() {
 		width:  240
 		height: 280
 	)
-	win.set_theme(ui.theme_dark_rgb())
+	win.set_theme(themes.theme_dark_rgb())
 
 	mut top := ui.Panel.new()
 
