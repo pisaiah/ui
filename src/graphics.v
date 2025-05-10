@@ -177,7 +177,7 @@ pub fn (g &GraphicsContext) text_width(text string) int {
 		}
 	}
 	ctx := g.gg
-	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(0))
+	adv := ctx.ft.fons.text_bounds(0, 0, text, &f32(unsafe { nil }))
 	return int(adv / ctx.scale)
 }
 

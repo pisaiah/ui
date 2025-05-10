@@ -83,12 +83,14 @@ fn main() {
 	frame_tab := app.make_frame_tab()
 	slider_tab := app.make_slider_tab()
 	selector_tab := app.make_selector_tab()
+	svg_tab := app.make_svg_tab()
 
 	tb.add_child('Overview', pane)
 	tb.add_child('Buttons', button_tab)
 	tb.add_child('Frames', frame_tab)
 	tb.add_child('Slider', slider_tab)
 	tb.add_child('Selector', selector_tab)
+	tb.add_child('SVG (New!)', svg_tab)
 
 	window.add_child(tb)
 

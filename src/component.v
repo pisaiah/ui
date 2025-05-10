@@ -36,6 +36,8 @@ pub fn (com &Component) str() string {
 	return com.type_name() // typeof(com)
 }
 
+type AbstractComponent = Component_A
+
 @[heap]
 pub struct Component_A implements Component {
 pub mut:
