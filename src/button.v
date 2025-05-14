@@ -74,16 +74,33 @@ pub:
 	area_filled bool = true
 	icon        int  = -1
 	font_size   ?int
+	width       int
+	height      int
+	on_click    ?fn (voidptr)
+}
+
+fn (c ButtonConfig) width() int {
+	if c.bounds.height != 0 {
+		return c.bounds.width
+	}
+	return c.width
+}
+
+fn (c ButtonConfig) height() int {
+	if c.bounds.height != 0 {
+		return c.bounds.height
+	}
+	return c.height
 }
 
 pub fn Button.new(c ButtonConfig) &Button {
-	return &Button{
+	mut btn := &Button{
 		text:        c.text
 		icon:        c.icon
 		x:           c.bounds.x
 		y:           c.bounds.y
-		width:       c.bounds.width
-		height:      c.bounds.height
+		width:       c.width()
+		height:      c.height()
 		user_data:   c.user_data
 		need_pack:   c.should_pack || c.pack
 		area_filled: AreafilledConfig{
@@ -93,6 +110,12 @@ pub fn Button.new(c ButtonConfig) &Button {
 		}
 		font_size:   c.font_size
 	}
+
+	if c.on_click != none {
+		btn.subscribe_event('mouse_up', c.on_click)
+	}
+
+	return btn
 }
 
 // Set to apply the action_fill as Button style
@@ -227,9 +250,35 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 		ctx.line_height / 2
 	}
 
+	if btn.children.len != 0 {
+		btn.draw_children_and_text(sizh, text, font, cfgg, ctx)
+		return
+	}
+
 	size := ctx.text_width(text) / 2
 	ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, text,
 		font, cfgg)
+	ctx.reset_text_font()
+}
+
+fn (mut btn Button) draw_children_and_text(sizh int, text string, font string, cfg gx.TextCfg, ctx &GraphicsContext) {
+	pad := 4
+	mut xo := 0
+	for mut item in btn.children {
+		item.set_parent(btn)
+		item.draw_with_offset(ctx, btn.x + pad, btn.y + pad)
+
+		if btn.width < item.width {
+			btn.width = item.width + pad * 2
+		}
+		if btn.height < item.height {
+			btn.height = item.height + pad * 2
+		}
+		xo = (item.width / 2) + 2
+	}
+	size := ctx.text_width(text) / 2
+	ctx.draw_text((btn.x + (btn.width / 2)) - size + xo, btn.y + (btn.height / 2) - sizh,
+		text, font, cfg)
 	ctx.reset_text_font()
 }
 
@@ -240,6 +289,12 @@ pub fn (mut btn Button) pack() {
 pub fn (mut btn Button) pack_do(ctx &GraphicsContext) {
 	width := ctx.text_width(btn.text) + 6
 	btn.width = width
+
+	if btn.children.len != 0 {
+		btn.width = width + btn.children[0].width + 12
+		return
+	}
+
 	btn.height = min_h(ctx)
 	btn.need_pack = false
 }

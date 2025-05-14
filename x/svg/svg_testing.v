@@ -30,7 +30,7 @@ pub mut:
 	sx              f32
 	sy              f32
 	color           ?gx.Color
-	accent_first    bool
+	accent_first    int
 }
 
 @[params]
@@ -41,7 +41,7 @@ pub:
 	viewbox      string
 	width        int
 	height       int
-	accent_first bool
+	accent_first int
 	color        ?gx.Color
 }
 
@@ -61,7 +61,7 @@ pub fn Svg.new(c SvgConfig) &Svg {
 }
 
 pub fn (s Svg) color(g &ui.GraphicsContext, idx int) gx.Color {
-	if s.accent_first && idx == 0 {
+	if idx < s.accent_first {
 		return g.theme.accent_fill
 	}
 
@@ -79,11 +79,6 @@ pub fn (mut s Svg) x(x f32) f32 {
 // Convert SVG y-pos into screen pos
 pub fn (mut s Svg) y(y f32) f32 {
 	return s.y + s.oy + (y * s.sy)
-}
-
-pub fn (mut s Svg) set_path(path string) {
-	// s.path = path
-	// s.cmds = parse_svg_path(s.path)
 }
 
 pub fn (mut s Svg) compute_viewbox() {
@@ -114,7 +109,7 @@ fn (mut this Svg) draw(g &ui.GraphicsContext) {
 	}
 
 	if this.sx == 0 || true {
-		// TODO: not every draw
+		// TODO: cache this
 		this.compute_viewbox()
 	}
 
@@ -129,7 +124,7 @@ struct Command {
 	args []f32
 }
 
-// Function to parse SVG path data
+// Parse the given data into SVG Command(s)
 fn parse_svg_path(path_data string) []Command {
 	mut re := regex.regex_opt(r'([MLCQAHVZmlcqahvz])([^MLCQAHVZmlcqahvz]*)') or { panic(err) }
 	matches := re.find_all_str(path_data)
@@ -148,23 +143,8 @@ fn parse_svg_path(path_data string) []Command {
 	return commands
 }
 
-// Function to simulate drawing the parsed path
-fn draw_path(commands []Command) {
-	for command in commands {
-		match command.cmd {
-			'M', 'm' { println('Move to (${command.args[0]}, ${command.args[1]})') }
-			'L', 'l' { println('Line to (${command.args[0]}, ${command.args[1]})') }
-			'C', 'c' { println('Cubic curve control points: ${command.args}') }
-			'Q', 'q' { println('Quadratic curve control points: ${command.args}') }
-			'H', 'h' { println('Horizontal line to ${command.args[0]}') }
-			'V', 'v' { println('Vertical line to ${command.args[0]}') }
-			'Z', 'z' { println('Close path') }
-			else { println('Unknown command: ${command.cmd}') }
-		}
-	}
-}
-
 // Draw the path command
+// M = move to, L=line, C=cubic, Q=Quadratic, H=Horizontal, V=Vertical, Z=End
 fn (mut s Svg) draw_path_gg(g &ui.GraphicsContext, idx int, commands []Command) {
 	mut last_x := f32(0.0)
 	mut last_y := f32(0.0)
@@ -192,18 +172,18 @@ fn (mut s Svg) draw_path_gg(g &ui.GraphicsContext, idx int, commands []Command) 
 				last_y = command.args[0]
 			}
 			'C', 'c' {
-				// Cubic Bezier curve (approximated by straight lines)
-				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(command.args[0]), s.y(command.args[1]),
-					s.color(g, idx))
-				g.gg.draw_line(s.x(command.args[0]), s.y(command.args[1]), s.x(command.args[2]),
-					s.y(command.args[3]), s.color(g, idx))
-				g.gg.draw_line(s.x(command.args[2]), s.y(command.args[3]), s.x(command.args[4]),
-					s.y(command.args[5]), s.color(g, idx))
+				// Cubic Bezier curve
+				g.gg.draw_cubic_bezier([s.x(last_x), s.y(last_y),
+					s.x(command.args[0]), s.y(command.args[1]),
+					s.x(command.args[2]), s.y(command.args[3]),
+					s.x(command.args[4]), s.y(command.args[5])], s.color(g, idx))
+
 				last_x = command.args[4]
 				last_y = command.args[5]
 			}
 			'Z', 'z' {
 				// Close the path by drawing back to the initial move point
+				// TODO: seems something is off here (see examples\demo)
 				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(commands[0].args[0]), s.y(commands[0].args[1]),
 					s.color(g, idx))
 			}
@@ -212,49 +192,6 @@ fn (mut s Svg) draw_path_gg(g &ui.GraphicsContext, idx int, commands []Command) 
 			}
 		}
 	}
-}
-
-// Function to compute the scale factors for an SVG viewBox
-// Function to compute scale factors while supporting preserveAspectRatio
-fn compute_viewbox_scale(viewbox_str string, new_width f32, new_height f32, preserve_aspect string) (f32, f32) {
-	if viewbox_str.len == 0 {
-		// No viewBox provided, default scale factors
-		return 1, 1
-	}
-
-	values := viewbox_str.split(' ').map(it.f32())
-	if values.len != 4 {
-		panic('Invalid viewBox format!')
-	}
-
-	orig_width := values[2]
-	orig_height := values[3]
-
-	// Calculate individual scale factors
-	mut scale_x := new_width / orig_width
-	mut scale_y := new_height / orig_height
-
-	// Handle preserveAspectRatio modes
-	match preserve_aspect {
-		'none' {
-			// Don't preserve aspect
-		}
-		'xMinYMin meet', 'xMidYMid meet', 'xMaxYMax meet' {
-			scale_x = if scale_x < scale_y { scale_x } else { scale_y }
-			scale_y = scale_x
-		}
-		'xMinYMin slice', 'xMidYMid slice', 'xMaxYMax slice' {
-			scale_x = if scale_x > scale_y { scale_x } else { scale_y }
-			scale_y = scale_x
-		}
-		else {
-			println("Unknown preserveAspectRatio value: '${preserve_aspect}'. Using default scaling.")
-		}
-	}
-
-	dump('${scale_x} ${scale_y}')
-
-	return scale_x, scale_y
 }
 
 // Function to compute xMidYMid scaling & centering
@@ -281,35 +218,4 @@ fn compute_viewbox_xmidymid(viewbox_str string, new_width f32, new_height f32) (
 	offset_y := (new_height - (orig_height * scale)) / 2
 
 	return scale, scale, offset_x, offset_y
-}
-
-// Function to scale an SVG viewBox to match the desired width and height
-/*
-fn scale_viewbox(viewbox_str string, new_width f32, new_height f32) (f32, f32, f32, f32) {
-    if viewbox_str.len == 0 {
-		return
-	}
-	
-	values := viewbox_str.split(" ").map(it.f32())
-    if values.len != 4 {
-        panic("Invalid viewBox format!")
-    }
-
-    orig_width := values[2]
-    orig_height := values[3]
-
-    // Determine scale factors while maintaining aspect ratio
-    scale_x := new_width / orig_width
-    scale_y := new_height / orig_height
-    scale := if scale_x < scale_y { scale_x } else { scale_y }
-
-    // Compute the scaled dimensions
-    return values[0] * scale, values[1] * scale, orig_width * scale, orig_height * scale
-}
-*/
-
-fn main() {
-	svg_path := 'M 100 200 L 300 400 C 150 50 200 100 250 150 Z'
-	commands := parse_svg_path(svg_path)
-	draw_path(commands)
 }

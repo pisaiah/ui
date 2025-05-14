@@ -4,7 +4,7 @@ import iui as ui
 import gx
 
 fn (mut app App) make_button_tab() &ui.Panel {
-	mut hbox := ui.Panel.new()
+	mut p := ui.Panel.new()
 
 	mut btn := ui.Button.new(text: 'Button')
 
@@ -38,18 +38,19 @@ fn (mut app App) make_button_tab() &ui.Panel {
 	btn3.icon_width = 28
 	btn3.icon_height = 28
 
-	hbox.add_child(btn)
-	hbox.add_child(btn2)
-	hbox.add_child(sq_btn)
-	hbox.add_child(btn3)
-	hbox.add_child(filled_btn)
-	hbox.add_child(sbtn)
+	p.add_child(btn)
+	p.add_child(btn2)
+	p.add_child(sq_btn)
+	p.add_child(btn3)
+	p.add_child(filled_btn)
+	p.add_child(sbtn)
 
-	// hbox.pack()
-	// hbox.set_bounds(0, 0, 400, 500)
+	// Button with SVG Icon (see svg_tab.v)
+	mut svg_btn := make_svg_button()
+	p.add_child(svg_btn)
 
-	mut p := ui.Panel.new(layout: ui.BorderLayout.new())
-	p.add_child(hbox, value: ui.borderlayout_center)
-	p.add_child(make_code_box('button_tab.v'), value: ui.borderlayout_east)
-	return p
+	mut cp := ui.Panel.new(layout: ui.BorderLayout.new())
+	cp.add_child(p, value: ui.borderlayout_center)
+	cp.add_child(make_code_box('button_tab.v'), value: ui.borderlayout_east)
+	return cp
 }
