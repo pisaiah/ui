@@ -17,6 +17,8 @@ pub mut:
 	numeric     bool
 	blinked     bool
 	bind_val    &string = unsafe { nil }
+	sel         ?Selection
+	reset_sel   bool
 }
 
 pub fn (mut tf TextField) bind_to(val &string) {
@@ -35,16 +37,13 @@ pub fn (mut tf TextField) update_bind() {
 	}
 }
 
-pub fn (mut box TextField) set_text_change_(b fn (a voidptr, b voidptr)) {
-	// box.text_change_event_fn = b
-}
-
 pub fn numeric_field(val int) &TextField {
 	return &TextField{
 		text:        val.str()
 		numeric:     true
 		center:      true
 		carrot_left: val.str().len
+		sel:         none
 	}
 }
 
@@ -65,6 +64,7 @@ pub fn TextField.new(c FieldCfg) &TextField {
 		height:      c.bounds.height
 		center:      c.center
 		carrot_left: c.text.len
+		sel:         none
 	}
 }
 
@@ -72,45 +72,44 @@ pub fn text_field(cfg FieldCfg) &TextField {
 	return TextField.new(cfg)
 }
 
-fn (mut this TextField) draw_background(ctx &GraphicsContext) {
-	click := this.is_mouse_rele
-	bg := if click { ctx.theme.button_bg_click } else { ctx.theme.textbox_background }
+fn (mut txf TextField) draw_background(g &GraphicsContext) {
+	click := txf.is_mouse_rele && !txf.is_selected
+	bg := if click { g.theme.button_bg_click } else { g.theme.textbox_background }
 
-	mid := this.x + (this.width / 2)
-	midy := this.y + (this.height / 2)
+	mid := txf.x + (txf.width / 2)
+	midy := txf.y + (txf.height / 2)
 
 	// Fluent Design
-	line_color := if click || this.is_selected {
-		ctx.theme.accent_fill
+	accent := if click || txf.is_selected {
+		g.theme.accent_fill
 	} else {
-		// TODO
-		ctx.theme.scroll_bar_color
+		g.theme.scroll_bar_color
 	}
 
-	line_height := if click || this.is_selected { 2 } else { 1 }
+	b_h := if click || txf.is_selected { 21 } else { 1 }
 
-	ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 2, ctx.theme.textbox_border)
-	ctx.gg.draw_rounded_rect_filled(this.x + 1, this.y + 1, this.width - 2, this.height,
-		4, line_color)
-	ctx.gg.draw_rounded_rect_filled(this.x + 1, this.y + 1, this.width - 2, this.height - line_height,
+	g.gg.draw_rounded_rect_filled(txf.x, txf.y, txf.width, txf.height, 2, g.theme.textbox_border)
+	g.gg.draw_rounded_rect_filled(txf.x + 1, txf.y + 1, txf.width - 2, txf.height, 4,
+		accent)
+	g.gg.draw_rounded_rect_filled(txf.x + 1, txf.y + 1, txf.width - 2, txf.height - b_h,
 		4, bg)
 
 	// Detect Click
-	if this.is_mouse_rele {
-		this.is_selected = true
+	if txf.is_mouse_rele {
+		txf.reset_sel = true
+		txf.is_selected = true
 
-		if this.is_selected {
+		if txf.is_selected {
 			wasm_keyboard_show(true)
 		}
 
-		// this.click_event_fn(ctx.win, this)
-		this.is_mouse_rele = false
+		txf.is_mouse_rele = false
 		return
 	}
 
-	if ctx.win.click_x > -1 && !(abs(mid - ctx.win.mouse_x) < this.width / 2
-		&& abs(midy - ctx.win.mouse_y) < this.height / 2) {
-		this.is_selected = false
+	if g.win.click_x > -1 && !(abs(mid - g.win.mouse_x) < txf.width / 2
+		&& abs(midy - g.win.mouse_y) < txf.height / 2) {
+		txf.is_selected = false
 	}
 }
 
@@ -133,14 +132,11 @@ fn wasm_keyboard_show(val bool) {
 	*/
 }
 
-fn (mut this TextField) draw(ctx &GraphicsContext) {
-	this.draw_background(ctx)
+fn (mut this TextField) draw(g &GraphicsContext) {
+	this.draw_background(g)
 
 	xp := this.x + 4 + this.padding_x
-
-	color := ctx.theme.text_color
-
-	this.scroll_i = 0
+	color := g.theme.text_color
 
 	if this.carrot_left < 0 {
 		this.carrot_left = 0
@@ -152,19 +148,19 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	cfg := gx.TextCfg{
 		color: color
-		size:  ctx.win.font_size
+		size:  g.win.font_size
 	}
 
-	wid := ctx.text_width(this.text[0..this.carrot_left])
+	wid := g.text_width(this.text[0..this.carrot_left])
 
 	pipe_color := if this.blinked && this.is_selected {
-		ctx.theme.button_bg_hover
+		g.theme.button_bg_hover
 	} else {
 		color
 	}
 
 	if this.width == 0 {
-		width := ctx.text_width(this.text)
+		width := g.text_width(this.text)
 		this.width = width + 8 + this.padding_x
 	}
 
@@ -176,53 +172,90 @@ fn (mut this TextField) draw(ctx &GraphicsContext) {
 
 	if this.center {
 		// Y-center text
-		th := ctx.line_height
+		th := g.line_height
 		if this.height < th {
-			this.height = min_h(ctx)
+			this.height = min_h(g)
 		}
 
 		ycp := this.y + (this.height - th) / 2
-		ctx.draw_text(xp, ycp, this.text, ctx.font, cfg)
-		ctx.gg.draw_line(xp + wid, ycp, xp + wid, ycp + th, pipe_color)
+		g.draw_text(xp, ycp, this.text, g.font, cfg)
+		g.gg.draw_line(xp + wid, ycp, xp + wid, ycp + th, pipe_color)
+		if this.reset_sel {
+			this.draw_selection(g)
+		}
 	} else {
-		ctx.draw_text(xp, this.y + 4, this.text, ctx.font, cfg)
-		ctx.gg.draw_line(xp + wid, this.y + 2, xp + wid, this.y + ctx.line_height, pipe_color)
+		g.draw_text(xp, this.y + 4, this.text, g.font, cfg)
+		g.gg.draw_line(xp + wid, this.y + 2, xp + wid, this.y + g.line_height, pipe_color)
 	}
 
-	this.mouse_down_caret(ctx)
+	this.mouse_down_caret(g)
 }
 
-fn (mut this TextField) mouse_down_caret(ctx &GraphicsContext) {
+fn (mut this TextField) mouse_down_caret(g &GraphicsContext) {
 	if !this.is_mouse_down {
 		return
 	}
 
-	if ctx.win.bar != unsafe { nil } {
-		if ctx.win.bar.tik < 90 {
-			this.is_mouse_down = false
-			return
-		}
+	if this.reset_sel {
+		this.sel = none
+		this.reset_sel = false
 	}
 
 	x := if this.rx != 0 { this.rx } else { this.x }
 
-	mx := ctx.win.mouse_x - x
-	wid_char := ctx.text_width('A')
-	full_wid := ctx.text_width(this.text)
+	mx := g.win.mouse_x - x
+	wid_char := g.text_width('A')
+	full_wid := g.text_width(this.text)
+
+	mut lv := 0
 
 	if mx > full_wid {
 		this.carrot_left = this.text.len
+		lv = this.text.len
 	}
 
 	for i in 0 .. this.text.len + 1 {
 		substr := this.text[0..i]
-		wid := ctx.text_width(substr)
+		wid := g.text_width(substr)
 
 		if abs(mx - wid) <= wid_char {
 			this.carrot_left = i
-			return
+			lv = i
+			break
 		}
 	}
+
+	// Selection
+	if this.sel == none {
+		this.sel = Selection{
+			x0: lv
+			y0: 0
+		}
+	} else {
+		this.sel.x1 = lv
+		this.sel.y1 = 0
+		this.draw_selection(g)
+	}
+}
+
+fn (mut box TextField) draw_selection(g &GraphicsContext) {
+	sel := box.sel or { return }
+	color := gx.rgba(0, 120, 215, 100)
+
+	// Same Line
+	minx := if sel.x0 > sel.x1 { sel.x1 } else { sel.x0 }
+	maxx := if sel.x0 > sel.x1 { sel.x0 } else { sel.x1 }
+
+	if maxx > box.text.len {
+		return
+	}
+
+	wba := g.text_width(box.text[0..minx].replace('\t', tabr()))
+	wbb := g.text_width(box.text[minx..maxx].replace('\t', tabr()))
+	x := box.x + box.padding_x + 4
+
+	th := g.line_height + 4
+	g.gg.draw_rect_filled(x + wba, box.y + (box.height - th) / 2, wbb, th, color)
 }
 
 fn (mut w Window) runebox_key(key gg.KeyCode, ev &gg.Event, mut com TextField) {

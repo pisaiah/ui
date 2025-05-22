@@ -15,7 +15,7 @@ pub mut:
 	fs                   int
 	blink                bool
 	keys                 []string
-	sel                  Selection
+	sel                  ?Selection
 	reset_sel            bool
 	px                   int
 	last_letter          string
@@ -46,9 +46,7 @@ pub:
 pub fn Textbox.new(c TextboxConfig) &Textbox {
 	return &Textbox{
 		lines:        c.lines
-		sel:          Selection{
-			x0: -1
-		}
+		sel:          none
 		bg:           none
 		pack:         c.pack
 		not_editable: c.not_editable
@@ -210,9 +208,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 
 	if this.is_mouse_down && !this.is_mouse_rele {
 		if this.reset_sel {
-			this.sel = Selection{
-				x0: -1
-			}
+			this.sel = none
 			this.reset_sel = false
 		}
 		this.do_mouse_down(ctx, th)
@@ -357,9 +353,15 @@ fn (mut this Textbox) do_mouse_down(ctx &GraphicsContext, th int) {
 		lv = line.len
 	}
 
-	if this.sel.x0 == -1 {
-		this.sel.x0 = lv
-		this.sel.y0 = cy
+	// if this.sel.x0 == -1 {
+	if this.sel == none {
+		this.sel = Selection{
+			x0: lv
+			y0: cy
+		}
+
+		// this.sel.x0 = lv
+		// this.sel.y0 = cy
 	} else {
 		this.sel.x1 = lv
 		this.sel.y1 = cy
@@ -369,48 +371,45 @@ fn (mut this Textbox) do_mouse_down(ctx &GraphicsContext, th int) {
 	this.caret_x = lv
 }
 
-fn (mut this Textbox) draw_selection(ctx &GraphicsContext, th int) {
-	if this.sel.x0 == -1 || this.sel.x1 == -1 || this.sel.y1 == -1 {
-		return
-	}
+fn (mut box Textbox) draw_selection(ctx &GraphicsContext, th int) {
+	sel := box.sel or { return }
 
-	if this.sel.y0 >= this.lines.len {
-		this.sel.y0 = this.lines.len - 1
+	if sel.y0 >= box.lines.len {
+		box.sel or { return }.y0 = box.lines.len - 1
 	}
 
 	color := gx.rgba(0, 120, 215, 100)
 
-	if this.sel.y1 > this.sel.y0 {
-		// Moving Down
-		this.draw_high(ctx, th, color, this.sel.y0, this.sel.y1, this.sel.x0, this.sel.x1)
+	// Moving Down
+	if sel.y1 > sel.y0 {
+		box.draw_high(ctx, th, color, sel.y0, sel.y1, sel.x0, sel.x1)
 	}
 
-	if this.sel.y1 < this.sel.y0 {
+	// Moving Up
+	if sel.y1 < sel.y0 {
 		// Moving Up
-		this.draw_high(ctx, th, color, this.sel.y1, this.sel.y0, this.sel.x1, this.sel.x0)
+		box.draw_high(ctx, th, color, sel.y1, sel.y0, sel.x1, sel.x0)
 	}
 
-	if this.sel.y0 == this.sel.y1 {
-		// Same Line
-		y := this.sel.y0
-		minx := if this.sel.x0 > this.sel.x1 { this.sel.x1 } else { this.sel.x0 }
-		maxx := if this.sel.x0 > this.sel.x1 { this.sel.x0 } else { this.sel.x1 }
+	// Same Line
+	if sel.y0 == sel.y1 {
+		y := sel.y0
+		minx := if sel.x0 > sel.x1 { sel.x1 } else { sel.x0 }
+		maxx := if sel.x0 > sel.x1 { sel.x0 } else { sel.x1 }
 
-		if y < 0 || maxx > this.lines[y].len {
+		if y < 0 || maxx > box.lines[y].len {
 			return
 		}
 
-		wba := ctx.text_width(this.lines[y][0..minx].replace('\t', tabr()))
-		wbb := ctx.text_width(this.lines[y][minx..maxx].replace('\t', tabr()))
-		x := this.x + this.px
-		ctx.gg.draw_rect_filled(x + wba, this.y + (th * y), wbb, th, color)
+		wba := ctx.text_width(box.lines[y][0..minx].replace('\t', tabr()))
+		wbb := ctx.text_width(box.lines[y][minx..maxx].replace('\t', tabr()))
+		x := box.x + box.px
+		ctx.gg.draw_rect_filled(x + wba, box.y + (th * y), wbb, th, color)
 	}
 }
 
-fn (mut this Textbox) clear_sel() {
-	this.sel = Selection{
-		x0: -1
-	}
+fn (mut box Textbox) clear_sel() {
+	box.sel = none
 }
 
 fn (mut this Textbox) draw_high(ctx &GraphicsContext, th int, color gx.Color, ya int, yb int, x0 int, x1 int) {
@@ -491,9 +490,7 @@ fn (mut win Window) textbox_key_down(key gg.KeyCode, ev &gg.Event, mut com Textb
 	}
 
 	// Clear selection
-	com.sel = Selection{
-		x0: -1
-	}
+	com.sel = none
 }
 
 fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Textbox) {
@@ -527,9 +524,7 @@ fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Tex
 	line := com.lines[com.caret_y]
 
 	com.last_letter = 'backspace'
-	com.sel = Selection{
-		x0: -1
-	}
+	com.sel = none
 
 	// TODO: Remove old
 	if com.before_txtc_event_fn != none {
