@@ -19,9 +19,7 @@ pub mut:
 	reset_sel            bool
 	px                   int
 	last_letter          string
-	before_txtc_event_fn fn (mut Window, Textbox) bool = fn (mut a Window, b Textbox) bool {
-		return false
-	}
+	before_txtc_event_fn ?fn (mut Window, Textbox) bool
 	ctrl_down            bool
 	no_line_numbers      bool
 	not_editable         bool
@@ -250,7 +248,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	}
 }
 
-fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &GraphicsContext) {
+fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, g &GraphicsContext) {
 	matc := make_match(line, this.keys)
 
 	mut xx := x
@@ -260,7 +258,7 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &
 
 	for str in matc {
 		if str == '\t' {
-			xx += ctx.text_width(tabr())
+			xx += g.text_width(tabr())
 			continue
 		}
 		color = cfg.color
@@ -310,14 +308,14 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, ctx &
 				color: color
 				size:  cfg.size
 			}
-			ctx.draw_text(xx, y + 2, str, ctx.font, cfg1)
+			g.draw_text(xx, y + 2, str, g.font, cfg1)
 		} else {
-			ctx.draw_text(xx, y + 2, str, ctx.font, cfg)
+			g.draw_text(xx, y + 2, str, g.font, cfg)
 		}
-		xx += ctx.text_width(str)
+		xx += g.text_width(str)
 	}
 
-	tw := ctx.text_width(line) + this.px + 8
+	tw := g.text_width(line) + this.px + 8
 	if this.pack && this.width < tw {
 		this.width = tw
 	}
@@ -533,9 +531,11 @@ fn (mut win Window) textbox_key_down_2(key gg.KeyCode, ev &gg.Event, mut com Tex
 		x0: -1
 	}
 
-	bevnt_old := com.before_txtc_event_fn(mut win, *com)
-	if bevnt_old {
-		return
+	// TODO: Remove old
+	if com.before_txtc_event_fn != none {
+		if com.before_txtc_event_fn(mut win, *com) {
+			return
+		}
 	}
 
 	bevnt := invoke_text_change(com, win.graphics_context, 'before_text_change')
@@ -593,9 +593,11 @@ fn (mut win Window) textbox_key_down_typed(key gg.KeyCode, ev &gg.Event, mut com
 		com.last_letter = 'enter'
 	}
 
-	mut bevnt_old := com.before_txtc_event_fn(mut win, *com)
-	if bevnt_old {
-		return
+	// TODO: Remove old
+	if com.before_txtc_event_fn != none {
+		if com.before_txtc_event_fn(mut win, *com) {
+			return
+		}
 	}
 
 	bevnt := invoke_text_change(com, win.graphics_context, 'before_text_change')

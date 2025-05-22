@@ -284,8 +284,8 @@ fn (mut app App) make_button_section() {
 		text:        'Open Page'
 		bounds:      ui.Bounds{0, 38, 130, 30}
 		should_pack: false
+		on_click:    test_page
 	)
-	btn2.subscribe_event('mouse_up', test_page)
 
 	mut btn3 := app.icon_btn(img_file.to_bytes())
 	btn3.set_bounds(85, 0, 45, 32)

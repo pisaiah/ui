@@ -60,7 +60,6 @@ fn (mut bar InfoBar) draw(g &GraphicsContext) {
 	g.set_cfg(cfg_bold)
 
 	lines := bar.text.split('\n')
-	sizh := (bar.height / 2) - g.line_height * (lines.len / 2)
 
 	padd := 8
 
