@@ -453,6 +453,8 @@ pub struct PanelConfig {
 pub:
 	layout   Layout = FlowLayout{}
 	children ?[]Component
+	width    int
+	height   int
 }
 
 pub fn Panel.new(cfg PanelConfig) &Panel {
@@ -463,6 +465,8 @@ pub fn panel(cfg PanelConfig) &Panel {
 	return &Panel{
 		layout:   cfg.layout
 		children: cfg.children or { []Component{} }
+		width:    cfg.width
+		height:   cfg.height
 	}
 }
 

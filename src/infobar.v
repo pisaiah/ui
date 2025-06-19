@@ -18,6 +18,9 @@ pub:
 	title    string
 	text     string
 	closable bool
+	children ?[]Component
+	width    int
+	height   int
 }
 
 pub fn InfoBar.new(c InfoBarConfig) &InfoBar {
@@ -25,6 +28,9 @@ pub fn InfoBar.new(c InfoBarConfig) &InfoBar {
 		text:     c.text
 		title:    c.title
 		closable: c.closable
+		children: c.children or { []Component{} }
+		width:    c.width
+		height:   c.height
 	}
 
 	if c.closable {
@@ -110,6 +116,10 @@ fn (mut bar InfoBar) draw(g &GraphicsContext) {
 		}
 
 		child.draw_with_offset(g, bar.x + bar.width - child.width - padd, bar.y + (bar.height / 2) - (child.height / 2))
+
+		if child.height == 0 {
+			child.height = bar.height
+		}
 		my += child.height + 4
 	}
 }

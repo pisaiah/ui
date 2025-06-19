@@ -10,11 +10,6 @@ fn (mut app App) make_svg_tab() &ui.Panel {
 
 	mut p := ui.Panel.new(layout: ui.BorderLayout.new())
 
-	mut lbl := ui.Label.new(
-		text: '(New!) Experimental SVG <Path> support.\nSee Module: "iui.x.svg" (will become "iui.svg" when non-experimental)'
-		pack: true
-	)
-
 	mut info := ui.InfoBar.new(
 		title: 'SVG'
 		text:  '(New!) Experimental SVG <Path> support. See Module: "iui.x.svg"'

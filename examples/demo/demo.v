@@ -28,7 +28,7 @@ fn main() {
 	)
 
 	mut pane := ui.Panel.new(
-		layout: ui.FlowLayout.new(hgap: 10, vgap: 10)
+		layout: ui.FlowLayout.new(hgap: 6, vgap: 10)
 	)
 	mut app := &App{
 		win:  window
@@ -58,22 +58,19 @@ fn main() {
 		file: 'v.png'
 	)
 	img.set_bounds(5, 5, 50, 50)
-	mut title_box := ui.Titlebox.new(text: 'Image', children: [img])
-	title_box.set_bounds(0, 0, 100, 130)
+
+	title_box := ui.Titlebox.new(
+		text:     'Image'
+		children: [img]
+		width:    100
+		height:   130
+	)
 	pane.add_child(title_box)
 
 	app.make_tree_section()
 	app.make_tab_section()
 
 	app.make_edits_section()
-
-	pane.set_pos(4, 10)
-
-	pane.subscribe_event('draw', fn (mut e ui.DrawEvent) {
-		ws := e.ctx.gg.window_size()
-		e.target.width = ws.width
-		e.target.height = ws.height
-	})
 
 	mut tb := ui.Tabbox.new(
 		closable: false
@@ -85,12 +82,41 @@ fn main() {
 	selector_tab := app.make_selector_tab()
 	svg_tab := app.make_svg_tab()
 
-	tb.add_child('Overview', pane)
+	right_panel := ui.Panel.new(
+		children: [
+			ui.Hyperlink.new(text: 'Github', pack: true, url: 'https://github.com/pisaiah/ui')
+		]
+		width: 50
+	)
+
+	title := ui.Panel.new(
+		layout: ui.FlowLayout.new(hgap: 6, vgap: 4)
+		children: [
+			ui.InfoBar.new(
+				title: 'iUI ${ui.version}'
+				text:  'Cross-platform GUI library for V.'
+				children: [right_panel]
+			)
+		]
+	)
+
+	lbl := ui.Label.new(text: '© 2021-2025', pack: true)
+
+	mut pp := ui.Panel.new(
+		layout: ui.BorderLayout.new()
+	)
+
+	pp.add_child(pane, value: ui.borderlayout_center)
+	pp.add_child(title, value: ui.borderlayout_north)
+	pp.add_child(lbl, value: ui.borderlayout_south)
+
+	// tb.add_child('Overview', pane)
+	tb.add_child('Overview', pp)
 	tb.add_child('Buttons', button_tab)
 	tb.add_child('Frames', frame_tab)
 	tb.add_child('Slider', slider_tab)
 	tb.add_child('Selector', selector_tab)
-	tb.add_child('SVG (New!)', svg_tab)
+	tb.add_child('SVG', svg_tab)
 
 	window.add_child(tb)
 
@@ -187,7 +213,7 @@ fn (mut app App) make_edits_section() {
 	mut code_box := ui.Textbox.new(lines: ['module main', '', 'fn main() {', '}'])
 	code_box.set_bounds(0, 0, 175, 100)
 
-	mut edits_title_box := ui.Titlebox.new(
+	edits_title_box := ui.Titlebox.new(
 		text:     'TextField / TextBox'
 		children: [
 			ui.TextField.new(
@@ -200,8 +226,9 @@ fn (mut app App) make_edits_section() {
 				padding: 0
 			),
 		]
+		width:    200
+		height:   150
 	)
-	edits_title_box.set_bounds(0, 0, 200, 150)
 	app.pane.add_child(edits_title_box)
 }
 
@@ -216,20 +243,28 @@ fn (mut app App) make_progress_section() {
 	)
 	p.set_bounds(0, 0, 120, 90)
 
-	mut title_box := ui.Titlebox.new(text: 'Progressbar', children: [p])
-	title_box.set_bounds(0, 0, 120, 130)
+	title_box := ui.Titlebox.new(
+		text:     'Progressbar'
+		children: [p]
+		width:    120
+		height:   130
+	)
 	app.pane.add_child(title_box)
 }
 
 fn (mut app App) make_tree_section() {
 	mut tree := create_tree(app.win)
-	mut tree_view := ui.scroll_view(
+	mut tree_view := ui.ScrollView.new(
 		bounds: ui.Bounds{0, 0, 170, 145}
 		view:   tree
 	)
 
-	mut title_box := ui.Titlebox.new(text: 'Treeview', children: [tree_view])
-	title_box.set_bounds(0, 0, 190, 180)
+	title_box := ui.Titlebox.new(
+		text:     'Treeview'
+		children: [tree_view]
+		width:    190
+		height:   180
+	)
 
 	app.pane.add_child(title_box)
 }
@@ -246,11 +281,12 @@ fn (mut app App) make_checkbox_section() {
 		selected: true
 	)
 
-	mut title_box := ui.Titlebox.new(
+	title_box := ui.Titlebox.new(
 		text:     'Checkbox/Switch'
 		children: [cbox, cbox2]
+		width:    130
+		height:   130
 	)
-	title_box.set_bounds(0, 0, 130, 130)
 
 	app.pane.add_child(title_box)
 }
@@ -269,9 +305,13 @@ fn (mut app App) make_selectbox_section() {
 	)
 	slid.set_bounds(0, 30, 90, 30)
 
-	mut title_box := ui.Titlebox.new(text: 'Selector/Slider', children: [sel, slid])
+	title_box := ui.Titlebox.new(
+		text:     'Selector/Slider'
+		children: [sel, slid]
+		width:    120
+		height:   130
+	)
 
-	title_box.set_bounds(0, 0, 120, 130)
 	app.pane.add_child(title_box)
 }
 
@@ -301,8 +341,12 @@ fn (mut app App) make_button_section() {
 
 	p.set_bounds(0, 0, 150, 80)
 
-	mut title_box := ui.Titlebox.new(text: 'Button', children: [p])
-	title_box.set_bounds(0, 0, 150, 130)
+	title_box := ui.Titlebox.new(
+		text:     'Button'
+		children: [p]
+		width:    150
+		height:   130
+	)
 
 	app.pane.add_child(title_box)
 }
@@ -323,8 +367,12 @@ fn (mut app App) make_tab_section() {
 	tbtn1.pack()
 	tb.add_child('Tab B', tbtn1)
 
-	mut title_box := ui.Titlebox.new(text: 'Tabbox', children: [tb])
-	title_box.set_bounds(0, 0, 180, 180)
+	title_box := ui.Titlebox.new(
+		text:     'Tabbox'
+		children: [tb]
+		width:    180
+		height:   180
+	)
 
 	app.pane.add_child(title_box)
 }

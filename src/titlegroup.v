@@ -18,6 +18,8 @@ pub:
 	children []Component
 	padding  int = 8
 	compact  bool
+	width    int
+	height   int
 }
 
 pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
@@ -26,6 +28,8 @@ pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 		children: c.children
 		padding:  c.padding
 		compact:  c.compact
+		width:    c.width
+		height:   c.height
 	}
 }
 

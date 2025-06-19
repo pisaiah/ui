@@ -4,9 +4,9 @@
 
 <br>
 
-![0.0.20](https://img.shields.io/badge/version-0.0.24-white?style=flat)
+![0.0.20](https://img.shields.io/badge/version-0.27-white?style=flat)
 ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=flat)
-![vlang](http://img.shields.io/badge/V-0.4.10-%236d8fc5?style=flat)
+![vlang](http://img.shields.io/badge/V-0.4.11-%236d8fc5?style=flat)
 
 Cross-platform GUI library for V. Inspired by the syntax of Java's Swing/FX & Fluent/WinUI3 Style.
 
@@ -23,8 +23,10 @@ fn main() {
 	)
 
 	// Create Button
-	mut btn := ui.Button.new(text: 'My Button')
-	btn.subscribe_event('mouse_up', on_click_event)
+	mut btn := ui.Button.new(
+		text:     'My Button'
+		on_click: on_click_event
+	)
 
 	// Add Button to Window & Run
 	window.add_child(btn)
