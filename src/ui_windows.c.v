@@ -126,7 +126,7 @@ pub fn (mut l WLabel) init_sokol_image() {
 		width:         l.width
 		height:        l.height
 		num_mipmaps:   0
-		label:         ''.str
+		label:         c''
 		d3d11_texture: 0
 	}
 

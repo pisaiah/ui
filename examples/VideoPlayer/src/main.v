@@ -48,7 +48,7 @@ pub fn (mut mpv MPVPlayer) init(_ voidptr) {
 	temp_adv_control_hack := int(0)
 
 	params := [
-		MPVRenderParameter{C.MPV_RENDER_PARAM_API_TYPE, 'sw'.str},
+		MPVRenderParameter{C.MPV_RENDER_PARAM_API_TYPE, c'sw'},
 		MPVRenderParameter{C.MPV_RENDER_PARAM_ADVANCED_CONTROL, &temp_adv_control_hack},
 		MPVRenderParameter{0, &voidptr(0)},
 	]
@@ -65,9 +65,9 @@ pub fn (mut mpv MPVPlayer) init(_ voidptr) {
 	C.mpv_set_wakeup_callback(mpv.i_mpv_handle, on_mpv_events, 0)
 
 	// Observe props
-	C.mpv_observe_property(mpv.i_mpv_handle, 0, 'duration'.str, C.MPV_FORMAT_DOUBLE)
-	C.mpv_observe_property(mpv.i_mpv_handle, 0, 'time-pos'.str, C.MPV_FORMAT_DOUBLE)
-	C.mpv_observe_property(mpv.i_mpv_handle, 0, 'pause'.str, C.MPV_FORMAT_STRING)
+	C.mpv_observe_property(mpv.i_mpv_handle, 0, c'duration', C.MPV_FORMAT_DOUBLE)
+	C.mpv_observe_property(mpv.i_mpv_handle, 0, c'time-pos', C.MPV_FORMAT_DOUBLE)
+	C.mpv_observe_property(mpv.i_mpv_handle, 0, c'pause', C.MPV_FORMAT_STRING)
 
 	// Texture
 	i_texture_id := mpv.ctx.new_streaming_image(c_win_width, c_win_height, 4, pixel_format: .rgba8)
@@ -78,7 +78,7 @@ pub fn (mut mpv MPVPlayer) init(_ voidptr) {
 
 	mpv.rend_params = [
 		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_SIZE, resolution.data},
-		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_FORMAT, 'rgb0'.str},
+		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_FORMAT, c'rgb0'},
 		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_STRIDE, &pitch},
 		C.mpv_render_param{C.MPV_RENDER_PARAM_SW_POINTER, &mpv.i_pixels},
 		C.mpv_render_param{0, &voidptr(0)},
@@ -90,7 +90,7 @@ pub fn (mut mpv MPVPlayer) init(_ voidptr) {
 
 pub fn (mut mpv MPVPlayer) play_video(path string) {
 	println('Playing: ${path}')
-	C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('loadfile'.str), &char(path.str), &char(0)].data)
+	C.mpv_command_async(mpv.i_mpv_handle, 0, [&char(c'loadfile'), &char(path.str), &char(0)].data)
 }
 
 pub fn (mut mpv MPVPlayer) on_mpv_events() {

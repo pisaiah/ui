@@ -31,6 +31,13 @@ mut:
 	set_bounds(int, int, int, int)
 }
 
+pub enum State {
+	normal
+	hover
+	focus
+	pressed
+}
+
 // pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 pub fn (com &Component) str() string {
 	return com.type_name() // typeof(com)

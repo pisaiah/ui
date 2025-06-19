@@ -151,7 +151,7 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 			p.setup(win.graphics_context)
 		}
 		p.path = 'dvd://'
-		p.cmd_async([&char('loadfile'.str), &char('dvd://'.str), &char(C.NULL)])
+		p.cmd_async([&char(c'loadfile'), &char(c'dvd://'), &char(C.NULL)])
 
 		// C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('loadfile'.str), &char(path.str), &char(0)].data)
 		return
@@ -170,7 +170,7 @@ fn (mut p Player) open_click(mut win ui.Window, com ui.MenuItem) {
 		p.setup(win.graphics_context)
 	} else {
 		p.vmpv.is_pause = true
-		p.cmd_async([&char('loadfile'.str), &char(selected_file.str), &char(0)])
+		p.cmd_async([&char(c'loadfile'), &char(selected_file.str), &char(0)])
 		p.vmpv.is_pause = false
 	}
 }
@@ -315,7 +315,7 @@ fn (mut this Player) setup_controls(ctx &ui.GraphicsContext) {
 	})
 
 	pbtn.subscribe_event('mouse_up', fn [mut this] (mut e ui.MouseEvent) {
-		this.cmd_async([&char('cycle'.str), &char('pause'.str), &char(0)])
+		this.cmd_async([&char(c'cycle'), &char(c'pause'), &char(0)])
 
 		// this.cmd_async([&char('set'.str), &char('video-speed-correction'.str), &char(2)])
 	})
@@ -384,7 +384,7 @@ fn (this &Player) change_speed(speed f32) int {
 		return -1
 	}
 
-	return C.mpv_set_property_string(this.vmpv.i_mpv_handle, 'speed'.str, '${speed}'.str)
+	return C.mpv_set_property_string(this.vmpv.i_mpv_handle, c'speed', '${speed}'.str)
 }
 
 pub fn (mut mpv MPVPlayer) draw_texture_(x int, y int, w int, h int) {
@@ -410,5 +410,5 @@ pub fn (mut mpv MPVPlayer) draw_(x int, y int, w int, h int) {
 
 pub fn (mut mpv MPVPlayer) seek(val int) {
 	/// C.mpv_command_async(mpv.i_mpv_handle, 0, [&char('seek'.str), &char('absolute'.str), &char('${val}'.str)].data)
-	C.mpv_set_property_string(mpv.i_mpv_handle, 'time-pos'.str, '${val}'.str)
+	C.mpv_set_property_string(mpv.i_mpv_handle, c'time-pos', '${val}'.str)
 }

@@ -451,7 +451,8 @@ pub mut:
 @[params]
 pub struct PanelConfig {
 pub:
-	layout Layout = FlowLayout{}
+	layout   Layout = FlowLayout{}
+	children ?[]Component
 }
 
 pub fn Panel.new(cfg PanelConfig) &Panel {
@@ -460,7 +461,8 @@ pub fn Panel.new(cfg PanelConfig) &Panel {
 
 pub fn panel(cfg PanelConfig) &Panel {
 	return &Panel{
-		layout: cfg.layout
+		layout:   cfg.layout
+		children: cfg.children or { []Component{} }
 	}
 }
 

@@ -152,6 +152,9 @@ fn (mut s Svg) draw_path_gg(g &ui.GraphicsContext, idx int, commands []Command) 
 	for command in commands {
 		match command.cmd {
 			'M', 'm' {
+				if command.args.len == 1 {
+					return
+				}
 				last_x = command.args[0]
 				last_y = command.args[1]
 			}
@@ -173,6 +176,10 @@ fn (mut s Svg) draw_path_gg(g &ui.GraphicsContext, idx int, commands []Command) 
 			}
 			'C', 'c' {
 				// Cubic Bezier curve
+				if command.args.len < 5 {
+					return
+				}
+
 				g.gg.draw_cubic_bezier([s.x(last_x), s.y(last_y),
 					s.x(command.args[0]), s.y(command.args[1]),
 					s.x(command.args[2]), s.y(command.args[3]),

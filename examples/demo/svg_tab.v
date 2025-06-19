@@ -187,6 +187,19 @@ fn make_svg_panel() &ui.Panel {
 	p.add_child(svg_h)
 	p.add_child(svg_i)
 
+	mut svg_letter := svg.Svg.new(
+		paths:   [
+			// 'M 123 668 L 684 671 L 602 545 L 384 284 L 192 56.7 L 173 34.6 L 274 9.45 L 384 6.3 L 709 25.2'
+			//'M 110 671 L 372 31.5 L 450 211 L 598 551 L 639 510 L 709 400 L 819 176 L 895 34.6 L 945 176 L 989 369 L 1039.5 662'
+			'M 561 592 L 356 583 L 246 558 L 151 510 L 110 460 L 107 413 L 135 365 L 205 346 L 384 346 L 510 359 L 583 340 L 598 299 L 583 252 L 504 205 L 419 161 L 296 139 L 154 132 M 318 816 L 387 -53.5',
+		]
+		viewbox: '0 0 900 900'
+		width:   w
+		height:  h
+	)
+
+	p.add_child(svg_letter)
+
 	mut btn := make_svg_button()
 
 	p.add_child(btn)

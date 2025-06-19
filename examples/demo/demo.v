@@ -104,25 +104,33 @@ fn main() {
 }
 
 fn (mut app App) make_selector_tab() &ui.Panel {
-	mut p := ui.Panel.new()
+	mut list := []string{}
+
+	for i in 0 .. 10 {
+		list << 'Item ${i}'
+	}
 
 	mut sel := ui.Selectbox.new(
 		text:  'Selectbox'
-		items: ['Item A', 'Item B']
+		items: list // ['Item A', 'Item B']
 	)
 
 	// Can either add items as string (above) or via new_item
-	mut item := sel.new_item(
+	sel.add_child(sel.new_item(
 		uicon: '\ue949'
 		text:  'with uicon'
+	))
+
+	return ui.Panel.new(
+		children: [
+			ui.Titlebox.new(
+				text:     'Selectbox'
+				children: [
+					sel,
+				]
+			),
+		]
 	)
-	sel.add_child(item)
-
-	mut title_box := ui.Titlebox.new(text: 'Selector', children: [sel])
-
-	title_box.set_bounds(0, 0, 120, 130)
-	p.add_child(title_box)
-	return p
 }
 
 fn draw_custom_themed(name string, mut e ui.DrawEvent) {
@@ -176,25 +184,21 @@ fn (mut app App) make_hbox_section() {
 }
 
 fn (mut app App) make_edits_section() {
-	tbox := ui.text_field(
-		text:   'This is a TextField'
-		bounds: ui.Bounds{2, 5, 175, 30}
-	)
-
 	mut code_box := ui.Textbox.new(lines: ['module main', '', 'fn main() {', '}'])
 	code_box.set_bounds(0, 0, 175, 100)
-
-	mut sv := ui.ScrollView.new(
-		view:    code_box
-		bounds:  ui.Bounds{2, 44, 175, 100}
-		padding: 0
-	)
 
 	mut edits_title_box := ui.Titlebox.new(
 		text:     'TextField / TextBox'
 		children: [
-			tbox,
-			sv,
+			ui.TextField.new(
+				text:   'This is a TextField'
+				bounds: ui.Bounds{2, 5, 175, 30}
+			),
+			ui.ScrollView.new(
+				view:    code_box
+				bounds:  ui.Bounds{2, 44, 175, 100}
+				padding: 0
+			),
 		]
 	)
 	edits_title_box.set_bounds(0, 0, 200, 150)
@@ -202,16 +206,17 @@ fn (mut app App) make_edits_section() {
 }
 
 fn (mut app App) make_progress_section() {
-	mut pb := ui.Progressbar.new(val: 30)
-	pb.set_bounds(0, 0, 110, 24)
+	mut p := ui.Panel.new(
+		layout:   ui.GridLayout.new(cols: 1)
+		children: [
+			ui.Progressbar.new(val: 30),
+			ui.Progressbar.new(val: 50),
+			ui.Progressbar.new(val: 70),
+		]
+	)
+	p.set_bounds(0, 0, 120, 90)
 
-	mut pb2 := ui.Progressbar.new(val: 50)
-	pb2.set_bounds(0, 30, 110, 24)
-
-	mut pb3 := ui.Progressbar.new(val: 70)
-	pb3.set_bounds(0, 60, 110, 24)
-
-	mut title_box := ui.Titlebox.new(text: 'Progressbar', children: [pb, pb2, pb3])
+	mut title_box := ui.Titlebox.new(text: 'Progressbar', children: [p])
 	title_box.set_bounds(0, 0, 120, 130)
 	app.pane.add_child(title_box)
 }
@@ -262,7 +267,6 @@ fn (mut app App) make_selectbox_section() {
 		max: 100
 		dir: .hor
 	)
-	slid.pack()
 	slid.set_bounds(0, 30, 90, 30)
 
 	mut title_box := ui.Titlebox.new(text: 'Selector/Slider', children: [sel, slid])
@@ -272,28 +276,34 @@ fn (mut app App) make_selectbox_section() {
 }
 
 fn (mut app App) make_button_section() {
-	mut btn := ui.Button.new(
-		text:   'Button'
-		bounds: ui.Bounds{0, 0, 80, 32}
+	btn := ui.Button.new(
+		text:   'A Button'
+		bounds: ui.Bounds{0, 0, 1, 64}
 	)
 
-	// btn.icon = -2
-	// btn.icon_width = 0
-	// btn.icon_height = 1
-	mut btn2 := ui.Button.new(
-		text:        'Open Page'
-		bounds:      ui.Bounds{0, 38, 130, 30}
-		should_pack: false
-		on_click:    test_page
+	btn2 := ui.Button.new(
+		text:     'New Page'
+		on_click: test_page
 	)
 
 	mut btn3 := app.icon_btn(img_file.to_bytes())
-	btn3.set_bounds(85, 0, 45, 32)
-	btn3.icon_width = 28
-	btn3.icon_height = 28
+	btn3.icon_width = 32
+	btn3.icon_height = 32
 
-	mut title_box := ui.Titlebox.new(text: 'Button', children: [btn, btn2, btn3])
+	mut p := ui.Panel.new(
+		layout:   ui.GridLayout.new(
+			rows: 2
+			vgap: 4
+			hgap: 4
+		)
+		children: [btn, btn2, btn3]
+	)
+
+	p.set_bounds(0, 0, 150, 80)
+
+	mut title_box := ui.Titlebox.new(text: 'Button', children: [p])
 	title_box.set_bounds(0, 0, 150, 130)
+
 	app.pane.add_child(title_box)
 }
 
@@ -392,20 +402,6 @@ fn create_tree(window &ui.Window) &ui.Tree2 {
 	return tree
 }
 
-// Button click
-fn on_click(mut win ui.Window, com ui.Button) {
-	debug('on_click')
-}
-
-// MenuItem in the Theme section click event
-/*
-fn theme_click(mut e ui.MouseEvent) {
-	text := e.target.text
-	theme := ui.theme_by_name(text)
-	e.ctx.win.set_theme(theme)
-}
-*/
-
 fn test_page(mut e ui.MouseEvent) {
 	mut page := ui.Page.new(title: 'Page 1')
 	e.ctx.win.add_child(page)
@@ -424,14 +420,14 @@ fn make_code_box(file_name string) &ui.ScrollView {
 	lines := os.read_lines(file) or { ['// Error: Unable to read ${file}'] }
 
 	mut box := ui.Textbox.new(
-		lines: lines
+		lines:        lines
+		not_editable: true
 	)
 
 	box.set_bounds(0, 0, 450, 200)
-	box.not_editable = true
 	box.no_line_numbers = true
 
-	mut p := ui.ScrollView.new(
+	p := ui.ScrollView.new(
 		view:   box
 		bounds: ui.Bounds{0, 0, 250, 200}
 	)

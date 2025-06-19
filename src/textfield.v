@@ -86,7 +86,7 @@ fn (mut txf TextField) draw_background(g &GraphicsContext) {
 		g.theme.scroll_bar_color
 	}
 
-	b_h := if click || txf.is_selected { 21 } else { 1 }
+	b_h := if click || txf.is_selected { 2 } else { 1 }
 
 	g.gg.draw_rounded_rect_filled(txf.x, txf.y, txf.width, txf.height, 2, g.theme.textbox_border)
 	g.gg.draw_rounded_rect_filled(txf.x + 1, txf.y + 1, txf.width - 2, txf.height, 4,
@@ -240,7 +240,8 @@ fn (mut this TextField) mouse_down_caret(g &GraphicsContext) {
 
 fn (mut box TextField) draw_selection(g &GraphicsContext) {
 	sel := box.sel or { return }
-	color := gx.rgba(0, 120, 215, 100)
+	ac := g.theme.accent_fill
+	color := gx.rgba(ac.r, ac.g, ac.b, 100)
 
 	// Same Line
 	minx := if sel.x0 > sel.x1 { sel.x1 } else { sel.x0 }

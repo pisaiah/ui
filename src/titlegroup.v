@@ -8,6 +8,7 @@ pub struct Titlebox {
 	Component_A
 pub mut:
 	padding int = 8
+	compact bool
 }
 
 @[params]
@@ -16,6 +17,7 @@ pub:
 	text     string
 	children []Component
 	padding  int = 8
+	compact  bool
 }
 
 pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
@@ -23,6 +25,7 @@ pub fn Titlebox.new(c TitleboxConfig) &Titlebox {
 		text:     c.text
 		children: c.children
 		padding:  c.padding
+		compact:  c.compact
 	}
 }
 
@@ -52,6 +55,16 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	wid := ctx.text_width(this.text)
 
 	ctx.gg.draw_rect_empty(this.x, y, this.width, hei, ctx.theme.button_border_normal)
+
+	if this.compact {
+		ctx.gg.draw_rect_filled(this.x, this.y, wid, text_height + 1, ctx.theme.background)
+		ctx.draw_text(this.x, this.y, this.text, ctx.font, gx.TextCfg{
+			color: ctx.theme.text_color
+			size:  ctx.font_size
+		})
+		return
+	}
+
 	ctx.gg.draw_rect_filled(x - 8, this.y, wid + 16, text_height + 1, ctx.theme.background)
 	ctx.draw_text(x, this.y, this.text, ctx.font, gx.TextCfg{
 		color: ctx.theme.text_color

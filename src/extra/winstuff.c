@@ -39,7 +39,7 @@ static iui__Window* wind;
 static int not_sokol = 0;
 
 // have these here so gcc don't complain
-VV_EXPORTED_SYMBOL bool iui_check_for_menuitem(iui__Window* w, int x, int y);
+VV_EXP bool iui_check_for_menuitem(iui__Window* w, int x, int y);
 // VV_EXPORTED_SYMBOL voidptr iui_get_hwnd_2(iui__Window* win);
 
 #define BUTTON_CLOSE 1

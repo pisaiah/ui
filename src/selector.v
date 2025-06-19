@@ -244,9 +244,6 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 	if si.box != none {
 		// dump('${si.text} ${si.box?.text}')
 
-		// :(
-		// Options in V are broken again (V 0.4.9 60dfdbf)
-		// :(
 		box := si.box
 
 		if box.text == si.text {
