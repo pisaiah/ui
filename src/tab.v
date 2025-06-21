@@ -204,6 +204,7 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 
 	mut val := tb.kids[tb.active_tab]
 	val.sort(a.z_index < b.z_index)
+
 	for mut com in val {
 		if !isnil(com.draw_event_fn) {
 			mut win := ctx.win

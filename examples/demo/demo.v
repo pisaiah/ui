@@ -23,7 +23,7 @@ fn main() {
 		width:           700
 		height:          480
 		theme:           ui.get_system_theme()
-		ui_mode:         true
+		ui_mode:         false
 		custom_titlebar: true
 	)
 
@@ -84,19 +84,19 @@ fn main() {
 
 	right_panel := ui.Panel.new(
 		children: [
-			ui.Hyperlink.new(text: 'Github', pack: true, url: 'https://github.com/pisaiah/ui')
+			ui.Hyperlink.new(text: 'Github', pack: true, url: 'https://github.com/pisaiah/ui'),
 		]
-		width: 50
+		width:    50
 	)
 
 	title := ui.Panel.new(
-		layout: ui.FlowLayout.new(hgap: 6, vgap: 4)
+		layout:   ui.FlowLayout.new(hgap: 6, vgap: 4)
 		children: [
 			ui.InfoBar.new(
-				title: 'iUI ${ui.version}'
-				text:  'Cross-platform GUI library for V.'
+				title:    'iUI ${ui.version}'
+				text:     'Cross-platform GUI library for V.'
 				children: [right_panel]
-			)
+			),
 		]
 	)
 

@@ -261,6 +261,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		ui_mode:       cfg.ui_mode
 		sample_count:  sample_count
 		swap_interval: swap_interval
+		resized_fn:    win.on_resize
 	)
 	win.graphics_context = new_graphics(win)
 	if win.graphics_context.icon_cache.len == 0 {
@@ -281,6 +282,19 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 
 	win.theme.setup_fn(mut win)
 	return win
+}
+
+fn (w &Window) on_resize(e &gg.Event, data voidptr) {
+	w.invoke_window_resize()
+}
+
+pub fn (win &Window) invoke_window_resize() {
+	ev := &WindowEvent{
+		win: win
+	}
+	for f in win.event_map['window_resize'] {
+		f(ev)
+	}
 }
 
 pub fn (win &Window) invoke_window_create() {
@@ -381,7 +395,14 @@ pub fn (mut win Window) draw_window_controls() {
 
 		mut min := Button.new(icon: -1, text: '\uE937', font_size: 10)
 		mut max := Button.new(icon: -1, text: '\uE938', font_size: 10)
-		mut xxx := Button.new(icon: -1, text: '\uE8BB', font_size: 10)
+		mut xxx := Button.new(
+			icon:      -1
+			text:      '\uE8BB'
+			font_size: 10
+			on_click:  fn (e &MouseEvent) {
+				win_post_control_message(0)
+			}
+		)
 
 		min.border_radius = -1
 		max.border_radius = -1
@@ -397,10 +418,6 @@ pub fn (mut win Window) draw_window_controls() {
 
 		max.subscribe_event('mouse_up', fn (e &MouseEvent) {
 			win_post_control_message(2)
-		})
-
-		xxx.subscribe_event('mouse_up', fn (e &MouseEvent) {
-			win_post_control_message(0)
 		})
 
 		min.icon_width = 0
@@ -520,16 +537,21 @@ fn (mut w Window) do_sleep() {
 	}
 
 	if w.has_event {
+		/*
 		w.frame_evnt_count += 1
 		if w.frame_evnt_count > 3 {
 			w.has_event = false
 			w.frame_evnt_count = 0
 		}
+		*/
 	}
 
 	if !w.has_event {
 		//	time.sleep(10 * time.millisecond) // Reduce CPU Usage
 	}
+}
+
+fn (mut app Window) revalidate() {
 }
 
 fn (mut app Window) draw() {
@@ -617,10 +639,19 @@ fn (mut app Window) draw() {
 		app.last_update = end
 		app.second_pass += 1
 		app.tooltip = ''
+		app.frame_evnt_count = 0
 	} else {
 		app.second_pass = 0
 	}
+	// app.frame_evnt_count += 1
 	app.frame_time = int(end - now)
+
+	/*
+	dt := app.gg.timer.elapsed().milliseconds()
+	if dt > 500 {
+		app.gg.timer.restart()
+	}
+	*/
 }
 
 fn (mut app Window) draw_children() {

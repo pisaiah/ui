@@ -44,9 +44,6 @@ pub fn (mut bar Progressbar) draw(g &GraphicsContext) {
 	val := bar.get_val()
 	wid := bar.width * (0.01 * val)
 
-	// ctx.gg.draw_rect_filled(bar.x, bar.y, wid, bar.height, ctx.theme.accent_fill)
-	// ctx.gg.draw_rect_empty(bar.x, bar.y, bar.width, bar.height, ctx.theme.button_border_normal)
-
 	g.gg.draw_rounded_rect_filled(bar.x, bar.y, bar.width, bar.height, 4, g.theme.button_border_normal)
 	g.gg.draw_rounded_rect_filled(bar.x + 1, bar.y + 1, wid - 2, bar.height - 2, 4, g.theme.accent_fill)
 
