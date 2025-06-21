@@ -17,3 +17,4 @@ examples/vpaint/
 examples/explore
 
 examples/VideoPlayer/*.dll
+examples/gui-builder/

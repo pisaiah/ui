@@ -98,10 +98,10 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 	wid_2 := wid - (bord_wid * 2)
 	ttop := this.y + (ctx.line_height / 2)
 
-	ctx.gg.draw_rounded_rect_filled(this.x, this.y, wid, hei, 8, bg)
-
 	if this.active {
-		ctx.gg.draw_rounded_rect_empty(this.x, this.y, wid, hei, 8, ctx.theme.accent_fill)
+		ctx.draw_rounded_rect(this.x, this.y, wid, hei, 8, ctx.theme.accent_fill, bg)
+	} else {
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y, wid, hei, 8, bg)
 	}
 
 	ctx.gg.draw_text(this.x + 6, ttop, this.text, gx.TextCfg{

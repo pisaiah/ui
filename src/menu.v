@@ -320,10 +320,20 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 
 @[params]
 pub struct MenubarConfig {
+	children []&MenuItem
 }
 
 pub fn Menubar.new(cfg MenubarConfig) &Menubar {
-	return &Menubar{}
+	mut bar := &Menubar{}
+
+	for kid in cfg.children {
+		bar.add_child(kid)
+	}
+	return bar
+}
+
+fn (mut win Window) set_menubar(bar &Menubar) {
+	win.bar = bar
 }
 
 fn (mut win Window) get_bar() &Menubar {
