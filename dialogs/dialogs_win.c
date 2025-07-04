@@ -8,8 +8,6 @@
 #include <commdlg.h>
 // #include <dialogs_win.h>
 
-// int win_open_file_dialog() {
-	
 static char* wchar_to_utf8(const wchar_t* s) {
 	if (!s)
 		return NULL;
@@ -21,7 +19,7 @@ static char* wchar_to_utf8(const wchar_t* s) {
 	return r;
 }
 	
-char * win_open_file_dialog(char const * aTitle) {
+char * win_open_dialogs(char const * aTitle) {
     OPENFILENAME ofn;
     wchar_t szFile[MAX_PATH] = L"";
 
@@ -37,13 +35,11 @@ char * win_open_file_dialog(char const * aTitle) {
     ofn.lpstrInitialDir = NULL;
     ofn.Flags = 0x00000001 | 0x00001000;
 
-
     if (GetOpenFileNameW(&ofn)) {
-        printf("Selected file: %s\n", szFile);
-        // Now you can use 'szFile' for further processing.
+        //printf("Selected file: %s\n", szFile);
 		return wchar_to_utf8(szFile);
     } else {
-        printf("User canceled the file selection.\n");
+        //printf("User canceled the file selection.\n");
 		return "";
     }
 
