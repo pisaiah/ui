@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // Select - implements Component interface
 pub struct Selectbox {
@@ -136,7 +136,7 @@ pub fn (mut sb Selectbox) do_pack(ctx &GraphicsContext) {
 	}
 }
 
-pub fn (box &Selectbox) get_bg_bord(g &GraphicsContext) (gx.Color, gx.Color) {
+pub fn (box &Selectbox) get_bg_bord(g &GraphicsContext) (gg.Color, gg.Color) {
 	if box.is_mouse_down {
 		return g.theme.button_bg_click, g.theme.accent_fill_third
 	}
@@ -193,7 +193,7 @@ pub fn (box &Selectbox) draw_box(ctx &GraphicsContext, x int, y int) {
 	ctx.draw_corner_rect(x, y, box.width, box.height, border, bg)
 
 	// ctx.gg.draw_rect_filled(x, y, box.width, box.height, bg)
-	ctx.draw_text(x + 5, y + (box.height / 2) - sizh, box.text, ctx.font, gx.TextCfg{
+	ctx.draw_text(x + 5, y + (box.height / 2) - sizh, box.text, ctx.font, gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
@@ -266,19 +266,19 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 
 fn (mut si SelectItem) draw_text(ctx &GraphicsContext, y int) {
 	if si.uicon != none && ctx.icon_ttf_exists() {
-		ctx.draw_text(si.x + 10, y, si.uicon, ctx.win.extra_map['icon_ttf'], gx.TextCfg{
+		ctx.draw_text(si.x + 10, y, si.uicon, ctx.win.extra_map['icon_ttf'], gg.TextCfg{
 			size:  ctx.win.font_size
 			color: ctx.theme.text_color
 		})
 		wid := ctx.text_width(si.uicon) + 17
-		ctx.draw_text(si.x + wid, y, si.text, ctx.font, gx.TextCfg{
+		ctx.draw_text(si.x + wid, y, si.text, ctx.font, gg.TextCfg{
 			size:  ctx.win.font_size
 			color: ctx.theme.text_color
 		})
 		return
 	}
 
-	ctx.draw_text(si.x + 10, y, si.text, ctx.font, gx.TextCfg{
+	ctx.draw_text(si.x + 10, y, si.text, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 	})

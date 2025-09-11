@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 import os
 
 // Tabbox - implements Component interface
@@ -44,12 +44,12 @@ pub fn (mut tb Tabbox) change_title(old_title string, new_title string) {
 	tb.kids.delete(old_title)
 }
 
-fn (tb &Tabbox) get_tab_color(ctx &GraphicsContext, active bool) gx.Color {
+fn (tb &Tabbox) get_tab_color(ctx &GraphicsContext, active bool) gg.Color {
 	if active {
 		return ctx.theme.button_bg_normal
 	}
 	bg := ctx.theme.button_bg_normal
-	return gx.rgba(bg.r, bg.g, bg.b, 10)
+	return gg.rgba(bg.r, bg.g, bg.b, 10)
 }
 
 pub fn (this &Tabbox) get_active_tab_height(ctx &GraphicsContext) int {
@@ -102,7 +102,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 
 	// Draw Button Text
 	tx := tb.x + mx + 8
-	ctx.draw_text(tx, tb.y + my + ty, key, ctx.font, gx.TextCfg{
+	ctx.draw_text(tx, tb.y + my + ty, key, ctx.font, gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})

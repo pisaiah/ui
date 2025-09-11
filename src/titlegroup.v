@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // Titlebox -
 //	Titled border around children
@@ -62,7 +62,7 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 
 	if this.compact {
 		ctx.gg.draw_rect_filled(this.x, this.y, wid, text_height + 1, ctx.theme.background)
-		ctx.draw_text(this.x, this.y, this.text, ctx.font, gx.TextCfg{
+		ctx.draw_text(this.x, this.y, this.text, ctx.font, gg.TextCfg{
 			color: ctx.theme.text_color
 			size:  ctx.font_size
 		})
@@ -70,7 +70,7 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	}
 
 	ctx.gg.draw_rect_filled(x - 8, this.y, wid + 16, text_height + 1, ctx.theme.background)
-	ctx.draw_text(x, this.y, this.text, ctx.font, gx.TextCfg{
+	ctx.draw_text(x, this.y, this.text, ctx.font, gg.TextCfg{
 		color: ctx.theme.text_color
 		size:  ctx.font_size
 	})

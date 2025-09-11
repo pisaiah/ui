@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 
 // Checkbox - implements Component interface
 pub struct Checkbox {
@@ -28,7 +27,7 @@ pub fn Checkbox.new(c CheckboxConfig) &Checkbox {
 }
 
 // Get border color
-fn (cb &Checkbox) get_border(is_hover bool, g &GraphicsContext) gx.Color {
+fn (cb &Checkbox) get_border(is_hover bool, g &GraphicsContext) gg.Color {
 	if cb.is_mouse_down {
 		return g.theme.accent_fill_third
 	}
@@ -48,7 +47,7 @@ fn (cb &Checkbox) get_border(is_hover bool, g &GraphicsContext) gx.Color {
 }
 
 // Get background color
-fn (cb &Checkbox) get_background(is_hover bool, g &GraphicsContext) gx.Color {
+fn (cb &Checkbox) get_background(is_hover bool, g &GraphicsContext) gg.Color {
 	if cb.is_selected {
 		if cb.is_mouse_down {
 			return g.theme.accent_fill_third
@@ -114,7 +113,7 @@ fn (cb &Checkbox) draw_text(g &GraphicsContext) {
 	sizh := g.gg.text_height(cb.text) / 2
 
 	g.draw_text(cb.x + cb.height + 4, cb.y + (cb.height / 2) - sizh, cb.text, g.font,
-		gx.TextCfg{
+		gg.TextCfg{
 		size:  g.font_size
 		color: g.theme.text_color
 	})
@@ -125,9 +124,9 @@ fn (cb &Checkbox) draw_checkmark(g &GraphicsContext) {
 	// Use Checkmark SVG if icon set loaded
 	if g.icon_ttf_exists() {
 		h := cb.height / 2
-		g.draw_text_ofset(cb.x, cb.y, h, h, '\uea11', gx.TextCfg{
+		g.draw_text_ofset(cb.x, cb.y, h, h, '\uea11', gg.TextCfg{
 			size:           g.win.font_size
-			color:          gx.white
+			color:          gg.white
 			family:         g.win.extra_map['icon_ttf']
 			align:          .center
 			vertical_align: .middle
@@ -143,7 +142,7 @@ fn (cb &Checkbox) draw_checkmark(g &GraphicsContext) {
 	})
 }
 
-fn draw_checkmark(x f32, y f32, w f32, h f32, check_padding f32, c gx.Color, g &GraphicsContext) {
+fn draw_checkmark(x f32, y f32, w f32, h f32, check_padding f32, c gg.Color, g &GraphicsContext) {
 	// Calculate the coordinates for the checkmark
 	start_x := x + check_padding
 	start_y := y + (h / 2)

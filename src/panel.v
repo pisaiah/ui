@@ -1,11 +1,11 @@
 module iui
 
-import gx
+import gg
 import math
 
 const nill = unsafe { nil }
 
-const no_bg = gx.rgba(0, 0, 0, 0)
+const no_bg = gg.rgba(0, 0, 0, 0)
 
 // Layout
 pub interface Layout {
@@ -444,7 +444,7 @@ pub struct Panel implements Container {
 pub mut:
 	layout            Layout
 	rh                int
-	bg                gx.Color = no_bg
+	bg                gg.Color = no_bg
 	container_pass_ev bool     = true
 }
 
@@ -479,7 +479,7 @@ pub fn (mut p Panel) get_layout_as[T]() T {
 }
 
 // Set background color of this Panel. Default=none
-pub fn (mut this Panel) set_background(bg gx.Color) {
+pub fn (mut this Panel) set_background(bg gg.Color) {
 	this.bg = bg
 }
 
@@ -514,7 +514,7 @@ fn (mut this Panel) draw(ctx &GraphicsContext) {
 	}
 
 	if ctx.win.debug_draw {
-		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.green)
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.green)
 	}
 	this.layout.draw_kids(mut this, ctx)
 }

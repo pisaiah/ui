@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // Label - implements Component interface
 pub struct Label {
@@ -12,8 +12,8 @@ pub mut:
 	bold           bool
 	abs_fsize      bool
 	center_text_y  bool
-	vertical_align gx.VerticalAlign
-	color          gx.Color
+	vertical_align gg.VerticalAlign
+	color          gg.Color
 	em_size        f32
 }
 
@@ -27,7 +27,7 @@ pub:
 	height         int
 	width          int
 	text           string
-	vertical_align gx.VerticalAlign
+	vertical_align gg.VerticalAlign
 	// = .middle
 	bold    bool
 	em_size f32
@@ -45,7 +45,7 @@ pub fn Label.new(c LabelConfig) &Label {
 		text:           c.text
 		x:              c.x
 		y:              c.y
-		color:          gx.rgba(0, 0, 0, 0)
+		color:          gg.rgba(0, 0, 0, 0)
 		height:         c.height
 		width:          c.width
 		need_pack:      c.should_pack || c.pack
@@ -108,7 +108,7 @@ pub fn (mut this Label) pack() {
 
 pub fn (mut lbl Label) pack_do(ctx &GraphicsContext) {
 	// Set font size
-	ctx.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gg.TextCfg{
 		size: lbl.font_size(ctx)
 		// ctx.win.font_size + lbl.size
 		color: ctx.win.theme.text_color
@@ -140,7 +140,7 @@ pub fn (mut lbl Label) pack_do(ctx &GraphicsContext) {
 	reset_text_config(ctx)
 }
 
-fn (this &Label) get_color(ctx &GraphicsContext) gx.Color {
+fn (this &Label) get_color(ctx &GraphicsContext) gg.Color {
 	if this.color.a != 0 {
 		return this.color
 	} else {
@@ -161,7 +161,7 @@ fn (this &Label) draw_label(ctx &GraphicsContext) {
 
 	size := this.font_size(ctx)
 
-	cfg := gx.TextCfg{
+	cfg := gg.TextCfg{
 		size:           size
 		color:          this.get_color(ctx)
 		vertical_align: this.vertical_align
@@ -193,7 +193,7 @@ fn (this &Label) draw_label(ctx &GraphicsContext) {
 }
 
 fn reset_text_config(ctx &GraphicsContext) {
-	ctx.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 		bold:  false
@@ -204,9 +204,9 @@ fn (this &Label) debug_draw(ctx &GraphicsContext) {
 	if !ctx.win.debug_draw {
 		return
 	}
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
-	ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
-	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
+	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.blue)
+	ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gg.blue)
+	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gg.blue)
 }
 
 @[deprecated: 'Use Label.set_size_em, Label.set_bold']

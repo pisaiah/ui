@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 
 // Modal - implements Component interface
 pub struct Modal {
@@ -64,7 +63,7 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 
 	if m.z_index <= 501 {
 		// Only draw background for one modal.
-		ctx.gg.draw_rect_filled(0, 0, ws.width, ws.height, gx.rgba(0, 0, 0, 170))
+		ctx.gg.draw_rect_filled(0, 0, ws.width, ws.height, gg.rgba(0, 0, 0, 170))
 	}
 
 	wid := m.in_width
@@ -78,7 +77,7 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 
 	ttop := m.top_off + (ctx.line_height / 2) - 1
 
-	ctx.gg.draw_text(m.xs + 6, ttop, m.text, gx.TextCfg{
+	ctx.gg.draw_text(m.xs + 6, ttop, m.text, gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})

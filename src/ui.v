@@ -2,7 +2,6 @@
 module iui
 
 import gg
-import gx
 import time
 import os
 import os.font
@@ -164,11 +163,11 @@ fn (win &Window) draw_tooltip(ctx &GraphicsContext) {
 	ts := ctx.text_width(lines[0])
 	th := ctx.line_height * lines.len
 
-	ctx.gg.draw_rect_filled(x, y, ts, th, gx.rgb(184, 207, 229))
-	ctx.gg.draw_rect_empty(x, y, ts, th, gx.rgb(99, 130, 191))
+	ctx.gg.draw_rect_filled(x, y, ts, th, gg.rgb(184, 207, 229))
+	ctx.gg.draw_rect_empty(x, y, ts, th, gg.rgb(99, 130, 191))
 
 	for line in lines {
-		ctx.draw_text(x, y, line, ctx.font, gx.TextCfg{
+		ctx.draw_text(x, y, line, ctx.font, gg.TextCfg{
 			size:  win.font_size
 			color: ctx.theme.text_color
 		})
@@ -461,7 +460,7 @@ pub fn (mut win Window) draw_window_controls() {
 	txt := win.config.title
 	tw := g.text_width(txt)
 	tc := g.theme.text_color
-	title_color := gx.rgba(tc.r, tc.g, tc.b, 100)
+	title_color := gg.rgba(tc.r, tc.g, tc.b, 100)
 
 	bw := win.bar.get_items_width()
 
@@ -470,14 +469,14 @@ pub fn (mut win Window) draw_window_controls() {
 	nw := if w < bw { bw + 4 } else { w }
 
 	if bw == 0 {
-		g.draw_text_ofset(0, 0, 8, h, txt, gx.TextCfg{
+		g.draw_text_ofset(0, 0, 8, h, txt, gg.TextCfg{
 			size:  g.font_size
 			color: title_color
 		})
 		return
 	}
 
-	g.draw_text_ofset(0, 0, nw, h, txt, gx.TextCfg{
+	g.draw_text_ofset(0, 0, nw, h, txt, gg.TextCfg{
 		size:  g.font_size
 		color: title_color
 	})

@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 import sokol.sgl
 import sokol.gfx
 
@@ -10,7 +10,7 @@ import sokol.gfx
 #flag -lntdll
 #flag -lwinmm
 
-pub fn (ctx &GraphicsContext) draw_win32_text(x int, y int, txt string, cfg gx.TextCfg) {
+pub fn (ctx &GraphicsContext) draw_win32_text(x int, y int, txt string, cfg gg.TextCfg) {
 	mut win := ctx.win
 	id := 'WL-${txt}'
 	if id !in win.id_map {
@@ -39,7 +39,7 @@ mut:
 	data &u8 = unsafe { nil }
 	sok  bool
 	simg gfx.Image
-	cfg  gx.TextCfg
+	cfg  gg.TextCfg
 	dirt bool
 	samp gfx.Sampler
 }
@@ -70,7 +70,7 @@ pub fn set_power_save(val bool) {
 	C.i_set_power_save(val)
 }
 
-pub fn winc(co gx.Color) C.COLORREF {
+pub fn winc(co gg.Color) C.COLORREF {
 	return C.RGB(co.r, co.g, co.b)
 }
 
@@ -108,7 +108,7 @@ pub fn (mut wl WLabel) draw(ctx &GraphicsContext) {
 	sgl.enable_texture()
 	sgl.texture(wl.simg, wl.samp)
 
-	c := gx.white
+	c := gg.white
 
 	sgl.begin_quads()
 	sgl.c4b(c.r, c.g, c.b, c.a)

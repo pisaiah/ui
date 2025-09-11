@@ -1,6 +1,5 @@
 module iui
 
-import gx
 import gg
 
 const numbers_val = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
@@ -146,7 +145,7 @@ fn (mut this TextField) draw(g &GraphicsContext) {
 		this.carrot_left = this.text.len
 	}
 
-	cfg := gx.TextCfg{
+	cfg := gg.TextCfg{
 		color: color
 		size:  g.win.font_size
 	}
@@ -241,7 +240,7 @@ fn (mut this TextField) mouse_down_caret(g &GraphicsContext) {
 fn (mut box TextField) draw_selection(g &GraphicsContext) {
 	sel := box.sel or { return }
 	ac := g.theme.accent_fill
-	color := gx.rgba(ac.r, ac.g, ac.b, 100)
+	color := gg.rgba(ac.r, ac.g, ac.b, 100)
 
 	// Same Line
 	minx := if sel.x0 > sel.x1 { sel.x1 } else { sel.x0 }

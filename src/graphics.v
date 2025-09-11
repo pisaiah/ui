@@ -1,6 +1,5 @@
 module iui
 
-import gx
 import sokol.sgl
 import math
 import gg
@@ -79,9 +78,9 @@ pub fn (ctx &GraphicsContext) icon_ttf_exists() bool {
 	return os.exists(ctx.win.extra_map['icon_ttf'])
 }
 
-pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
+pub fn (ctx &GraphicsContext) set_cfg(cfg gg.TextCfg) {
 	// cfg.family = ''
-	mut cfgg := gx.TextCfg{
+	mut cfgg := gg.TextCfg{
 		...cfg
 		family: ctx.font
 	}
@@ -98,7 +97,7 @@ pub fn (ctx &GraphicsContext) set_cfg(cfg gx.TextCfg) {
 }
 
 pub fn (ctx &GraphicsContext) reset_text_font() {
-	cfg_reset := gx.TextCfg{
+	cfg_reset := gg.TextCfg{
 		color:  ctx.theme.text_color
 		size:   ctx.font_size
 		family: ctx.font
@@ -106,7 +105,7 @@ pub fn (ctx &GraphicsContext) reset_text_font() {
 	ctx.gg.set_text_cfg(cfg_reset)
 }
 
-pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id string, cfg gx.TextCfg) {
+pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id string, cfg gg.TextCfg) {
 	$if windows {
 		if ctx.gg.native_rendering {
 			ctx.gg.draw_text(x, y, text_, cfg)
@@ -121,7 +120,7 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 	}
 	scale := if ctx.gg.ft.scale == 0 { f32(1) } else { ctx.gg.ft.scale }
 
-	cfgg := gx.TextCfg{
+	cfgg := gg.TextCfg{
 		...cfg
 		family: font_id
 	}
@@ -136,7 +135,7 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 	}*/
 }
 
-pub fn (ctx &GraphicsContext) draw_text_ofset(x int, y int, xo int, yo int, text string, cfg gx.TextCfg) {
+pub fn (ctx &GraphicsContext) draw_text_ofset(x int, y int, xo int, yo int, text string, cfg gg.TextCfg) {
 	$if windows {
 		if ctx.gg.native_rendering {
 			ctx.gg.draw_text(x, y, text, cfg)
@@ -189,12 +188,12 @@ pub fn (ctx &GraphicsContext) refresh_ui() {
 	}
 }
 
-pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gx.Color, bord gx.Color) {
+pub fn (g &GraphicsContext) draw_bordered_rect(x int, y int, w int, h int, bg gg.Color, bord gg.Color) {
 	g.gg.draw_rect_filled(x, y, w, h, bg)
 	g.gg.draw_rect_empty(x, y, w, h, bord)
 }
 
-pub fn (g &GraphicsContext) draw_rounded_bordered_rect(x int, y int, w int, h int, r int, bg gx.Color, bord gx.Color) {
+pub fn (g &GraphicsContext) draw_rounded_bordered_rect(x int, y int, w int, h int, r int, bg gg.Color, bord gg.Color) {
 	g.gg.draw_rounded_rect_filled(x, y, w, h, r, bg)
 	g.gg.draw_rounded_rect_empty(x, y, w, h, r, bord)
 }
@@ -214,7 +213,7 @@ fn (g &GraphicsContext) draw_iconset_image(x f32, y f32, w f32, h f32, px int, p
 }
 
 // Copy from draw.c.v
-pub fn (g &GraphicsContext) draw_rounded_rect_filled_top(x f32, y f32, w f32, h f32, radius f32, c gx.Color) {
+pub fn (g &GraphicsContext) draw_rounded_rect_filled_top(x f32, y f32, w f32, h f32, radius f32, c gg.Color) {
 	$if windows {
 		if g.gg.native_rendering {
 			g.gg.draw_rect_filled(x, y, w, h, c)
@@ -296,11 +295,11 @@ pub fn (g &GraphicsContext) draw_rounded_rect_filled_top(x f32, y f32, w f32, h 
 	sgl.end()
 }
 
-pub fn (g &GraphicsContext) draw_corner_rect(x f32, y f32, w f32, h f32, bord gx.Color, bg gx.Color) {
+pub fn (g &GraphicsContext) draw_corner_rect(x f32, y f32, w f32, h f32, bord gg.Color, bg gg.Color) {
 	g.draw_rounded_rect(x, y, w, h, control_corner_radius, bord, bg)
 }
 
-pub fn (g &GraphicsContext) draw_rounded_rect(x f32, y f32, w f32, h f32, r f32, bord gx.Color, bg gx.Color) {
+pub fn (g &GraphicsContext) draw_rounded_rect(x f32, y f32, w f32, h f32, r f32, bord gg.Color, bg gg.Color) {
 	g.gg.draw_rounded_rect_filled(x, y, w, h, r, bord)
 	g.gg.draw_rounded_rect_filled(x + 1, y + 1, w - 2, h - 2, r, bg)
 }

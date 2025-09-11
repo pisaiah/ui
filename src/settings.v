@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 import os
 
 // Reference:
@@ -47,7 +47,7 @@ pub fn (this SettingsCard) draw_uicon(ctx &GraphicsContext, y int) int {
 	icon_font := ctx.win.extra_map['icon_ttf']
 
 	if os.exists(icon_font) {
-		ctx.draw_text(this.x + 12, y, txt, icon_font, gx.TextCfg{
+		ctx.draw_text(this.x + 12, y, txt, icon_font, gg.TextCfg{
 			size:  ctx.win.font_size * 2
 			color: ctx.theme.text_color
 		})
@@ -74,7 +74,7 @@ pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 	mut x := this.x + this.draw_uicon(ctx, y) + this.padding
 
 	// Draw Title
-	ctx.draw_text(x, y - 4, this.text, ctx.font, gx.TextCfg{
+	ctx.draw_text(x, y - 4, this.text, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size + 4
 		color: ctx.theme.text_color
 		bold:  true
@@ -82,7 +82,7 @@ pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 	y += ctx.gg.text_height(this.text)
 
 	// Draw Desc
-	ctx.draw_text(x, y, this.desc, ctx.font, gx.TextCfg{
+	ctx.draw_text(x, y, this.desc, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 		bold:  true

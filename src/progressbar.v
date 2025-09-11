@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // Progress bar - implements Component interface
 pub struct Progressbar {
@@ -52,13 +52,13 @@ pub fn (mut bar Progressbar) draw(g &GraphicsContext) {
 	bar.draw_text(g, val, c)
 }
 
-fn (bar &Progressbar) draw_text(g &GraphicsContext, val f32, c gx.Color) {
+fn (bar &Progressbar) draw_text(g &GraphicsContext, val f32, c gg.Color) {
 	text := '${val}%'
 	size := g.gg.text_width(text) / 2
 	sizh := g.line_height / 2
 
 	g.draw_text((bar.x + (bar.width / 2)) - size, bar.y + (bar.height / 2) - sizh, text,
-		g.font, gx.TextCfg{
+		g.font, gg.TextCfg{
 		size:  g.font_size
 		color: c
 	})

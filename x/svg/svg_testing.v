@@ -16,6 +16,8 @@ module svg
 import iui as ui
 import regex
 import gx
+// import svgg
+import gg
 
 // (Experimental) SVG
 pub struct Svg {
@@ -31,6 +33,8 @@ pub mut:
 	sy              f32
 	color           ?gx.Color
 	accent_first    int
+	test            int
+	tik				int
 }
 
 @[params]
@@ -115,6 +119,56 @@ fn (mut this Svg) draw(g &ui.GraphicsContext) {
 
 	for i, cmds in this.cmds {
 		this.draw_path_gg(g, i, cmds)
+	}
+	
+	if !g.win.debug_draw {
+		return
+	}
+
+	if this.test == 0 {
+		/*
+		mut ctx := g.gg
+
+		mut con := []string{}
+		
+		con << '<svg viewBox="${this.viewbox}" fill="none" xmlns="http://www.w3.org/2000/svg">'
+		
+		// for i, cmds in this.cmds {
+		for i, path in this.paths {		
+			c := this.color(g, i)
+			
+			css := 'rgb(${c.r}, ${c.g}, ${c.b})' // c.to_css_string()
+			
+			dump(css)
+			
+			if i < this.accent_first || this.color != none{
+				con << '<path d="${path}" fill="${css}"/>'
+			} else {
+				con << '<path d="${path}" fill="${css}"/>'
+			}
+		}
+		
+		con << '</svg>'
+
+		_, this.test = svgg.create_svg_image_from_input(mut ctx, con.join('\n'), svgg.RasterizeCfg{
+			width: this.width
+			height: this.height
+			scale: (this.sx + this.sy) / 2
+		})
+		*/
+	} else {
+		//dump('')
+		g.gg.draw_image_with_config(gg.DrawImageConfig{
+			img_id:   this.test
+
+			img_rect: gg.Rect{
+				x:      this.x
+				y:      this.y
+				width:  this.width
+				height: this.height
+			}
+
+		})
 	}
 }
 

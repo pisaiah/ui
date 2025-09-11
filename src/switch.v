@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // Checkbox - implements Component interface
 pub struct Switch {
@@ -65,7 +65,7 @@ pub fn Switch.new(cf SwitchConfig) &Switch {
 }
 
 // Get border color
-fn (this &Switch) get_border(is_hover bool, g &GraphicsContext) gx.Color {
+fn (this &Switch) get_border(is_hover bool, g &GraphicsContext) gg.Color {
 	if this.is_mouse_down {
 		return g.theme.accent_fill_third
 	}
@@ -77,7 +77,7 @@ fn (this &Switch) get_border(is_hover bool, g &GraphicsContext) gx.Color {
 }
 
 // Get background color
-fn (this &Switch) get_background(is_hover bool, g &GraphicsContext) gx.Color {
+fn (this &Switch) get_background(is_hover bool, g &GraphicsContext) gg.Color {
 	if this.is_selected {
 		if this.is_mouse_down {
 			return g.theme.accent_fill_third
@@ -170,7 +170,7 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 	left := this.height * 2
 
 	ctx.draw_text(this.x + left + 4, this.y + (this.height / 2) - sizh, this.text, ctx.font,
-		gx.TextCfg{
+		gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})

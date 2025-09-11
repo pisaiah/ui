@@ -1,24 +1,23 @@
 module iui
 
 import gg
-import gx
 
 // Page
 pub struct Page {
 	Component_A
 pub:
-	text_cfg gx.TextCfg
+	text_cfg gg.TextCfg
 pub mut:
 	text       string
 	close      &Button
 	top_off    int      = 75
-	line_color gx.Color = gx.rgba(0, 0, 0, 90)
+	line_color gg.Color = gg.rgba(0, 0, 0, 90)
 }
 
-fn draw_cfg() gx.TextCfg {
-	return gx.TextCfg{
+fn draw_cfg() gg.TextCfg {
+	return gg.TextCfg{
 		size:  36
-		color: gx.white
+		color: gg.white
 	}
 }
 

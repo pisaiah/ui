@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // https://docs.oracle.com/javase/8/docs/api/javax/swing/JDesktopPane.html
 //[heap]
@@ -104,7 +104,7 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 		ctx.gg.draw_rounded_rect_filled(this.x, this.y, wid, hei, 8, bg)
 	}
 
-	ctx.gg.draw_text(this.x + 6, ttop, this.text, gx.TextCfg{
+	ctx.gg.draw_text(this.x + 6, ttop, this.text, gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})
@@ -288,12 +288,12 @@ fn (mut this InternalFrame) do_move(ctx &GraphicsContext) {
 			this.my = my - this.y
 
 			if mx >= this.x + this.width - 12 && my >= this.y + this.height - 12 {
-				ctx.gg.draw_rect_filled(this.x + this.mx, this.y + this.my, 12, 12, gx.blue)
+				ctx.gg.draw_rect_filled(this.x + this.mx, this.y + this.my, 12, 12, gg.blue)
 				this.my = -2
 			}
 		} else {
 			if this.my == -2 {
-				ctx.gg.draw_rect_filled(mx, my, 12, 12, gx.blue)
+				ctx.gg.draw_rect_filled(mx, my, 12, 12, gg.blue)
 
 				nw := mx - this.x
 				nh := my - this.y

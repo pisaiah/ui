@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 import os
 
 // https://learn.microsoft.com/en-us/windows/apps/design/controls/infobar
@@ -52,12 +52,12 @@ fn (bar &InfoBar) draw_background(g &GraphicsContext) {
 }
 
 fn (mut bar InfoBar) draw(g &GraphicsContext) {
-	cfg_bold := gx.TextCfg{
+	cfg_bold := gg.TextCfg{
 		size:  g.font_size
 		bold:  true
 		color: g.theme.text_color
 	}
-	cfg_norm := gx.TextCfg{
+	cfg_norm := gg.TextCfg{
 		size:  g.font_size
 		bold:  false
 		color: g.theme.text_color
@@ -88,7 +88,7 @@ fn (mut bar InfoBar) draw(g &GraphicsContext) {
 	mut my := padd
 
 	if os.exists(icon_font) {
-		g.draw_text(bar.x + 4, bar.y + padd, uicon, icon_font, gx.TextCfg{
+		g.draw_text(bar.x + 4, bar.y + padd, uicon, icon_font, gg.TextCfg{
 			size:  g.win.font_size
 			color: g.theme.accent_fill
 		})

@@ -1,7 +1,6 @@
 module iui
 
 import gg
-import gx
 import v.util.version { full_v_version }
 import os
 
@@ -171,12 +170,12 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 		icon_font := ctx.win.extra_map['icon_ttf']
 
 		if os.exists(icon_font) {
-			ctx.draw_text(this.x + 7, y, this.uicon, icon_font, gx.TextCfg{
+			ctx.draw_text(this.x + 7, y, this.uicon, icon_font, gg.TextCfg{
 				size:  ctx.win.font_size
 				color: ctx.theme.text_color
 			})
 			wid := ctx.text_width(this.uicon) + 14
-			ctx.draw_text(this.x + wid, y, this.text, ctx.font, gx.TextCfg{
+			ctx.draw_text(this.x + wid, y, this.text, ctx.font, gg.TextCfg{
 				size:  ctx.win.font_size
 				color: ctx.theme.text_color
 			})
@@ -184,7 +183,7 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 		}
 	}
 
-	ctx.draw_text(this.x + 7, y, this.text, ctx.font, gx.TextCfg{
+	ctx.draw_text(this.x + 7, y, this.text, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 	})

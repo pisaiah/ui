@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 pub interface VariableHeight {
 mut:
@@ -204,7 +204,7 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 
 	// Draw Icon
 	font := ctx.win.extra_map['icon_ttf']
-	cfgg := gx.TextCfg{
+	cfgg := gg.TextCfg{
 		size:   ctx.win.font_size
 		color:  ctx.theme.text_color
 		family: font
@@ -242,7 +242,7 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	}
 	tx := if item.icon.len != 0 { size + 32 } else { 8 }
 	ctx.draw_text(item.x + tx, item.y + (item.height / 2) - ctx.line_height / 2, item.text,
-		ctx.font, gx.TextCfg{
+		ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 	})

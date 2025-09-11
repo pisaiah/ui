@@ -1,9 +1,8 @@
 module iui
 
 import gg
-import gx
 
-pub const blank_bg = gx.rgba(0, 0, 1, 0)
+pub const blank_bg = gg.rgba(0, 0, 1, 0)
 
 //
 // Button - implements Component interface
@@ -14,7 +13,7 @@ pub mut:
 	need_pack         bool
 	extra             string
 	user_data         voidptr
-	override_bg_color gx.Color = blank_bg
+	override_bg_color gg.Color = blank_bg
 	icon_width        int
 	icon_height       int
 	border_radius     int = 4
@@ -158,7 +157,7 @@ pub fn (mut this Button) set_area_filled_state(val bool, state AreaFilledState) 
 	}
 }
 
-pub fn (mut this Button) set_background(color gx.Color) {
+pub fn (mut this Button) set_background(color gg.Color) {
 	this.override_bg_color = color
 }
 
@@ -237,7 +236,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	font_size := if btn.font_size != none { btn.font_size } else { ctx.win.font_size }
 
 	// sizh := ctx.line_height / 2 // ctx.text_height(text) / 2
-	cfgg := gx.TextCfg{
+	cfgg := gg.TextCfg{
 		size:   font_size
 		color:  if btn.is_action { ctx.theme.accent_text } else { ctx.theme.text_color }
 		family: font
@@ -261,7 +260,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	ctx.reset_text_font()
 }
 
-fn (mut btn Button) draw_children_and_text(sizh int, text string, font string, cfg gx.TextCfg, ctx &GraphicsContext) {
+fn (mut btn Button) draw_children_and_text(sizh int, text string, font string, cfg gg.TextCfg, ctx &GraphicsContext) {
 	pad := 4
 	mut xo := 0
 	for mut item in btn.children {
@@ -346,7 +345,7 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 	}
 }
 
-fn (b &Button) get_border(g &GraphicsContext, is_hover bool) gx.Color {
+fn (b &Button) get_border(g &GraphicsContext, is_hover bool) gg.Color {
 	if b.is_mouse_down {
 		// return g.theme.button_border_click
 		return g.theme.accent_fill_second
@@ -364,7 +363,7 @@ fn (b &Button) get_border(g &GraphicsContext, is_hover bool) gx.Color {
 	return g.theme.button_border_normal
 }
 
-fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gx.Color {
+fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gg.Color {
 	if b.override_bg_color != blank_bg {
 		return b.override_bg_color
 	}

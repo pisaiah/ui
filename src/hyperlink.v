@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // Hyperlink - implements Component interface
 pub struct Hyperlink {
@@ -55,7 +55,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 
 	size := this.get_font_size(ctx)
 
-	ctx.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gg.TextCfg{
 		size:  size
 		color: ctx.theme.text_color
 		bold:  this.bold
@@ -72,22 +72,22 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 
 	hover := is_in(this, ctx.win.mouse_x, ctx.win.mouse_y)
 	color := if hover {
-		gx.rgb(100, 100, 200)
+		gg.rgb(100, 100, 200)
 	} else {
 		if ctx.theme.text_color.r > 150 {
-			gx.rgb(100, 180, 255)
+			gg.rgb(100, 180, 255)
 		} else {
-			gx.rgb(0, 128, 255)
+			gg.rgb(0, 128, 255)
 		}
 	}
 
-	ctx.draw_text(x, y + this.height - line_height, fix_tab(this.text), ctx.font, gx.TextCfg{
+	ctx.draw_text(x, y + this.height - line_height, fix_tab(this.text), ctx.font, gg.TextCfg{
 		size:  size
 		color: color
 		bold:  this.bold
 	})
 
-	ctx.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 		bold:  false
@@ -123,7 +123,7 @@ pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
 	// Set font size
 	size := btn.get_font_size(ctx)
 
-	ctx.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gg.TextCfg{
 		size:  size
 		color: ctx.theme.text_color
 		bold:  btn.bold
@@ -142,7 +142,7 @@ pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
 	btn.need_pack = false
 
 	// Reset for text_height
-	ctx.set_cfg(gx.TextCfg{
+	ctx.set_cfg(gg.TextCfg{
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 		bold:  false
@@ -153,9 +153,9 @@ fn (this &Hyperlink) debug_draw(ctx &GraphicsContext) {
 	if !ctx.win.debug_draw {
 		return
 	}
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
-	ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gx.blue)
-	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gx.blue)
+	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.blue)
+	ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gg.blue)
+	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gg.blue)
 }
 
 @[deprecated]

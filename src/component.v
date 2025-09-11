@@ -1,6 +1,6 @@
 module iui
 
-import gx
+import gg
 
 // Component Interface
 
@@ -173,13 +173,13 @@ pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
 	x2 := com.x + com.width
 	y2 := com.y + com.height
 
-	ctx.gg.draw_line(com.x, com.y, x2, y2, gx.green)
-	ctx.gg.draw_line(x2, com.y, com.x, y2, gx.green)
+	ctx.gg.draw_line(com.x, com.y, x2, y2, gg.green)
+	ctx.gg.draw_line(x2, com.y, com.x, y2, gg.green)
 
-	ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gx.red)
+	ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gg.red)
 
-	ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gx.rgba(250, 0, 0, 150))
-	ctx.draw_text(tx, ty, txt, ctx.font)
+	ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gg.rgba(250, 0, 0, 150))
+	ctx.draw_text(tx, ty, txt, ctx.font, gg.TextCfg{})
 }
 
 pub fn (mut com Component) set_x(x int) {
@@ -258,7 +258,7 @@ pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 		f(&ev)
 	}
 	if ctx.win.debug_draw {
-		ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gx.red)
+		ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gg.red)
 	}
 }
 

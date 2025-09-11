@@ -2,13 +2,12 @@
 module iui
 
 import gg
-import gx
 
 pub struct Textbox {
 	Component_A
 pub mut:
-	fg                   ?gx.Color
-	bg                   ?gx.Color
+	fg                   ?gg.Color
+	bg                   ?gg.Color
 	lines                []string
 	caret_x              int
 	caret_y              int
@@ -58,7 +57,7 @@ fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 		return
 	}
 
-	cfg := gx.TextCfg{
+	cfg := gg.TextCfg{
 		size:  ctx.font_size
 		color: this.fg or { ctx.theme.text_color }
 	}
@@ -127,7 +126,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 		this.blink = !this.blink
 	}
 
-	cfg := gx.TextCfg{
+	cfg := gg.TextCfg{
 		color: this.fg or { ctx.theme.text_color }
 		size:  ctx.win.font_size + this.fs
 	}
@@ -175,7 +174,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 			tc := this.fg or { ctx.theme.text_color }
 			if this.is_selected {
 				color := if this.blink {
-					gx.rgba(tc.r, tc.g, tc.b, 70)
+					gg.rgba(tc.r, tc.g, tc.b, 70)
 				} else {
 					tc
 				}
@@ -240,11 +239,11 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	ctx.gg.scissor_rect(0, 0, ws.width, ws.height)
 
 	if ctx.win.debug_draw {
-		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gx.blue)
+		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.blue)
 	}
 }
 
-fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, g &GraphicsContext) {
+fn (mut this Textbox) draw_text(x int, y int, line string, cfg gg.TextCfg, g &GraphicsContext) {
 	matc := make_match(line, this.keys)
 
 	mut xx := x
@@ -260,29 +259,29 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, g &Gr
 		color = cfg.color
 
 		if str in colors {
-			color = gx.color_from_string(str)
+			color = gg.color_from_string(str)
 		}
 
 		if str in numbers {
-			color = gx.orange
+			color = gg.orange
 		}
 		if str in blue_keys {
-			color = gx.rgb(51, 153, 255)
+			color = gg.rgb(51, 153, 255)
 		}
 		if str in red_keys {
-			color = gx.red
+			color = gg.red
 		}
 
 		if str in purp_keys {
-			color = gx.rgb(190, 40, 250)
+			color = gg.rgb(190, 40, 250)
 		}
 
 		if str == "'" {
 			is_str = !is_str
-			color = gx.rgb(205, 145, 120)
+			color = gg.rgb(205, 145, 120)
 		}
 		if is_str {
-			color = gx.rgb(205, 145, 120)
+			color = gg.rgb(205, 145, 120)
 		}
 
 		if str == '/*' && !is_str {
@@ -291,7 +290,7 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, g &Gr
 
 		//|| this.ml_comment
 		if str == '// ' || comment {
-			color = gx.rgb(0, 200, 0)
+			color = gg.rgb(0, 200, 0)
 			comment = true
 		}
 
@@ -300,7 +299,7 @@ fn (mut this Textbox) draw_text(x int, y int, line string, cfg gx.TextCfg, g &Gr
 		}
 
 		if cfg.color != color {
-			cfg1 := gx.TextCfg{
+			cfg1 := gg.TextCfg{
 				color: color
 				size:  cfg.size
 			}
@@ -378,7 +377,7 @@ fn (mut box Textbox) draw_selection(ctx &GraphicsContext, th int) {
 		box.sel or { return }.y0 = box.lines.len - 1
 	}
 
-	color := gx.rgba(0, 120, 215, 100)
+	color := gg.rgba(0, 120, 215, 100)
 
 	// Moving Down
 	if sel.y1 > sel.y0 {
@@ -397,7 +396,7 @@ fn (mut box Textbox) draw_selection(ctx &GraphicsContext, th int) {
 		minx := if sel.x0 > sel.x1 { sel.x1 } else { sel.x0 }
 		maxx := if sel.x0 > sel.x1 { sel.x0 } else { sel.x1 }
 
-		if y < 0 || maxx > box.lines[y].len {
+		if y < 0 || y >= box.lines.len || maxx > box.lines[y].len {
 			return
 		}
 
@@ -412,7 +411,7 @@ fn (mut box Textbox) clear_sel() {
 	box.sel = none
 }
 
-fn (mut this Textbox) draw_high(ctx &GraphicsContext, th int, color gx.Color, ya int, yb int, x0 int, x1 int) {
+fn (mut this Textbox) draw_high(ctx &GraphicsContext, th int, color gg.Color, ya int, yb int, x0 int, x1 int) {
 	if x0 < 0 {
 		return
 	}
@@ -422,7 +421,7 @@ fn (mut this Textbox) draw_high(ctx &GraphicsContext, th int, color gx.Color, ya
 	y1 := if yb > ll { ll } else { yb }
 	x := this.x + this.px
 
-	line_y0 := this.lines[y0]
+	line_y0 := this.lines[y0] or { return }
 	if x0 > line_y0.len {
 		return
 	}
