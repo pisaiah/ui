@@ -23,11 +23,12 @@ pub mut:
 @[params]
 pub struct ModalConfig {
 pub:
-	title  string
-	width  int = 500
-	height int = 300
-	left   int
-	top    int = 50
+	children ?[]Component
+	title    string
+	width    int = 500
+	height   int = 300
+	left     int
+	top      int = 50
 }
 
 pub fn Modal.new(c ModalConfig) &Modal {
@@ -40,6 +41,7 @@ pub fn Modal.new(c ModalConfig) &Modal {
 		close:      unsafe { nil }
 		left_off:   c.left
 		top_off:    c.top
+		children:   c.children or { []Component{} }
 	}
 }
 

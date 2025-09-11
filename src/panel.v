@@ -86,11 +86,38 @@ fn (mut lay BorderLayout) draw_north(ctx &GraphicsContext, x int, y int, w int) 
 	// return 0
 }
 
+// If the Panel has children without flags, Let's assign flags.
+// In order by child index: Center, North, South, East, West.
+fn (mut lay BorderLayout) do_check(mut p Panel) {
+	if p.children.len == 0 {
+		return
+	}
+
+	if lay.north == none && lay.south == none && lay.center == none && lay.east == none
+		&& lay.west == none {
+		lay.center = &p.children[0]
+		if p.children.len > 1 {
+			lay.north = &p.children[1]
+		}
+		if p.children.len > 2 {
+			lay.south = &p.children[2]
+		}
+		if p.children.len > 3 {
+			lay.east = &p.children[3]
+		}
+		if p.children.len > 4 {
+			lay.west = &p.children[4]
+		}
+	}
+}
+
 fn (mut lay BorderLayout) draw_layout(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + lay.hgap
 	mut y := panel.y + lay.vgap
 	mut cw := panel.width - (lay.hgap * 2)
 	mut ch := panel.height - (lay.vgap * 2)
+
+	lay.do_check(mut panel)
 
 	if lay.style == 0 {
 		// North

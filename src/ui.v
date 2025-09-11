@@ -179,12 +179,6 @@ pub fn (mut win Window) set_font(font_path string) {
 	win.graphics_context.font = font_path
 }
 
-@[deprecated]
-pub fn (mut win Window) add_font(font_name string, font_path string) int {
-	win.set_font(font_path)
-	return -1
-}
-
 pub fn (win &Window) get[T](id string) T {
 	return win.id_map[id] or { panic('Component with ID "${id}" not found.') }
 }
@@ -236,7 +230,6 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		custom_titlebar:  cfg.custom_titlebar
 	}
 
-	// blank_draw_event_fn(mut win, &Component_A{})
 	txt := $if emscripten ? {
 		'canvas'
 	} $else {

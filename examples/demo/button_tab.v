@@ -4,10 +4,6 @@ import iui as ui
 import gx
 
 fn (mut app App) make_button_tab() &ui.Panel {
-	mut p := ui.Panel.new()
-
-	mut btn := ui.Button.new(text: 'Button')
-
 	mut btn2 := ui.Button.new(
 		text: 'Round Button'
 	)
@@ -18,17 +14,9 @@ fn (mut app App) make_button_tab() &ui.Panel {
 	)
 	sq_btn.border_radius = 0
 
-	mut filled_btn := ui.Button.new(
-		text: 'Filled Button'
-	)
-
-	filled_btn.set_bounds(0, 0, 100, 30)
-	filled_btn.is_action = true
-
 	mut sbtn := ui.Button.new(
 		text: 'Button'
 	)
-	sbtn.override_bg_color = gx.rgba(0, 0, 0, 0)
 	sbtn.subscribe_event('draw', fn (mut e ui.DrawEvent) {
 		draw_custom_themed('ocean-btn', mut e)
 	})
@@ -38,19 +26,45 @@ fn (mut app App) make_button_tab() &ui.Panel {
 	btn3.icon_width = 28
 	btn3.icon_height = 28
 
-	p.add_child(btn)
-	p.add_child(btn2)
-	p.add_child(sq_btn)
-	p.add_child(btn3)
-	p.add_child(filled_btn)
-	p.add_child(sbtn)
-
 	// Button with SVG Icon (see svg_tab.v)
 	mut svg_btn := make_svg_button()
-	p.add_child(svg_btn)
 
+	// Create our inner Panel
+	mut p := ui.Panel.new(
+		children: [
+			ui.Button.new(
+				text:     'Button'
+				on_click: on_btn_click
+			),
+			btn2,
+			sq_btn,
+			btn3,
+			ui.Button.new(
+				text:     'Filled Button'
+				on_click: on_btn_click
+				accent:   true
+				width:    100
+				height:   30
+			),
+			sbtn,
+			svg_btn,
+		]
+	)
+
+	// Create our outer Panel
 	mut cp := ui.Panel.new(layout: ui.BorderLayout.new())
 	cp.add_child(p, value: ui.borderlayout_center)
 	cp.add_child(make_code_box('button_tab.v'), value: ui.borderlayout_east)
 	return cp
+}
+
+// Button mouse event function
+fn on_btn_click(mut e ui.MouseEvent) {
+	// For our Demo add/remove "!" from Button text
+	mut b := e.target
+	if b.text.contains('!') {
+		b.text = b.text.replace('!', '')
+	} else {
+		b.text = b.text + '!'
+	}
 }

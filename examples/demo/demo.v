@@ -189,26 +189,6 @@ fn (mut app App) icon_btn(data []u8) &ui.Button {
 fn create_theme_menu() {
 }
 
-fn (mut app App) make_hbox_section() {
-	mut hbox := ui.Panel.new()
-
-	mut btn_ := ui.Button.new(text: 'Button in HBox')
-	btn_.pack()
-
-	mut btn3 := ui.Button.new(text: 'Button 2')
-	btn3.set_pos(4, 0)
-	btn3.pack()
-
-	hbox.add_child(btn_)
-	hbox.add_child(btn3)
-
-	mut hbox_title_box := ui.Titlebox.new(text: 'HBox layout', children: [hbox])
-
-	hbox.set_bounds(0, 0, 150, 0)
-	hbox_title_box.set_bounds(0, 0, 200, 150)
-	app.pane.add_child(hbox_title_box)
-}
-
 fn (mut app App) make_edits_section() {
 	mut code_box := ui.Textbox.new(lines: ['module main', '', 'fn main() {', '}'])
 	code_box.set_bounds(0, 0, 175, 100)
@@ -233,15 +213,16 @@ fn (mut app App) make_edits_section() {
 }
 
 fn (mut app App) make_progress_section() {
-	mut p := ui.Panel.new(
+	p := ui.Panel.new(
 		layout:   ui.GridLayout.new(cols: 1)
 		children: [
 			ui.Progressbar.new(val: 30),
 			ui.Progressbar.new(val: 50),
 			ui.Progressbar.new(val: 70),
 		]
+		width:    120
+		height:   90
 	)
-	p.set_bounds(0, 0, 120, 90)
 
 	title_box := ui.Titlebox.new(
 		text:     'Progressbar'
@@ -316,16 +297,6 @@ fn (mut app App) make_selectbox_section() {
 }
 
 fn (mut app App) make_button_section() {
-	btn := ui.Button.new(
-		text:   'A Button'
-		bounds: ui.Bounds{0, 0, 1, 64}
-	)
-
-	btn2 := ui.Button.new(
-		text:     'New Page'
-		on_click: test_page
-	)
-
 	mut btn3 := app.icon_btn(img_file.to_bytes())
 	btn3.icon_width = 32
 	btn3.icon_height = 32
@@ -336,7 +307,16 @@ fn (mut app App) make_button_section() {
 			vgap: 4
 			hgap: 4
 		)
-		children: [btn, btn2, btn3]
+		children: [
+			ui.Button.new(
+				text: 'A Button'
+			),
+			ui.Button.new(
+				text:     'New Page'
+				on_click: test_page
+			),
+			btn3,
+		]
 	)
 
 	p.set_bounds(0, 0, 150, 80)
@@ -357,14 +337,18 @@ fn (mut app App) make_tab_section() {
 	)
 	tb.set_bounds(2, 2, 155, 140)
 
-	mut tbtn := ui.Button.new(text: 'In Tab A')
+	mut tbtn := ui.Button.new(
+		text: 'In Tab A'
+		pack: true
+	)
 	tbtn.set_pos(10, 10)
-	tbtn.pack()
 	tb.add_child('Tab A', tbtn)
 
-	mut tbtn1 := ui.Label.new(text: 'Now in Tab B')
+	mut tbtn1 := ui.Label.new(
+		text: 'Now in Tab B'
+		pack: true
+	)
 	tbtn1.set_pos(10, 10)
-	tbtn1.pack()
 	tb.add_child('Tab B', tbtn1)
 
 	title_box := ui.Titlebox.new(

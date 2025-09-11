@@ -71,7 +71,8 @@ pub:
 	should_pack bool
 	user_data   voidptr
 	area_filled bool = true
-	icon        int  = -1
+	accent      bool
+	icon        int = -1
 	font_size   ?int
 	width       int
 	height      int
@@ -108,6 +109,7 @@ pub fn Button.new(c ButtonConfig) &Button {
 			down:   c.area_filled
 		}
 		font_size:   c.font_size
+		is_action:   c.accent
 	}
 
 	if c.on_click != none {
@@ -167,7 +169,6 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	}
 
 	text := btn.text
-	// sizh := ctx.line_height / 2 // ctx.text_height(text) / 2
 
 	// Handle click
 	if btn.is_mouse_rele {
@@ -378,22 +379,23 @@ fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gg.Color {
 		return g.theme.accent_fill
 	}
 
-	should := true // b.app.bar == unsafe { nil } || b.app.bar.tik > 90
-	if b.is_mouse_down && should {
+	if b.is_mouse_down {
 		return g.theme.button_bg_click
 	}
-	if is_hover && should {
+	if is_hover {
 		return g.theme.button_bg_hover
 	}
 	return g.theme.button_bg_normal
 }
 
 // Deprecated functions:
+/*
 @[deprecated: 'use subscribe_event']
-pub fn (mut com Button) set_click_fn(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
+pub fn (mut com Button) set_click_fn1(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
 	com.user_data = extra_data
 
 	com.subscribe_event('mouse_up', fn [b, extra_data] (mut e MouseEvent) {
 		b(e.ctx.win, e.target, extra_data)
 	})
 }
+*/

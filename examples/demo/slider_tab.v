@@ -5,8 +5,7 @@ import rand
 import gx
 
 fn (mut app App) make_slider_tab() &ui.Panel {
-	mut p := ui.Panel.new(layout: ui.BorderLayout.new())
-	mut cp := ui.Panel.new()
+	// mut p := ui.Panel.new(layout: ui.BorderLayout.new())
 
 	// Slider #1
 	mut slid := ui.Slider.new(
@@ -38,35 +37,6 @@ fn (mut app App) make_slider_tab() &ui.Panel {
 		lbl2.pack()
 	})
 
-	cp.add_child(slid)
-	cp.add_child(slid2)
-
-	mut btn1 := ui.Button.new(text: '#1: Switch direction')
-	btn1.subscribe_event('mouse_up', fn [mut slid] (mut e ui.MouseEvent) {
-		slid.switch_dir()
-	})
-
-	mut btn2 := ui.Button.new(text: '#2: Switch direction')
-	btn2.subscribe_event('mouse_up', fn [mut slid2] (mut e ui.MouseEvent) {
-		slid2.switch_dir()
-	})
-
-	mut btn3 := ui.Button.new(text: 'Change thumb color')
-	btn3.subscribe_event('mouse_up', fn [mut slid2] (mut e ui.MouseEvent) {
-		color := gx.rgb(rand.u8(), rand.u8(), rand.u8())
-		slid2.set_custom_thumb_color(color)
-	})
-
-	mut btn4 := ui.Button.new(text: 'thumb_width++')
-	btn4.subscribe_event('mouse_up', fn [mut slid2] (mut e ui.MouseEvent) {
-		slid2.thumb_wid += 1
-	})
-
-	mut btn5 := ui.Button.new(text: 'thumb_width--')
-	btn5.subscribe_event('mouse_up', fn [mut slid2] (mut e ui.MouseEvent) {
-		slid2.thumb_wid -= 1
-	})
-
 	mut pb1 := ui.Progressbar.new()
 	mut pb2 := ui.Progressbar.new()
 
@@ -76,25 +46,57 @@ fn (mut app App) make_slider_tab() &ui.Panel {
 	pb1.bind_to(&slid.cur)
 	pb2.bind_to(&slid2.cur)
 
-	mut bp := ui.Panel.new(layout: ui.BoxLayout.new(vgap: 0))
+	// Our bottom Button Panel
+	mut bp := ui.Panel.new(
+		layout:   ui.BoxLayout.new(vgap: 0)
+		children: [
+			ui.Button.new(
+				text:     '#1: Switch direction'
+				on_click: fn [mut slid] (mut e ui.MouseEvent) {
+					slid.switch_dir()
+				}
+			),
+			ui.Button.new(
+				text:     '#2: Switch direction'
+				on_click: fn [mut slid2] (mut e ui.MouseEvent) {
+					slid2.switch_dir()
+				}
+			),
+			ui.Button.new(
+				text:     'Change thumb color'
+				on_click: fn [mut slid2] (mut e ui.MouseEvent) {
+					color := gx.rgb(rand.u8(), rand.u8(), rand.u8())
+					slid2.set_custom_thumb_color(color)
+				}
+			),
+			ui.Button.new(
+				text:     'thumb_width++'
+				on_click: fn [mut slid2] (mut e ui.MouseEvent) {
+					slid2.thumb_wid += 1
+				}
+			),
+			ui.Button.new(
+				text:     'thumb_width--'
+				on_click: fn [mut slid2] (mut e ui.MouseEvent) {
+					slid2.thumb_wid -= 1
+				}
+			),
+		]
+	)
 
-	bp.add_child(btn1)
-	bp.add_child(btn2)
-	bp.add_child(btn3)
-	bp.add_child(btn4)
-	bp.add_child(btn5)
-
-	mut north := ui.Panel.new()
-	north.add_child(pb1)
-	north.add_child(pb2)
-
-	cp.add_child(lbl)
-	cp.add_child(lbl2)
-
-	p.add_child_with_flag(north, ui.borderlayout_north)
-	p.add_child_with_flag(cp, ui.borderlayout_center)
-	p.add_child_with_flag(bp, ui.borderlayout_south)
-	p.add_child_with_flag(make_slider_tab_code(), ui.borderlayout_east)
+	mut p := ui.Panel.new(
+		layout:   ui.BorderLayout.new()
+		children: [
+			ui.Panel.new(
+				children: [slid, slid2, lbl, lbl2]
+			),
+			ui.Panel.new(
+				children: [pb1, pb2]
+			),
+			bp,
+			make_slider_tab_code(),
+		]
+	)
 
 	return p
 }

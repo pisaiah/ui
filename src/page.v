@@ -24,7 +24,8 @@ fn draw_cfg() gg.TextCfg {
 @[params]
 pub struct PageCfg {
 pub:
-	title string
+	title    string
+	children ?[]Component
 }
 
 pub fn Page.new(c PageCfg) &Page {
@@ -35,6 +36,7 @@ pub fn Page.new(c PageCfg) &Page {
 		// needs_init: true
 		text_cfg: draw_cfg()
 		close:    unsafe { nil }
+		children: c.children or { []Component{} }
 	}
 }
 
