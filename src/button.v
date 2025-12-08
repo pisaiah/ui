@@ -111,6 +111,9 @@ pub fn Button.new(c ButtonConfig) &Button {
 		font_size:   c.font_size
 		is_action:   c.accent
 	}
+	btn.border = ButtonBorder{
+		component: btn
+	}
 
 	if c.on_click != none {
 		btn.subscribe_event('mouse_up', c.on_click)
@@ -175,7 +178,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 		btn.is_mouse_rele = false
 	}
 
-	// Draw Button Background & Border
+	// Draw Button Background & Border	
 	btn.draw_background(ctx)
 
 	if btn.width == 0 && btn.height == 0 {
@@ -299,7 +302,7 @@ pub fn (mut btn Button) pack_do(ctx &GraphicsContext) {
 	btn.need_pack = false
 }
 
-fn (this &Button) draw_background(ctx &GraphicsContext) {
+fn (mut this Button) draw_background(ctx &GraphicsContext) {
 	mid_x := this.x + (this.width / 2)
 	mid_y := this.y + (this.height / 2)
 
@@ -314,7 +317,7 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 	bg := this.get_bg(ctx, mouse_in)
 	border := this.get_border(ctx, mouse_in)
 
-	has_border := this.border_radius != -1
+	// has_border := this.border_radius != -1
 	area_filled := this.is_area_filled(mouse_in)
 
 	radius := if ctx.theme.name == 'Ocean' {
@@ -323,21 +326,21 @@ fn (this &Button) draw_background(ctx &GraphicsContext) {
 		this.border_radius
 	}
 
-	if has_border && (area_filled && bg.a > 200) {
-		// Draw as filled as rounded_rect_empty has issues with a radius
-		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, radius,
-			border)
+	if this.border != none {
+		mut bord := this.border
+		if mut bord is ButtonBorder {
+			bord.bg_alpha = bg.a
+			bord.area_filled = area_filled
+			bord.color = border
+			bord.radius = radius
+		}
+		this.border.draw(ctx)
 	}
 
 	if area_filled {
 		border_radius := if radius != -1 { radius } else { 1 }
 		ctx.theme.button_fill_fn(this.x + 1, this.y + 1, this.width - 2, this.height - 2,
 			border_radius, bg, ctx)
-	}
-
-	if has_border && (!area_filled || bg.a < 200) {
-		ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, radius,
-			border)
 	}
 
 	if this.extra.len != 0 && mouse_in {
@@ -388,14 +391,29 @@ fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gg.Color {
 	return g.theme.button_bg_normal
 }
 
-// Deprecated functions:
-/*
-@[deprecated: 'use subscribe_event']
-pub fn (mut com Button) set_click_fn1(b fn (voidptr, voidptr, voidptr), extra_data voidptr) {
-	com.user_data = extra_data
-
-	com.subscribe_event('mouse_up', fn [b, extra_data] (mut e MouseEvent) {
-		b(e.ctx.win, e.target, extra_data)
-	})
+pub struct ButtonBorder implements Border {
+	AbstractBorder
+mut:
+	area_filled bool
+	bg_alpha    u8
+	color       gg.Color
 }
-*/
+
+fn (border &ButtonBorder) draw(ctx &GraphicsContext) {
+	mut this := border.get_component[Button]()
+	// color := gg.red // ctx.theme.button_border_normal
+
+	if border.radius == -1 {
+		return
+	}
+
+	if border.area_filled && border.bg_alpha > 200 {
+		ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, border.radius,
+			border.color)
+	}
+
+	if !border.area_filled || border.bg_alpha < 200 {
+		ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, border.radius,
+			border.color)
+	}
+}

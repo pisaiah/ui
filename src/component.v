@@ -27,6 +27,7 @@ mut:
 	font          int
 	events        &EventManager
 	hidden        bool
+	border        ?Border
 	draw(&GraphicsContext)
 	set_bounds(int, int, int, int)
 }
@@ -36,6 +37,26 @@ pub enum State {
 	hover
 	focus
 	pressed
+}
+
+pub interface Border {
+	component voidptr
+mut:
+	radius int
+	draw(&GraphicsContext)
+}
+
+pub struct AbstractBorder implements Border {
+	component voidptr
+mut:
+	radius int = 4
+}
+
+pub fn (border &AbstractBorder) get_component[T]() &T {
+	return unsafe { &T(border.component) }
+}
+
+fn (border &AbstractBorder) draw(ctx &GraphicsContext) {
 }
 
 // pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
@@ -67,6 +88,7 @@ pub mut:
 	font          int
 	events        &EventManager = &EventManager{}
 	hidden        bool
+	border        ?Border
 }
 
 pub struct EventManager {
