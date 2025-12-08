@@ -70,7 +70,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	x := this.x
 	y := this.y
 
-	hover := is_in(this, ctx.win.mouse_x, ctx.win.mouse_y)
+	hover := this.state == .hover
 	color := if hover {
 		gg.rgb(100, 100, 200)
 	} else {

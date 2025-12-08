@@ -177,6 +177,10 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	if btn.is_mouse_rele {
 		btn.is_mouse_rele = false
 	}
+	
+	if btn.state == .click {
+		btn.state = .normal
+	}
 
 	// Draw Button Background & Border	
 	btn.draw_background(ctx)
@@ -303,16 +307,17 @@ pub fn (mut btn Button) pack_do(ctx &GraphicsContext) {
 }
 
 fn (mut this Button) draw_background(ctx &GraphicsContext) {
-	mid_x := this.x + (this.width / 2)
-	mid_y := this.y + (this.height / 2)
+	// mid_x := this.x + (this.width / 2)
+	// mid_y := this.y + (this.height / 2)
 
-	mouse_x := ctx.win.mouse_x
-	mouse_y := ctx.win.mouse_y
+	// mouse_x := ctx.win.mouse_x
+	// mouse_y := ctx.win.mouse_y
 
-	mouse_in_x := abs(mid_x - mouse_x) < this.width / 2
-	mouse_in_y := abs(mid_y - mouse_y) < this.height / 2
+	// mouse_in_x := abs(mid_x - mouse_x) < this.width / 2
+	// mouse_in_y := abs(mid_y - mouse_y) < this.height / 2
 
-	mouse_in := mouse_in_x && mouse_in_y
+	// mouse_in := mouse_in_x && mouse_in_y
+	mouse_in := this.state == .hover
 
 	bg := this.get_bg(ctx, mouse_in)
 	border := this.get_border(ctx, mouse_in)
@@ -373,7 +378,7 @@ fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gg.Color {
 	}
 
 	if b.is_action {
-		if b.is_mouse_down {
+		if b.state == .press {
 			return g.theme.accent_fill_third
 		}
 		if is_hover {
@@ -382,7 +387,7 @@ fn (b &Button) get_bg(g &GraphicsContext, is_hover bool) gg.Color {
 		return g.theme.accent_fill
 	}
 
-	if b.is_mouse_down {
+	if b.state == .press {
 		return g.theme.button_bg_click
 	}
 	if is_hover {

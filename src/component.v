@@ -28,6 +28,7 @@ mut:
 	events        &EventManager
 	hidden        bool
 	border        ?Border
+	state         State
 	draw(&GraphicsContext)
 	set_bounds(int, int, int, int)
 }
@@ -36,7 +37,8 @@ pub enum State {
 	normal
 	hover
 	focus
-	pressed
+	press
+	click
 }
 
 pub interface Border {
@@ -89,6 +91,7 @@ pub mut:
 	events        &EventManager = &EventManager{}
 	hidden        bool
 	border        ?Border
+	state         State = .normal
 }
 
 pub struct EventManager {
@@ -173,6 +176,16 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
+	
+	// dump(com.state)
+	
+	if com.state == .hover {
+		is_point_in := point_in_raw(mut com, ctx.win.mouse_x, ctx.win.mouse_y)
+		if !is_point_in {
+			com.reset_state(ctx.win)
+		}
+		// dump('${com.text} ${is_point_in}')
+	}
 
 	invoke_draw_event(com, ctx)
 
@@ -181,6 +194,15 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 	com.debug_draw(ctx)
 	com.x = com.x - off_x
 	com.y = com.y - off_y
+	
+	if com.state == .click {
+		is_point_in := point_in_raw(mut com, ctx.win.mouse_x, ctx.win.mouse_y)
+		if is_point_in {
+			com.state == .hover
+		} else {
+			com.state = .normal
+		}
+	}
 }
 
 pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
@@ -202,6 +224,7 @@ pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
 
 	ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gg.rgba(250, 0, 0, 150))
 	ctx.draw_text(tx, ty, txt, ctx.font, gg.TextCfg{})
+	ctx.draw_text(tx, ty + ctx.line_height, '${com.state}', ctx.font, gg.TextCfg{})
 }
 
 pub fn (mut com Component) set_x(x int) {

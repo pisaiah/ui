@@ -22,6 +22,7 @@ pub fn on_event(e &gg.Event, mut app Window) {
 	if e.typ == .mouse_move {
 		app.mouse_x = app.gg.mouse_pos_x
 		app.mouse_y = app.gg.mouse_pos_y
+		on_mouse_move_event(e, mut app)
 		return
 	}
 
@@ -58,6 +59,156 @@ pub fn on_event(e &gg.Event, mut app Window) {
 	}
 
 	app.has_event = false
+}
+
+pub fn on_mouse_move_event(e &gg.Event, mut app Window) {
+
+	/*
+	res := app.bar.check_mouse(app, app.click_x, app.click_y)
+	if res {
+		return
+	}
+	*/
+
+	/*
+	for mut pop in app.popups {
+		$if event_debug ? {
+			dump('Popup on mouse down')
+		}
+
+		// mut com := &Component(pop)
+		if pop.on_mouse_down_component(app) {
+			return
+		}
+	}
+	*/
+
+	
+	if app.custom_controls != none {
+		mut com := &Component(app.custom_controls.p)
+		if com.on_mouse_move_component(app, 0) {
+			return
+		}
+	}
+	
+
+	// Sort by Z-index
+	// app.components.sort(a.z_index > b.z_index)
+
+	for mut com in app.components {
+		if com.on_mouse_move_component(app, 0) {
+			// return
+		}
+		if mut com is Modal || mut com is Page {
+			return
+		}
+	}
+}
+
+pub fn (mut com Component) reset_state(app &Window) bool {
+
+	for mut kid in com.children {
+		if kid.state == .hover || kid.state == .normal {
+			kid.reset_state(app)
+			kid.state = .normal
+		}
+	}
+
+	if mut com is Tabbox {
+		mut val := com.kids[com.active_tab]
+		for mut kid in val {
+			if kid.state == .hover || kid.state == .normal  {
+				kid.reset_state(app)
+				kid.state = .normal
+			}
+		}
+	}
+
+	if com.state == .hover {
+		com.state = .normal
+	}
+	return true
+}
+
+pub fn (mut com Component) on_mouse_move_component(app &Window, tab int) bool {
+	is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
+
+	$if event_debug ? {
+		tabs := '\t'.repeat(tab)
+		println('on_mouse_move_component: ${tabs} ${is_point_in} ${com.type_name()} ${com.x} ${com.y} ${com.width} ${com.height}')
+	}
+
+	if !is_point_in {
+		//if com.state != .hover {
+			com.reset_state(app)
+			return false
+		//}
+	}
+
+	/*
+	if app.bar != unsafe { nil } && app.bar.tik < 9 {
+		return true
+	}
+	*/
+
+	// dump(com.handle_mouse_down(app))
+	if mut com is ScrollView {
+		// com.is_mouse_down = true
+	}
+
+	if mut com is InternalFrame {
+		// com.is_mouse_down = is_point_in
+	}
+
+	for mut child in com.children {
+		if child.state == .hover {
+			child.reset_state(app)
+			child.state = .normal
+		}
+		if child.on_mouse_move_component(app, tab + 1) {
+			return true
+		}
+	}
+
+	// com.is_mouse_down = is_point_in
+	
+	com.reset_state(app)
+	
+	if is_point_in {
+		com.state = .hover
+		// invoke_mouse_down(com, app.graphics_context)
+	} else {
+		// com.state = .normal
+		com.reset_state(app)
+	}
+
+	if mut com is Tabbox {
+		mut val := com.kids[com.active_tab]
+		for mut comm in val {
+			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
+				// comm.is_mouse_down = is_point_in
+				if comm.on_mouse_move_component(app, tab + 1) {
+					// return true
+				} else {
+				
+				}
+			} else {
+				//if comm.state == .hover {
+					// comm.on_mouse_move_component(app, tab + 1)
+					comm.reset_state(app)
+					// comm.state = .normal
+				//}
+			}
+		}
+	}
+
+	if mut com is Container {
+		if com.container_pass_ev {
+			return false
+		}
+	}
+
+	return true
 }
 
 fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool {
@@ -168,6 +319,7 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	// dump(com.handle_mouse_down(app))
 	if mut com is ScrollView {
 		com.is_mouse_down = true
+		com.state = .press
 
 		bar_x := com.rx + com.width - com.xbar_width
 		if app.click_x >= bar_x {
@@ -183,6 +335,7 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 
 	if mut com is InternalFrame {
 		com.is_mouse_down = is_point_in
+		com.state = .press
 	}
 
 	for mut child in com.children {
@@ -192,6 +345,7 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 	}
 
 	com.is_mouse_down = is_point_in
+	com.state = .press
 	if is_point_in {
 		invoke_mouse_down(com, app.graphics_context)
 	}
@@ -201,6 +355,7 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 		for mut comm in val {
 			if point_in_raw(mut comm, app.click_x, app.click_y) {
 				comm.is_mouse_down = is_point_in
+				comm.state = .press
 				if comm.on_mouse_down_component(app) {
 					return true
 				}
@@ -252,6 +407,10 @@ pub fn on_mouse_rele_generic[T](mut com T, app &Window) bool {
 	is_point_in := point_in(mut com, app.mouse_x, app.mouse_y)
 	com.is_mouse_rele = is_point_in
 	com.is_mouse_down = false
+	
+	if is_point_in {
+		com.state = .click
+	}
 
 	$if event_debug ? {
 		dump('${com.str()} ${com.x} ${com.y} ${com.width} ${com.height}')
@@ -272,8 +431,12 @@ pub fn on_mouse_rele_generic[T](mut com T, app &Window) bool {
 		val.sort(a.z_index > b.z_index)
 		for mut comm in val {
 			comm.is_mouse_down = false
+			comm.state = .normal
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.is_mouse_rele = is_point_in
+				if is_point_in {
+					comm.state = .click
+				}
 				if comm.on_mouse_rele_component(app) {
 					val.sort(a.z_index < b.z_index)
 					return true
@@ -317,6 +480,9 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 	is_point_in := point_in_raw(mut com, app.mouse_x, app.mouse_y)
 	com.is_mouse_rele = is_point_in
 	com.is_mouse_down = false
+	if is_point_in {
+		com.state = .click
+	}
 
 	if mut com is ScrollView {
 		if app.mouse_y < com.ry {
@@ -333,8 +499,10 @@ pub fn (mut com Component) on_mouse_rele_component(app &Window) bool {
 		val.sort(a.z_index > b.z_index)
 		for mut comm in val {
 			comm.is_mouse_down = false
+			comm.state = .normal
 			if point_in_raw(mut comm, app.mouse_x, app.mouse_y) {
 				comm.is_mouse_rele = is_point_in
+				comm.state = .click
 				if comm.on_mouse_rele_component(app) {
 					val.sort(a.z_index < b.z_index)
 					return true
