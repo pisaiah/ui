@@ -92,10 +92,6 @@ fn (this &Switch) get_background(is_hover bool, g &GraphicsContext) gg.Color {
 		return g.theme.button_bg_click
 	}
 
-	if this.is_selected {
-		return g.theme.accent_fill
-	}
-
 	if is_hover {
 		return g.theme.button_bg_hover
 	}
@@ -152,7 +148,7 @@ pub fn (mut sw Switch) draw(g &GraphicsContext) {
 
 // Draw background & border of Switch
 fn (sw &Switch) draw_background(g &GraphicsContext) {
-	is_hover := is_in(sw, g.win.mouse_x, g.win.mouse_y)
+	is_hover := sw.state == .hover // is_in(sw, g.win.mouse_x, g.win.mouse_y)
 
 	bg := sw.get_background(is_hover, g)
 	border := sw.get_border(is_hover, g)
