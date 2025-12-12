@@ -68,7 +68,7 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 		this.popup.add_child(subb)
 	}
 
-	for mut kid in this.children {
+	for mut kid in &this.children {
 		if mut kid is SelectItem {
 			kid.set_bounds(0, 1, this.width - 1, this.sub_height)
 

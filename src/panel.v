@@ -189,7 +189,7 @@ fn (this &BorderLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut lay := panel.layout
 
 	if panel.rh == 0 {
-		for mut child in panel.children {
+		for mut child in &panel.children {
 			child.draw_with_offset(ctx, x, y)
 		}
 		panel.rh = 1
@@ -235,7 +235,7 @@ pub fn BoxLayout.new(c BoxLayoutConfig) BoxLayout {
 fn (this &BoxLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
-	for mut child in panel.children {
+	for mut child in &panel.children {
 		child.draw_with_offset(ctx, x, y)
 		if this.ori == 0 {
 			x += child.width + this.hgap
@@ -284,7 +284,7 @@ fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 
 	panel.rh = 0
 
-	for mut child in panel.children {
+	for mut child in &panel.children {
 		ex := x + child.width + this.hgap
 		if ex > panel.x + panel.width {
 			x = panel.x + this.hgap
@@ -371,7 +371,7 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	if do_pack {
 		mut w := 0
 		mut h := 0
-		for mut child in panel.children {
+		for mut child in &panel.children {
 			child.draw_with_offset(ctx, x, y)
 			h += child.height
 			w += child.width + this.hgap
@@ -391,7 +391,7 @@ fn (this &GridLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 		panel.height = h
 	}
 
-	for mut child in panel.children {
+	for mut child in &panel.children {
 		child.draw_with_offset(ctx, x, y)
 
 		if do_pack {
@@ -447,7 +447,7 @@ fn (this &CardLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
 
-	for mut child in panel.children {
+	for mut child in &panel.children {
 		if child.id == this.selected {
 			child.draw_with_offset(ctx, x, y)
 		}

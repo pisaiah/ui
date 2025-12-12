@@ -65,7 +65,7 @@ fn (mut p Popup) draw(ctx &GraphicsContext) {
 		p.container_pass_ev = true
 	}
 
-	for mut child in p.children {
+	for mut child in &p.children {
 		if y >= p.y || true {
 			child.draw_with_offset(ctx, p.x, y)
 		}

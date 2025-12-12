@@ -607,7 +607,7 @@ fn (mut app Window) draw() {
 	}
 
 	// Draw Popups last
-	for mut pop in app.popups {
+	for mut pop in &app.popups {
 		pop.draw(app.graphics_context)
 	}
 
@@ -653,7 +653,7 @@ fn (mut app Window) draw_children() {
 		app.bar.width = gg.window_size().width
 	}
 
-	for mut com in app.components {
+	for mut com in &(app.components) {
 		if !isnil(com.draw_event_fn) {
 			com.draw_event_fn(mut app, com)
 		}
