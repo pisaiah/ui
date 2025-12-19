@@ -7,10 +7,10 @@ import gg
 const control_corner_radius = 4
 
 // Fluenty/WinUI3 Design (Light)
-const light_accent_text = gg.white
-const light_accent_fill = gg.rgb(0, 80, 158)
-const light_accent_fill_second = gg.rgb(25, 97, 167)
-const light_accent_fill_third = gg.rgb(50, 113, 175)
+pub const light_accent_text = gg.white
+pub const light_accent_fill = gg.rgb(0, 80, 158)
+pub const light_accent_fill_second = gg.rgb(25, 97, 167)
+pub const light_accent_fill_third = gg.rgb(50, 113, 175)
 
 // Fluenty/WinUI3 Design (Dark)
 const dark_accent_text = gg.black

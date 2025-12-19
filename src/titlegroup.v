@@ -4,11 +4,12 @@ import gg
 
 // Titlebox -
 //	Titled border around children
-pub struct Titlebox {
+pub struct Titlebox implements Container {
 	Component_A
 pub mut:
 	padding int = 8
 	compact bool
+	container_pass_ev bool = true
 }
 
 @[params]
@@ -38,6 +39,13 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	text_height := ctx.line_height / 2
 
 	for mut kid in this.children {
+		if this.children.len == 1 && kid is Container {
+			tw := this.width - (this.padding * 2)
+			//if kid.width < tw {
+				kid.width = tw
+			//}
+		}
+
 		y := this.y + this.padding + text_height + 5
 		kid.draw_with_offset(ctx, this.x + this.padding, y)
 

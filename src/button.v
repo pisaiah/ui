@@ -272,6 +272,13 @@ fn (mut btn Button) draw_children_and_text(sizh int, text string, font string, c
 	pad := 4
 	mut xo := 0
 	for mut item in btn.children {
+		if item.state == .press {
+			btn.state = .press
+		}
+		if item.state == .hover {
+			btn.state = .hover
+		}
+	
 		item.set_parent(btn)
 		item.draw_with_offset(ctx, btn.x + pad, btn.y + pad)
 

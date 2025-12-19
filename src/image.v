@@ -23,6 +23,8 @@ pub:
 	rotate int
 	id     int
 	pack   bool
+	width  int
+	height int
 }
 
 // New Image
@@ -34,6 +36,8 @@ pub fn Image.new(c ImgConfig) &Image {
 		img_id:    c.id
 		img:       c.img
 		rotate:    c.rotate
+		width:     c.width
+		height:    c.height
 	}
 }
 
@@ -67,6 +71,19 @@ fn (mut this Image) init(ctx &GraphicsContext) {
 			this.img_id = ggg.cache_image(img)
 		}
 	}
+}
+
+pub fn (mut this Image) get_id(ctx &GraphicsContext) int {
+	if this.need_init {
+		this.init(ctx)
+		this.need_init = false
+	}
+	if this.img_id == 0 && !isnil(this.img) {
+		mut ggg := ctx.gg
+		id := ggg.cache_image(this.img)
+		return id
+	}
+	return this.img_id
 }
 
 pub fn (mut this Image) draw(ctx &GraphicsContext) {

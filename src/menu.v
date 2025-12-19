@@ -319,6 +319,7 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 
 @[params]
 pub struct MenubarConfig {
+pub:
 	children []&MenuItem
 }
 

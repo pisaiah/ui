@@ -313,12 +313,18 @@ fn (this &FlowLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	if panel.width == 0 {
 		panel.width = x - panel.x
 		if panel.height == 0 {
-			panel.height = y - panel.y
+			panel.height = y - panel.y + (panel.rh + this.vgap)
 			if panel.height < min_h {
 				panel.height = min_h
 			}
 		}
 	}
+
+	if panel.height == 0 {
+		y += panel.rh + this.vgap
+		panel.height = (y - panel.y) + (this.vgap * 2)
+	}
+
 	if panel.height == this.vgap * 2 && min_h > 0 {
 		panel.height = min_h + this.vgap * 2
 	}
@@ -480,11 +486,19 @@ pub struct PanelConfig {
 pub:
 	layout   Layout = FlowLayout{}
 	children ?[]Component
+	flags    ?[]FlagValue
 	width    int
 	height   int
 }
 
 pub fn Panel.new(cfg PanelConfig) &Panel {
+	if cfg.flags != none {
+		mut p := panel(cfg)
+		for i, flag in cfg.flags {
+			p.check_flag(p.children[i], flag)
+		}
+		return p
+	}
 	return panel(cfg)
 }
 
@@ -570,6 +584,10 @@ pub fn (mut this Panel) add_child(com &Component, flag ?Flag) {
 
 pub fn (mut this Panel) add_child_with_flag(com &Component, flag FlagValue) {
 	this.children << com
+	this.check_flag(com, flag)
+}
+
+pub fn (mut this Panel) check_flag(com &Component, flag FlagValue) {
 	if mut this.layout is BorderLayout {
 		unsafe {
 			match flag as int {

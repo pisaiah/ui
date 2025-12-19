@@ -150,6 +150,7 @@ fn (mut this TextField) draw(g &GraphicsContext) {
 		size:  g.win.font_size
 	}
 
+	g.reset_text_font()
 	wid := g.text_width(this.text[0..this.carrot_left])
 
 	pipe_color := if this.blinked && this.is_selected {
