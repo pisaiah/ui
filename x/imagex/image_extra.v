@@ -54,6 +54,7 @@ pub fn ResizedImage.new(c ResizedImageConfig) &ResizedImage {
 		resized_width:  c.resized_width
 		resized_height: c.resized_height
 		resize_percent: c.resize_percent
+		async:          c.async
 	}
 }
 
