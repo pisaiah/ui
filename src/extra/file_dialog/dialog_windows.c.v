@@ -19,7 +19,7 @@ pub fn open_dialog(title string) string {
 	}
 	dump(temp)
 
-	if temp != &char(0) {
+	if temp != unsafe { &char(0) } {
 		return unsafe { temp.vstring() }
 	} else {
 		return ''

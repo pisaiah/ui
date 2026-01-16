@@ -63,7 +63,7 @@ pub fn (mut this ButtonGroup[T]) get_selected() &T {
 }
 
 pub fn (mut this ButtonGroup[T]) invoke_mouse_up(com &Component, ctx &GraphicsContext) {
-	ev := MouseEvent{
+	ev := &MouseEvent{
 		target: unsafe { com }
 		ctx:    ctx
 	}

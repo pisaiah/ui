@@ -61,7 +61,7 @@ pub fn (mut m Modal) calc_resize(ctx &GraphicsContext, ws gg.Size) {
 
 	m.xs = (ws.width / 2) - (m.in_width / 2) - m.left_off
 	if m.on_resize != none {
-		mut ev := DrawEvent{
+		mut ev := &DrawEvent{
 			target: m
 			ctx:    ctx
 		}

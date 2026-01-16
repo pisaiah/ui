@@ -302,6 +302,22 @@ pub fn (mut win Window) add_theme(theme &Theme) {
 	win.graphics_context.themes.add_theme(theme)
 }
 
+pub fn (mut win Window) get_theme_manager() &ThemeManager {
+	return win.graphics_context.themes
+}
+
+pub fn (g &GraphicsContext) get_theme(name string) &Theme {
+	themes := g.themes.get_themes().filter(it.name == name)
+	if themes.len == 0 {
+		return get_system_theme()
+	}
+	return themes[0]
+}
+
+pub fn (mut win Window) get_theme(name string) &Theme {
+	return win.graphics_context.get_theme(name)
+}
+
 pub fn (mut win Window) set_theme(theme Theme) {
 	theme.setup_fn(mut win)
 	win.theme = theme
