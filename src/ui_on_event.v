@@ -62,7 +62,6 @@ pub fn on_event(e &gg.Event, mut app Window) {
 }
 
 pub fn on_mouse_move_event(e &gg.Event, mut app Window) {
-
 	/*
 	res := app.bar.check_mouse(app, app.click_x, app.click_y)
 	if res {
@@ -83,14 +82,12 @@ pub fn on_mouse_move_event(e &gg.Event, mut app Window) {
 	}
 	*/
 
-	
 	if app.custom_controls != none {
 		mut com := &Component(app.custom_controls.p)
 		if com.on_mouse_move_component(app, 0) {
 			return
 		}
 	}
-	
 
 	// Sort by Z-index
 	// app.components.sort(a.z_index > b.z_index)
@@ -106,7 +103,6 @@ pub fn on_mouse_move_event(e &gg.Event, mut app Window) {
 }
 
 pub fn (mut com Component) reset_state(app &Window) bool {
-
 	for mut kid in com.children {
 		if kid.state == .hover || kid.state == .normal {
 			kid.reset_state(app)
@@ -117,7 +113,7 @@ pub fn (mut com Component) reset_state(app &Window) bool {
 	if mut com is Tabbox {
 		mut val := com.kids[com.active_tab]
 		for mut kid in val {
-			if kid.state == .hover || kid.state == .normal  {
+			if kid.state == .hover || kid.state == .normal {
 				kid.reset_state(app)
 				kid.state = .normal
 			}
@@ -139,9 +135,9 @@ pub fn (mut com Component) on_mouse_move_component(app &Window, tab int) bool {
 	}
 
 	if !is_point_in {
-		//if com.state != .hover {
-			com.reset_state(app)
-			return false
+		// if com.state != .hover {
+		com.reset_state(app)
+		return false
 		//}
 	}
 
@@ -171,9 +167,9 @@ pub fn (mut com Component) on_mouse_move_component(app &Window, tab int) bool {
 	}
 
 	// com.is_mouse_down = is_point_in
-	
+
 	com.reset_state(app)
-	
+
 	if is_point_in {
 		com.state = .hover
 		// invoke_mouse_down(com, app.graphics_context)
@@ -190,13 +186,12 @@ pub fn (mut com Component) on_mouse_move_component(app &Window, tab int) bool {
 				if comm.on_mouse_move_component(app, tab + 1) {
 					// return true
 				} else {
-				
 				}
 			} else {
-				//if comm.state == .hover {
-					// comm.on_mouse_move_component(app, tab + 1)
-					comm.reset_state(app)
-					// comm.state = .normal
+				// if comm.state == .hover {
+				// comm.on_mouse_move_component(app, tab + 1)
+				comm.reset_state(app)
+				// comm.state = .normal
 				//}
 			}
 		}
@@ -407,7 +402,7 @@ pub fn on_mouse_rele_generic[T](mut com T, app &Window) bool {
 	is_point_in := point_in(mut com, app.mouse_x, app.mouse_y)
 	com.is_mouse_rele = is_point_in
 	com.is_mouse_down = false
-	
+
 	if is_point_in {
 		com.state = .click
 	}

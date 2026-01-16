@@ -10,6 +10,7 @@ pub mut:
 	needs_init bool
 	close      &Button
 	shown      bool
+	close_idx  ?int
 
 	in_width          int
 	in_height         int
@@ -18,17 +19,20 @@ pub mut:
 	xs                int
 	pack              bool
 	container_pass_ev bool = true
+	on_resize         ?fn (voidptr)
 }
 
 @[params]
 pub struct ModalConfig {
 pub:
-	children ?[]Component
-	title    string
-	width    int = 500
-	height   int = 300
-	left     int
-	top      int = 50
+	children  ?[]Component
+	title     string
+	width     int = 500
+	height    int = 300
+	left      int
+	top       int = 50
+	close_idx ?int
+	on_resize ?fn (voidptr)
 }
 
 pub fn Modal.new(c ModalConfig) &Modal {
@@ -39,9 +43,11 @@ pub fn Modal.new(c ModalConfig) &Modal {
 		in_width:   c.width
 		in_height:  c.height
 		close:      unsafe { nil }
+		close_idx:  c.close_idx
 		left_off:   c.left
 		top_off:    c.top
 		children:   c.children or { []Component{} }
+		on_resize:  c.on_resize
 	}
 }
 
@@ -49,12 +55,21 @@ pub fn (mut this Modal) pack() {
 	this.pack = true
 }
 
-pub fn (mut this Modal) calc_resize(ctx &GraphicsContext, ws gg.Size) {
-	this.width = ws.width
-	this.height = ws.height
+pub fn (mut m Modal) calc_resize(ctx &GraphicsContext, ws gg.Size) {
+	m.width = ws.width
+	m.height = ws.height
 
-	this.xs = (ws.width / 2) - (this.in_width / 2) - this.left_off
+	m.xs = (ws.width / 2) - (m.in_width / 2) - m.left_off
+	if m.on_resize != none {
+		mut ev := DrawEvent{
+			target: m
+			ctx:    ctx
+		}
+		m.on_resize(ev)
+	}
 }
+
+const modal_transparent = gg.rgba(0, 0, 0, 170)
 
 pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 	ws := gg.window_size()
@@ -65,7 +80,7 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 
 	if m.z_index <= 501 {
 		// Only draw background for one modal.
-		ctx.gg.draw_rect_filled(0, 0, ws.width, ws.height, gg.rgba(0, 0, 0, 170))
+		ctx.gg.draw_rect_filled(0, 0, ws.width, ws.height, modal_transparent)
 	}
 
 	wid := m.in_width
@@ -90,24 +105,32 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 	mut app := ctx.win
 
 	// Do component draw event again to fix z-index
-	if !isnil(m.draw_event_fn) {
-		// m.draw_event_fn(mut app, &Component(m))
-	}
+	// if !isnil(m.draw_event_fn) {
+	// m.draw_event_fn(mut app, &Component(m))
+	// }
 
 	if m.needs_init {
-		m.make_close_btn(true)
+		if m.close_idx == none {
+			m.make_close_btn(true)
+		}
 		m.needs_init = false
 	}
 
 	y_off := m.y + m.top_off + top
-	for mut kid in m.children {
+	for i, mut kid in m.children {
 		kid.draw_event_fn(mut app, kid)
 		kid.draw_with_offset(ctx, m.xs, y_off + 2)
 
 		if m.pack {
 			if kid.width > m.in_width {
 				m.in_width = kid.width + (kid.x * 2)
-				m.close.x = m.in_width - 115
+				if !isnil(m.close) {
+					m.close.x = m.in_width - 115
+				} else if m.close_idx != none {
+					if i == m.close_idx {
+						kid.x = m.in_width - 115
+					}
+				}
 				m.calc_resize(ctx, ws)
 			}
 		}
@@ -126,9 +149,9 @@ pub fn (mut this Modal) make_close_btn(ce bool) &Button {
 
 	if ce {
 		close.subscribe_event('mouse_up', default_modal_close_fn)
-	}
-	if ce && this.needs_init {
-		close.is_action = true
+		if this.needs_init {
+			close.is_action = true
+		}
 	}
 
 	this.children << close

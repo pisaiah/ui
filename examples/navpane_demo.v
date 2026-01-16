@@ -69,12 +69,12 @@ fn main() {
 	item.add_child(subitem)
 
 	np.add_child(item)
-	
+
 	mut settings := ui.NavPaneItem.new(
 		text: 'Settings'
 		icon: '\ue713'
 	)
-	
+
 	np.add_child(settings)
 
 	p.add_child(np, value: ui.borderlayout_west)

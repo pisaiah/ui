@@ -176,9 +176,9 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 
 	com.x = com.x + off_x
 	com.y = com.y + off_y
-	
+
 	// dump(com.state)
-	
+
 	if com.state == .hover {
 		is_point_in := point_in_raw(mut com, ctx.win.mouse_x, ctx.win.mouse_y)
 		if !is_point_in {
@@ -194,7 +194,7 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 	com.debug_draw(ctx)
 	com.x = com.x - off_x
 	com.y = com.y - off_y
-	
+
 	if com.state == .click {
 		is_point_in := point_in_raw(mut com, ctx.win.mouse_x, ctx.win.mouse_y)
 		if is_point_in {

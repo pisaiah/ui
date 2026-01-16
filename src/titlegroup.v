@@ -7,8 +7,8 @@ import gg
 pub struct Titlebox implements Container {
 	Component_A
 pub mut:
-	padding int = 8
-	compact bool
+	padding           int = 8
+	compact           bool
 	container_pass_ev bool = true
 }
 
@@ -41,8 +41,8 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	for mut kid in this.children {
 		if this.children.len == 1 && kid is Container {
 			tw := this.width - (this.padding * 2)
-			//if kid.width < tw {
-				kid.width = tw
+			// if kid.width < tw {
+			kid.width = tw
 			//}
 		}
 

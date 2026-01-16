@@ -179,6 +179,10 @@ pub fn resize_image(path string, target_w int, target_h int, perc ?f32) !(&u8, i
 	}
 	defer {
 		C.stbi_image_free(data)
+		data.free()
+		unsafe {
+			free(data)
+		}
 	}
 
 	$if dump_img_load_time ? {

@@ -177,7 +177,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	if btn.is_mouse_rele {
 		btn.is_mouse_rele = false
 	}
-	
+
 	if btn.state == .click {
 		btn.state = .normal
 	}
@@ -278,7 +278,7 @@ fn (mut btn Button) draw_children_and_text(sizh int, text string, font string, c
 		if item.state == .hover {
 			btn.state = .hover
 		}
-	
+
 		item.set_parent(btn)
 		item.draw_with_offset(ctx, btn.x + pad, btn.y + pad)
 

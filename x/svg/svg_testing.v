@@ -34,7 +34,7 @@ pub mut:
 	color           ?gx.Color
 	accent_first    int
 	test            int
-	tik				int
+	tik             int
 }
 
 @[params]
@@ -120,7 +120,7 @@ fn (mut this Svg) draw(g &ui.GraphicsContext) {
 	for i, cmds in this.cmds {
 		this.draw_path_gg(g, i, cmds)
 	}
-	
+
 	if !g.win.debug_draw {
 		return
 	}
@@ -157,9 +157,9 @@ fn (mut this Svg) draw(g &ui.GraphicsContext) {
 		})
 		*/
 	} else {
-		//dump('')
+		// dump('')
 		g.gg.draw_image_with_config(gg.DrawImageConfig{
-			img_id:   this.test
+			img_id: this.test
 
 			img_rect: gg.Rect{
 				x:      this.x
@@ -167,7 +167,6 @@ fn (mut this Svg) draw(g &ui.GraphicsContext) {
 				width:  this.width
 				height: this.height
 			}
-
 		})
 	}
 }
