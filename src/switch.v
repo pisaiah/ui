@@ -49,19 +49,24 @@ pub:
 	bounds   Bounds
 	selected bool
 	text     string
+	on_click ?fn (voidptr)
 }
 
-pub fn Switch.new(cf SwitchConfig) &Switch {
-	return &Switch{
-		text:        cf.text
-		x:           cf.bounds.x
-		y:           cf.bounds.y
-		width:       cf.bounds.width
-		height:      cf.bounds.height
-		is_selected: cf.selected
+pub fn Switch.new(c SwitchConfig) &Switch {
+	mut s := &Switch{
+		text:        c.text
+		x:           c.bounds.x
+		y:           c.bounds.y
+		width:       c.bounds.width
+		height:      c.bounds.height
+		is_selected: c.selected
 		thumb_x:     0
 		pack:        true
 	}
+	if c.on_click != none {
+		s.subscribe_event('mouse_up', c.on_click)
+	}
+	return s
 }
 
 // Get border color

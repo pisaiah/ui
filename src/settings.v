@@ -27,16 +27,18 @@ pub:
 	uicon       ?string
 	stretch     bool
 	padding     int = 16
+	children    ?[]Component
 }
 
 // TODO
 pub fn SettingsCard.new(c SettingsCardConfig) &SettingsCard {
 	return &SettingsCard{
-		text:    c.text
-		desc:    c.description
-		uicon:   c.uicon
-		stretch: c.stretch
-		padding: c.padding
+		text:     c.text
+		desc:     c.description
+		uicon:    c.uicon
+		stretch:  c.stretch
+		padding:  c.padding
+		children: c.children or { []Component{} }
 	}
 }
 

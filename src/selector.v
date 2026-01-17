@@ -21,21 +21,28 @@ fn (box &Selectbox) is_open() bool {
 @[params]
 pub struct SelectboxConfig {
 pub:
-	bounds Bounds
-	items  []string
-	text   string
+	bounds    ?Bounds
+	items     []string
+	text      string
+	width     int
+	height    int
+	on_change ?fn (voidptr)
 }
 
-pub fn Selectbox.new(cfg SelectboxConfig) &Selectbox {
-	return &Selectbox{
-		text:   cfg.text
-		x:      cfg.bounds.x
-		y:      cfg.bounds.y
-		width:  cfg.bounds.width
-		height: cfg.bounds.height
-		items:  cfg.items
+pub fn Selectbox.new(c SelectboxConfig) &Selectbox {
+	mut box := &Selectbox{
+		text:   c.text
+		x:      if c.bounds != none { c.bounds.x } else { 0 }
+		y:      if c.bounds != none { c.bounds.y } else { 0 }
+		width:  if c.bounds != none { c.bounds.width } else { c.width }
+		height: if c.bounds != none { c.bounds.height } else { c.height }
+		items:  c.items
 		popup:  &Popup{}
 	}
+	if c.on_change != none {
+		box.subscribe_event('item_change', c.on_change)
+	}
+	return box
 }
 
 pub fn (mut box Selectbox) popup_show(g &GraphicsContext) {

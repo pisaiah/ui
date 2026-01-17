@@ -13,10 +13,11 @@ pub:
 	bounds   Bounds
 	selected bool
 	text     string
+	on_click ?fn (voidptr)
 }
 
 pub fn Checkbox.new(c CheckboxConfig) &Checkbox {
-	return &Checkbox{
+	mut b := &Checkbox{
 		text:        c.text
 		x:           c.bounds.x
 		y:           c.bounds.y
@@ -24,6 +25,10 @@ pub fn Checkbox.new(c CheckboxConfig) &Checkbox {
 		height:      c.bounds.height
 		is_selected: c.selected
 	}
+	if c.on_click != none {
+		b.subscribe_event('mouse_up', c.on_click)
+	}
+	return b
 }
 
 // Get border color
