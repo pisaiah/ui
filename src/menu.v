@@ -321,12 +321,17 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 pub struct MenubarConfig {
 pub:
 	children []&MenuItem
+	animate  bool = true
+	padding  int
 }
 
-pub fn Menubar.new(cfg MenubarConfig) &Menubar {
-	mut bar := &Menubar{}
+pub fn Menubar.new(c MenubarConfig) &Menubar {
+	mut bar := &Menubar{
+		padding: c.padding
+		animate: c.animate
+	}
 
-	for kid in cfg.children {
+	for kid in c.children {
 		bar.add_child(kid)
 	}
 	return bar
