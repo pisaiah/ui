@@ -25,26 +25,34 @@ pub mut:
 @[params]
 pub struct ScrollViewConfig {
 pub mut:
-	bounds      Bounds
-	view        &Component
+	bounds      ?Bounds
+	view        ?&Component
 	increment   int = 4
 	always_show bool
 	padding     int = 20
+	width       int
+	height      int
 }
 
 pub fn ScrollView.new(c ScrollViewConfig) &ScrollView {
-	return &ScrollView{
-		x:           c.bounds.x
-		y:           c.bounds.y
-		width:       c.bounds.width
-		height:      c.bounds.height
-		children:    [c.view]
+	mut sv := &ScrollView{
+		x:      if c.bounds != none { c.bounds.x } else { 0 }
+		y:      if c.bounds != none { c.bounds.y } else { 0 }
+		width:  if c.bounds != none { c.bounds.width } else { c.width }
+		height: if c.bounds != none { c.bounds.height } else { c.height }
+		// children:    [c.view]
 		increment:   c.increment
 		always_show: c.always_show
 		padding:     c.padding
 	}
+
+	if c.view != none {
+		sv.add_child(c.view)
+	}
+	return sv
 }
 
+@[deprecated]
 pub fn scroll_view(cfg ScrollViewConfig) &ScrollView {
 	return ScrollView.new(cfg)
 }
