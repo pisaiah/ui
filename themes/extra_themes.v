@@ -1,17 +1,13 @@
 module themes
 
 import iui as ui
-import gx
-
-@[deprecated: 'Testing']
-pub fn theme_mod_test() {
-}
+import gg
 
 // "Seven" - A theme inspired by Win7
 pub fn theme_seven() &ui.Theme {
 	mut th := ui.theme_default()
 	th.name = 'Seven'
-	th.accent_fill = gx.rgb(143, 184, 218)
+	th.accent_fill = gg.rgb(143, 184, 218)
 	th.button_fill_fn = seven_button_fill_fn
 	th.bar_fill_fn = seven_bar_fill_fn
 	th.setup_fn = seven_setup
@@ -23,7 +19,7 @@ pub fn theme_seven() &ui.Theme {
 pub fn theme_seven_dark() &ui.Theme {
 	mut th := ui.theme_dark()
 	th.name = 'Seven Dark'
-	th.accent_fill = gx.rgb(143, 184, 218)
+	th.accent_fill = gg.rgb(143, 184, 218)
 	th.button_fill_fn = seven_dark_button_fill_fn
 	th.bar_fill_fn = seven_dark_bar_fill_fn
 	th.setup_fn = seven_dark_setup
@@ -38,7 +34,7 @@ pub fn seven_setup(mut win ui.Window) {
 	ui.cache_image('seven-btn', mut g, img0.data(), img0.len)
 }
 
-pub fn seven_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, g &ui.GraphicsContext) {
+pub fn seven_button_fill_fn(x int, y int, w int, h int, r int, bg gg.Color, g &ui.GraphicsContext) {
 	if bg == g.theme.button_bg_normal {
 		g.gg.draw_image_by_id(x, y, w, h, g.icon_cache['seven-btn'])
 	} else {
@@ -53,10 +49,10 @@ pub fn seven_bar_fill_fn(x int, y f32, w int, h f32, hor bool, g &ui.GraphicsCon
 pub fn seven_menubar_fill_fn(x int, y int, w int, h int, g &ui.GraphicsContext) {
 	yy := y + 8
 	hh := (h - 8) / 4
-	g.gg.draw_rect_filled(x, y, w, h, gx.rgb(244, 244, 244))
-	g.gg.draw_rect_filled(x, yy + hh, w, hh, gx.rgb(239, 239, 239))
-	g.gg.draw_rect_filled(x, yy + (hh + hh), w, hh, gx.rgb(233, 233, 233))
-	g.gg.draw_rect_filled(x, yy + (hh * 3), w, hh, gx.rgb(228, 228, 228))
+	g.gg.draw_rect_filled(x, y, w, h, gg.rgb(244, 244, 244))
+	g.gg.draw_rect_filled(x, yy + hh, w, hh, gg.rgb(239, 239, 239))
+	g.gg.draw_rect_filled(x, yy + (hh + hh), w, hh, gg.rgb(233, 233, 233))
+	g.gg.draw_rect_filled(x, yy + (hh * 3), w, hh, gg.rgb(228, 228, 228))
 }
 
 pub fn seven_dark_setup(mut win ui.Window) {
@@ -69,7 +65,7 @@ pub fn seven_dark_setup(mut win ui.Window) {
 	ui.cache_image('seven_dark-menu', mut ctx, img2.data(), img2.len)
 }
 
-pub fn seven_dark_button_fill_fn(x int, y int, w int, h int, r int, bg gx.Color, g &ui.GraphicsContext) {
+pub fn seven_dark_button_fill_fn(x int, y int, w int, h int, r int, bg gg.Color, g &ui.GraphicsContext) {
 	if bg == g.theme.button_bg_normal {
 		g.gg.draw_image_by_id(x, y, w, h, g.icon_cache['seven_dark-btn'])
 	} else {
@@ -85,12 +81,12 @@ pub fn half_bar_fill(x int, y f32, w int, h f32, hor bool, a u8, b u8, g &ui.Gra
 	hh := if hor { h / 2 } else { h }
 	ww := if hor { w } else { w / 2 }
 
-	g.gg.draw_rect_filled(x, y, w, hh, gx.rgb(a, a, a))
+	g.gg.draw_rect_filled(x, y, w, hh, gg.rgb(a, a, a))
 
 	if hor {
-		g.gg.draw_rect_filled(x, y + hh, ww, hh, gx.rgb(b, b, b))
+		g.gg.draw_rect_filled(x, y + hh, ww, hh, gg.rgb(b, b, b))
 	} else {
-		g.gg.draw_rect_filled(x + ww, y, ww, hh, gx.rgb(b, b, b))
+		g.gg.draw_rect_filled(x + ww, y, ww, hh, gg.rgb(b, b, b))
 	}
 
 	g.gg.draw_rect_empty(x, y, w, h, g.theme.scroll_bar_color)

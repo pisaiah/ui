@@ -49,13 +49,14 @@ pub fn numeric_field(val int) &TextField {
 @[params]
 pub struct FieldCfg {
 pub:
-	text   string
-	center bool = true
-	bounds Bounds
+	text      string
+	center    bool = true
+	bounds    Bounds
+	on_change ?fn (voidptr)
 }
 
 pub fn TextField.new(c FieldCfg) &TextField {
-	return &TextField{
+	mut f := &TextField{
 		text:        c.text
 		x:           c.bounds.x
 		y:           c.bounds.y
@@ -65,6 +66,11 @@ pub fn TextField.new(c FieldCfg) &TextField {
 		carrot_left: c.text.len
 		sel:         none
 	}
+
+	if c.on_change != none {
+		f.subscribe_event('text_change', c.on_change)
+	}
+	return f
 }
 
 pub fn text_field(cfg FieldCfg) &TextField {

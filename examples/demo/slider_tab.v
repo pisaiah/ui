@@ -2,7 +2,7 @@ module main
 
 import iui as ui
 import rand
-import gx
+import gg
 
 fn (mut app App) make_slider_tab() &ui.Panel {
 	// mut p := ui.Panel.new(layout: ui.BorderLayout.new())
@@ -65,7 +65,7 @@ fn (mut app App) make_slider_tab() &ui.Panel {
 			ui.Button.new(
 				text:     'Change thumb color'
 				on_click: fn [mut slid2] (mut e ui.MouseEvent) {
-					color := gx.rgb(rand.u8(), rand.u8(), rand.u8())
+					color := gg.rgb(rand.u8(), rand.u8(), rand.u8())
 					slid2.set_custom_thumb_color(color)
 				}
 			),

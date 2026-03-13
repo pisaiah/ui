@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2025 Isaiah.
+// Copyright (c) 2021-2026 Isaiah.
 module iui
 
 import gg

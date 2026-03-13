@@ -2,7 +2,7 @@ module main
 
 import iui as ui
 import iui.x.svg
-import gx
+import gg
 
 fn (mut app App) make_svg_tab() &ui.Panel {
 	// Create Window
@@ -169,7 +169,7 @@ fn make_svg_panel() &ui.Panel {
 		viewbox: '0 0 16 16'
 		width:   w
 		height:  h
-		color:   gx.rgb(246, 174, 172)
+		color:   gg.rgb(246, 174, 172)
 	)
 
 	p.add_child(svg_a)

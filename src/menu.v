@@ -430,12 +430,12 @@ fn open_about_modal(app &Window) &Modal {
 	)
 
 	lbl := Label.new(
-		text: 'My UI Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}'
+		text: 'User-interface Toolkit for V.\nVersion: ${version}\nCompiled with ${full_v_version(false)}'
 		pack: true
 	)
 
 	mut copy := Label.new(
-		text:    'Copyright © 2021-2025 Isaiah.'
+		text:    'Copyright © 2021-2026 Isaiah.'
 		pack:    true
 		em_size: .8
 		// .75em = 12px

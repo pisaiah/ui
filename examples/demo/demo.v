@@ -3,7 +3,7 @@ module main
 import iui as ui { debug }
 import iui.themes
 import os
-import gx
+import gg
 
 const img_file = $embed_file('v.png')
 
@@ -167,7 +167,7 @@ fn draw_custom_themed(name string, mut e ui.DrawEvent) {
 	is_hover := ui.is_in(e.target, e.ctx.win.mouse_x, e.ctx.win.mouse_y)
 	mut btn := e.target
 	if mut btn is ui.Button {
-		btn.override_bg_color = if is_hover { ui.blank_bg } else { gx.rgba(0, 0, 0, 1) }
+		btn.override_bg_color = if is_hover { ui.blank_bg } else { gg.rgba(0, 0, 0, 1) }
 	}
 	if !is_hover {
 		e.ctx.gg.draw_image_by_id(btn.x, btn.y, btn.width, btn.height, e.ctx.icon_cache[name])

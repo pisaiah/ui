@@ -1,21 +1,21 @@
 module themes
 
-import gx
+import gg
 import iui as ui
 
 // Dark RGB
 pub fn theme_dark_rgb() &ui.Theme {
 	mut th := ui.theme_dark()
 	th.name = 'Dark (RGB)'
-	th.accent_text = gx.black
-	th.accent_fill = gx.rgb(255, 0, 0)
-	th.accent_fill_second = gx.rgb(200, 0, 0)
-	th.accent_fill_third = gx.rgb(200, 0, 0)
+	th.accent_text = gg.black
+	th.accent_fill = gg.rgb(255, 0, 0)
+	th.accent_fill_second = gg.rgb(200, 0, 0)
+	th.accent_fill_third = gg.rgb(200, 0, 0)
 	th.setup_fn = rgb_setup
 	return th
 }
 
-fn darker(c gx.Color, mut theme ui.Theme) {
+fn darker(c gg.Color, mut theme ui.Theme) {
 	f1 := .8
 	f2 := .6
 	theme.accent_fill_second.r = u8(f32(c.r) * f1)
@@ -30,7 +30,7 @@ fn darker(c gx.Color, mut theme ui.Theme) {
 }
 
 pub fn rgb_setup(mut win ui.Window) {
-	win.theme.accent_fill = gx.rgb(0, 0, 0)
+	win.theme.accent_fill = gg.rgb(0, 0, 0)
 	win.subscribe_event('draw', rgb_animate_colors)
 }
 

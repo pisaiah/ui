@@ -1,7 +1,6 @@
 module main
 
 import iui as ui
-import gx
 
 fn (mut app App) make_button_tab() &ui.Panel {
 	mut btn2 := ui.Button.new(
