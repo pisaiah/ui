@@ -1,3 +1,4 @@
+// UI Demo Showcase Program
 module main
 
 import iui as ui { debug }
@@ -7,6 +8,7 @@ import gg
 
 const img_file = $embed_file('v.png')
 
+// Our App structure
 @[heap]
 struct App {
 mut:
@@ -16,6 +18,7 @@ mut:
 	dp    &ui.DesktopPane
 }
 
+// Main
 fn main() {
 	// Create Window
 	mut window := ui.Window.new(
@@ -27,9 +30,12 @@ fn main() {
 		custom_titlebar: true
 	)
 
+	// Our Center Panel
 	mut pane := ui.Panel.new(
 		layout: ui.FlowLayout.new(hgap: 6, vgap: 10)
 	)
+
+	// Create our App instance
 	mut app := &App{
 		win:  window
 		pane: pane
@@ -37,41 +43,63 @@ fn main() {
 	}
 
 	// Setup Menubar and items
-	window.bar = ui.Menubar.new()
-	window.bar.set_padding(4)
-	window.bar.set_animate(true)
-	window.bar.add_child(ui.MenuItem.new(text: 'File'))
-	window.bar.add_child(ui.MenuItem.new(text: 'Edit'))
-	window.bar.add_child(create_help_menu())
-
-	mut theme_menu := window.make_theme_menu()
-
-	window.bar.add_child(theme_menu)
-	// window.add_child(window.bar)
+	window.bar = ui.Menubar.new(
+		padding:  4
+		animate:  true
+		children: [
+			ui.MenuItem.new(text: 'File'),
+			ui.MenuItem.new(text: 'Edit'),
+			create_help_menu(),
+			window.make_theme_menu(),
+		]
+	)
 
 	app.make_button_section()
 	app.make_checkbox_section()
 	app.make_selectbox_section()
 	app.make_progress_section()
 
-	mut img := ui.Image.new(
-		file: 'v.png'
-	)
-	img.set_bounds(5, 5, 50, 50)
-
-	title_box := ui.Titlebox.new(
-		text:     'Image'
-		children: [img]
-		width:    100
-		height:   130
-	)
-	pane.add_child(title_box)
+	pane.add_child(app.make_image_section())
 
 	app.make_tree_section()
 	app.make_tab_section()
-
 	app.make_edits_section()
 
+	// Our North Panel
+	title := ui.Panel.new(
+		layout:   ui.FlowLayout.new(hgap: 6, vgap: 4)
+		children: [
+			ui.InfoBar.new(
+				title:    'iUI ${ui.version}'
+				text:     'Cross-platform GUI library for V.'
+				children: [
+					ui.Panel.new(
+						children: [
+							ui.Hyperlink.new(
+								text: 'Github'
+								pack: true
+								url:  'https://github.com/pisaiah/ui'
+							),
+						]
+						width:    50
+					),
+				]
+			),
+		]
+	)
+
+	// Panel with BorderLayout
+	// children go: center, north, south, east, west, unless other specified.
+	mut pp := ui.Panel.new(
+		layout:   ui.BorderLayout.new()
+		children: [
+			pane,
+			title,
+			ui.Label.new(text: 'UI Demo © 2021-2026', pack: true),
+		]
+	)
+
+	// Create our Tabbox
 	mut tb := ui.Tabbox.new(
 		closable: false
 	)
@@ -82,35 +110,6 @@ fn main() {
 	selector_tab := app.make_selector_tab()
 	svg_tab := app.make_svg_tab()
 
-	right_panel := ui.Panel.new(
-		children: [
-			ui.Hyperlink.new(text: 'Github', pack: true, url: 'https://github.com/pisaiah/ui'),
-		]
-		width:    50
-	)
-
-	title := ui.Panel.new(
-		layout:   ui.FlowLayout.new(hgap: 6, vgap: 4)
-		children: [
-			ui.InfoBar.new(
-				title:    'iUI ${ui.version}'
-				text:     'Cross-platform GUI library for V.'
-				children: [right_panel]
-			),
-		]
-	)
-
-	lbl := ui.Label.new(text: '© 2021-2025', pack: true)
-
-	mut pp := ui.Panel.new(
-		layout: ui.BorderLayout.new()
-	)
-
-	pp.add_child(pane, value: ui.borderlayout_center)
-	pp.add_child(title, value: ui.borderlayout_north)
-	pp.add_child(lbl, value: ui.borderlayout_south)
-
-	// tb.add_child('Overview', pane)
 	tb.add_child('Overview', pp)
 	tb.add_child('Buttons', button_tab)
 	tb.add_child('Frames', frame_tab)
@@ -118,6 +117,7 @@ fn main() {
 	tb.add_child('Selector', selector_tab)
 	tb.add_child('SVG', svg_tab)
 
+	// Add our Tabbox as our root Component
 	window.add_child(tb)
 
 	// Add Extra Themes
@@ -127,6 +127,18 @@ fn main() {
 
 	// Run/Show The Window
 	window.run()
+}
+
+fn (mut app App) make_image_section() &ui.Titlebox {
+	return ui.Titlebox.new(
+		text:     'Image'
+		children: [ui.Image.new(
+			file: 'v.png'
+			pack: true
+		)]
+		width:    100
+		height:   130
+	)
 }
 
 fn (mut app App) make_selector_tab() &ui.Panel {
@@ -184,11 +196,6 @@ fn (mut app App) icon_btn(data []u8) &ui.Button {
 	return btn
 }
 
-// Make a 'Theme' menu item to select themes
-@[deprecated: 'Replaced by ui thememanager']
-fn create_theme_menu() {
-}
-
 fn (mut app App) make_edits_section() {
 	mut code_box := ui.Textbox.new(lines: ['module main', '', 'fn main() {', '}'])
 	code_box.set_bounds(0, 0, 175, 100)
@@ -213,20 +220,20 @@ fn (mut app App) make_edits_section() {
 }
 
 fn (mut app App) make_progress_section() {
-	p := ui.Panel.new(
-		layout:   ui.GridLayout.new(cols: 1)
-		children: [
-			ui.Progressbar.new(val: 30),
-			ui.Progressbar.new(val: 50),
-			ui.Progressbar.new(val: 70),
-		]
-		width:    120
-		height:   90
-	)
-
 	title_box := ui.Titlebox.new(
 		text:     'Progressbar'
-		children: [p]
+		children: [
+			ui.Panel.new(
+				layout:   ui.GridLayout.new(cols: 1)
+				children: [
+					ui.Progressbar.new(val: 30),
+					ui.Progressbar.new(val: 50),
+					ui.Progressbar.new(val: 70),
+				]
+				width:    120
+				height:   90
+			),
+		]
 		width:    120
 		height:   130
 	)
@@ -235,14 +242,15 @@ fn (mut app App) make_progress_section() {
 
 fn (mut app App) make_tree_section() {
 	mut tree := create_tree(app.win)
-	mut tree_view := ui.ScrollView.new(
-		bounds: ui.Bounds{0, 0, 170, 145}
-		view:   tree
-	)
 
 	title_box := ui.Titlebox.new(
 		text:     'Treeview'
-		children: [tree_view]
+		children: [
+			ui.ScrollView.new(
+				bounds: ui.Bounds{0, 0, 170, 145}
+				view:   tree
+			),
+		]
 		width:    190
 		height:   180
 	)
@@ -301,29 +309,29 @@ fn (mut app App) make_button_section() {
 	btn3.icon_width = 32
 	btn3.icon_height = 32
 
-	mut p := ui.Panel.new(
-		layout:   ui.GridLayout.new(
-			rows: 2
-			vgap: 4
-			hgap: 4
-		)
-		children: [
-			ui.Button.new(
-				text: 'A Button'
-			),
-			ui.Button.new(
-				text:     'New Page'
-				on_click: test_page
-			),
-			btn3,
-		]
-	)
-
-	p.set_bounds(0, 0, 150, 80)
-
 	title_box := ui.Titlebox.new(
 		text:     'Button'
-		children: [p]
+		children: [
+			ui.Panel.new(
+				layout:   ui.GridLayout.new(
+					rows: 2
+					vgap: 4
+					hgap: 4
+				)
+				children: [
+					ui.Button.new(
+						text: 'A Button'
+					),
+					ui.Button.new(
+						text:     'New Page'
+						on_click: test_page
+					),
+					btn3,
+				]
+				width:    150
+				height:   80
+			),
+		]
 		width:    150
 		height:   130
 	)
