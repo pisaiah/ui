@@ -93,12 +93,12 @@ fn draw_wrapped_text(g &ui.GraphicsContext, text string, x int, y int, max_width
 }
 
 // stb_image_write.h binding
-fn C.stbi_write_png_to_func(func voidptr,  callback function pointer,
+fn C.stbi_write_png_to_func(func voidptr, callback function, pointer,
 	context voidptr,
-	w int,  width,
-	h int,  height,
-	comp int, 
-	data voidptr, 
+	w int, width,
+	h int, height,
+	comp int,
+	data voidptr,
 	stride_in_bytes int) int
 
 fn cb_malloc(s usize) voidptr {

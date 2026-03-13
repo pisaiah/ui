@@ -5,36 +5,44 @@ import iui.x.svg
 import gg
 
 fn (mut app App) make_svg_tab() &ui.Panel {
-	// Create Window
-	// app.make_icons()
-
-	mut p := ui.Panel.new(layout: ui.BorderLayout.new())
-
-	mut info := ui.InfoBar.new(
-		title: 'SVG'
-		text:  '(New!) Experimental SVG <Path> support. See Module: "iui.x.svg"'
+	p := ui.Panel.new(
+		layout:   ui.BorderLayout.new()
+		children: [
+			ui.InfoBar.new(
+				title: 'SVG'
+				text:  '(New!) Experimental SVG <Path> support. See Module: "iui.x.svg"'
+			),
+			make_svg_panel(),
+			ui.Panel.new(
+				children: [
+					ui.Button.new(
+						text:     'Size += ${move_by}'
+						on_click: svg_size_inc_evnt
+					),
+					ui.Button.new(
+						text:     'Size -= ${move_by}'
+						on_click: svg_size_dec_evnt
+					),
+					ui.Button.new(
+						text:     'Reset size to 32x32'
+						on_click: svg_size_reset_evnt
+					),
+				]
+			),
+		]
+		flags:    [
+			ui.borderlayout_north,
+			ui.borderlayout_center,
+			ui.borderlayout_south,
+		]
 	)
 
-	mut svg_panel := make_svg_panel()
-	mut btm := ui.Panel.new()
-
-	mut btn1 := ui.Button.new(text: 'Size += ${move_by}')
-	mut btn2 := ui.Button.new(text: 'Size -= ${move_by}')
-	mut btn3 := ui.Button.new(text: 'Reset size to 32x32')
-	btn1.subscribe_event('mouse_up', svg_size_inc_evnt)
-	btn2.subscribe_event('mouse_up', svg_size_dec_evnt)
-	btn3.subscribe_event('mouse_up', svg_size_reset_evnt)
-	btm.add_child(btn1)
-	btm.add_child(btn2)
-	btm.add_child(btn3)
-
-	p.add_child(info, value: ui.borderlayout_north)
-	p.add_child(svg_panel, value: ui.borderlayout_center)
-	p.add_child(btm, value: ui.borderlayout_south)
-
-	mut cp := ui.Panel.new(layout: ui.BorderLayout.new())
-	cp.add_child_with_flag(p, ui.borderlayout_center)
-	// cp.add_child_with_flag(make_code_box('svg_tab.v'), ui.borderlayout_east)
+	mut cp := ui.Panel.new(
+		layout:   ui.BorderLayout.new()
+		children: [
+			p,
+		]
+	)
 
 	return cp
 }
@@ -74,8 +82,6 @@ fn svg_size_reset_evnt(mut e ui.MouseEvent) {
 }
 
 fn make_svg_panel() &ui.Panel {
-	mut p := ui.Panel.new()
-
 	w, h := 64, 64
 
 	// Triangle
@@ -172,16 +178,6 @@ fn make_svg_panel() &ui.Panel {
 		color:   gg.rgb(246, 174, 172)
 	)
 
-	p.add_child(svg_a)
-	p.add_child(svg_b)
-	p.add_child(svg_c)
-	p.add_child(svg_d)
-	p.add_child(svg_e)
-	p.add_child(svg_f)
-	p.add_child(svg_g)
-	p.add_child(svg_h)
-	p.add_child(svg_i)
-
 	mut svg_letter := svg.Svg.new(
 		paths:   [
 			// 'M 123 668 L 684 671 L 602 545 L 384 284 L 192 56.7 L 173 34.6 L 274 9.45 L 384 6.3 L 709 25.2'
@@ -193,11 +189,21 @@ fn make_svg_panel() &ui.Panel {
 		height:  h
 	)
 
-	p.add_child(svg_letter)
-
-	mut btn := make_svg_button()
-
-	p.add_child(btn)
+	mut p := ui.Panel.new(
+		children: [
+			svg_a,
+			svg_b,
+			svg_c,
+			svg_d,
+			svg_e,
+			svg_f,
+			svg_g,
+			svg_h,
+			svg_i,
+			svg_letter,
+			make_svg_button(),
+		]
+	)
 
 	p.set_bounds(0, 0, 200, 200)
 

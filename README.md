@@ -4,9 +4,9 @@
 
 <br>
 
-![0.0.20](https://img.shields.io/badge/version-0.28-white?style=flat)
+![0.29](https://img.shields.io/badge/version-0.29-white?style=flat)
 ![GitHub](https://img.shields.io/badge/license-MIT-blue?style=flat)
-![vlang](http://img.shields.io/badge/V-0.4.11-%236d8fc5?style=flat)
+![vlang](http://img.shields.io/badge/V-0.5+-%236d8fc5?style=flat)
 
 Cross-platform GUI library for V. Inspired by the syntax of Java's Swing/FX & Fluent/WinUI3 Style.
 

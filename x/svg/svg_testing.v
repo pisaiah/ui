@@ -15,7 +15,6 @@ module svg
 
 import iui as ui
 import regex
-import gx
 // import svgg
 import gg
 
@@ -31,7 +30,7 @@ pub mut:
 	oy              f32
 	sx              f32
 	sy              f32
-	color           ?gx.Color
+	color           ?gg.Color
 	accent_first    int
 	test            int
 	tik             int
@@ -46,7 +45,7 @@ pub:
 	width        int
 	height       int
 	accent_first int
-	color        ?gx.Color
+	color        ?gg.Color
 }
 
 pub fn Svg.new(c SvgConfig) &Svg {
@@ -64,7 +63,7 @@ pub fn Svg.new(c SvgConfig) &Svg {
 	return svg
 }
 
-pub fn (s Svg) color(g &ui.GraphicsContext, idx int) gx.Color {
+pub fn (s Svg) color(g &ui.GraphicsContext, idx int) gg.Color {
 	if idx < s.accent_first {
 		return g.theme.accent_fill
 	}
