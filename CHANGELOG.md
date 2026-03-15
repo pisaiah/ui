@@ -7,10 +7,20 @@ Planned TODO Features:
 - List (https://docs.oracle.com/javase/8/docs/api/javax/swing/JList.html)
 - GIF
 - Video Support (without requiring libmpv)
+- Multiple Window Support
+
+# 0.29
+- Current 
+
+# 0.28
+- Improve static .new configs
+- examples: add basic File explorer
 
 # 0.27
-- Current development stage.
-- *(version numbers drop extra 0)*
+- Window: add resize event
+- Button: add Border field
+- Component: Add State (Normal, Hover, Press)
+- Imagex: Add ResizedImage
 
 # 0.26
 - Themes: Move extra themes to sub-module
