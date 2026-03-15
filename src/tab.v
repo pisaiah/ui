@@ -24,16 +24,28 @@ pub:
 	compact  bool
 	stretch  bool
 	closable bool = true
+	children ?[]Component
+	titles   ?[]string
 }
 
 // Return new Tabbox
 pub fn Tabbox.new(c TabboxConfig) &Tabbox {
-	return &Tabbox{
+	mut tb := &Tabbox{
 		compact:  c.compact
 		stretch:  c.stretch
 		closable: c.closable
 		text:     ''
 	}
+
+	if c.children != none && c.titles != none {
+		for i, child in c.children {
+			title := c.titles[i] or { 'Tab ${i}' }
+			tb.add_child(title, child)
+		}
+
+		// tb.add_child()
+	}
+	return tb
 }
 
 // TODO: Make this better

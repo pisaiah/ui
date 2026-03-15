@@ -90,7 +90,7 @@ fn main() {
 
 	// Panel with BorderLayout
 	// children go: center, north, south, east, west, unless other specified.
-	mut pp := ui.Panel.new(
+	overview_panel := ui.Panel.new(
 		layout:   ui.BorderLayout.new()
 		children: [
 			pane,
@@ -100,25 +100,28 @@ fn main() {
 	)
 
 	// Create our Tabbox
-	mut tb := ui.Tabbox.new(
+	tab_box := ui.Tabbox.new(
 		closable: false
+		children: [
+			overview_panel,
+			app.make_button_tab(),
+			app.make_frame_tab(),
+			app.make_slider_tab(),
+			app.make_selector_tab(),
+			app.make_svg_tab(),
+		]
+		titles:   [
+			'Overview',
+			'Buttons',
+			'Frames',
+			'Slider',
+			'Selector',
+			'SVG',
+		]
 	)
 
-	button_tab := app.make_button_tab()
-	frame_tab := app.make_frame_tab()
-	slider_tab := app.make_slider_tab()
-	selector_tab := app.make_selector_tab()
-	svg_tab := app.make_svg_tab()
-
-	tb.add_child('Overview', pp)
-	tb.add_child('Buttons', button_tab)
-	tb.add_child('Frames', frame_tab)
-	tb.add_child('Slider', slider_tab)
-	tb.add_child('Selector', selector_tab)
-	tb.add_child('SVG', svg_tab)
-
 	// Add our Tabbox as our root Component
-	window.add_child(tb)
+	window.add_child(tab_box)
 
 	// Add Extra Themes
 	window.add_theme(themes.theme_dark_rgb())
@@ -340,24 +343,37 @@ fn (mut app App) make_button_section() {
 }
 
 fn (mut app App) make_tab_section() {
-	mut tb := ui.Tabbox.new(
-		stretch: true
-	)
-	tb.set_bounds(2, 2, 155, 140)
-
 	mut tbtn := ui.Button.new(
 		text: 'In Tab A'
 		pack: true
 	)
-	tbtn.set_pos(10, 10)
-	tb.add_child('Tab A', tbtn)
 
 	mut tbtn1 := ui.Label.new(
 		text: 'Now in Tab B'
 		pack: true
 	)
-	tbtn1.set_pos(10, 10)
-	tb.add_child('Tab B', tbtn1)
+
+	mut tb := ui.Tabbox.new(
+		stretch:  true
+		children: [
+			ui.Panel.new(
+				layout:   ui.BorderLayout.new()
+				children: [
+					tbtn,
+				]
+			),
+			ui.Panel.new(
+				children: [
+					tbtn1,
+				]
+			),
+		]
+		titles:   [
+			'Tab A',
+			'Tab B',
+		]
+	)
+	tb.set_bounds(2, 2, 155, 140)
 
 	title_box := ui.Titlebox.new(
 		text:     'Tabbox'
