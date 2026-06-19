@@ -183,8 +183,8 @@ fn (mut p FilePanel) draw_update_size(e &ui.DrawEvent) {
 	p.width = p.parent.width
 	p.height = 0
 
-	e.ctx.draw_corner_rect(p.x, p.parent.y, p.width, p.parent.height, e.ctx.theme.textbox_background,
-		e.ctx.theme.textbox_background)
+	e.ctx.draw_corner_rect(p.x, p.parent.y, p.width, p.parent.height,
+		e.ctx.theme.textbox_background, e.ctx.theme.textbox_background)
 
 	if p.children.len < 10 {
 		for mut child in p.children {

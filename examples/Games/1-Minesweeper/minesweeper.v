@@ -237,8 +237,8 @@ fn (mut app App) button_draw_fn(mut e ui.DrawEvent) {
 	sizh := e.ctx.line_height
 
 	// Draw Colored Number
-	e.ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh,
-		btn.text, e.ctx.font, gx.TextCfg{
+	e.ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, btn.text,
+		e.ctx.font, gx.TextCfg{
 		size:  e.ctx.win.font_size * 2
 		color: text_colors[btn.text.int() - 1]
 		bold:  true

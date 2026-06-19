@@ -562,8 +562,8 @@ fn (mut app App) game_tick(g &ui.GraphicsContext) {
 	}
 
 	for mut sq in app.squirrel_objs {
-		sq.rect = Rect{sq.x - app.camerax, sq.y - app.cameray - get_bounce_amount(sq.bounce,
-			sq.bouncerate, sq.bounceheight), sq.width, sq.height}
+		sq.rect = Rect{sq.x - app.camerax, sq.y - app.cameray -
+			get_bounce_amount(sq.bounce, sq.bouncerate, sq.bounceheight), sq.width, sq.height}
 
 		draw_image(g, app.imgs[0], sq.rect.x, sq.rect.y, sq.rect.width, sq.rect.height)
 	}
@@ -575,11 +575,11 @@ fn (mut app App) game_tick(g &ui.GraphicsContext) {
 	flash_on := flash_is_on() // math.round(time.time(), 1) * 10 % 2 == 1
 
 	if !app.game_over_mode && !(app.invulnerable_mode && flash_on) {
-		app.player_obj.rect = Rect{app.player_obj.x - app.camerax, app.player_obj.y - app.cameray - get_bounce_amount(app.player_obj.bounce,
-			bouncerate * 16, bounceheight), app.player_obj.size, app.player_obj.size}
+		app.player_obj.rect = Rect{app.player_obj.x - app.camerax, app.player_obj.y - app.cameray -
+			get_bounce_amount(app.player_obj.bounce, bouncerate * 16, bounceheight), app.player_obj.size, app.player_obj.size}
 
-		draw_image(g, app.imgs[0], app.player_obj.rect.x, app.player_obj.rect.y, app.player_obj.rect.width,
-			app.player_obj.rect.height)
+		draw_image(g, app.imgs[0], app.player_obj.rect.x, app.player_obj.rect.y,
+			app.player_obj.rect.width, app.player_obj.rect.height)
 	}
 
 	draw_health_meter(g, app.player_obj.health)
@@ -648,8 +648,7 @@ fn (mut app App) game_tick(g &ui.GraphicsContext) {
 		win_surf := 'You have achieved OMEGA SQUIRREL!'
 		win_surf2 := '(Press "r" to restart.)'
 		// Placeholder for drawing win text
-		g.draw_text_ofset(0, 0, winwidth, winheight, 'You have achieved OMEGA SQUIRREL!',
-			cfg)
+		g.draw_text_ofset(0, 0, winwidth, winheight, 'You have achieved OMEGA SQUIRREL!', cfg)
 		// draw_text(win_surf, win_rect)
 		// draw_text(win_surf2, win_rect2)
 	}

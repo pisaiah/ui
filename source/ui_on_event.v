@@ -251,6 +251,7 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 		}
 		else {}
 	}
+
 	for mut a in app.components {
 		if mut a is Modal {
 			for mut child in a.children {

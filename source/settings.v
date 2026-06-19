@@ -69,8 +69,10 @@ pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 		}
 	}
 
-	ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 4, ctx.theme.button_bg_normal)
-	ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 4, ctx.theme.textbox_border)
+	ctx.gg.draw_rounded_rect_filled(this.x, this.y, this.width, this.height, 4,
+		ctx.theme.button_bg_normal)
+	ctx.gg.draw_rounded_rect_empty(this.x, this.y, this.width, this.height, 4,
+		ctx.theme.textbox_border)
 
 	mut y := this.y + this.padding
 	mut x := this.x + this.draw_uicon(ctx, y) + this.padding

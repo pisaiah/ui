@@ -88,8 +88,7 @@ fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut t
 	}
 
 	if y >= tree.y {
-		ctx.draw_text_ofset(xoff + this.height, y, 0, this.height / 2, os.base(this.text),
-			cfg)
+		ctx.draw_text_ofset(xoff + this.height, y, 0, this.height / 2, os.base(this.text), cfg)
 
 		this.draw_icon(ctx, xoff, y)
 	}
@@ -173,8 +172,12 @@ pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 		if mut node is TreeNode {
 			wid := this.width - x - 15
 
-			mut ptr := &node
-			ptr.set_bounds(x, y + node_height, wid, node_height)
+			// mut ptr := &node
+			// ptr.set_bounds(x, y + node_height, wid, node_height)
+			node.x = x
+			node.y = y + node_height
+			node.width = wid
+			node.height = node_height
 
 			node.draw(ctx)
 			change := node.draw_content(ctx, x, node.y, mut this)

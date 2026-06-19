@@ -195,8 +195,10 @@ fn (s &Slider) draw_hor(g &GraphicsContext, wid f32, thumb_color gg.Color) {
 	}
 
 	y := s.y + (s.height / 2) - (s.thumb_wid / 2)
-	g.gg.draw_rounded_rect_filled(s.x + wid, y, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
-	g.gg.draw_rounded_rect_empty(s.x + wid, y, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(s.x + wid, y, s.thumb_wid, hei, slider_radius,
+		g.theme.textbox_border)
+	g.gg.draw_rounded_rect_empty(s.x + wid, y, s.thumb_wid, hei, slider_radius,
+		g.theme.button_border_normal)
 	g.gg.draw_rounded_rect_filled(s.x + wid + cut, y + cut, s.thumb_wid - cut * 2, hei - cut * 2,
 		slider_radius, color)
 }
@@ -225,14 +227,17 @@ fn (s &Slider) draw_vert(g &GraphicsContext, wid f32, thumb_color gg.Color) {
 
 	x := s.x + (s.width / 2) - (s.thumb_wid / 2)
 
-	g.gg.draw_rounded_rect_filled(x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.textbox_border)
-	g.gg.draw_rounded_rect_empty(x, s.y + wid, s.thumb_wid, hei, slider_radius, g.theme.button_border_normal)
+	g.gg.draw_rounded_rect_filled(x, s.y + wid, s.thumb_wid, hei, slider_radius,
+		g.theme.textbox_border)
+	g.gg.draw_rounded_rect_empty(x, s.y + wid, s.thumb_wid, hei, slider_radius,
+		g.theme.button_border_normal)
 	g.gg.draw_rounded_rect_filled(x + cut, s.y + wid + cut, s.thumb_wid - cut * 2, hei - cut * 2,
 		slider_radius, color)
 }
 
 fn (s &Slider) draw_vert_old(g &GraphicsContext, wid f32, color gg.Color) {
-	g.draw_bordered_rect(s.x, s.y, s.width, s.height, g.theme.scroll_track_color, g.theme.button_border_normal)
+	g.draw_bordered_rect(s.x, s.y, s.width, s.height, g.theme.scroll_track_color,
+		g.theme.button_border_normal)
 	g.gg.draw_rounded_rect_filled(s.x, s.y + wid, s.width, s.thumb_wid, 8, color)
 	g.gg.draw_rect_empty(s.x, s.y, s.width, s.height, g.theme.button_border_normal)
 }

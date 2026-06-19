@@ -32,14 +32,14 @@ fn (bar &Menubar) get_items_width() int {
 }
 
 // Function for Win32 Immersive Title bar
-@[export: 'iui_check_for_menuitem']
-fn (mut w Window) check_for_menuitem(x int, y int) bool {
+@[export: 'myiui_check_for_menuitem']
+fn (mut w Window) check_for_menuitem(x int, y int) int {
 	if isnil(w.bar) {
-		return false
+		return 0
 	}
 
 	if y < 0 {
-		return false
+		return 0
 	}
 
 	// TODO: process sokol event here
@@ -48,18 +48,18 @@ fn (mut w Window) check_for_menuitem(x int, y int) bool {
 
 	for child in w.bar.children {
 		if is_in(child, x, y) {
-			return true
+			return 1
 		}
 	}
 
 	if w.custom_controls != none {
 		if is_in(w.custom_controls.p, x, y) {
 			w.custom_controls.p.is_mouse_down = true
-			return true
+			return 1
 		}
 	}
 
-	return false
+	return 0
 }
 
 pub fn (mut this Menubar) set_animate(val bool) {

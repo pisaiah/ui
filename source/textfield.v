@@ -94,10 +94,8 @@ fn (mut txf TextField) draw_background(g &GraphicsContext) {
 	b_h := if click || txf.is_selected { 2 } else { 1 }
 
 	g.gg.draw_rounded_rect_filled(txf.x, txf.y, txf.width, txf.height, 2, g.theme.textbox_border)
-	g.gg.draw_rounded_rect_filled(txf.x + 1, txf.y + 1, txf.width - 2, txf.height, 4,
-		accent)
-	g.gg.draw_rounded_rect_filled(txf.x + 1, txf.y + 1, txf.width - 2, txf.height - b_h,
-		4, bg)
+	g.gg.draw_rounded_rect_filled(txf.x + 1, txf.y + 1, txf.width - 2, txf.height, 4, accent)
+	g.gg.draw_rounded_rect_filled(txf.x + 1, txf.y + 1, txf.width - 2, txf.height - b_h, 4, bg)
 
 	// Detect Click
 	if txf.is_mouse_rele {
@@ -171,7 +169,7 @@ fn (mut this TextField) draw(g &GraphicsContext) {
 	}
 
 	if !isnil(this.bind_val) {
-		if this.text != this.bind_val {
+		if this.text != *this.bind_val {
 			this.text = this.bind_val
 		}
 	}

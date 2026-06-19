@@ -4,4 +4,5 @@ Module {
 	version: '0.29'
 	license: 'MIT'
 	dependencies: []
+	subdirs: ['source']
 }

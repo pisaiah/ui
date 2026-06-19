@@ -206,6 +206,5 @@ fn (mut this Square) draw(ctx &ui.GraphicsContext) {
 		// dump(dx)
 	}
 
-	ctx.gg.draw_rect_filled(this.x - dx, this.y - dy, this.width, this.height, gx.rgb(0,
-		100, 0))
+	ctx.gg.draw_rect_filled(this.x - dx, this.y - dy, this.width, this.height, gx.rgb(0, 100, 0))
 }

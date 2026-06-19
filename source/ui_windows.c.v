@@ -4,9 +4,9 @@ import gg
 import sokol.sgl
 import sokol.gfx
 
-#flag -I @VMODROOT/src/extra/
-#include "@VMODROOT/src/extra/winstuff.c"
-#include "@VMODROOT/src/extra/sokol_patch.c"
+#flag -I @VMODROOT/extra/
+#include "@VMODROOT/extra/winstuff.c"
+#include "@VMODROOT/extra/sokol_patch.c"
 #flag -lntdll
 #flag -lwinmm
 

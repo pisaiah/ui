@@ -263,8 +263,8 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	}
 
 	size := ctx.text_width(text) / 2
-	ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, text,
-		font, cfgg)
+	ctx.draw_text((btn.x + (btn.width / 2)) - size, btn.y + (btn.height / 2) - sizh, text, font,
+		cfgg)
 	ctx.reset_text_font()
 }
 
@@ -291,8 +291,8 @@ fn (mut btn Button) draw_children_and_text(sizh int, text string, font string, c
 		xo = (item.width / 2) + 2
 	}
 	size := ctx.text_width(text) / 2
-	ctx.draw_text((btn.x + (btn.width / 2)) - size + xo, btn.y + (btn.height / 2) - sizh,
-		text, font, cfg)
+	ctx.draw_text((btn.x + (btn.width / 2)) - size + xo, btn.y + (btn.height / 2) - sizh, text,
+		font, cfg)
 	ctx.reset_text_font()
 }
 
@@ -346,7 +346,8 @@ fn (mut this Button) draw_background(ctx &GraphicsContext) {
 			bord.color = border
 			bord.radius = radius
 		}
-		this.border.draw(ctx)
+		// this.border.draw(ctx)
+		bord.draw(ctx)
 	}
 
 	if area_filled {

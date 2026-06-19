@@ -109,16 +109,14 @@ fn (cb &Checkbox) draw_background(g &GraphicsContext) {
 	bg := cb.get_background(is_hover, g)
 	border := cb.get_border(is_hover, g)
 
-	g.draw_rounded_rect(cb.x, cb.y, cb.height, cb.height, control_corner_radius, border,
-		bg)
+	g.draw_rounded_rect(cb.x, cb.y, cb.height, cb.height, control_corner_radius, border, bg)
 }
 
 // Draw the text of Checkbox
 fn (cb &Checkbox) draw_text(g &GraphicsContext) {
 	sizh := g.gg.text_height(cb.text) / 2
 
-	g.draw_text(cb.x + cb.height + 4, cb.y + (cb.height / 2) - sizh, cb.text, g.font,
-		gg.TextCfg{
+	g.draw_text(cb.x + cb.height + 4, cb.y + (cb.height / 2) - sizh, cb.text, g.font, gg.TextCfg{
 		size:  g.font_size
 		color: g.theme.text_color
 	})

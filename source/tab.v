@@ -106,10 +106,11 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 		tab_color := tb.get_tab_color(ctx, is_active)
 		xx := tb.x + mx
 		r := 4
-		ctx.draw_rounded_rect_filled_top(xx, tb.y + my, tsize, theig, r, ctx.theme.button_border_normal)
-		ctx.draw_rounded_rect_filled_top(xx + 1, tb.y + my, tsize - 2, theig - 1, r, ctx.theme.accent_fill)
-		ctx.draw_rounded_rect_filled_top(xx + 1, tb.y + my + 2, tsize - 2, theig - 1,
-			r, tab_color)
+		ctx.draw_rounded_rect_filled_top(xx, tb.y + my, tsize, theig, r,
+			ctx.theme.button_border_normal)
+		ctx.draw_rounded_rect_filled_top(xx + 1, tb.y + my, tsize - 2, theig - 1, r,
+			ctx.theme.accent_fill)
+		ctx.draw_rounded_rect_filled_top(xx + 1, tb.y + my + 2, tsize - 2, theig - 1, r, tab_color)
 	}
 
 	// Draw Button Text
@@ -163,8 +164,8 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 	if hover {
 		offset := 3
 		widhei := x_size + (offset * 2)
-		ctx.draw_rounded_rect(c_x - offset, c_y - offset, widhei, widhei, 8, ctx.theme.accent_fill_third,
-			ctx.theme.accent_fill_second)
+		ctx.draw_rounded_rect(c_x - offset, c_y - offset, widhei, widhei, 8,
+			ctx.theme.accent_fill_third, ctx.theme.accent_fill_second)
 	}
 
 	color := if hover { ctx.theme.accent_text } else { ctx.theme.text_color }
@@ -176,7 +177,8 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 // Draw this component
 pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	t_heig := tb.get_active_tab_height(ctx)
-	ctx.gg.draw_rect_empty(tb.x, tb.y + t_heig, tb.width, tb.height - (t_heig - 1), ctx.theme.button_border_normal)
+	ctx.gg.draw_rect_empty(tb.x, tb.y + t_heig, tb.width, tb.height - (t_heig - 1),
+		ctx.theme.button_border_normal)
 	mut mx := 0
 	mut my := 0
 

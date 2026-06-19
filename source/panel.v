@@ -576,8 +576,8 @@ pub fn (mut this Panel) add_child(com &Component, flag ?Flag) {
 	if flag == none {
 		this.children << com
 		return
-	}
-	if flag != none {
+	} else {
+		// if flag != none {
 		this.add_child_with_flag(com, flag.value)
 	}
 }

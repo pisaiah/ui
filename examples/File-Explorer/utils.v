@@ -197,7 +197,8 @@ fn load_thumbnail_id(mut ctx gg.Context, path string, thumb_w int, thumb_h int) 
 
 	mut resized := malloc(thumb_w * thumb_h * 4)
 	C.stbir_resize_uint8_linear(data, w, h, 0, resized, thumb_w, thumb_h, 0, 4)
-	stream_img := ctx.new_streaming_image(thumb_w, thumb_h, 4, gg.StreamingImageConfig{}) // or { panic(err) }
+	stream_img :=
+		ctx.new_streaming_image(thumb_w, thumb_h, 4, gg.StreamingImageConfig{}) // or { panic(err) }
 	ctx.update_pixel_data(stream_img, resized)
 
 	atlas.add_tile(resized)
@@ -274,7 +275,8 @@ fn (mut this MyImage) draw(ctx &ui.GraphicsContext) {
 fn (mut this MyImage) myinit(ctx &ui.GraphicsContext) {
 	mut win := ctx.win
 	if os.exists(this.text) {
-		mut img := load_thumbnail_id(mut win.gg, this.text, img_size, img_size) // or { println(err) return }
+		mut img :=
+			load_thumbnail_id(mut win.gg, this.text, img_size, img_size) // or { println(err) return }
 		this.img_id = img
 		this.width = img_size
 		this.height = img_size

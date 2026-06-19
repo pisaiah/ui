@@ -236,7 +236,8 @@ pub fn SelectItem.new(c MenuItemConfig) &SelectItem {
 
 fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 	if is_in(si, ctx.win.mouse_x, ctx.win.mouse_y) {
-		ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2, ctx.theme.button_bg_hover)
+		ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2,
+			ctx.theme.button_bg_hover)
 	}
 
 	if si.is_mouse_down || si.is_mouse_rele {
@@ -254,7 +255,8 @@ fn (mut si SelectItem) draw(ctx &GraphicsContext) {
 		box := si.box
 
 		if box.text == si.text {
-			ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2, ctx.theme.button_bg_hover)
+			ctx.gg.draw_rect_filled(si.x + 1, si.y + 1, si.width - 2, si.height - 2,
+				ctx.theme.button_bg_hover)
 			ctx.gg.draw_rect_filled(si.x + 3, si.y + (si.height / 4), 3, (si.height / 2),
 				ctx.theme.accent_fill)
 		}

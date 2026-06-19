@@ -118,7 +118,7 @@ pub fn (mut sw Switch) draw(g &GraphicsContext) {
 	}
 
 	if !isnil(sw.bind_val) {
-		if sw.is_selected != sw.bind_val {
+		if sw.is_selected != *sw.bind_val {
 			sw.is_selected = sw.bind_val
 		}
 	}
@@ -170,8 +170,7 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 	sizh := ctx.line_height / 2 // ctx.gg.text_height(this.text) / 2
 	left := this.height * 2
 
-	ctx.draw_text(this.x + left + 4, this.y + (this.height / 2) - sizh, this.text, ctx.font,
-		gg.TextCfg{
+	ctx.draw_text(this.x + left + 4, this.y + (this.height / 2) - sizh, this.text, ctx.font, gg.TextCfg{
 		size:  ctx.font_size
 		color: ctx.theme.text_color
 	})

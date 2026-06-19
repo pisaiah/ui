@@ -48,7 +48,8 @@ pub fn InfoBar.new(c InfoBarConfig) &InfoBar {
 
 // Draw Background & Border
 fn (bar &InfoBar) draw_background(g &GraphicsContext) {
-	g.draw_corner_rect(bar.x, bar.y, bar.width, bar.height, g.theme.textbox_border, g.theme.textbox_background)
+	g.draw_corner_rect(bar.x, bar.y, bar.width, bar.height, g.theme.textbox_border,
+		g.theme.textbox_background)
 }
 
 fn (mut bar InfoBar) draw(g &GraphicsContext) {
@@ -102,8 +103,7 @@ fn (mut bar InfoBar) draw(g &GraphicsContext) {
 
 	// Draw Button Text
 	for spl in lines {
-		g.draw_text(bar.x + xp, bar.y + my, spl.replace('\t', '  '.repeat(8)), g.font,
-			cfg_norm)
+		g.draw_text(bar.x + xp, bar.y + my, spl.replace('\t', '  '.repeat(8)), g.font, cfg_norm)
 		my += g.line_height
 	}
 
@@ -115,7 +115,8 @@ fn (mut bar InfoBar) draw(g &GraphicsContext) {
 			child.set_parent(bar)
 		}
 
-		child.draw_with_offset(g, bar.x + bar.width - child.width - padd, bar.y + (bar.height / 2) - (child.height / 2))
+		child.draw_with_offset(g, bar.x + bar.width - child.width - padd, bar.y + (bar.height / 2) -
+			(child.height / 2))
 
 		if child.height == 0 {
 			child.height = bar.height

@@ -201,7 +201,8 @@ fn (mut this ScrollView) draw_scrollbar(ctx &GraphicsContext, cl int, spl_len in
 		return
 	}
 
-	ctx.draw_rounded_rect(x, y, wid, height, this.radius, ctx.theme.textbox_border, ctx.theme.scroll_track_color)
+	ctx.draw_rounded_rect(x, y, wid, height, this.radius, ctx.theme.textbox_border,
+		ctx.theme.scroll_track_color)
 	ctx.theme.bar_fill_fn(x + 2, y + 17 + sth, wid - 4, enh - 3, false, ctx)
 
 	triangle_color := ctx.theme.scroll_bar_color
@@ -268,7 +269,8 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len i
 
 	// Draw Scroll
 	if requires_scrollbar {
-		ctx.win.gg.draw_rounded_rect_filled(x, y, width, wid, this.radius, ctx.theme.scroll_track_color)
+		ctx.win.gg.draw_rounded_rect_filled(x, y, width, wid, this.radius,
+			ctx.theme.scroll_track_color)
 		ctx.theme.bar_fill_fn(int(x + 17 + sth), y + 2, int(enh - 3), wid - 3, true, ctx)
 	} else {
 		return
@@ -276,10 +278,12 @@ fn (mut this ScrollView) draw_scrollbar2(ctx &GraphicsContext, cl int, spl_len i
 
 	ty := y + (wid / 2) - 5
 
-	ctx.gg.draw_triangle_filled(x + 5, ty + 5, x + 10, ty + 10, x + 10, ty, ctx.theme.scroll_bar_color)
+	ctx.gg.draw_triangle_filled(x + 5, ty + 5, x + 10, ty + 10, x + 10, ty,
+		ctx.theme.scroll_bar_color)
 
 	tx := x + width - 10
-	ctx.gg.draw_triangle_filled(tx + 5, ty + 5, tx + 0, ty + 10, tx + 0, ty - 1, ctx.theme.scroll_bar_color)
+	ctx.gg.draw_triangle_filled(tx + 5, ty + 5, tx + 0, ty + 10, tx + 0, ty - 1,
+		ctx.theme.scroll_bar_color)
 
 	// Scroll Buttons
 	if this.is_mouse_rele {

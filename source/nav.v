@@ -212,8 +212,7 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	ctx.gg.set_text_cfg(cfgg)
 	text := item.icon
 	size := item.offset + (40 / 2) - ctx.text_width(text) / 2
-	ctx.draw_text(item.x + size, item.y + (item.height / 2) - ctx.line_height / 2, text,
-		font, cfgg)
+	ctx.draw_text(item.x + size, item.y + (item.height / 2) - ctx.line_height / 2, text, font, cfgg)
 	ctx.reset_text_font()
 
 	if item.children.len > 0 && !pp.collapsed {

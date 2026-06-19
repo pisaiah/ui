@@ -274,10 +274,10 @@ pub fn draw_scrollbar(mut win ui.Window, mut com ui.VBox, cl int, spl_len int) {
 		wid := 16
 		wido := wid + 1
 
-		win.draw_bordered_rect(x + com.width - wido, y + 1, wid, com.height - 2, 2, win.theme.scroll_track_color,
-			win.theme.button_bg_hover)
-		win.draw_bordered_rect(x + com.width - wido, y + sth + 1, wid, enh - 2, 2, win.theme.scroll_bar_color,
-			win.theme.scroll_track_color)
+		win.draw_bordered_rect(x + com.width - wido, y + 1, wid, com.height - 2, 2,
+			win.theme.scroll_track_color, win.theme.button_bg_hover)
+		win.draw_bordered_rect(x + com.width - wido, y + sth + 1, wid, enh - 2, 2,
+			win.theme.scroll_bar_color, win.theme.scroll_track_color)
 	}
 }
 
