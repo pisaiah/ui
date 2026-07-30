@@ -15,6 +15,7 @@ pub mut:
 	collapsed         bool
 	animate           bool = true
 	container_pass_ev bool = true
+	max_child_w       int   
 }
 
 // TODO: check default WinUI3 value for collapsed.
@@ -23,6 +24,7 @@ pub struct NavPaneConfig {
 pub mut:
 	pack      bool
 	collapsed bool
+	children  ?[]Component
 }
 
 pub fn (mut com NavPane) add_child(c &Component) {
@@ -73,6 +75,12 @@ pub fn NavPane.new(c NavPaneConfig) &NavPane {
 	})
 
 	np.add_child(collapse_btn)
+	
+	if c.children != none {
+		for child in c.children {
+			np.add_child(child)
+		}
+	}
 
 	return np
 }
@@ -245,6 +253,13 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 		size:  ctx.win.font_size
 		color: ctx.theme.text_color
 	})
+	/*
+	mcw := item.x + tx + ctx.text_width(item.text) + tx
+	if pp.max_child_w < mcw {
+		pp.max_child_w = mcw
+		pp.width = mcw
+	}
+	*/
 }
 
 pub fn (mut np NavPane) set_collapsed(val bool) {
