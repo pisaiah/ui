@@ -71,7 +71,7 @@ pub fn (s Svg) color(g &ui.GraphicsContext, idx int) gg.Color {
 	if s.color != none {
 		return s.color
 	}
-	return g.theme.text_color
+	return g.foreground_color()
 }
 
 // Convert SVG x-pos into screen pos
@@ -120,9 +120,11 @@ fn (mut this Svg) draw(g &ui.GraphicsContext) {
 		this.draw_path_gg(g, i, cmds)
 	}
 
+	/*
 	if !g.win.debug_draw {
 		return
 	}
+	*/
 
 	if this.test == 0 {
 		/*
@@ -211,19 +213,19 @@ fn (mut s Svg) draw_path_gg(g &ui.GraphicsContext, idx int, commands []Command) 
 				last_y = command.args[1]
 			}
 			'L', 'l' {
-				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(command.args[0]), s.y(command.args[1]),
-					s.color(g, idx))
+				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(command.args[0]),
+					s.y(command.args[1]), s.color(g, idx))
 				last_x = command.args[0]
 				last_y = command.args[1]
 			}
 			'H', 'h' {
-				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(command.args[0]), s.y(last_y),
-					s.color(g, idx))
+				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(command.args[0]), s.y(last_y), s.color(g,
+					idx))
 				last_x = command.args[0]
 			}
 			'V', 'v' {
-				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(last_x), s.y(command.args[0]),
-					s.color(g, idx))
+				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(last_x), s.y(command.args[0]), s.color(g,
+					idx))
 				last_y = command.args[0]
 			}
 			'C', 'c' {
@@ -243,8 +245,8 @@ fn (mut s Svg) draw_path_gg(g &ui.GraphicsContext, idx int, commands []Command) 
 			'Z', 'z' {
 				// Close the path by drawing back to the initial move point
 				// TODO: seems something is off here (see examples\demo)
-				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(commands[0].args[0]), s.y(commands[0].args[1]),
-					s.color(g, idx))
+				g.gg.draw_line(s.x(last_x), s.y(last_y), s.x(commands[0].args[0]),
+					s.y(commands[0].args[1]), s.color(g, idx))
 			}
 			else {
 				println('Unsupported command: ${command.cmd}')

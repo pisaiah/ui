@@ -49,7 +49,7 @@ pub fn (mut bar Progressbar) draw(g &GraphicsContext) {
 	g.gg.draw_rounded_rect_filled(bar.x + 1, bar.y + 1, wid - 2, bar.height - 2, 4,
 		g.theme.accent_fill)
 
-	c := if wid > bar.width / 2 { g.theme.accent_text } else { g.theme.text_color }
+	c := if wid > bar.width / 2 { g.theme.accent_text } else { g.foreground_color() }
 
 	bar.draw_text(g, val, c)
 }

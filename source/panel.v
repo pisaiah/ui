@@ -479,6 +479,7 @@ pub mut:
 	rh                int
 	bg                gg.Color = no_bg
 	container_pass_ev bool     = true
+	text              string
 }
 
 @[params]
@@ -554,7 +555,7 @@ fn (mut this Panel) draw(ctx &GraphicsContext) {
 		ctx.gg.draw_rect_filled(this.x, this.y, this.width, this.height, this.bg)
 	}
 
-	if ctx.win.debug_draw {
+	$if debugdraw ? {
 		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.green)
 	}
 	this.layout.draw_kids(mut this, ctx)

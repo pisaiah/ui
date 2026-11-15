@@ -56,12 +56,12 @@ fn (mut bar InfoBar) draw(g &GraphicsContext) {
 	cfg_bold := gg.TextCfg{
 		size:  g.font_size
 		bold:  true
-		color: g.theme.text_color
+		color: g.foreground_color()
 	}
 	cfg_norm := gg.TextCfg{
 		size:  g.font_size
 		bold:  false
-		color: g.theme.text_color
+		color: g.foreground_color()
 	}
 
 	g.set_cfg(cfg_bold)

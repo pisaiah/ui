@@ -639,7 +639,7 @@ fn (mut app App) game_tick(g &ui.GraphicsContext) {
 		// dump(g.theme)
 
 		cfg := gx.TextCfg{
-			color:          gx.red // g.theme.text_color
+			color:          gx.red // g.foreground_color()
 			size:           g.font_size
 			vertical_align: .middle
 			family:         g.font

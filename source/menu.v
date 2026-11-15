@@ -31,6 +31,7 @@ fn (bar &Menubar) get_items_width() int {
 	return x
 }
 
+/*
 // Function for Win32 Immersive Title bar
 @[export: 'myiui_check_for_menuitem']
 fn (mut w Window) check_for_menuitem(x int, y int) int {
@@ -61,6 +62,7 @@ fn (mut w Window) check_for_menuitem(x int, y int) int {
 
 	return 0
 }
+*/
 
 pub fn (mut this Menubar) set_animate(val bool) {
 	this.animate = val
@@ -129,7 +131,8 @@ fn (mut this MenuItem) draw(ctx &GraphicsContext) {
 
 		if this.text == 'About iUI' {
 			about := open_about_modal(ctx.win)
-			ctx.win.add_child(about)
+			mut win := ctx.win
+			win.add_child(about)
 			this.is_mouse_rele = false
 			this.open = false
 
@@ -172,12 +175,12 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 		if os.exists(icon_font) {
 			ctx.draw_text(this.x + 7, y, this.uicon, icon_font, gg.TextCfg{
 				size:  ctx.win.font_size
-				color: ctx.theme.text_color
+				color: ctx.foreground_color()
 			})
 			wid := ctx.text_width(this.uicon) + 14
 			ctx.draw_text(this.x + wid, y, this.text, ctx.font, gg.TextCfg{
 				size:  ctx.win.font_size
-				color: ctx.theme.text_color
+				color: ctx.foreground_color()
 			})
 			return
 		}
@@ -185,7 +188,7 @@ fn (mut this MenuItem) draw_text(ctx &GraphicsContext, y int) {
 
 	ctx.draw_text(this.x + 7, y, this.text, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 }
 
@@ -298,7 +301,7 @@ fn (mut this MenuItem) check_mouse(win &Window, mx int, my int) bool {
 	}
 
 	for mut item in this.children {
-		if is_in(item, mx, my) {
+		if item.is_in(mx, my) {
 			return true
 		} else {
 			if mut item is MenuItem {
@@ -351,7 +354,7 @@ fn (mut win Window) set_bar_tick(val int) {
 	}
 }
 
-@[parms]
+@[params]
 pub struct MenuItemConfig {
 pub:
 	text           string

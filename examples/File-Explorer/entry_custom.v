@@ -86,7 +86,7 @@ fn (mut e TextEntry) draw(g &ui.GraphicsContext) {
 
 	cfg := gg.TextCfg{
 		size:  g.win.font_size
-		color: g.theme.text_color
+		color: g.foreground_color()
 	}
 
 	if e.view == .icons {

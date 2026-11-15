@@ -89,10 +89,12 @@ pub fn (mut this Page) draw(ctx &GraphicsContext) {
 
 	// this.children.sort(a.z_index < b.z_index)
 	for mut com in this.children {
-		if !isnil(com.draw_event_fn) {
+		/*
+		if !isnil(com.draw _event_fn) {
 			mut win := ctx.win
-			com.draw_event_fn(mut win, com)
+			com.draw _event_fn(mut win, com)
 		}
+		*/
 		com.draw_with_offset(ctx, 0, y_off + 2)
 	}
 }

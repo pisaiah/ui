@@ -18,3 +18,6 @@ examples/explore
 
 examples/VideoPlayer/*.dll
 examples/gui-builder/
+mytest.c
+mytestmake.bat
+*.exe*

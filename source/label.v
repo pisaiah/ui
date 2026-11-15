@@ -111,7 +111,7 @@ pub fn (mut lbl Label) pack_do(ctx &GraphicsContext) {
 	ctx.set_cfg(gg.TextCfg{
 		size: lbl.font_size(ctx)
 		// ctx.win.font_size + lbl.size
-		color: ctx.win.theme.text_color
+		color: ctx.foreground_color()
 		bold:  lbl.bold
 	})
 
@@ -144,7 +144,7 @@ fn (this &Label) get_color(ctx &GraphicsContext) gg.Color {
 	if this.color.a != 0 {
 		return this.color
 	} else {
-		return ctx.theme.text_color
+		return ctx.foreground_color()
 	}
 }
 
@@ -189,24 +189,14 @@ fn (this &Label) draw_label(ctx &GraphicsContext) {
 	}
 
 	reset_text_config(ctx)
-	this.debug_draw(ctx)
 }
 
 fn reset_text_config(ctx &GraphicsContext) {
 	ctx.set_cfg(gg.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		bold:  false
 	})
-}
-
-fn (this &Label) debug_draw(ctx &GraphicsContext) {
-	if !ctx.win.debug_draw {
-		return
-	}
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.blue)
-	ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gg.blue)
-	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gg.blue)
 }
 
 @[deprecated: 'Use Label.set_size_em, Label.set_bold']

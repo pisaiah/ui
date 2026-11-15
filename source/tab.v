@@ -117,7 +117,7 @@ fn (mut tb Tabbox) draw_tab(ctx &GraphicsContext, key_ string, mx int, my int) i
 	tx := tb.x + mx + 8
 	ctx.draw_text(tx, tb.y + my + ty, key, ctx.font, gg.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 
 	if tb.closable {
@@ -168,7 +168,7 @@ pub fn (mut tb Tabbox) draw_close_btn(ctx &GraphicsContext, mx int, my int, tsiz
 			ctx.theme.accent_fill_third, ctx.theme.accent_fill_second)
 	}
 
-	color := if hover { ctx.theme.accent_text } else { ctx.theme.text_color }
+	color := if hover { ctx.theme.accent_text } else { ctx.foreground_color() }
 
 	ctx.gg.draw_line(c_x, c_y, c_x + x_size, c_y + x_size, color)
 	ctx.gg.draw_line(c_x, c_y + x_size, c_x + x_size, c_y, color)
@@ -220,10 +220,6 @@ pub fn (mut tb Tabbox) draw(ctx &GraphicsContext) {
 	val.sort(a.z_index < b.z_index)
 
 	for mut com in val {
-		if !isnil(com.draw_event_fn) {
-			mut win := ctx.win
-			com.draw_event_fn(mut win, com)
-		}
 		com.draw_with_offset(ctx, tb.x, tb.y + my)
 	}
 }

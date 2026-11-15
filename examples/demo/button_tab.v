@@ -52,7 +52,10 @@ fn (mut app App) make_button_tab() &ui.Panel {
 
 	// Create our outer Panel
 	mut cp := ui.Panel.new(layout: ui.BorderLayout.new())
-	cp.add_child(p, value: ui.borderlayout_center)
+
+	p_ptr := &ui.Component(p)
+
+	cp.add_child(p_ptr, value: ui.borderlayout_center)
 	cp.add_child(make_code_box('button_tab.v'), value: ui.borderlayout_east)
 	return cp
 }

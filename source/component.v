@@ -21,7 +21,6 @@ mut:
 	is_mouse_down bool
 	is_mouse_rele bool
 	parent        &Component_A
-	draw_event_fn fn (mut Window, &Component)
 	children      []Component
 	id            string
 	font          int
@@ -61,7 +60,6 @@ pub fn (border &AbstractBorder) get_component[T]() &T {
 fn (border &AbstractBorder) draw(ctx &GraphicsContext) {
 }
 
-// pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 pub fn (com &Component) str() string {
 	return com.type_name() // typeof(com)
 }
@@ -83,8 +81,7 @@ pub mut:
 	scroll_i      int
 	is_mouse_down bool
 	is_mouse_rele bool
-	draw_event_fn fn (mut Window, &Component) = blank_draw_event_fn
-	parent        &Component_A                = unsafe { nil }
+	parent        &Component_A = unsafe { nil }
 	children      []Component
 	id            string
 	font          int
@@ -139,6 +136,10 @@ pub fn (mut this Component_A) add_child(com &Component) {
 	this.children << com
 }
 
+pub fn (this &Component) get_parent[T]() T {
+	return T(this.parent)
+}
+
 pub fn (this &Component_A) get_parent[T]() T {
 	return T(this.parent)
 }
@@ -151,10 +152,6 @@ pub fn (mut com Component) set_parent(par voidptr) {
 
 pub fn (mut com Component_A) get_com() Component_A {
 	return com
-}
-
-fn blank_draw_event_fn(mut win Window, c &Component) {
-	// Stub
 }
 
 pub fn (mut com Component_A) draw(ctx &GraphicsContext) {
@@ -191,14 +188,16 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 
 	com.draw(ctx)
 	invoke_after_draw_event(com, ctx)
-	com.debug_draw(ctx)
+	$if debugdraw ? {
+		com.debug_draw(ctx)
+	}
 	com.x = com.x - off_x
 	com.y = com.y - off_y
 
 	if com.state == .click {
 		is_point_in := point_in_raw(mut com, ctx.win.mouse_x, ctx.win.mouse_y)
 		if is_point_in {
-			com.state == .hover
+			com.state = .hover
 		} else {
 			com.state = .normal
 		}
@@ -206,25 +205,28 @@ pub fn (mut com Component) draw_with_offset(ctx &GraphicsContext, off_x int, off
 }
 
 pub fn (com &Component) debug_draw(ctx &GraphicsContext) {
-	if !ctx.win.debug_draw {
+	if com.state == .normal {
 		return
 	}
-	txt := com.str().replace('iui.', '').trim_space() // '${com.is_mouse_down} ${com.is_mouse_rele}'
-	tw := ctx.text_width(txt)
-	tx := com.x + (com.width / 2) - (tw / 2)
-	ty := com.y + (com.height / 2) - (ctx.line_height / 2)
 
-	x2 := com.x + com.width
-	y2 := com.y + com.height
+	$if debugdraw ? {
+		txt := com.str().replace('iui.', '').trim_space()
+		tw := ctx.text_width(txt)
+		tx := com.x + (com.width / 2) - (tw / 2)
+		ty := com.y + (com.height / 2) - (ctx.line_height / 2)
 
-	ctx.gg.draw_line(com.x, com.y, x2, y2, gg.green)
-	ctx.gg.draw_line(x2, com.y, com.x, y2, gg.green)
+		x2 := com.x + com.width
+		y2 := com.y + com.height
 
-	ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gg.red)
+		ctx.gg.draw_line(com.x, com.y, x2, y2, gg.green)
+		ctx.gg.draw_line(x2, com.y, com.x, y2, gg.green)
 
-	ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gg.rgba(250, 0, 0, 150))
-	ctx.draw_text(tx, ty, txt, ctx.font, gg.TextCfg{})
-	ctx.draw_text(tx, ty + ctx.line_height, '${com.state}', ctx.font, gg.TextCfg{})
+		ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gg.red)
+
+		ctx.gg.draw_rect_filled(tx, ty, tw, ctx.line_height, gg.rgba(250, 0, 0, 150))
+		ctx.draw_text(tx, ty, txt, ctx.font, gg.TextCfg{})
+		ctx.draw_text(tx, ty + ctx.line_height, '${com.state}', ctx.font, gg.TextCfg{})
+	}
 }
 
 pub fn (mut com Component) set_x(x int) {
@@ -287,6 +289,10 @@ pub fn invoke_draw_event(com &Component, ctx &GraphicsContext) {
 }
 
 pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
+	$if debugdrawafter ? {
+		ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gg.red)
+	}
+
 	if isnil(com.events) {
 		return
 	}
@@ -301,9 +307,6 @@ pub fn invoke_after_draw_event(com &Component, ctx &GraphicsContext) {
 	}
 	for f in com.events.event_map['after_draw'] {
 		f(&ev)
-	}
-	if ctx.win.debug_draw {
-		ctx.gg.draw_rect_empty(com.x, com.y, com.width, com.height, gg.red)
 	}
 }
 
@@ -385,7 +388,11 @@ pub fn invoke_text_change(com &Component, ctx &GraphicsContext, n string) bool {
 
 pub interface Container {
 	container_pass_ev bool
-	children          []Component
+	// children          []Component
+}
+
+pub fn (c Container) get_pass_ev() bool {
+	return c.container_pass_ev
 }
 
 pub fn invoke_slider_change(com &Slider, ctx &GraphicsContext, value f32) {

@@ -3,9 +3,11 @@ module iui
 import gg
 
 // https://docs.oracle.com/javase/8/docs/api/javax/swing/JDesktopPane.html
-//[heap]
-pub struct DesktopPane {
+@[heap]
+pub struct DesktopPane implements Container {
 	Panel
+pub mut:
+	container_pass_ev bool = true
 }
 
 pub fn DesktopPane.new() &DesktopPane {
@@ -106,7 +108,7 @@ fn (mut this InternalFrame) draw(ctx &GraphicsContext) {
 
 	ctx.gg.draw_text(this.x + 6, ttop, this.text, gg.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 
 	ctx.gg.draw_rect_filled(this.x + bord_wid, this.y + top, wid_2, hei - top - bord_wid,
@@ -221,7 +223,8 @@ fn (mut this InternalFrame) init_controls(g &GraphicsContext) {
 
 fn btn_max_click(mut e MouseEvent) {
 	// Button -> Panel -> Frame -> DesktopPane
-	mut frame := &InternalFrame(e.target.parent.parent)
+	// mut frame := e.target.parent.get_parent[&InternalFrame]()
+	mut frame := e.target.get_parent[&Panel]().get_parent[&InternalFrame]()
 	mut desk := frame.parent
 
 	// TODO: improve this

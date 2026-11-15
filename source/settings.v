@@ -51,7 +51,7 @@ pub fn (this SettingsCard) draw_uicon(ctx &GraphicsContext, y int) int {
 	if os.exists(icon_font) {
 		ctx.draw_text(this.x + 12, y, txt, icon_font, gg.TextCfg{
 			size:  ctx.win.font_size * 2
-			color: ctx.theme.text_color
+			color: ctx.foreground_color()
 		})
 		wid := ctx.text_width(txt) + 10
 		return wid
@@ -80,7 +80,7 @@ pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 	// Draw Title
 	ctx.draw_text(x, y - 4, this.text, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size + 4
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		bold:  true
 	})
 	y += ctx.gg.text_height(this.text)
@@ -88,7 +88,7 @@ pub fn (mut this SettingsCard) draw(ctx &GraphicsContext) {
 	// Draw Desc
 	ctx.draw_text(x, y, this.desc, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		bold:  true
 	})
 

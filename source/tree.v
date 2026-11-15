@@ -69,7 +69,7 @@ fn (mut this TreeNode) draw_icon(ctx &GraphicsContext, x int, y int) {
 
 fn (mut this TreeNode) draw_content(ctx &GraphicsContext, xoff int, y int, mut tree Tree2) bool {
 	cfg := gg.TextCfg{
-		color:          ctx.theme.text_color
+		color:          ctx.foreground_color()
 		size:           ctx.font_size
 		vertical_align: .middle
 	}
@@ -142,7 +142,7 @@ pub fn (this &Tree2) get_node_height(ctx &GraphicsContext) int {
 
 pub fn (mut this Tree2) draw(ctx &GraphicsContext) {
 	cfg := gg.TextCfg{
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		size:  ctx.font_size
 	}
 

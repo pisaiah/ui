@@ -28,8 +28,15 @@ fn main() {
 		on_click: on_click_event
 	)
 
-	// Add Button to Window & Run
-	window.add_child(btn)
+	// Content Panel
+	mut panel := ui.Panel.new(
+		children: [
+			btn
+		]
+	)
+
+	// Add to Window & Run
+	window.add_child(panel)
 	window.gg.run()
 }
 

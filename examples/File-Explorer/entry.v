@@ -170,7 +170,7 @@ fn (mut e FileEntry) draw(g &ui.GraphicsContext) {
 
 	cfg := gg.TextCfg{
 		size:  g.font_size
-		color: g.theme.text_color
+		color: g.foreground_color()
 	}
 
 	if p.view == .icons {

@@ -34,12 +34,15 @@ HWND get_hwnd_2() {
 //
 static int borderless = 0;
 static WNDPROC originalWindowProc;
-static iui__Window* wind;
+
+
+// 
+// static iui__Window* wind;
 
 static int not_sokol = 0;
 
 // have these here so gcc don't complain
-VV_EXP int myiui_check_for_menuitem(iui__Window* w, int x, int y);
+// VV_EXP int myiui_check_for_menuitem(iui__Window* w, int x, int y);
 // bool iui_check_for_menuitem(iui__Window* w, int x, int y);
 // VV_EXPORTED_SYMBOL voidptr iui_get_hwnd_2(iui__Window* win);
 
@@ -74,11 +77,11 @@ LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 ScreenToClient(hwnd, &pt);
                 
 				// TODO: Check for our menubar
-				if (pt.y < 30) { // Make the top 30 pixels draggable
-					if (myiui_check_for_menuitem(wind, pt.x, pt.y) == 1) {
+				if (pt.y < 20) { // Make the top 30 pixels draggable
+					// if (myiui_check_for_menuitem(wind, pt.x, pt.y) == 1) {
 					// if (iui__Window_check_for_menuitem((wind, pt.x, pt.y))) {
-						break;
-					}
+					//	break;
+					// }
                     return HTCAPTION;
                 }
             }
@@ -129,7 +132,7 @@ LRESULT CALLBACK CustomWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
 void win_post_control_message(int val) {
 	//HWND hwnd = (HWND)sapp_win32_get_hwnd();
-	HWND hwnd = get_hwnd_2(wind);
+	HWND hwnd = get_hwnd_2();
 	if (val == 0) {
 		PostMessage(hwnd, WM_CLOSE, 0, 0);
 	} else if (val == 1) {
@@ -142,15 +145,15 @@ void win_post_control_message(int val) {
 #pragma GCC diagnostic pop
 
 // Modify the window style to make it borderless
-void win_make_borderless(iui__Window* winn) {
+void win_make_borderless(/*iui__Window* winn*/) {
 	if (borderless == 1) {
 		return;
 	}
 
 	
-	wind = winn;
+	// wind = winn;
 	//HWND hwnd = (HWND)sapp_win32_get_hwnd();
-	HWND hwnd = get_hwnd_2(winn);
+	HWND hwnd = get_hwnd_2();
 	LONG style = GetWindowLong(hwnd, GWL_STYLE);
 	style &= ~(WS_CAPTION | WS_THICKFRAME);
 	style |= WS_THICKFRAME;

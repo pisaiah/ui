@@ -3,6 +3,7 @@ module iui
 import gg
 
 // Checkbox - implements Component interface
+@[heap]
 pub struct Switch {
 	Component_A
 pub mut:
@@ -142,7 +143,7 @@ pub fn (mut sw Switch) draw(g &GraphicsContext) {
 	tx := sw.get_thumb_x(g)
 	wid := sw.height - sw.cut * 2
 
-	fill_color := if sw.is_selected { g.theme.button_bg_normal } else { g.theme.text_color }
+	fill_color := if sw.is_selected { g.theme.button_bg_normal } else { g.foreground_color() }
 
 	g.gg.draw_rounded_rect_filled(tx, sw.y + sw.cut, wid, wid, 64, g.theme.button_border_normal)
 	g.gg.draw_rounded_rect_filled(tx + 1, sw.y + sw.cut + 1, wid - 2, wid - 2, 64, fill_color)
@@ -172,7 +173,7 @@ fn (this &Switch) draw_text(ctx &GraphicsContext) {
 
 	ctx.draw_text(this.x + left + 4, this.y + (this.height / 2) - sizh, this.text, ctx.font, gg.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 }
 

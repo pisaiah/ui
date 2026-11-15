@@ -3,7 +3,7 @@ module iui
 import gg
 
 // Modal - implements Component interface
-pub struct Modal {
+pub struct Modal implements Container {
 	Component_A
 pub mut:
 	text       string
@@ -96,18 +96,11 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 
 	ctx.gg.draw_text(m.xs + 6, ttop, m.text, gg.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 
 	ctx.gg.draw_rect_filled(m.xs + bord_wid, m.top_off + top, wid_2, hei, ctx.theme.background)
 	ctx.gg.draw_rect_empty(m.xs + bord_wid, m.top_off + top, wid_2, hei, ctx.theme.button_bg_click)
-
-	mut app := ctx.win
-
-	// Do component draw event again to fix z-index
-	// if !isnil(m.draw_event_fn) {
-	// m.draw_event_fn(mut app, &Component(m))
-	// }
 
 	if m.needs_init {
 		if m.close_idx == none {
@@ -118,7 +111,6 @@ pub fn (mut m Modal) draw(ctx &GraphicsContext) {
 
 	y_off := m.y + m.top_off + top
 	for i, mut kid in m.children {
-		kid.draw_event_fn(mut app, kid)
 		kid.draw_with_offset(ctx, m.xs, y_off + 2)
 
 		if m.pack {

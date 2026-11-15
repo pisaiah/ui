@@ -17,7 +17,7 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		}
 	}
 
-	app.has_event = true
+	// app.has_event = true
 
 	if e.typ == .mouse_move {
 		app.mouse_x = app.gg.mouse_pos_x
@@ -58,7 +58,7 @@ pub fn on_event(e &gg.Event, mut app Window) {
 		on_scroll_event(e, mut app)
 	}
 
-	app.has_event = false
+	// app.has_event = false
 }
 
 pub fn on_mouse_move_event(e &gg.Event, mut app Window) {
@@ -221,6 +221,7 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			app.check_box(key, e, mut comm)
 		}
 	}
+	/*
 	if mut a is Titlebox || mut a is SplitView || mut a is InternalFrame {
 		for mut comm in a.children {
 			if app.check_box(key, e, mut comm) {
@@ -228,13 +229,14 @@ fn (mut app Window) check_box(key gg.KeyCode, e &gg.Event, mut a Component) bool
 			}
 		}
 	}
-	if mut a is ScrollView || mut a is Panel || mut a is DesktopPane || mut a is Container {
-		for mut comm in a.children {
-			if app.check_box(key, e, mut comm) {
-				return true
-			}
+	*/
+	// if mut a is ScrollView || mut a is Panel || mut a is DesktopPane || mut a is Container {
+	for mut comm in a.children {
+		if app.check_box(key, e, mut comm) {
+			return true
 		}
 	}
+	//}
 	return false
 }
 
@@ -242,7 +244,7 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 	// global keys
 	match key {
 		.left_alt {
-			app.debug_draw = !app.debug_draw
+			// app.debug_draw = !app.debug_draw
 			return
 		}
 		.left_control {
@@ -268,7 +270,6 @@ fn (mut app Window) key_down(key gg.KeyCode, e &gg.Event) {
 
 		app.check_box(key, e, mut a)
 	}
-	app.key_down_event(mut app, key, e)
 	app.invoke_key_event(key, e, 'key_down')
 }
 
@@ -356,6 +357,12 @@ pub fn (mut com Component) on_mouse_down_component(app &Window) bool {
 					return true
 				}
 			}
+		}
+	}
+
+	if mut com is Container {
+		if com.get_pass_ev() {
+			return false
 		}
 	}
 

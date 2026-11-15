@@ -114,7 +114,7 @@ fn (mut this ClockComponent) draw_nums(ctx &ui.GraphicsContext, i int) {
 	tw := ctx.text_width(txt)
 
 	ctx.draw_text(x + lx - (tw / 2), y - ly - (ctx.line_height / 2), txt, ctx.font, gx.TextCfg{
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 }
 

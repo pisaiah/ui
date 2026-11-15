@@ -246,7 +246,7 @@ pub fn (mut btn Button) draw(ctx &GraphicsContext) {
 	// sizh := ctx.line_height / 2 // ctx.text_height(text) / 2
 	cfgg := gg.TextCfg{
 		size:   font_size
-		color:  if btn.is_action { ctx.theme.accent_text } else { ctx.theme.text_color }
+		color:  if btn.is_action { ctx.theme.accent_text } else { ctx.foreground_color() }
 		family: font
 	}
 	ctx.gg.set_text_cfg(cfgg)

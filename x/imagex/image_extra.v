@@ -95,10 +95,10 @@ fn (mut i ResizedImage) draw(g &ui.GraphicsContext) {
 	}
 
 	if !i.img_init {
-		g.draw_corner_rect(i.x, i.y, i.width, i.height, g.theme.text_color, g.theme.background)
+		g.draw_corner_rect(i.x, i.y, i.width, i.height, g.foreground_color(), g.theme.background)
 		angle := f32(0.05 * f32(g.gg.frame))
-		draw_loader_arc(g.gg, i.x + (i.width / 2), i.y + (i.height / 2), 60, 8, angle,
-			0.25, g.theme.text_color, g.theme.scroll_bar_color)
+		draw_loader_arc(g.gg, i.x + (i.width / 2), i.y + (i.height / 2), 60, 8, angle, 0.25,
+			g.foreground_color(), g.theme.scroll_bar_color)
 		return
 	}
 

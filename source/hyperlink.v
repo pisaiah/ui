@@ -57,7 +57,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 
 	ctx.set_cfg(gg.TextCfg{
 		size:  size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		bold:  this.bold
 	})
 
@@ -74,7 +74,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 	color := if hover {
 		gg.rgb(100, 100, 200)
 	} else {
-		if ctx.theme.text_color.r > 150 {
+		if ctx.foreground_color().r > 150 {
 			gg.rgb(100, 180, 255)
 		} else {
 			gg.rgb(0, 128, 255)
@@ -89,7 +89,7 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 
 	ctx.set_cfg(gg.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		bold:  false
 	})
 
@@ -100,8 +100,6 @@ pub fn (mut this Hyperlink) draw(ctx &GraphicsContext) {
 		mut win := ctx.win
 		win.tooltip = this.url
 	}
-
-	this.debug_draw(ctx)
 }
 
 pub fn fix_tab(val string) string {
@@ -125,7 +123,7 @@ pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
 
 	ctx.set_cfg(gg.TextCfg{
 		size:  size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		bold:  btn.bold
 	})
 
@@ -144,18 +142,9 @@ pub fn (mut btn Hyperlink) pack_do(ctx &GraphicsContext) {
 	// Reset for text_height
 	ctx.set_cfg(gg.TextCfg{
 		size:  ctx.win.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		bold:  false
 	})
-}
-
-fn (this &Hyperlink) debug_draw(ctx &GraphicsContext) {
-	if !ctx.win.debug_draw {
-		return
-	}
-	ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.blue)
-	ctx.gg.draw_line(this.x, this.y, this.x + this.width, this.y + this.height, gg.blue)
-	ctx.gg.draw_line(this.x, this.y + this.height, this.x + this.width, this.y, gg.blue)
 }
 
 @[deprecated]

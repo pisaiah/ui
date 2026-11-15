@@ -139,7 +139,7 @@ fn (mut this TextField) draw(g &GraphicsContext) {
 	this.draw_background(g)
 
 	xp := this.x + 4 + this.padding_x
-	color := g.theme.text_color
+	color := g.foreground_color()
 
 	if this.carrot_left < 0 {
 		this.carrot_left = 0

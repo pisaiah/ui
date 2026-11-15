@@ -140,7 +140,7 @@ pub fn (mut item NavPaneItem) pack_do(ctx &GraphicsContext) {
 fn (box &NavPaneItem) draw_arrow(ctx &GraphicsContext, x int, y int, w int, h int) {
 	a := x + w - 24
 	b := y + (h / 2) - 3
-	ctx.gg.draw_triangle_filled(a, b, a + 5, b + 5, a + 10, b, ctx.theme.text_color)
+	ctx.gg.draw_triangle_filled(a, b, a + 5, b + 5, a + 10, b, ctx.foreground_color())
 }
 
 // Default mouse up event
@@ -206,7 +206,7 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	font := ctx.win.extra_map['icon_ttf']
 	cfgg := gg.TextCfg{
 		size:   ctx.win.font_size
-		color:  ctx.theme.text_color
+		color:  ctx.foreground_color()
 		family: font
 	}
 	ctx.gg.set_text_cfg(cfgg)
@@ -243,7 +243,7 @@ pub fn (mut item NavPaneItem) draw(ctx &GraphicsContext) {
 	ctx.draw_text(item.x + tx, item.y + (item.height / 2) - ctx.line_height / 2, item.text,
 		ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 }
 

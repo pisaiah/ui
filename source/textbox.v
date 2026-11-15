@@ -59,7 +59,7 @@ fn (mut this Textbox) draw_line_numbers(ctx &GraphicsContext, lh int) {
 
 	cfg := gg.TextCfg{
 		size:  ctx.font_size
-		color: this.fg or { ctx.theme.text_color }
+		color: this.fg or { ctx.foreground_color() }
 	}
 
 	ctx.gg.set_text_cfg(cfg)
@@ -128,7 +128,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	}
 
 	cfg := gg.TextCfg{
-		color: this.fg or { ctx.theme.text_color }
+		color: this.fg or { ctx.foreground_color() }
 		size:  ctx.win.font_size + this.fs
 	}
 	ctx.gg.set_text_cfg(cfg)
@@ -172,7 +172,7 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 
 			wb := ctx.text_width(line[0..this.caret_x].replace('\t', tabr()))
 
-			tc := this.fg or { ctx.theme.text_color }
+			tc := this.fg or { ctx.foreground_color() }
 			if this.is_selected {
 				color := if this.blink {
 					gg.rgba(tc.r, tc.g, tc.b, 70)
@@ -238,10 +238,6 @@ fn (mut this Textbox) draw(ctx &GraphicsContext) {
 	ws := ctx.gg.window_size()
 
 	ctx.gg.scissor_rect(0, 0, ws.width, ws.height)
-
-	if ctx.win.debug_draw {
-		ctx.gg.draw_rect_empty(this.x, this.y, this.width, this.height, gg.blue)
-	}
 }
 
 fn (mut this Textbox) draw_text(x int, y int, line string, cfg gg.TextCfg, g &GraphicsContext) {

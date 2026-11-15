@@ -30,7 +30,7 @@ fn darker(c gg.Color, mut theme ui.Theme) {
 }
 
 pub fn rgb_setup(mut win ui.Window) {
-	win.theme.accent_fill = gg.rgb(0, 0, 0)
+	win.graphics_context.theme.accent_fill = gg.rgb(0, 0, 0)
 	win.subscribe_event('draw', rgb_animate_colors)
 }
 

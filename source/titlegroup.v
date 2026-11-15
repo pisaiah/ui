@@ -39,11 +39,10 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	text_height := ctx.line_height / 2
 
 	for mut kid in this.children {
-		if this.children.len == 1 && kid is Container {
+		is_container := kid is Container
+		if this.children.len == 1 && is_container {
 			tw := this.width - (this.padding * 2)
-			// if kid.width < tw {
 			kid.width = tw
-			//}
 		}
 
 		y := this.y + this.padding + text_height + 5
@@ -71,7 +70,7 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 	if this.compact {
 		ctx.gg.draw_rect_filled(this.x, this.y, wid, text_height + 1, ctx.theme.background)
 		ctx.draw_text(this.x, this.y, this.text, ctx.font, gg.TextCfg{
-			color: ctx.theme.text_color
+			color: ctx.foreground_color()
 			size:  ctx.font_size
 		})
 		return
@@ -79,7 +78,7 @@ pub fn (mut this Titlebox) draw(ctx &GraphicsContext) {
 
 	ctx.gg.draw_rect_filled(x - 8, this.y, wid + 16, text_height + 1, ctx.theme.background)
 	ctx.draw_text(x, this.y, this.text, ctx.font, gg.TextCfg{
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 		size:  ctx.font_size
 	})
 }

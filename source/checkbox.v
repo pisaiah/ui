@@ -118,7 +118,7 @@ fn (cb &Checkbox) draw_text(g &GraphicsContext) {
 
 	g.draw_text(cb.x + cb.height + 4, cb.y + (cb.height / 2) - sizh, cb.text, g.font, gg.TextCfg{
 		size:  g.font_size
-		color: g.theme.text_color
+		color: g.foreground_color()
 	})
 }
 

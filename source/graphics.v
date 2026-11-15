@@ -20,10 +20,18 @@ pub mut:
 	icon_cache  map[string]int
 }
 
+pub fn (g &GraphicsContext) theme() &Theme {
+	return g.theme
+}
+
+pub fn (g &GraphicsContext) foreground_color() gg.Color {
+	return g.theme.text_color
+}
+
 fn new_graphics(win &Window) &GraphicsContext {
 	return &GraphicsContext{
 		gg:        win.gg
-		theme:     &win.theme
+		theme:     win.config.theme
 		font_size: win.font_size
 		win:       win
 		themes:    ThemeManager.new()
@@ -98,7 +106,7 @@ pub fn (ctx &GraphicsContext) set_cfg(cfg gg.TextCfg) {
 
 pub fn (ctx &GraphicsContext) reset_text_font() {
 	cfg_reset := gg.TextCfg{
-		color:  ctx.theme.text_color
+		color:  ctx.foreground_color()
 		size:   ctx.font_size
 		family: ctx.font
 	}
@@ -109,12 +117,6 @@ pub fn (ctx &GraphicsContext) draw_text(x int, y int, text_ string, font_id stri
 	$if windows {
 		if ctx.gg.native_rendering {
 			ctx.gg.draw_text(x, y, text_, cfg)
-			return
-		}
-		$if wintxt ? {
-			if text_.len > 0 {
-				ctx.draw_win32_text(x, y, text_, cfg)
-			}
 			return
 		}
 	}
@@ -226,7 +228,8 @@ pub fn (g &GraphicsContext) draw_rounded_rect_filled_top(x f32, y f32, w f32, h 
 	}
 
 	if c.a != 255 {
-		sgl.load_pipeline(g.gg.pipeline.alpha)
+		// sgl.load_pipeline(g.gg.r.pipeline.alpha)
+		// g.gg.r.load_pipeline(g.gg.pipeline.alpha)
 	}
 	sgl.c4b(c.r, c.g, c.b, c.a)
 
@@ -302,4 +305,13 @@ pub fn (g &GraphicsContext) draw_corner_rect(x f32, y f32, w f32, h f32, bord gg
 pub fn (g &GraphicsContext) draw_rounded_rect(x f32, y f32, w f32, h f32, r f32, bord gg.Color, bg gg.Color) {
 	g.gg.draw_rounded_rect_filled(x, y, w, h, r, bord)
 	g.gg.draw_rounded_rect_filled(x + 1, y + 1, w - 2, h - 2, r, bg)
+}
+
+pub fn (mut ctx GraphicsContext) set_theme(theme &Theme) {
+	mut win := ctx.win
+	ctx.theme = theme
+	theme.setup_fn(mut win)
+
+	ctx.gg.set_bg_color(theme.background)
+	ctx.win.invoke_theme_change_event()
 }

@@ -6,7 +6,35 @@ import time
 import os
 import os.font
 
-pub const version = '0.29'
+pub const version = '0.30'
+
+// Window
+@[heap; markused]
+pub struct Window {
+pub mut:
+	gg               &gg.Context
+	font_size        int = 16
+	mouse_x          int
+	mouse_y          int
+	click_x          int
+	click_y          int
+	bar              &Menubar
+	components       []Component
+	popups           []&Popup
+	show_menu_bar    bool = true
+	shift_pressed    bool
+	last_update      i64
+	frame_time       int
+	config           &WindowConfig
+	extra_map        map[string]string
+	id_map           map[string]voidptr
+	graphics_context &GraphicsContext
+	second_pass      u8
+	tooltip          string
+	event_map        map[string][]fn (voidptr)
+	custom_titlebar  bool
+	custom_controls  ?WindowControls
+}
 
 pub fn default_font() string {
 	$if emscripten ? {
@@ -23,9 +51,6 @@ pub:
 	y      int
 	width  int
 	height int
-}
-
-pub fn debug(o string) {
 }
 
 pub fn is_in_bounds(px int, py int, b Bounds) bool {
@@ -48,21 +73,21 @@ pub fn is_in(com &Component, px int, py int) bool {
 	return abs(midx - px) < (com.width / 2) && abs(midy - py) < (com.height / 2)
 }
 
+pub fn (com &Component) is_in(px int, py int) bool {
+	x := if com.rx == 0 { com.x } else { com.rx }
+	y := if com.ry == 0 { com.y } else { com.ry }
+
+	midx := x + (com.width / 2)
+	midy := y + (com.height / 2)
+
+	return abs(midx - px) < (com.width / 2) && abs(midy - py) < (com.height / 2)
+}
+
 pub fn point_in_raw(mut com Component, px int, py int) bool {
 	if com.rx == 0 && com.ry == 0 {
 		// Not drawn with offset
 		return point_in(mut com, px, py)
 	}
-
-	mut hei := com.height / 2
-	/*
-	if mut com is Selectbox {
-		if com.show_items {
-			list_height := (com.items.len * com.sub_height)
-			hei = list_height / 2
-		}
-	}
-	*/
 
 	// Don't process if MenuItem is hidden.
 	if mut com is MenuItem {
@@ -72,17 +97,11 @@ pub fn point_in_raw(mut com Component, px int, py int) bool {
 		}
 	}
 
-	midx := com.rx + (com.width / 2)
-	midy := com.ry + hei
-
-	return abs(midx - px) < (com.width / 2) && abs(midy - py) < hei
+	return px >= com.rx && px < com.rx + com.width && py >= com.ry && py < com.ry + com.height
 }
 
 pub fn point_in(mut com Component, px int, py int) bool {
-	midx := com.x + (com.width / 2)
-	midy := com.y + (com.height / 2)
-
-	return abs(midx - px) < (com.width / 2) && abs(midy - py) < (com.height / 2)
+	return px >= com.rx && px < com.rx + com.width && py >= com.ry && py < com.ry + com.height
 }
 
 pub fn (mut com Component_A) set_bounds(x int, y int, width int, height int) {
@@ -111,40 +130,6 @@ pub fn set_bounds(mut com Component, x int, y int, width int, height int) {
 	com.height = height
 }
 
-// Window
-@[heap]
-pub struct Window {
-pub mut:
-	gg               &gg.Context
-	font_size        int = 16
-	mouse_x          int
-	mouse_y          int
-	click_x          int
-	click_y          int
-	theme            Theme
-	bar              &Menubar
-	components       []Component
-	popups           []&Popup
-	show_menu_bar    bool = true
-	shift_pressed    bool
-	key_down_event   fn (mut Window, gg.KeyCode, &gg.Event) = fn (mut win Window, key gg.KeyCode, e &gg.Event) {}
-	last_update      i64
-	frame_time       int
-	has_event        bool = true
-	config           &WindowConfig
-	extra_map        map[string]string
-	id_map           map[string]voidptr
-	debug_draw       bool
-	graphics_context &GraphicsContext
-	frame_evnt_count int
-	sleep_if_no_evnt bool = true
-	second_pass      u8
-	tooltip          string
-	event_map        map[string][]fn (voidptr)
-	custom_titlebar  bool
-	custom_controls  ?WindowControls
-}
-
 struct WindowControls {
 mut:
 	p &Panel
@@ -169,7 +154,7 @@ fn (win &Window) draw_tooltip(ctx &GraphicsContext) {
 	for line in lines {
 		ctx.draw_text(x, y, line, ctx.font, gg.TextCfg{
 			size:  win.font_size
-			color: ctx.theme.text_color
+			color: ctx.foreground_color()
 		})
 		y += ctx.line_height
 	}
@@ -183,19 +168,21 @@ pub fn (win &Window) get[T](id string) T {
 	return win.id_map[id] or { panic('Component with ID "${id}" not found.') }
 }
 
-/*
 pub fn (mut win Window) add_child(com Component) {
 	win.components << com
-}*/
+}
 
+/*
 pub fn (win &Window) add_child(com Component) {
 	unsafe { win.components << com }
 }
+*/
 
 pub fn (win &Window) add_popup(com &Popup) {
 	unsafe { win.popups << com }
 }
 
+@[deprecated]
 pub fn window(c &WindowConfig) &Window {
 	return Window.new(c)
 }
@@ -222,7 +209,6 @@ pub fn (mut win Window) run() {
 pub fn Window.new(cfg &WindowConfig) &Window {
 	mut win := &Window{
 		gg:               unsafe { nil }
-		theme:            cfg.theme
 		bar:              unsafe { nil }
 		config:           cfg
 		font_size:        cfg.font_size
@@ -240,7 +226,7 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 	swap_interval := $if si2 ? { 2 } $else { 1 }
 
 	win.gg = gg.new_context(
-		bg_color:      win.theme.background
+		bg_color:      cfg.theme.background
 		width:         cfg.width
 		height:        cfg.height
 		create_window: true
@@ -255,11 +241,15 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 		swap_interval: swap_interval
 		resized_fn:    win.on_resize
 	)
-	win.graphics_context = new_graphics(win)
-	if win.graphics_context.icon_cache.len == 0 {
-		win.graphics_context.fill_icon_cache(mut win)
+
+	mut ctx := new_graphics(win)
+	if ctx.icon_cache.len == 0 {
+		ctx.fill_icon_cache(mut win)
 	}
 
+	win.graphics_context = ctx
+
+	/*
 	$if windows {
 		if win.gg.native_rendering {
 			win.gg.ui_mode = false
@@ -271,8 +261,9 @@ pub fn Window.new(cfg &WindowConfig) &Window {
 			set_window_fps(40)
 		}
 	}
+	*/
 
-	win.theme.setup_fn(mut win)
+	ctx.theme.setup_fn(mut win)
 	return win
 }
 
@@ -314,22 +305,6 @@ pub fn (g &GraphicsContext) get_theme(name string) &Theme {
 	return themes[0]
 }
 
-pub fn (mut win Window) get_theme(name string) &Theme {
-	return win.graphics_context.get_theme(name)
-}
-
-pub fn (mut win Window) set_theme(theme Theme) {
-	theme.setup_fn(mut win)
-	win.theme = theme
-	ref := &theme
-
-	win.graphics_context.theme = ref
-	theme.setup_fn(mut win)
-
-	win.gg.set_bg_color(theme.background)
-	win.invoke_theme_change_event()
-}
-
 pub fn (win &Window) invoke_key_event(key gg.KeyCode, gg_ev &gg.Event, typ string) {
 	ev := WindowKeyEvent{
 		win: win
@@ -350,6 +325,7 @@ pub fn (win &Window) invoke_theme_change_event() {
 	}
 }
 
+/*
 fn C.win_make_borderless(w &Window)
 
 fn C.win_post_control_message(val int)
@@ -361,7 +337,7 @@ fn win_post_control_message(val int) {
 }
 
 // v-native-render
-/*
+
 fn C.get_hwnd() C.HWND
 fn C.sapp_win32_get_hwnd() C.HWND
 
@@ -378,11 +354,13 @@ fn (win &Window) get_hwnd_2() voidptr {
 */
 
 // Borderless Window support
+/*
 pub fn (win &Window) win32_make_borderless() {
 	$if windows {
 		C.win_make_borderless(win)
 	}
 }
+
 
 pub fn is_custom_titlebar_supported() bool {
 	$if windows {
@@ -390,8 +368,10 @@ pub fn is_custom_titlebar_supported() bool {
 	}
 	return false
 }
+*/
 
 pub fn (mut win Window) draw_window_controls() {
+	/*
 	if !is_custom_titlebar_supported() {
 		return
 	}
@@ -468,7 +448,7 @@ pub fn (mut win Window) draw_window_controls() {
 
 	txt := win.config.title
 	tw := g.text_width(txt)
-	tc := g.theme.text_color
+	tc := g.foreground_color()
 	title_color := gg.rgba(tc.r, tc.g, tc.b, 100)
 
 	bw := win.bar.get_items_width()
@@ -489,6 +469,7 @@ pub fn (mut win Window) draw_window_controls() {
 		size:  g.font_size
 		color: title_color
 	})
+	*/
 }
 
 pub fn (win &Window) get_size() gg.Size {
@@ -530,41 +511,12 @@ fn frame(mut app Window) {
 fn (app &Window) display() {
 }
 
-// ui_mode: lower cpu usage
-fn (mut w Window) do_sleep() {
-	$if no_ui_sleep ? {
-		return
-	}
-
-	if w.config.ui_mode {
-		return
-	}
-
-	if !w.sleep_if_no_evnt {
-		return
-	}
-
-	if w.has_event {
-		/*
-		w.frame_evnt_count += 1
-		if w.frame_evnt_count > 3 {
-			w.has_event = false
-			w.frame_evnt_count = 0
-		}
-		*/
-	}
-
-	if !w.has_event {
-		//	time.sleep(10 * time.millisecond) // Reduce CPU Usage
-	}
-}
-
 fn (mut app Window) revalidate() {
 }
 
 fn (mut app Window) draw() {
 	// Custom 'UI Mode' - Refresh text caret
-	app.do_sleep()
+	// app.do_sleep()
 	now := time.now().unix_milli()
 
 	// Sort by Z-index; Lower draw first
@@ -574,6 +526,7 @@ fn (mut app Window) draw() {
 		app.graphics_context.calculate_line_height()
 	}
 
+	/*
 	$if customtitlebar ? {
 		app.custom_titlebar = true
 	}
@@ -585,6 +538,7 @@ fn (mut app Window) draw() {
 		}
 		app.win32_make_borderless()
 	}
+	*/
 
 	if app.components.len == 1 {
 		if app.components[0] is Container || app.components[0] is ScrollView
@@ -627,9 +581,11 @@ fn (mut app Window) draw() {
 		pop.draw(app.graphics_context)
 	}
 
+	/*
 	if app.custom_titlebar {
 		app.draw_window_controls()
 	}
+	*/
 
 	if app.tooltip.len != 0 {
 		app.draw_tooltip(app.graphics_context)
@@ -647,19 +603,10 @@ fn (mut app Window) draw() {
 		app.last_update = end
 		app.second_pass += 1
 		app.tooltip = ''
-		app.frame_evnt_count = 0
 	} else {
 		app.second_pass = 0
 	}
-	// app.frame_evnt_count += 1
 	app.frame_time = int(end - now)
-
-	/*
-	dt := app.gg.timer.elapsed().milliseconds()
-	if dt > 500 {
-		app.gg.timer.restart()
-	}
-	*/
 }
 
 fn (mut app Window) draw_children() {
@@ -669,11 +616,7 @@ fn (mut app Window) draw_children() {
 		app.bar.width = gg.window_size().width
 	}
 
-	for mut com in &(app.components) {
-		if !isnil(com.draw_event_fn) {
-			com.draw_event_fn(mut app, com)
-		}
-
+	for mut com in app.components {
 		if mut com is Page {
 			bar_drawn = true
 		}

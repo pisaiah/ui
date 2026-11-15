@@ -75,17 +75,17 @@ pub fn (mut this Selectbox) setup_popup(ctx &GraphicsContext, n bool) {
 		this.popup.add_child(subb)
 	}
 
-	for mut kid in &this.children {
-		if mut kid is SelectItem {
-			kid.set_bounds(0, 1, this.width - 1, this.sub_height)
+	for mut kid in this.children {
+		// if mut kid is SelectItem {
+		kid.set_bounds(0, 1, this.width - 1, this.sub_height)
 
-			kid.x = 0
-			kid.y = 1
-			kid.width = this.width - 1
-			kid.height = this.sub_height
+		kid.x = 0
+		kid.y = 1
+		kid.width = this.width - 1
+		kid.height = this.sub_height
 
-			this.popup.add_child(kid)
-		}
+		this.popup.add_child(*kid)
+		//}
 	}
 
 	items_len := this.items.len + this.children.len
@@ -202,7 +202,7 @@ pub fn (box &Selectbox) draw_box(ctx &GraphicsContext, x int, y int) {
 	// ctx.gg.draw_rect_filled(x, y, box.width, box.height, bg)
 	ctx.draw_text(x + 5, y + (box.height / 2) - sizh, box.text, ctx.font, gg.TextCfg{
 		size:  ctx.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 
 	// ctx.gg.draw_rect_empty(x, y, box.width, box.height, border)
@@ -213,13 +213,14 @@ pub fn (box &Selectbox) draw_box(ctx &GraphicsContext, x int, y int) {
 fn (box &Selectbox) draw_arrow(ctx &GraphicsContext, x int, y int, w int, h int) {
 	a := x + w - 17
 	b := y + (h / 2) - 3
-	ctx.gg.draw_triangle_filled(a, b, a + 5, b + 5, a + 10, b, ctx.theme.text_color)
+	ctx.gg.draw_triangle_filled(a, b, a + 5, b + 5, a + 10, b, ctx.foreground_color())
 }
 
 // SelectItem
 pub struct SelectItem {
 	Component_A
 pub mut:
+	text  string
 	icon  &Image
 	uicon ?string
 	box   ?&Selectbox
@@ -277,18 +278,18 @@ fn (mut si SelectItem) draw_text(ctx &GraphicsContext, y int) {
 	if si.uicon != none && ctx.icon_ttf_exists() {
 		ctx.draw_text(si.x + 10, y, si.uicon, ctx.win.extra_map['icon_ttf'], gg.TextCfg{
 			size:  ctx.win.font_size
-			color: ctx.theme.text_color
+			color: ctx.foreground_color()
 		})
 		wid := ctx.text_width(si.uicon) + 17
 		ctx.draw_text(si.x + wid, y, si.text, ctx.font, gg.TextCfg{
 			size:  ctx.win.font_size
-			color: ctx.theme.text_color
+			color: ctx.foreground_color()
 		})
 		return
 	}
 
 	ctx.draw_text(si.x + 10, y, si.text, ctx.font, gg.TextCfg{
 		size:  ctx.win.font_size
-		color: ctx.theme.text_color
+		color: ctx.foreground_color()
 	})
 }

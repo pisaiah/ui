@@ -53,7 +53,7 @@ pub fn (man &ThemeManager) get_themes() []&Theme {
 fn theme_click(mut e MouseEvent) {
 	text := e.target.text
 	theme := e.ctx.themes.get_theme(text)
-	e.ctx.win.set_theme(theme)
+	e.ctx.set_theme(theme)
 }
 
 pub fn (mut win Window) make_theme_menu() &MenuItem {
@@ -105,6 +105,7 @@ pub interface UITheme {
 	accent_fill gg.Color
 }
 
+@[heap]
 pub struct Theme implements UITheme {
 pub mut:
 	name string

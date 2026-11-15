@@ -1,7 +1,7 @@
 // UI Demo Showcase Program
 module main
 
-import iui as ui { debug }
+import iui as ui
 import iui.themes
 import os
 import gg
@@ -461,12 +461,10 @@ fn create_tree(window &ui.Window) &ui.Tree2 {
 fn test_page(mut e ui.MouseEvent) {
 	mut page := ui.Page.new(title: 'Page 1')
 	e.ctx.win.add_child(page)
-
-	debug('btn click')
 }
 
 fn btn_click(mut e ui.MouseEvent) {
-	debug('btn click')
+	// The Button has been clicked
 }
 
 // Code Textbox
