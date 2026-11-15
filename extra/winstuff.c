@@ -5,9 +5,38 @@
 // #include <commctrl.h> // Include this header for DefSubclassProc
 
 // Note: TCC does not have timeapi.h
+#ifndef _TIMEAPI_H
+#define _TIMEAPI_H
+
 #ifdef __V_GCC__
 #include <timeapi.h> 
+#else
+
+/* Return codes */
+#define TIMERR_NOERROR 0
+#define TIMERR_NOCANDO 97
+
+#ifndef WINAPI
+#define WINAPI __stdcall
 #endif
+
+#ifndef UINT
+typedef unsigned int UINT;
+#endif
+
+#ifndef MMRESULT
+typedef unsigned int MMRESULT;
+#endif
+
+/* Function declarations */
+MMRESULT WINAPI timeBeginPeriod(UINT uPeriod);
+MMRESULT WINAPI timeEndPeriod(UINT uPeriod);
+
+#endif /* __V_GCC__ */
+#endif /* _TIMEAPI_H */
+
+
+
 
 HWND get_hwnd();
 

@@ -438,8 +438,8 @@ pub mut:
 @[params]
 pub struct CardLayoutConfig {
 pub:
-	hgap int = 5
-	vgap int = 5
+	hgap int = 0
+	vgap int = 0
 }
 
 pub fn CardLayout.new(c CardLayoutConfig) CardLayout {
@@ -452,9 +452,12 @@ pub fn CardLayout.new(c CardLayoutConfig) CardLayout {
 fn (this &CardLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	mut x := panel.x + this.hgap
 	mut y := panel.y + this.vgap
+	
 
 	for mut child in &panel.children {
 		if child.id == this.selected {
+			child.width = panel.width - (this.hgap * 2)
+			child.height = panel.height - (this.vgap * 2)
 			child.draw_with_offset(ctx, x, y)
 		}
 	}
@@ -465,6 +468,7 @@ fn (this &CardLayout) draw_kids(mut panel Panel, ctx &GraphicsContext) {
 	if panel.width == 0 {
 		panel.width = x - panel.x
 	}
+	
 }
 
 pub fn (mut this CardLayout) show(p Panel, id string) {
